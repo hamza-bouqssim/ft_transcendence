@@ -1,4 +1,8 @@
 import Header from "@/components/Header/Header"
+import About from "@/components/About/About"
+import Team from "@/components/Team/Team"
+import PingPong from "@/PingPong"
+
 // import localFont from 'next/font/local'
 
 // const whitney = localFont({
@@ -9,8 +13,11 @@ import Header from "@/components/Header/Header"
 const Home = () => {
   return (
     // <main className={`${whitney.variable} font-sans`} >
-    <main >
-      <Header />
+    <main className='font-Whitney'>
+      {/* <PingPong /> */}
+      <Header/>
+      <About />
+      <Team />
     </main>
   )
 }

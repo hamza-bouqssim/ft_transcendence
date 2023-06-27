@@ -1,87 +1,54 @@
-// "use client";
-// import { useEffect } from "react";
 import "./Header.css";
 import Image from 'next/image'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleArrowDown } from '@fortawesome/free-solid-svg-icons'
-// import * as THREE from 'three'
-// import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 const Header = () => {
-	// useEffect(() => {
-	// 	const scene: any = new THREE.Scene();
-	// 	const camera: any = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 1000 );
-	// 	scene.add( camera );
-		
-	// 	const mesh: any = new THREE.Mesh(
-	// 		new THREE.BoxGeometry( 1, 1, 1 ),
-	// 		new THREE.MeshBasicMaterial({ color: 0X6A67F3 })
-	// 		);
-	// 	scene.add( mesh );
-	// 	camera.position.z = 6;
-
-	// 	const renderer: any = new THREE.WebGLRenderer(
-	// 		{
-	// 			canvas: document.querySelector('#ping-pong') as HTMLCanvasElement
-	// 		}
-	// 	);
-	// 	const controls: any = new OrbitControls( camera, renderer.domElement );
-	// 	controls.autoRotate = true;
-	// 	const animate = () => {
-	// 		requestAnimationFrame(animate);
-	// 		renderer.render( scene, camera );
-	// 		mesh.rotation.x += 0.002;
-	// 		mesh.rotation.y += 0.002;
-	// 		controls.update()
-	// 	}
-	// 	animate();
-	// }
-	// , []);
-
 	return (
-		<header>
+		<header className='pt-[59px] pr-[300px] pb-[59px] pl-[300px] h-[1080px] relative'>
 			<section className="flex justify-between items-center">
 				<div>
 					<Image className='mix-blend-lighten'
 						src="/assets/42.svg"
-						width={60}
-						height={60}
+						width={100}
+						height={100}
 						alt="ping-pong"
 					/>
 				</div>
-				<nav>
-					<a href="#" className="link-style text-white">
+				<nav className='flex flex-row items-center justify-center gap-[15px]'>
+					<a href="#about" className="link-style">
 						About
 					</a>
-					<a href="#" className="link-style text-white">
+					<a href="#team" className="link-style">
 						Team
 					</a>
-					<a href="#" className="link-style text-white">
+					<a href="#" className="link-style">
 						Features
 					</a>
 					<a
 						href="#"
-						className="btn-style"
+						className="btn-style inline-block"
 					>
 						Sign In
 					</a>
 				</nav>
 			</section>
-			<section className="flex justify-between items-center mt-[150px]">
-				<div className='flex justify-between flex-col items-center pt-[40px] pb-[40px] mt-[40px] text-[25px] font-bold'>
-					<h1 className='w-[450px] text-white text-[40px] text-center font-bold' >Brace yourself for the epic battle ahead</h1>
-					<a href="#" className='inline-block btn-style w-[150px] text-center mt-[50px]'>Play</a>
-					<FontAwesomeIcon icon={faCircleArrowDown} className='text-white w-[45px] mt-[80px] hover:cursor-pointer animate-bounce hover:text-[var(--pink-color)] transition ease-in-out duration-300'/>
+			<section className="flex justify-around items-center mt-[175px]">
+				<div className='flex flex-col items-center justify-center mt-[40px] text-[25px] font-bold'>
+					<h1 className='text-[60px] text-center font-bold uppercase w-[800px]' >Brace yourself for the epic battle ahead</h1>
+					<a href="#" className='inline-block btn-style w-[240px] text-center mt-[50px]'>Play</a>
+					<FontAwesomeIcon icon={faCircleArrowDown} className='text-white w-[45px] mt-[70px] hover:cursor-pointer animate-bounce hover:text-[var(--pink-color)] transition ease-in-out duration-300'/>
 				</div>
-				<Image className='mix-blend-lighten border-solid border-white border-2 rounded-[30px] rotate-[-15deg] shadow-[0_0_50px_2px_var(--blue-color)]'
-					src="/assets/ping-pong.gif"
-					width={450}
-					height={450}
-					alt="ping-pong"
-				/>
-				{/* <canvas id='ping-pong' className='mix-blend-lighten h-[300%] w-[200%]'></canvas> */}
+				<div>
+					<Image className='mix-blend-lighten border-solid border-white border-2 rounded-[30px] rotate-[-20deg] shadow-[0_0_50px_2px_var(--blue-color)]'
+						src="/assets/ping-pong.gif"
+						width={650}
+						height={650}
+						alt="ping-pong"
+					/>
+				</div>
 			</section>
-				<hr className='text-white w-[50%] mt-[80px] ml-[25%]' />
+			<hr className='w-[20%] border-[2px] absolute bottom-0 left-[40%]' />
 		</header>
 	);
 };
