@@ -2,6 +2,7 @@ import Header from "@/components/Header/Header"
 import About from "@/components/About/About"
 import Team from "@/components/Team/Team"
 import PingPong from "@/PingPong"
+import Authenticate from "@/components/Authenticate/Authenticate"
 
 // import localFont from 'next/font/local'
 
@@ -13,11 +14,12 @@ import PingPong from "@/PingPong"
 const Home = () => {
   return (
     // <main className={`${whitney.variable} font-sans`} >
-    <main className='font-Whitney'>
+    <main className='font-Whitney text-white'>
       {/* <PingPong /> */}
-      <Header/>
+      {/* <Header/>
       <About />
-      <Team />
+      <Team /> */}
+      <Authenticate />
     </main>
   )
 }

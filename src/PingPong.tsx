@@ -28,8 +28,10 @@ const PingPong = () => {
 	document.body.appendChild( renderer.domElement );
 
 	const controls = new OrbitControls( camera, renderer.domElement );
+	renderer.domElement.style.cursor = 'grab';
+
 	controls.autoRotate = true;
-	controls.enableZoom = false;
+	controls.enableZoom = true;
 	controls.enabled = true
 
 	const min = -100;
