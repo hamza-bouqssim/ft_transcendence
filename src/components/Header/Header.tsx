@@ -19,7 +19,7 @@ const Header = () => {
 					<a href="#about" className="link-style">About</a>
 					<a href="#team" className="link-style">Team</a>
 					<a href="#" className="link-style">Features</a>
-					<a href="#" className="btn-style inline-block">Sign In</a>
+					<a href="#authenticate" className="btn-style inline-block">Sign In</a>
 				</nav>
 			</section>
 

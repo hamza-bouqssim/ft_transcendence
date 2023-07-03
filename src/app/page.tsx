@@ -16,9 +16,9 @@ const Home = () => {
     // <main className={`${whitney.variable} font-sans`} >
     <main className='font-Whitney text-white'>
       {/* <PingPong /> */}
-      {/* <Header/>
+      <Header/>
       <About />
-      <Team /> */}
+      <Team />
       <Authenticate />
     </main>
   )
