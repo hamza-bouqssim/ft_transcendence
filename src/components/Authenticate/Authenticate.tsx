@@ -4,28 +4,28 @@ import "./Authenticate.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faKey, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import PingPong from "@/PingPong";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useState } from "react";
 
 const Authenticate = () => {
 	const [email, setEmail] = useState<string>("");
 	const [password, setPassword] = useState<string>("");
 	const [rePassword, setRePassword] = useState<string>("");
 
-	let container : any,
-		subContainer : any,
-		btnSignUp : any,
-		btnSignIn : any,
-		signUp : any,
-		signIn : any
+	let container: HTMLElement | null,
+		subContainer: HTMLElement | null,
+		btnSignUp: HTMLElement | null,
+		btnSignIn: HTMLElement | null,
+		signUp: HTMLElement | null,
+		signIn: HTMLElement | null;
 
-	window.addEventListener('load', () => {
+	window.addEventListener("load", () => {
 		container = document.getElementById("container");
 		subContainer = document.getElementById("sub-container");
 		btnSignUp = document.getElementById("btn-sign-up");
 		btnSignIn = document.getElementById("btn-sign-in");
 		signUp = document.getElementById("sign-up");
 		signIn = document.getElementById("password");
-	})
+	});
 
 	const imgArr = ["/assets/google.svg", "/assets/42.svg", "/assets/github.svg"];
 
@@ -40,16 +40,29 @@ const Authenticate = () => {
 		/>
 	));
 
-	const handleInputChange = (e : any, fieldVal : string) => {
-		console.log(fieldVal);
-		// console.log(`email value ${fieldVal}`);
-		if (fieldVal.length > 0 && fieldVal.length < 8) e.target.style.border = "2px solid red"
+	const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+
+		switch (e.target.name) {
+		case "email":
+			{
+				setEmail(e.target.value);
+				break;
+			}
+		case "password":
+			setPassword(e.target.value);
+			break;
+		case "repassword":
+			setRePassword(e.target.value);
+			break;
+		}
+		// if (fieldVal.length > 0 && fieldVal.length < 8) e.target.style.border = "2px solid red"
 	};
 
 	// const validateForm = () => {};
 
 	const handleClick = (e: any) => {
-		let SignUpStyle: any, SignInStyle: any;
+		let SignUpStyle: CSSStyleDeclaration,
+			SignInStyle: CSSStyleDeclaration;
 
 		if (
 		container &&
@@ -100,8 +113,8 @@ const Authenticate = () => {
 	};
 
 	return (
-		// <section id="authenticate" className="custom-shape absolute top-1/2 left-[370px] transform translate-y-[-50%] w-fit">
-		<section id="authenticate">
+		<section id="authenticate" className="custom-shape absolute top-1/2 left-[370px] transform translate-y-[-50%] w-fit">
+		{/* <section id="authenticate"> */}
 		<PingPong />
 		<div className="glassmorphism flex items-center absolute w-[100%] h-[100%]">
 			<div
@@ -116,14 +129,14 @@ const Authenticate = () => {
 				<button
 					id="btn-sign-in"
 					className="transition ease-in-out duration-500 bg-white text-black w-[264px] rounded-r-[120px] rounded-bl-[37px] rounded-tl-[268px] h-[57px] flex items-center justify-center"
-					onClick={ (e) => handleClick(e) }
+					onClick={(e) => handleClick(e)}
 				>
 					Sign In
 				</button>
 				<button
 					id="btn-sign-up"
 					className="transition ease-in-out duration-500 bg-[#E0E0E0] text-[#949494] w-[264px] rounded-l-[120px] rounded-br-[268px] rounded-tr-[37px] h-[57px] flex items-center justify-center"
-					onClick={ (e) => handleClick(e) }
+					onClick={(e) => handleClick(e)}
 				>
 					Sign Up
 				</button>
@@ -148,10 +161,7 @@ const Authenticate = () => {
 					id="email"
 					className="absolute custom-shape input-style top-[26px]"
 					placeholder="email"
-					onChange={(e) => {
-						setEmail(e.target.value);
-						handleInputChange(e, email);
-					}}
+					onChange={ (e) => handleInputChange(e) }
 				/>
 				<FontAwesomeIcon
 					icon={faKey}
@@ -163,10 +173,7 @@ const Authenticate = () => {
 					id="password"
 					className="absolute custom-shape input-style top-[104px]"
 					placeholder="password"
-					onChange={(e) => {
-					setPassword(e.target.value);
-					handleInputChange(e, password);
-					}}
+					onChange={ (e) => handleInputChange(e) }
 				/>
 				<div
 					id="sign-up"
@@ -178,10 +185,7 @@ const Authenticate = () => {
 					id="password-sign-up"
 					className="px-[55px] absolute rounded-bl-[37px] rounded-tl-[268px] rounded-r-[80px] text-black text-xl border-solid border-2 border-[#8E8E8E] w-[197px] h-[59px]"
 					placeholder="password"
-					onChange={(e) => {
-						setPassword(e.target.value);
-						handleInputChange(e, password);
-					}}
+					onChange={ (e) => handleInputChange(e) }
 					/>
 					<FontAwesomeIcon
 					icon={faKey}
@@ -193,10 +197,7 @@ const Authenticate = () => {
 					id="repassword"
 					className="px-[55px] absolute rounded-br-[268px] rounded-tr-[37px] rounded-l-[80px] text-black text-xl border-solid border-2 border-[#8E8E8E] w-[197px] h-[59px] right-0"
 					placeholder="Confirm"
-					onChange={(e) => {
-						setRePassword(e.target.value);
-						handleInputChange(e, rePassword);
-					}}
+					onChange={ (e) => handleInputChange(e) }
 					/>
 				</div>
 				<button

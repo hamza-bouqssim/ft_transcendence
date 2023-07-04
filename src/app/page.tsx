@@ -19,7 +19,7 @@ const Home = () => {
       <Header/>
       <About />
       <Team />
-      <Authenticate />
+      {/* <Authenticate /> */}
     </main>
   )
 }
