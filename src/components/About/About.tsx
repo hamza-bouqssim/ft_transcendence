@@ -7,9 +7,9 @@ const About = () => {
 	const mappedImages = images.map( (el, i) => { 
 			return (
 				<div>
-					<Image 
+					<Image className='shrink-0 grow-[1] cursor-pointer transition ease-linear duration-300 hover:scale-125'
 						key={i}
-						src={el} className='cursor-pointer transition ease-linear duration-300 hover:scale-125'
+						src={el}
 						width={100}
 						height={100}
 						alt={el.substring(8)} />
@@ -18,15 +18,15 @@ const About = () => {
 				) } );
 
 	return (
-		<div id='about' className="relative h-[100vh] flex flex-col justify-center items-center">
+		<div id='about' className="relative h-[100vh] flex flex-col justify-center items-center py-[59px] px-[15%]">
 			<div  className='flex items-center flex-col font-bold'>
 				<h2 className='text-[80px] mb-[40px]'>About</h2>
-				<p className='w-[700px] mb-[60px] text-[30px] text-center uppercase'>
+				<p className='sm:w-[700px] mb-[60px] text-[30px] text-center uppercase'>
 					ft_transcendence is a real-time multiplayer
 					Pong web project with a chat system.
 					Built with
 				</p>
-				<div className="p-[4px] flex justify-center items-center gap-[20px]" data-aos="zoom-in-up">
+				<div className="w-[70%] flex justify-center flex-wrap flex-col sm:flex-row items-center gap-[20px] sm:p-[4px]" data-aos="zoom-in-up">
 					{mappedImages}
 				</div>
 			</div>

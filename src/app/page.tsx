@@ -15,11 +15,10 @@ const Home = () => {
   return (
     // <main className={`${whitney.variable} font-sans`} >
     <main className='font-Whitney text-white'>
-      {/* <PingPong /> */}
       <Header/>
       <About />
       <Team />
-      {/* <Authenticate /> */}
+      <Authenticate />
     </main>
   )
 }

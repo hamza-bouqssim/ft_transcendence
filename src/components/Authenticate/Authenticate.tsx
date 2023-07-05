@@ -18,14 +18,14 @@ const Authenticate = () => {
 		signUp: HTMLElement | null,
 		signIn: HTMLElement | null;
 
-	window.addEventListener("load", () => {
-		container = document.getElementById("container");
-		subContainer = document.getElementById("sub-container");
-		btnSignUp = document.getElementById("btn-sign-up");
-		btnSignIn = document.getElementById("btn-sign-in");
-		signUp = document.getElementById("sign-up");
-		signIn = document.getElementById("password");
-	});
+	// window.addEventListener("load", () => {
+	// 	container = document.getElementById("container");
+	// 	subContainer = document.getElementById("sub-container");
+	// 	btnSignUp = document.getElementById("btn-sign-up");
+	// 	btnSignIn = document.getElementById("btn-sign-in");
+	// 	signUp = document.getElementById("sign-up");
+	// 	signIn = document.getElementById("password");
+	// });
 
 	const imgArr = ["/assets/google.svg", "/assets/42.svg", "/assets/github.svg"];
 
@@ -60,7 +60,7 @@ const Authenticate = () => {
 
 	// const validateForm = () => {};
 
-	const handleClick = (e: any) => {
+	const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
 		let SignUpStyle: CSSStyleDeclaration,
 			SignInStyle: CSSStyleDeclaration;
 
@@ -73,13 +73,13 @@ const Authenticate = () => {
 		signIn
 		) {
 		if (
-			e.target.textContent === "Sign Up" &&
-			getComputedStyle(e.target).backgroundColor == "rgb(224, 224, 224)"
+			e.currentTarget.textContent === "Sign Up" &&
+			getComputedStyle(e.currentTarget).backgroundColor == "rgb(224, 224, 224)"
 		) {
 			container.style.transform = "rotate(-90deg)";
 			subContainer.style.transform = "rotate(90deg)";
 
-			SignUpStyle = getComputedStyle(e.target);
+			SignUpStyle = getComputedStyle(e.currentTarget);
 			SignInStyle = getComputedStyle(btnSignIn);
 
 			btnSignIn.style.backgroundColor = SignUpStyle.backgroundColor;
@@ -91,13 +91,13 @@ const Authenticate = () => {
 			signIn.style.display = "none";
 			signUp.style.display = "block";
 		} else if (
-			e.target.textContent === "Sign In" &&
-			getComputedStyle(e.target).backgroundColor == "rgb(224, 224, 224)"
+			e.currentTarget.textContent === "Sign In" &&
+			getComputedStyle(e.currentTarget).backgroundColor == "rgb(224, 224, 224)"
 		) {
 			container.style.transform = "rotate(0deg)";
 			subContainer.style.transform = "rotate(0deg)";
 
-			SignInStyle = getComputedStyle(e.target);
+			SignInStyle = getComputedStyle(e.currentTarget);
 			SignUpStyle = getComputedStyle(btnSignUp);
 
 			btnSignIn.style.backgroundColor = SignUpStyle.backgroundColor;
@@ -113,13 +113,15 @@ const Authenticate = () => {
 	};
 
 	return (
-		<section id="authenticate" className="custom-shape absolute top-1/2 left-[370px] transform translate-y-[-50%] w-fit">
-		{/* <section id="authenticate"> */}
-		<PingPong />
-		<div className="glassmorphism flex items-center absolute w-[100%] h-[100%]">
+		// <section id="authenticate" className="custom-shape relative top-1/2 left-[370px] transform translate-y-[-50%] w-fit">
+		<PingPong id='authenticate' className="relative h-[100vh]">
+			<div className="bg-red-500"></div>
+			<h1 className="text-white absolute">This Is Just A Test!</h1>
+			{/* <section id="authenticate" className="relative h-[100vh] flex items-center custom-shape py-[59px] px-[15%]"> */}
+		{/* <div className="bg-red-800 flex items-center justify-center">
 			<div
 			id="container"
-			className="absolute left-[370px] custom-shape bg-white h-[777px] w-[683px] flex flex-col items-center justify-center transition ease-in-out duration-300 shadow-[0_0_20px_2px_black]"
+			className="custom-shape bg-white h-[777px] w-[683px] top-[50px] flex flex-col items-center justify-center transition ease-in-out duration-300 shadow-[0_0_20px_2px_black]"
 			>
 			<div
 				id="sub-container"
@@ -209,8 +211,9 @@ const Authenticate = () => {
 				</form>
 			</div>
 			</div>
-		</div>
-		</section>
+		</div> */}
+		{/* </section> */}
+		</PingPong>
 	);
 };
 

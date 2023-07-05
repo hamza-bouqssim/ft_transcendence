@@ -1,9 +1,9 @@
 "use client";
-import { useEffect } from "react";
+import { Children, useEffect } from "react";
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
-const PingPong = () => {
+const PingPong = (props : any) => {
 	useEffect( () =>{
 
 	const scene = new THREE.Scene();
@@ -15,7 +15,11 @@ const PingPong = () => {
 
 	scene.add( camera );
 
-	const renderer = new THREE.WebGLRenderer();
+	const renderer = new THREE.WebGLRenderer(
+		{
+			canvas : document.getElementById('authenticate') as HTMLElement
+		}
+	);
 	
 	renderer.setSize( window.innerWidth, window.innerHeight );
 
@@ -69,7 +73,7 @@ const PingPong = () => {
 	animate();
 	}, [] );
 	
-	return <></>
+	return <canvas id={props.id} className={props.className} >{props.Children}</canvas>
 }
 
 export default PingPong;

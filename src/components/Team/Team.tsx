@@ -3,8 +3,9 @@ import './Team.css'
 
 const Team = () => {
 	const teams : string[] = ['/assets/yassine.png', '/assets/redouan.png', '/assets/soukaina.png', '/assets/hamza.png'];
-	const mappedNames = teams.map( (e) => 
+	const mappedNames = teams.map( (e, i) => 
 		<Image className='border-[2px] border-[var(--blue-color)] rounded-[50%] mt-[20px] cursor-pointer transition ease-linear duration-300 hover:scale-90 sm:w-[250px] xl:w-[300px]'
+			key={i}
 			src={e}
 			width={300}
 			height={300}
