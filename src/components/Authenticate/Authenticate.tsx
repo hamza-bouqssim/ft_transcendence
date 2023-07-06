@@ -3,7 +3,6 @@ import Image from "next/image";
 import "./Authenticate.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faKey, faEnvelope } from "@fortawesome/free-solid-svg-icons";
-import PingPong from "@/PingPong";
 import { ChangeEvent, useState } from "react";
 
 const Authenticate = () => {
@@ -18,16 +17,16 @@ const Authenticate = () => {
 		signUp: HTMLElement | null,
 		signIn: HTMLElement | null;
 
-	// window.addEventListener("load", () => {
-	// 	container = document.getElementById("container");
-	// 	subContainer = document.getElementById("sub-container");
-	// 	btnSignUp = document.getElementById("btn-sign-up");
-	// 	btnSignIn = document.getElementById("btn-sign-in");
-	// 	signUp = document.getElementById("sign-up");
-	// 	signIn = document.getElementById("password");
-	// });
+	window.addEventListener("load", () => {
+		container = document.getElementById("container");;
+		subContainer = document.getElementById("sub-container");;
+		btnSignUp = document.getElementById("btn-sign-up");;
+		btnSignIn = document.getElementById("btn-sign-in");;
+		signUp = document.getElementById("sign-up");;
+		signIn = document.getElementById("password");;
+	});
 
-	const imgArr = ["/assets/google.svg", "/assets/42.svg", "/assets/github.svg"];
+	const imgArr = ["/assets/google.svg", "/assets/42-auth.svg", "/assets/github.svg"];
 
 	const icons = imgArr.map((el, i) => (
 		<Image
@@ -113,15 +112,10 @@ const Authenticate = () => {
 	};
 
 	return (
-		// <section id="authenticate" className="custom-shape relative top-1/2 left-[370px] transform translate-y-[-50%] w-fit">
-		<PingPong id='authenticate' className="relative h-[100vh]">
-			<div className="bg-red-500"></div>
-			<h1 className="text-white absolute">This Is Just A Test!</h1>
-			{/* <section id="authenticate" className="relative h-[100vh] flex items-center custom-shape py-[59px] px-[15%]"> */}
-		{/* <div className="bg-red-800 flex items-center justify-center">
+		<div id='authenticate' className="absolute px-[15%]">
 			<div
 			id="container"
-			className="custom-shape bg-white h-[777px] w-[683px] top-[50px] flex flex-col items-center justify-center transition ease-in-out duration-300 shadow-[0_0_20px_2px_black]"
+			className="mt-[160px] absolute custom-shape bg-white h-[777px] w-[683px] flex flex-col items-center justify-center transition ease-in-out duration-300 shadow-[0_0_20px_2px_black]"
 			>
 			<div
 				id="sub-container"
@@ -211,9 +205,7 @@ const Authenticate = () => {
 				</form>
 			</div>
 			</div>
-		</div> */}
-		{/* </section> */}
-		</PingPong>
+		</div>
 	);
 };
 

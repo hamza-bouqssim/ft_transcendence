@@ -13,9 +13,10 @@ const Team = () => {
 		/> );
 
 	return (
-		<div id='team' className='relative h-[100vh] flex justify-center items-center flex-col py-[59px] px-[15%]'>
+		<div id='team' className='relative h-[1080px] flex justify-center items-center flex-col py-[59px] px-[15%]'>
 			<h1 className='text-[80px] mb-[40px] text-center font-bold'>Team</h1>
-			<div className='flex items-center justify-evenly gap-[30px] flex-wrap w-[100%]' data-aos="zoom-in-down">
+			{/* <div className='flex items-center justify-evenly gap-[30px] flex-wrap w-[100%]' data-aos="zoom-in-down"> */}
+			<div className='flex items-center justify-evenly gap-[30px] flex-wrap w-[100%]'>
 				{mappedNames}
 			</div>
 		</div>

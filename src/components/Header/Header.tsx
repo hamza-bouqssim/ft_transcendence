@@ -35,7 +35,7 @@ const Header = () => {
 	}
 
 	return (
-		<header className='relative h-[100vh] py-[59px] px-[15%]'>
+		<header className='relative h-[1080px] py-[59px] px-[15%]'>
 			<section className="flex absolute py-[2%] w-[70%] justify-between flex-col items-start sm:flex-col sm:items-center xl:flex-row">
 				<div>
 					<Image className='shrink-[1] mix-blend-lighten max-w-ful w-[55px] sm:w-[100px]'
@@ -74,7 +74,7 @@ const Header = () => {
 					/>
 				</div>
 			</section>
-			<hr className='w-[20%] border-[2px] absolute bottom-0 left-[40%]' />
+			{/* <hr className='w-[20%] border-[2px] absolute bottom-0 left-[40%]' /> */}
 		</header>
 	);
 };

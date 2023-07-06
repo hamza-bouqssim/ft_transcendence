@@ -1,6 +1,7 @@
 import Header from "@/components/Header/Header"
 import About from "@/components/About/About"
 import Team from "@/components/Team/Team"
+import Footer from "@/components/Footer/Footer"
 import PingPong from "@/PingPong"
 import Authenticate from "@/components/Authenticate/Authenticate"
 
@@ -18,7 +19,10 @@ const Home = () => {
       <Header/>
       <About />
       <Team />
-      <Authenticate />
+      <PingPong >
+        <Authenticate />
+      </PingPong>
+      <Footer />
     </main>
   )
 }

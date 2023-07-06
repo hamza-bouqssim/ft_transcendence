@@ -1,51 +1,47 @@
 "use client";
-import { Children, useEffect } from "react";
+import { useEffect } from "react";
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 const PingPong = (props : any) => {
-	useEffect( () =>{
+	useEffect( () => {
 
-	const scene = new THREE.Scene();
-
-	const camera = new THREE.PerspectiveCamera( 45, innerWidth / innerHeight, 0.1, 700 );
+	const scene: THREE.Scene = new THREE.Scene();
+	const camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera( 45, innerWidth / 1080, 0.1, 700 );
+	const threeContainer: HTMLElement | null  = document.getElementById('three-container') as HTMLElement;
 
 	scene.background = new THREE.Color(0x272040);
 	camera.position.set( 0, 4, 100 );
 
 	scene.add( camera );
 
-	const renderer = new THREE.WebGLRenderer(
-		{
-			canvas : document.getElementById('authenticate') as HTMLElement
-		}
-	);
+	const renderer: THREE.WebGLRenderer = new THREE.WebGLRenderer();
 	
-	renderer.setSize( window.innerWidth, window.innerHeight );
+	renderer.setSize( window.innerWidth, 1080 );
 
 	window.addEventListener( 'resize', () => {
-		camera.aspect = innerWidth / innerHeight;
+		camera.aspect = innerWidth / 1080;
 		camera.updateProjectionMatrix();
-		renderer.setSize( window.innerWidth, window.innerHeight );
+		renderer.setSize( window.innerWidth, 1080 );
 	} )
+	if(threeContainer)
+		threeContainer.appendChild(renderer.domElement);
 
-	document.body.appendChild( renderer.domElement );
-
-	const controls = new OrbitControls( camera, renderer.domElement );
+	const controls: OrbitControls = new OrbitControls( camera, renderer.domElement );
 	renderer.domElement.style.cursor = 'grab';
 
 	controls.autoRotate = true;
-	controls.enableZoom = true;
+	controls.enableZoom = false;
 	controls.enabled = true
 
 	const min = -100;
 	const max = 100;
 
-	const colArr = [0xffffff, 0xFC7785, 0x6A67F3, 0x498CDA, 0x3A3561, 0x332E59];
+	const colArr: number[] = [0xffffff, 0xFC7785, 0x6A67F3, 0x498CDA, 0x3A3561, 0x332E59];
 
 	for (let i = 0; i < 200; i++)
 	{
-		const mesh = new THREE.Mesh(
+		const mesh: THREE.Mesh<THREE.SphereGeometry, THREE.MeshStandardMaterial> = new THREE.Mesh(
 				new THREE.SphereGeometry( 5, 32, 16 ),
 				new THREE.MeshStandardMaterial( { color : colArr[Math.floor(Math.random() * colArr.length)]} )
 			);
@@ -57,12 +53,12 @@ const PingPong = (props : any) => {
 			);
 	}
 	// Create a directional light
-	const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+	const directionalLight: THREE.DirectionalLight = new THREE.DirectionalLight(0xffffff, 1);
 	directionalLight.position.set(0, 10, 4); // Set the position of the light
 	scene.add(directionalLight);
 	
 	//Create an ambient light
-	const ambientLight = new THREE.AmbientLight(0x404040);
+	const ambientLight: THREE.AmbientLight = new THREE.AmbientLight(0x404040);
 	scene.add(ambientLight);
 
 	const animate = () => { 
@@ -73,7 +69,9 @@ const PingPong = (props : any) => {
 	animate();
 	}, [] );
 	
-	return <canvas id={props.id} className={props.className} >{props.Children}</canvas>
+	return (
+		<div id="three-container" className="relative h-[1080px]" >{props.children}</div>
+	)
 }
 
 export default PingPong;

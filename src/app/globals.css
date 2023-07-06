@@ -17,7 +17,7 @@
 }
 
 .glassmorphism {
-  @apply bg-[rgba(255,255,255,0.09)] shadow-[0_4px_30px_rgba(0,0,0,.1)] backdrop-blur-[7.6px]
+  @apply bg-[rgba(255,255,255,0.09)] shadow-[0_4px_30px_rgba(0,0,0,.1)] backdrop-blur-[3px]
   /* -webkit-backdrop-filter: blur(7.6px);
   -webkit-border-radius: 25px;
   -moz-border-radius: 25px;
@@ -53,7 +53,6 @@ body {
   background-repeat: no-repeat;
   background-size: cover;
   overflow-x: hidden;
-  /* background: linear-gradient(90deg, rgba(252,119,133,1) 0%, rgba(73,140,218,1) 15%, rgba(106,103,243,1) 73%); */
 }
 
 * {
