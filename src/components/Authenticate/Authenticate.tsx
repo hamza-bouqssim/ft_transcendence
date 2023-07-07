@@ -6,6 +6,7 @@ import { faKey, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { ChangeEvent, useState } from "react";
 
 const Authenticate = () => {
+
 	const [email, setEmail] = useState<string>("");
 	const [password, setPassword] = useState<string>("");
 	const [rePassword, setRePassword] = useState<string>("");
