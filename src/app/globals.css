@@ -33,6 +33,17 @@
   @apply w-[403px] h-[59px] px-[55px] text-black text-xl border-solid border-2 border-[#8E8E8E]
 }
 
+.input-password-style {
+  @apply absolute px-[55px] text-black text-xl border-solid border-2 border-[#8E8E8E] w-[197px] h-[59px];
+}
+
+.active-btn-style {
+  @apply bg-white text-black;
+}
+
+.disabled-btn-style {
+  @apply bg-[rgb(224,224,224)] text-[#949494];
+}
 
 :root {
   /* --foreground-rgb: 0, 0, 0;
