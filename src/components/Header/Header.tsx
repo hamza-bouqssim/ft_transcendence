@@ -5,7 +5,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleArrowDown, faBars, faXmark } from '@fortawesome/free-solid-svg-icons'
 
 const Header = () => {
-
 	const handleClick = (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
 
 		const nav = document.querySelector('nav');
@@ -42,8 +41,7 @@ const Header = () => {
 						src="/assets/42.svg"
 						width={100}
 						height={100}
-						alt="ping-pong"
-					/>
+						alt="ping-pong" />
 				</div>
 				<nav className='rounded-3xl hidden text-center glassmorphism shrink-[1] sm:flex flex-col items-center cursor-pointer mt-[20px] w-[100%] p-[20px] z-10 sm:bg-transparent sm:shadow-none sm:justify-between sm:w-fit sm:flex-row sm:gap-[15px] sm:mt-[30px] xl:justify-between xl:mt-0 xl:gap-[15px]'>
 					<a href="#about" className="link-style my-[8px] sm:m-0">About</a>
@@ -70,8 +68,7 @@ const Header = () => {
 						src="/assets/ping-pong.gif"
 						width={650}
 						height={650}
-						alt="ping-pong"
-					/>
+						alt="ping-pong" />
 				</div>
 			</section>
 			{/* <hr className='w-[20%] border-[2px] absolute bottom-0 left-[40%]' /> */}
