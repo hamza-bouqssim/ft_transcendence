@@ -24,8 +24,7 @@ const PingPong = (props : any) => {
 		camera.updateProjectionMatrix();
 		renderer.setSize( window.innerWidth, 1080 );
 	} )
-	if(threeContainer)
-		threeContainer.appendChild(renderer.domElement);
+	threeContainer.appendChild(renderer.domElement);
 
 	const controls: OrbitControls = new OrbitControls( camera, renderer.domElement );
 	renderer.domElement.style.cursor = 'grab';

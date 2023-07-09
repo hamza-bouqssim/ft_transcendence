@@ -8,16 +8,7 @@ import { faKey, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 
 const Authenticate = () => {
 
-	// This Is For Form Validation :)
-	type Inputs = {
-		email: string;
-		password: string;
-		repassword: string;
-	};
-
-	// ###################################################################### //
-
-	const containerRef = useRef<HTMLDivElement | null>(null),
+	const containerRef  = useRef<HTMLDivElement | null>(null),
 		subContainerRef = useRef<HTMLDivElement | null>(null),
 		btnSignInRef = useRef<HTMLButtonElement | null>(null),
 		btnSignUpRef = useRef<HTMLButtonElement | null>(null),
@@ -30,56 +21,51 @@ const Authenticate = () => {
 		"/assets/github.svg",
 	];
 
-	const icons = imgArr.map((el, i) => (
+	const icons = imgArr.map((el, i): JSX.Element => (
 		<Image
-		className="hover:transform hover:scale-150 hover:transition hover:ease-in-out hover:duration-300"
-		key={i}
-		src={el}
-		width={40}
-		height={40}
-		alt={el.substring(8)}
-		/>
+			className="hover:transform hover:scale-150 hover:transition hover:ease-in-out hover:duration-300"
+			key={i}
+			src={el}
+			width={40}
+			height={40}
+			alt={el.substring(8)} />
 	));
 
-	const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-		// console.log(containerRef.current);
-		// console.log(subContainerRef.current);
-		// console.log(btnSignInRef.current);
-		// console.log(btnSignUpRef.current);
-		// console.log(signInRef.current);
-		// console.log(signUpRef.current);
+	const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => {
+
 		if (
-			containerRef.current &&
-			subContainerRef.current &&
-			btnSignInRef.current &&
-			btnSignUpRef.current &&
-			signInRef.current &&
-			getComputedStyle(e.currentTarget).backgroundColor == "rgb(224, 224, 224)"
+				containerRef.current &&
+				subContainerRef.current &&
+				btnSignInRef.current &&
+				btnSignUpRef.current &&
+				signInRef.current &&
+				signUpRef.current &&
+				getComputedStyle(e.currentTarget).backgroundColor == "rgb(224, 224, 224)"
 			)
 		{
-		if (e.currentTarget.textContent === "Sign Up")
-		{
-			containerRef.current.style.transform = "rotate(-90deg)";
-			subContainerRef.current.style.transform = "rotate(90deg)";
-			btnSignInRef.current.classList.remove("active-btn-style");
-			btnSignInRef.current.classList.add("disabled-btn-style");
-			btnSignUpRef.current.classList.remove("disabled-btn-style");
-			btnSignUpRef.current.classList.add("active-btn-style");
-			signInRef.current.style.display = "none";
-			// signUpRef.current.style.display = "block";
-		}
-		else if (e.currentTarget.textContent === "Sign In") {
-			containerRef.current.style.transform = "rotate(0deg)";
-			subContainerRef.current.style.transform = "rotate(0deg)";
+			if (e.currentTarget.textContent === "Sign Up")
+			{
+				containerRef.current.style.transform = "rotate(-90deg)";
+				subContainerRef.current.style.transform = "rotate(90deg)";
+				btnSignInRef.current.classList.remove("active-btn-style");
+				btnSignInRef.current.classList.add("disabled-btn-style");
+				btnSignUpRef.current.classList.remove("disabled-btn-style");
+				btnSignUpRef.current.classList.add("active-btn-style");
+				signInRef.current.style.display = "none";
+				signUpRef.current.style.display = "block";
+			}
+			else if (e.currentTarget.textContent === "Sign In") {
+				containerRef.current.style.transform = "rotate(0deg)";
+				subContainerRef.current.style.transform = "rotate(0deg)";
 
-			btnSignInRef.current.classList.remove("disabled-btn-style");
-			btnSignInRef.current.classList.add("active-btn-style");
-			btnSignUpRef.current.classList.remove("active-btn-style");
-			btnSignUpRef.current.classList.add("disabled-btn-style");
+				btnSignInRef.current.classList.remove("disabled-btn-style");
+				btnSignInRef.current.classList.add("active-btn-style");
+				btnSignUpRef.current.classList.remove("active-btn-style");
+				btnSignUpRef.current.classList.add("disabled-btn-style");
 
-			signInRef.current.style.display = "block";
-			// signUpRef.current.style.display = "none";
-		}
+				signInRef.current.style.display = "block";
+				signUpRef.current.style.display = "none";
+			}
 		}
 	};
 
@@ -102,10 +88,9 @@ const Authenticate = () => {
 						<h2 className="absolute bg-white px-2 bottom-[-11px] text-[#8E8E8E]">OR</h2>
 					</div>
 					<div>
-						{/* TODO: Function return Component signIn OR signUp */}
 						{/* TODO: scrollintoview Function For Block: center */}
-						{/* <SignIn ref={signInRef} />
-						<SignUp ref={signUpRef} /> */}
+						<SignIn ref={signInRef} />
+						<SignUp ref={signUpRef} />
 					</div>
 				</div>
 			</div>
@@ -116,116 +101,102 @@ const Authenticate = () => {
 // Sign In Component :)
 const SignIn = forwardRef( (props: any, ref : any) => {
 
-	type Inputs = {
+	type FormData = {
 		email: string;
 		password: string;
-		repassword: string;
 	};
 
-	const { register, handleSubmit } = useForm<Inputs>();
+	const { register, handleSubmit, formState: {errors} } = useForm<FormData>();
 
+	// const onSubmit = () => {
+	// 	if (errors.email?)
+	// };
+console.log(errors);
 	return (
-		<form
-			ref={ref}
-			onSubmit={handleSubmit( (data) => {
-			console.log(data);
-		} )}
-		action=""
-		className="relative h-[280px] w-[403px] flex items-center justify-center flex-col"
-		>
-		<FontAwesomeIcon
-			icon={faEnvelope}
-			className="absolute top-[50px] left-[25px] text-black w-[16px] z-10"
-		/>
-		<input
-			type="text"
-			id="email"
-			{...register("email")}
-			className="absolute custom-shape input-style top-[26px]"
-			placeholder="email"
-		/>
-		<FontAwesomeIcon
-			icon={faKey}
-			className="absolute top-[127px] left-[25px] text-black w-[16px] z-[1]"
-		/>
-		<input
-			type="password"
-			id="password"
-			{...register("password")}
-			className="absolute custom-shape input-style top-[104px]"
-			placeholder="password"
-		/>
-		<button
-			type="submit"
-			className="absolute custom-shape btn-style w-[216px] h-[57px] bg-[var(--purple-color)] transition ease-in-out duration-700 bottom-[38px]"
-		>
-			Sign In
-		</button>
-		</form>
+		<div ref={ref} className="h-[280px] w-[403px]">
+			<form
+				action=""
+				className="relative h-full w-full flex items-center justify-center flex-col gap-5"
+				onSubmit={handleSubmit( (data) => {
+					console.log(data); } )}
+				// onSubmit={onSubmit}
+					>
+				<div className="relative">
+					<FontAwesomeIcon icon={faEnvelope} className="absolute top-[40%] left-[7%] text-black w-[16px]" />
+					<input
+						type="email"
+						className="custom-shape input-style" placeholder="email"
+						{...register("email", {required: "true"}) } />
+				</div>
+				<div className="relative">
+					<FontAwesomeIcon icon={faKey} className="absolute top-[40%] left-[7%] text-black w-[16px]" />
+					<input type="password"
+						className="custom-shape input-style" placeholder="password"
+						{...register("password", {required: true, minLength: 8})}  />
+				</div>
+				<button type="submit" className="custom-shape btn-style w-[216px] h-[57px] bg-[var(--purple-color)] transition ease-in-out duration-700 bottom-[38px]" >
+					Sign In
+				</button>
+			</form>
+		</div>
 	);
 });
 
 // Sign Up Component :)
 const SignUp = forwardRef((props: any, ref: any) => {
 
-	type Inputs = {
+	type FormData = {
 		email: string;
 		password: string;
 		repassword: string;
 	};
 
-	const { register, handleSubmit } = useForm<Inputs>();
+	const { register, handleSubmit } = useForm<FormData>();
 
 	return (
-		<form
-			ref={ref}
-			onSubmit={handleSubmit((data) => {
-			console.log(data);
-			})}
-			action=""
-			className="relative h-[280px] w-[403px] top-[116px] flex items-center justify-center flex-col border-solid border-t-[1px] border-[#8E8E8E]"
-			>
-			<FontAwesomeIcon
-			icon={faEnvelope}
-			className="absolute top-[50px] left-[25px] text-black w-[16px] z-10"
-			/>
-			<input
-			type="text"
-			id="email"
-			{...register("email")}
-			className="absolute custom-shape input-style top-[26px]"
-			placeholder="email"
-			/>
-			<div
-			id="sign-up"
-			className="hidden absolute w-[403px] h-[59px] top-[104px]"
-			>
-			<input
-				type="password"
-				id="password-sign-up"
-				{...register("password")}
-				className="input-password-style rounded-bl-[37px] rounded-tl-[268px] rounded-r-[80px]"
-				placeholder="password"
-			/>
-			<FontAwesomeIcon
-				icon={faKey}
-				className="absolute top-[23px] left-[230px] text-black w-[16px] z-[1]"
-			/>
-			<input
-				type="password"
-				id="repassword"
-				{...register("repassword")}
-				className="input-password-style rounded-br-[268px] rounded-tr-[37px] rounded-l-[80px] right-0"
-				placeholder="Confirm"
-			/>
-			</div>
-			<button
-			type="submit"
-			className="absolute custom-shape btn-style w-[216px] h-[57px] bg-[var(--purple-color)] transition ease-in-out duration-700 bottom-[38px]"
-			>
-			Sign Up
-			</button>
-		</form>
+		<div ref={ref} className="h-[280px] w-[403px] hidden">
+			<form
+				action=""
+				className="relative h-full w-full flex items-center justify-center flex-col gap-5"
+				onSubmit={handleSubmit((data) => {
+					console.log(data); })}
+				>
+				<div className="relative">
+					<FontAwesomeIcon icon={faEnvelope} className="absolute top-[40%] left-[7%] text-black w-[16px]" />
+					<input
+						type="email"
+						className="custom-shape input-style" placeholder="email"
+						{...register("email", {required: "true"}) } />
+				</div>
+				<div className="relative flex w-[403px] justify-between" >
+					<div className="relative" >
+						<FontAwesomeIcon
+							icon={faKey}
+							className="absolute top-[40%] left-[7%] text-black w-[16px]" />
+						<input
+							type="password"
+							{...register("password", {required: true, minLength: 8})}
+							className="input-password-style rounded-bl-[37px] rounded-tl-[268px] rounded-r-[80px]"
+							placeholder="password" />
+					</div>
+					<div className="relative">
+						<FontAwesomeIcon
+							icon={faKey}
+							className="absolute top-[40%] left-[7%] text-black w-[16px]" />
+						<input
+							type="password"
+							{...register("repassword", {required: true, minLength: 8})}
+							className="input-password-style rounded-br-[268px] rounded-tr-[37px] rounded-l-[80px]"
+							placeholder="confirm" />
+					</div>
+				</div>
+				<button
+					type="submit"
+					className="custom-shape btn-style w-[216px] h-[57px] bg-[var(--purple-color)] transition ease-in-out duration-700 bottom-[38px]" >
+					Sign Up
+				</button>
+			</form>
+		</div>
 	);
 });
 

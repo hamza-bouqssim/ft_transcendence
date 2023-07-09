@@ -34,7 +34,7 @@
 }
 
 .input-password-style {
-  @apply absolute px-[55px] text-black text-xl border-solid border-2 border-[#8E8E8E] w-[197px] h-[59px];
+  @apply px-[55px] text-black text-xl border-solid border-2 border-[#8E8E8E] w-[197px] h-[59px];
 }
 
 .active-btn-style {
