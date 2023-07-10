@@ -3,32 +3,35 @@ import "./Header.css";
 import Image from 'next/image'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleArrowDown, faBars, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { useRef } from "react";
 
 const Header = () => {
+
+	const navRef = useRef<HTMLElement | null>(null),
+		menuRef = useRef<SVGSVGElement | null>(null),
+		closeRef = useRef<SVGSVGElement | null>(null);
+
 	const handleClick = (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
 
-		const nav = document.querySelector('nav');
-		const menu = document.getElementById('menu');
-		const close = document.getElementById('close');
-		if (nav && close && menu)
+		if (navRef.current && menuRef.current && closeRef.current)
 		{
 			if (e.currentTarget.getAttribute('name') == 'menu')
 			{
-				menu.classList.remove('block');
-				menu.classList.add('hidden');
-				close.classList.remove('hidden');
-				close.classList.add('block');
-				nav.classList.remove('hidden');
-				nav.classList.add('block');
+				menuRef.current.classList.remove('block');
+				menuRef.current.classList.add('hidden');
+				closeRef.current.classList.remove('hidden');
+				closeRef.current.classList.add('block');
+				navRef.current.classList.remove('hidden');
+				navRef.current.classList.add('block');
 			}
 			else
 			{
-				close.classList.remove('block');
-				close.classList.add('hidden');
-				menu.classList.remove('hidden');
-				menu.classList.add('block');
-				nav.classList.remove('block');
-				nav.classList.add('hidden');
+				closeRef.current.classList.remove('block');
+				closeRef.current.classList.add('hidden');
+				menuRef.current.classList.remove('hidden');
+				menuRef.current.classList.add('block');
+				navRef.current.classList.remove('block');
+				navRef.current.classList.add('hidden');
 			}
 		}
 	}
@@ -43,15 +46,18 @@ const Header = () => {
 						height={100}
 						alt="ping-pong" />
 				</div>
-				<nav className='rounded-3xl hidden text-center glassmorphism shrink-[1] sm:flex flex-col items-center cursor-pointer mt-[20px] w-[100%] p-[20px] z-10 sm:bg-transparent sm:shadow-none sm:justify-between sm:w-fit sm:flex-row sm:gap-[15px] sm:mt-[30px] xl:justify-between xl:mt-0 xl:gap-[15px]'>
-					<a href="#about" className="link-style my-[8px] sm:m-0">About</a>
+				<nav ref={navRef} className='rounded-3xl hidden text-center glassmorphism shrink-[1] sm:flex flex-col items-center cursor-pointer mt-[20px] w-[100%] p-[20px] z-10 sm:bg-transparent sm:shadow-none sm:justify-between sm:w-fit sm:flex-row sm:gap-[15px] sm:mt-[30px] xl:justify-between xl:mt-0 xl:gap-[15px]'>
+					<a onClick={()=> {
+						document.getElementById('about')?.scrollIntoView({block: "center"});
+					}} className="link-style my-[8px] sm:m-0"
+						>About</a>
 					<a href="#team" className="link-style my-[8px] sm:m-0">Team</a>
 					<a href="#" className="link-style my-[8px] sm:m-0">Features</a>
 					<a href="#authenticate" className="btn-style inline-block my-[20px] sm:m-0">Sign In</a>
 				</nav>
 				<div className="absolute right-0 top-[68px] cursor-pointer w-fit sm:hidden" >
-					<FontAwesomeIcon icon={faXmark} className='text-[35px] absolute right-0 top-[-58px] hidden sm:hidden' name="close" id='close' onClick={ (e) => handleClick(e)} />
-					<FontAwesomeIcon icon={faBars} className='text-[30px] absolute right-0 top-[-55px] sm:hidden block' name="menu" id='menu' onClick={ (e) => handleClick(e) } />
+					<FontAwesomeIcon icon={faXmark} className='text-[35px] absolute right-0 top-[-58px] hidden sm:hidden' ref={closeRef}  name="close"  onClick={ (e) => handleClick(e)} />
+					<FontAwesomeIcon icon={faBars} className='text-[30px] absolute right-0 top-[-55px] sm:hidden block' ref={menuRef} name="menu" onClick={ (e) => handleClick(e) } />
 				</div>
 			</section>
 

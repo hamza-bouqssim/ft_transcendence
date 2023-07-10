@@ -1,5 +1,5 @@
 "use client";
-import { forwardRef, useRef } from "react";
+import React, { ForwardedRef, forwardRef, useRef } from "react";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import "./Authenticate.css";
@@ -13,6 +13,7 @@ const Authenticate = () => {
 		btnSignInRef = useRef<HTMLButtonElement | null>(null),
 		btnSignUpRef = useRef<HTMLButtonElement | null>(null),
 		signInRef = useRef<HTMLFormElement | null>(null),
+		// inpEmailRef = useRef<SVGSVGElement | null>(null),
 		signUpRef = useRef<HTMLFormElement | null>(null);
 
 	const imgArr = [
@@ -21,7 +22,7 @@ const Authenticate = () => {
 		"/assets/github.svg",
 	];
 
-	const icons = imgArr.map((el, i): JSX.Element => (
+	const icons: JSX.Element[] = imgArr.map((el, i): JSX.Element => (
 		<Image
 			className="hover:transform hover:scale-150 hover:transition hover:ease-in-out hover:duration-300"
 			key={i}
@@ -88,7 +89,6 @@ const Authenticate = () => {
 						<h2 className="absolute bg-white px-2 bottom-[-11px] text-[#8E8E8E]">OR</h2>
 					</div>
 					<div>
-						{/* TODO: scrollintoview Function For Block: center */}
 						<SignIn ref={signInRef} />
 						<SignUp ref={signUpRef} />
 					</div>
@@ -99,7 +99,7 @@ const Authenticate = () => {
 };
 
 // Sign In Component :)
-const SignIn = forwardRef( (props: any, ref : any) => {
+const SignIn = forwardRef( (props: any, ref: any) => {
 
 	type FormData = {
 		email: string;

@@ -1,14 +1,16 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 const PingPong = (props : any) => {
+
+	const threeContainer = useRef<HTMLDivElement | null>(null);
+
 	useEffect( () => {
 
 	const scene: THREE.Scene = new THREE.Scene();
 	const camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera( 45, innerWidth / 1080, 0.1, 700 );
-	const threeContainer: HTMLElement | null  = document.getElementById('three-container') as HTMLElement;
 
 	scene.background = new THREE.Color(0x272040);
 	camera.position.set( 0, 4, 100 );
@@ -24,7 +26,8 @@ const PingPong = (props : any) => {
 		camera.updateProjectionMatrix();
 		renderer.setSize( window.innerWidth, 1080 );
 	} )
-	threeContainer.appendChild(renderer.domElement);
+	if (threeContainer.current)
+		threeContainer.current.appendChild(renderer.domElement);
 
 	const controls: OrbitControls = new OrbitControls( camera, renderer.domElement );
 	renderer.domElement.style.cursor = 'grab';
@@ -49,7 +52,7 @@ const PingPong = (props : any) => {
 			Math.random() * (max - min + 1) + min,
 			Math.random() * (max - min + 1) + min,
 			Math.random() * (max - min + 1) + min
-			);
+		);
 	}
 	// Create a directional light
 	const directionalLight: THREE.DirectionalLight = new THREE.DirectionalLight(0xffffff, 1);
@@ -65,11 +68,11 @@ const PingPong = (props : any) => {
 		renderer.render( scene, camera );
 		controls.update();
 	}
-	animate();
+		animate();
 	}, [] );
 	
 	return (
-		<div id="three-container" className="relative h-[1080px]" >{props.children}</div>
+		<div ref={threeContainer} className="relative h-[1080px]" >{props.children}</div>
 	)
 }
 
