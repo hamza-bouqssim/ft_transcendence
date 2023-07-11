@@ -6,7 +6,7 @@ const Team = () => {
 	const teams : string[] = ['/assets/yassine.png', '/assets/redouan.png', '/assets/soukaina.png', '/assets/hamza.png'];
 
 	const mappedNames: JSX.Element[] = teams.map( (e, i): JSX.Element => 
-		<Image className='border-[2px] border-[var(--blue-color)] rounded-[50%] mt-[20px] cursor-pointer transition ease-linear duration-300 hover:scale-90 sm:w-[250px] xl:w-[300px]'
+		<Image className='border-[2px] border-[var(--blue-color)] rounded-[50%] mt-[20px] cursor-pointer transition ease-linear duration-300 hover:scale-90 sm:w-[250px] xl:w-[220px]'
 			key={i}
 			src={e}
 			width={300}
