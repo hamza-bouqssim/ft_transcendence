@@ -40,7 +40,7 @@ const Header = () => {
 		<header className="py-[59px] px-[15%]">
 			<section className="flex items-center justify-between">
 				<div>
-					<Image
+					<Image className="md:w-11"
 						src={"/assets/42.svg"}
 						width={35}
 						height={35}
@@ -52,7 +52,7 @@ const Header = () => {
 				</div>
 				<div className="absolute z-10 top-12 left-1/2 translate-x-[-50%] glassmorphism rounded-xl flex flex-col-reverse items-end default-styles">
 					<div ref={navRef} className="hidden sm:block">
-						<nav className="flex flex-col items-center gap-3 text-xs p-2 pb-6 sm:flex-row sm:p-0">
+						<nav className="flex flex-col items-center gap-3 text-xs p-2 pb-6 sm:flex-row sm:p-0 md:text-sm">
 							<a href="#about" className="link-style">About</a>
 							<a href="#team" className="link-style">Team</a>
 							<a href="#featues" className="link-style">Features</a>
@@ -65,26 +65,26 @@ const Header = () => {
 				</div>
 			</section>
 
-			<section className="flex flex-col items-center justify-between gap-10 mt-16 md:flex-row md:mt-24">
-				<div className="flex flex-col items-center gap-7 sm:px-0 md:just">
-					<div className="text-center text-xl font-bold md:text-2xl md:w-64">
+			<section className="flex flex-col items-center justify-between gap-10 mt-16 md:flex-row md:mt-24 xl:mt-36">
+				<div className="flex flex-col items-center gap-7 sm:px-0">
+					<div className="text-center text-xl font-bold md:text-3xl md:w-80 lg:w-96 xl:text-4xl">
 						<h1>Brace yourself for the epic battle ahead</h1>
 					</div>
 					<div className="flex flex-col items-center gap-7">
-						<div>
+						<div className="md:text-xl xl:text-2xl" >
 							<a href="#" className="btn-style">Play</a>
 						</div>
-						<div className='hover:cursor-pointer animate-bounce text-2xl hover:text-[var(--pink-color)] transition ease-in-out duration-300'>
+						<div className='hover:cursor-pointer animate-bounce text-3xl hover:text-[var(--pink-color)] transition ease-in-out duration-300'>
 							<FontAwesomeIcon icon={faCircleArrowDown} />
 						</div>
 					</div>
 				</div>
 
 				<div className="flex justify-center">
-					<Image className="mix-blend-lighten rotate-[-18deg] shadow-[0_0_50px_2px_var(--blue-color)] rounded-2xl"
+					<Image className="mix-blend-lighten border-solid border-white border-2 rotate-[-18deg] shadow-[0_0_50px_2px_var(--blue-color)] rounded-2xl lg:w-80 xl:w-96"
 						src="/assets/ping-pong.gif"
-						width={640}
-						height={640}
+						width={240}
+						height={240}
 						alt="ping-pong" />
 				</div>
 			</section>
