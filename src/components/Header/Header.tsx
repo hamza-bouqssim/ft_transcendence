@@ -65,9 +65,9 @@ const Header = () => {
 				</div>
 			</section>
 
-			<section className="flex flex-col justify-between gap-3 mt-8">
-				<div className="flex flex-col items-center gap-7 p-9">
-					<div className="text-center text-xl font-bold sm:text-2xl sm:px-4">
+			<section className="flex flex-col items-center justify-between gap-10 mt-16 md:flex-row md:mt-24">
+				<div className="flex flex-col items-center gap-7 sm:px-0 md:just">
+					<div className="text-center text-xl font-bold md:text-2xl md:w-64">
 						<h1>Brace yourself for the epic battle ahead</h1>
 					</div>
 					<div className="flex flex-col items-center gap-7">
@@ -80,11 +80,11 @@ const Header = () => {
 					</div>
 				</div>
 
-				<div className="flex justify-center ">
+				<div className="flex justify-center">
 					<Image className="mix-blend-lighten rotate-[-18deg] shadow-[0_0_50px_2px_var(--blue-color)] rounded-2xl"
 						src="/assets/ping-pong.gif"
-						width={250}
-						height={250}
+						width={640}
+						height={640}
 						alt="ping-pong" />
 				</div>
 			</section>
