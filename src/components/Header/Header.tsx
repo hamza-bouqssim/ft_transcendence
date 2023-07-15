@@ -41,6 +41,7 @@ const Header = () => {
 			<section className="flex items-center justify-between">
 				<div>
 					<Image className="md:w-11 xl:text-lg"
+						key={0}
 						src={"/assets/42.svg"}
 						width={35}
 						height={35}
@@ -53,10 +54,16 @@ const Header = () => {
 				<div className="absolute z-10 top-12 left-1/2 translate-x-[-50%] glassmorphism rounded-xl flex flex-col-reverse items-end default-styles">
 					<div ref={navRef} className="hidden sm:block">
 						<nav className="flex flex-col items-center gap-3 text-xs p-2 pb-6 sm:flex-row sm:p-0 md:text-sm">
-							<a href="#about" className="link-style">About</a>
-							<a href="#team" className="link-style">Team</a>
+							<a className="link-style" onClick={() => {
+								document.getElementById('about')?.scrollIntoView({block: "center"});
+							}} >About</a>
+							<a className="link-style" onClick={() => {
+								document.getElementById('team')?.scrollIntoView({block: "center"});
+							}}>Team</a>
 							<a href="#featues" className="link-style">Features</a>
-							<a href="#authenticate" className="btn-style">Sign In</a>
+							<a className="btn-style" onClick={() => {
+								document.getElementById('authenticate')?.scrollIntoView({block: "center"});
+							}}>Sign In</a>
 						</nav>
 					</div>
 					<div ref={xMarkIconRef} className="hidden text-2xl cursor-pointer mr-5 mt-3 w-fit hover:text-red-500 sm:hidden" onClick={(e) => handleClick(e)}>
@@ -80,8 +87,9 @@ const Header = () => {
 					</div>
 				</div>
 
-				<div className="flex justify-center">
+				<div className="flex justify-center pointer-events-none">
 					<Image className="mix-blend-lighten border-solid border-white border-2 rotate-[-18deg] shadow-[0_0_50px_2px_var(--blue-color)] rounded-2xl lg:w-80 xl:w-96 2xl:w-[32rem]"
+						key={1}
 						src="/assets/ping-pong.gif"
 						width={240}
 						height={240}

@@ -35,15 +35,15 @@
 }
 
 .custom-shape {
-  @apply rounded-tr-[37px] rounded-br-[268px] rounded-bl-[37px] rounded-tl-[268px]
+  @apply rounded-tr-xl md:rounded-tr-[37px] rounded-br-[100px] md:rounded-br-[268px] rounded-bl-xl md:rounded-bl-[37px] rounded-tl-[100px] md:rounded-tl-[268px]
 }
 
 .input-style {
-  @apply w-[403px] h-[59px] px-[55px] text-black text-xl border-solid border-2 border-[#8E8E8E]
+  @apply w-72 h-12 md:w-[403px] md:h-[59px] px-[55px] text-black text-sm md:text-xl border-solid border-2 border-[#8E8E8E] placeholder:text-sm;
 }
 
 .input-password-style {
-  @apply px-[55px] text-black text-xl border-solid border-2 border-[#8E8E8E] w-[197px] h-[59px];
+  @apply w-[8.9rem] h-12 pl-[35px] pr-[15px] text-black text-xl border-solid border-2 border-[#8E8E8E] md:w-[197px] md:h-[59px] placeholder:text-sm;
 }
 
 .active-btn-style {

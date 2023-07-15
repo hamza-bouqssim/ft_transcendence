@@ -10,7 +10,7 @@ const PingPong = (props : any) => {
 	useEffect( () => {
 
 	const scene: THREE.Scene = new THREE.Scene();
-	const camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera( 45, innerWidth / 1080, 0.1, 700 );
+	const camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera( 45, window.innerWidth / 1080, 0.1, 700 );
 
 	scene.background = new THREE.Color(0x272040);
 	camera.position.set( 0, 4, 100 );

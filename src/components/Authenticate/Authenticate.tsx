@@ -24,7 +24,7 @@ const Authenticate = () => {
 
 	const icons: JSX.Element[] = imgArr.map((el, i): JSX.Element => (
 		<Image
-			className="hover:transform hover:scale-150 hover:transition hover:ease-in-out hover:duration-300"
+			className="hover:transform hover:scale-150 hover:transition hover:ease-in-out hover:duration-300 w-7"
 			key={i}
 			src={el}
 			width={40}
@@ -34,20 +34,22 @@ const Authenticate = () => {
 
 	const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => {
 
-		if (
-				containerRef.current &&
-				subContainerRef.current &&
-				btnSignInRef.current &&
-				btnSignUpRef.current &&
-				signInRef.current &&
-				signUpRef.current &&
-				getComputedStyle(e.currentTarget).backgroundColor == "rgb(224, 224, 224)"
-			)
+	if (
+			containerRef.current &&
+			subContainerRef.current &&
+			btnSignInRef.current &&
+			btnSignUpRef.current &&
+			signInRef.current &&
+			signUpRef.current &&
+			getComputedStyle(e.currentTarget).backgroundColor == "rgb(224, 224, 224)")
 		{
 			if (e.currentTarget.textContent === "Sign Up")
 			{
-				containerRef.current.style.transform = "rotate(-90deg)";
-				subContainerRef.current.style.transform = "rotate(90deg)";
+				if (window.innerWidth >= 768)
+				{
+					containerRef.current.style.transform = "rotate(-90deg)";
+					subContainerRef.current.style.transform = "rotate(90deg)";
+				}
 				btnSignInRef.current.classList.remove("active-btn-style");
 				btnSignInRef.current.classList.add("disabled-btn-style");
 				btnSignUpRef.current.classList.remove("disabled-btn-style");
@@ -55,15 +57,17 @@ const Authenticate = () => {
 				signInRef.current.style.display = "none";
 				signUpRef.current.style.display = "block";
 			}
-			else if (e.currentTarget.textContent === "Sign In") {
-				containerRef.current.style.transform = "rotate(0deg)";
-				subContainerRef.current.style.transform = "rotate(0deg)";
-
+			else if (e.currentTarget.textContent === "Sign In")
+			{
+				if (window.innerWidth >= 768)
+				{
+					containerRef.current.style.transform = "rotate(0deg)";
+					subContainerRef.current.style.transform = "rotate(0deg)";
+				}
 				btnSignInRef.current.classList.remove("disabled-btn-style");
 				btnSignInRef.current.classList.add("active-btn-style");
 				btnSignUpRef.current.classList.remove("active-btn-style");
 				btnSignUpRef.current.classList.add("disabled-btn-style");
-
 				signInRef.current.style.display = "block";
 				signUpRef.current.style.display = "none";
 			}
@@ -71,30 +75,56 @@ const Authenticate = () => {
 	};
 
 	return (
-		<div id='authenticate' className="relative px-[15%]">
-			{/* <div ref={containerRef} className="absolute mt-[160px] custom-shape bg-white h-[777px] w-[683px] flex flex-col items-center justify-center transition ease-in-out duration-300 shadow-[0_0_20px_2px_black]">
-				<div ref={subContainerRef} className="relative transition ease-in-out duration-700 flex flex-col items-center justify-center w-[100%] h-[100%]">
-					<div className="relative h-[180px] flex flex-col items-center justify-center border-b-[1px] gap-[20px] border-solid border-[#8E8E8E]">
-						<div className="transition-all duration-300 w-[554px] h-[70px] bg-[var(--gray-color)] rounded-tr-[37px] rounded-br-[268px] rounded-bl-[37px] rounded-tl-[268px] flex items-center justify-evenly">
-							<button ref={btnSignInRef} className="transition ease-in-out duration-500 bg-white text-black w-[264px] rounded-r-[120px] rounded-bl-[37px] rounded-tl-[268px] h-[57px] flex items-center justify-center" onClick={(e) => handleClick(e)} >
-								Sign In
-							</button>
-							<button ref={btnSignUpRef} className="transition ease-in-out duration-500 bg-[#E0E0E0] text-[#949494] w-[264px] rounded-l-[120px] rounded-br-[268px] rounded-tr-[37px] h-[57px] flex items-center justify-center" onClick={(e) => handleClick(e)} >
-								Sign Up
-							</button>
+			<div id="authenticate" className="absolute h-full w-full md:w-1/2 glassmorphism flex flex-col items-center justify-center">
+				<div ref={containerRef} className="bg-red-800 custom-shape">
+					<div ref={subContainerRef} className="bg-white custom-shape transition ease-in-out duration-700 flex flex-col items-center gap-6 py-10 px-6">
+						{/* <div className="relative h-36 w-full flex flex-col items-center justify-center gap-6 border-b-[1px] border-solid border-[#8E8E8E] z-20"> */}
+							<div className="transition-all duration-300 w-80 h-10 md:w-[554px] md:h-[70px] bg-[var(--gray-color)] rounded-tr-[37px] rounded-br-[268px] rounded-bl-[37px] rounded-tl-[268px] flex items-center justify-center">
+								<button ref={btnSignInRef} className="h-[80%] w-[48%] bg-white text-black rounded-r-[120px] rounded-bl-[37px] rounded-tl-[268px] text-sm transition ease-in-out duration-500 md:w-[264px] md:h-[57px]" onClick={(e) => handleClick(e)} >
+									Sign In
+								</button>
+								<button ref={btnSignUpRef} className="h-[80%] w-[48%] bg-[#E0E0E0] text-[#949494] rounded-l-[120px] rounded-br-[268px] rounded-tr-[37px] text-sm transition ease-in-out duration-500 md:w-[264px] md:h-[57px]" onClick={(e) => handleClick(e)} >
+									Sign Up
+								</button>
+							</div>
+							<div className="flex justify-center items-center gap-4 cursor-pointer md:gap-[30px]">
+								{icons}
+							</div>
+							<div className="h-[2px] bg-[#8E8E8E] relative w-72">
+								<span className="absolute bg-white text-[#8E8E8E] px-2 top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]">OR</span>
+							</div>
+						{/* <div className="h-[280px] w-[403px]"> */}
+						<div>
+							<SignIn ref={signInRef} />
+							<SignUp ref={signUpRef} />
 						</div>
-						<div className="flex justify-center items-center cursor-pointer gap-[30px]">
-							{icons}
-						</div>
-						<h2 className="absolute bg-white px-2 bottom-[-11px] text-[#8E8E8E]">OR</h2>
-					</div>
-					<div>
-						<SignIn ref={signInRef} />
-						<SignUp ref={signUpRef} />
 					</div>
 				</div>
-			</div> */}
-		</div>
+			</div>
+		// <div id='authenticate' className="relative px-[15%]">
+		// 	<div ref={containerRef} className="absolute mt-[160px] custom-shape bg-white h-[777px] w-[683px] flex flex-col items-center justify-center transition ease-in-out duration-300 shadow-[0_0_20px_2px_black]">
+		// 		<div ref={subContainerRef} className="relative transition ease-in-out duration-700 flex flex-col items-center justify-center w-[100%] h-[100%]">
+		// 			<div className="relative h-[180px] flex flex-col items-center justify-center border-b-[1px] gap-[20px] border-solid border-[#8E8E8E]">
+		// 				<div className="transition-all duration-300 w-[554px] h-[70px] bg-[var(--gray-color)] rounded-tr-[37px] rounded-br-[268px] rounded-bl-[37px] rounded-tl-[268px] flex items-center justify-evenly">
+		// 					<button ref={btnSignInRef} className="transition ease-in-out duration-500 bg-white text-black w-[264px] rounded-r-[120px] rounded-bl-[37px] rounded-tl-[268px] h-[57px] flex items-center justify-center" onClick={(e) => handleClick(e)} >
+		// 						Sign In
+		// 					</button>
+		// 					<button ref={btnSignUpRef} className="transition ease-in-out duration-500 bg-[#E0E0E0] text-[#949494] w-[264px] rounded-l-[120px] rounded-br-[268px] rounded-tr-[37px] h-[57px] flex items-center justify-center" onClick={(e) => handleClick(e)} >
+		// 						Sign Up
+		// 					</button>
+		// 				</div>
+		// 				<div className="flex justify-center items-center cursor-pointer gap-[30px]">
+		// 					{icons}
+		// 				</div>
+		// 				<h2 className="absolute bg-white px-2 bottom-[-11px] text-[#8E8E8E]">OR</h2>
+		// 			</div>
+		// 			<div>
+		// 				<SignIn ref={signInRef} />
+		// 				<SignUp ref={signUpRef} />
+		// 			</div>
+		// 		</div>
+		// 	</div>
+		// </div>
 	);
 };
 
@@ -113,7 +143,7 @@ const SignIn = forwardRef( (props: any, ref: any) => {
 	// };
 console.log(errors);
 	return (
-		<div ref={ref} className="h-[280px] w-[403px]">
+		<div ref={ref}>
 			<form
 				action=""
 				className="relative h-full w-full flex items-center justify-center flex-col gap-5"
@@ -122,19 +152,19 @@ console.log(errors);
 				// onSubmit={onSubmit}
 					>
 				<div className="relative">
-					<FontAwesomeIcon icon={faEnvelope} className="absolute top-[40%] left-[7%] text-black w-[16px]" />
+					<FontAwesomeIcon icon={faEnvelope} className="absolute top-[40%] left-[7%] text-black text-sm md:w-[16px]" />
 					<input
 						type="email"
 						className="custom-shape input-style" placeholder="email"
 						{...register("email", {required: "true"}) } />
 				</div>
 				<div className="relative">
-					<FontAwesomeIcon icon={faKey} className="absolute top-[40%] left-[7%] text-black w-[16px]" />
+					<FontAwesomeIcon icon={faKey} className="absolute top-[40%] left-[7%] text-black text-sm md:w-[16px]" />
 					<input type="password"
 						className="custom-shape input-style" placeholder="password"
 						{...register("password", {required: true, minLength: 8})}  />
 				</div>
-				<button type="submit" className="custom-shape btn-style w-[216px] h-[57px] bg-[var(--purple-color)] transition ease-in-out duration-700 bottom-[38px]" >
+				<button type="submit" className="custom-shape btn-style px-7 py-4 text:sm md:w-[216px] md:h-[57px] bg-[var(--purple-color)] transition ease-in-out duration-700" >
 					Sign In
 				</button>
 			</form>
@@ -154,7 +184,7 @@ const SignUp = forwardRef((props: any, ref: any) => {
 	const { register, handleSubmit } = useForm<FormData>();
 
 	return (
-		<div ref={ref} className="h-[280px] w-[403px] hidden">
+		<div ref={ref} className="hidden">
 			<form
 				action=""
 				className="relative h-full w-full flex items-center justify-center flex-col gap-5"
@@ -168,8 +198,8 @@ const SignUp = forwardRef((props: any, ref: any) => {
 						className="custom-shape input-style" placeholder="email"
 						{...register("email", {required: "true"}) } />
 				</div>
-				<div className="relative flex w-[403px] justify-between" >
-					<div className="relative" >
+				<div className="relative w-72 flex justify-between" >
+					<div className="relative">
 						<FontAwesomeIcon
 							icon={faKey}
 							className="absolute top-[40%] left-[7%] text-black w-[16px]" />
@@ -192,7 +222,7 @@ const SignUp = forwardRef((props: any, ref: any) => {
 				</div>
 				<button
 					type="submit"
-					className="custom-shape btn-style w-[216px] h-[57px] bg-[var(--purple-color)] transition ease-in-out duration-700 bottom-[38px]" >
+					className="custom-shape btn-style px-7 py-4 text:sm md:w-[216px] md:h-[57px] bg-[var(--purple-color)] transition ease-in-out duration-700" >
 					Sign Up
 				</button>
 			</form>
