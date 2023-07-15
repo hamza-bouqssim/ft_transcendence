@@ -72,7 +72,7 @@ const Authenticate = () => {
 
 	return (
 		<div id='authenticate' className="relative px-[15%]">
-			<div ref={containerRef} className="absolute mt-[160px] custom-shape bg-white h-[777px] w-[683px] flex flex-col items-center justify-center transition ease-in-out duration-300 shadow-[0_0_20px_2px_black]">
+			{/* <div ref={containerRef} className="absolute mt-[160px] custom-shape bg-white h-[777px] w-[683px] flex flex-col items-center justify-center transition ease-in-out duration-300 shadow-[0_0_20px_2px_black]">
 				<div ref={subContainerRef} className="relative transition ease-in-out duration-700 flex flex-col items-center justify-center w-[100%] h-[100%]">
 					<div className="relative h-[180px] flex flex-col items-center justify-center border-b-[1px] gap-[20px] border-solid border-[#8E8E8E]">
 						<div className="transition-all duration-300 w-[554px] h-[70px] bg-[var(--gray-color)] rounded-tr-[37px] rounded-br-[268px] rounded-bl-[37px] rounded-tl-[268px] flex items-center justify-evenly">
@@ -93,7 +93,7 @@ const Authenticate = () => {
 						<SignUp ref={signUpRef} />
 					</div>
 				</div>
-			</div>
+			</div> */}
 		</div>
 	);
 };

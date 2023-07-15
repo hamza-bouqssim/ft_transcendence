@@ -40,7 +40,7 @@ const Header = () => {
 		<header className="py-[59px] px-[15%]">
 			<section className="flex items-center justify-between">
 				<div>
-					<Image className="md:w-11"
+					<Image className="md:w-11 xl:text-lg"
 						src={"/assets/42.svg"}
 						width={35}
 						height={35}
@@ -66,22 +66,22 @@ const Header = () => {
 			</section>
 
 			<section className="flex flex-col items-center justify-between gap-10 mt-16 md:flex-row md:mt-24 xl:mt-36">
-				<div className="flex flex-col items-center gap-7 sm:px-0">
-					<div className="text-center text-xl font-bold md:text-3xl md:w-80 lg:w-96 xl:text-4xl">
+				<div className="flex flex-col items-center gap-7 sm:px-0 xl:gap-10">
+					<div className="text-center text-xl font-bold md:text-3xl md:w-80 lg:w-96 xl:text-4xl 2xl:text-5xl 2xl:w-[32rem]">
 						<h1>Brace yourself for the epic battle ahead</h1>
 					</div>
 					<div className="flex flex-col items-center gap-7">
 						<div className="md:text-xl xl:text-2xl" >
 							<a href="#" className="btn-style">Play</a>
 						</div>
-						<div className='hover:cursor-pointer animate-bounce text-3xl hover:text-[var(--pink-color)] transition ease-in-out duration-300'>
+						<div className='hover:cursor-pointer animate-bounce text-3xl hover:text-[var(--pink-color)] transition ease-in-out duration-300 2xl:text-4xl'>
 							<FontAwesomeIcon icon={faCircleArrowDown} />
 						</div>
 					</div>
 				</div>
 
 				<div className="flex justify-center">
-					<Image className="mix-blend-lighten border-solid border-white border-2 rotate-[-18deg] shadow-[0_0_50px_2px_var(--blue-color)] rounded-2xl lg:w-80 xl:w-96"
+					<Image className="mix-blend-lighten border-solid border-white border-2 rotate-[-18deg] shadow-[0_0_50px_2px_var(--blue-color)] rounded-2xl lg:w-80 xl:w-96 2xl:w-[32rem]"
 						src="/assets/ping-pong.gif"
 						width={240}
 						height={240}
@@ -89,50 +89,6 @@ const Header = () => {
 				</div>
 			</section>
 		</header>
-		// <header className='relative h-[1080px] py-[59px] px-[15%]'>
-		// 	<section className="absolute flex py-[2%] w-[70%] flex-col justify-between items-start sm:flex-col sm:items-center xl:flex-row">
-		// 		<div>
-		// 			<Image className='shrink-[1] mix-blend-lighten max-w-ful w-[55px] sm:w-[70px]'
-		// 				src="/assets/42.svg"
-		// 				width={100}
-		// 				height={100}
-		// 				alt="ping-pong" />
-		// 		</div>
-		// 		<nav ref={navRef} className='rounded-3xl hidden text-center glassmorphism shrink-[1] sm:flex flex-col items-center cursor-pointer mt-[20px] w-[100%] p-[20px] z-10 sm:bg-transparent sm:shadow-none sm:justify-between sm:w-fit sm:flex-row sm:gap-[15px] sm:mt-[30px] xl:justify-between xl:mt-0 xl:gap-[15px]'>
-		// 			<a onClick={()=> {
-		// 				document.getElementById('about')?.scrollIntoView({block: "center"});
-		// 			}} className="link-style my-[8px] sm:m-0"
-		// 				>About</a>
-		// 			<a onClick={() => {
-		// 				document.getElementById('team')?.scrollIntoView({block: "center"})
-		// 			}}	className="link-style my-[8px] sm:m-0">Team</a>
-		// 			<a href="#" className="link-style my-[8px] sm:m-0">Features</a>
-		// 			<a href="#authenticate" className="btn-style inline-block my-[20px] sm:m-0">Sign In</a>
-		// 		</nav>
-		// 		<div className="absolute right-0 top-[68px] cursor-pointer w-fit sm:hidden" >
-		// 			<FontAwesomeIcon icon={faXmark} className='text-[35px] absolute right-0 top-[-58px] hidden sm:hidden' ref={closeRef}  name="close"  onClick={ (e) => handleClick(e)} />
-		// 			<FontAwesomeIcon icon={faBars} className='text-[30px] absolute right-0 top-[-55px] sm:hidden block' ref={menuRef} name="menu" onClick={ (e) => handleClick(e) } />
-		// 		</div>
-		// 	</section>
-
-		// 	<section className="absolute w-[70%] py-[100px] flex justify-between items-center gap-[100px] flex-col-reverse top-[25%] sm:top-[25%] xl:flex-row xl:top-[90px]">
-		// 		<div className='flex flex-col items-center text-[25px] font-bold'>
-		// 			<h1 className='text-[25px] text-center font-bold uppercase sm:text-[45px] sm:mt-[100px] xl:text-[35px] xl:w-[450px]'>Brace yourself for the epic battle ahead</h1>
-		// 			<div className="w-[250px] h-[200px] flex flex-col items-center justify-around">
-		// 				<a href="#" className='inline-block btn-style w-[200px] text-center'>Play</a>
-		// 				<FontAwesomeIcon icon={faCircleArrowDown} className='text-white text-[45px] hover:cursor-pointer animate-bounce hover:text-[var(--pink-color)] transition ease-in-out duration-300'/>
-		// 			</div>
-		// 		</div>
-		// 		<div>
-		// 			<Image className='mix-blend-lighten border-solid border-white border-2 rounded-[30px] rotate-[-18deg] shadow-[0_0_50px_2px_var(--blue-color)] sm:w-[400px] sm:mt-[-50px] xl:w-[650px]'
-		// 				src="/assets/ping-pong.gif"
-		// 				width={650}
-		// 				height={650}
-		// 				alt="ping-pong" />
-		// 		</div>
-		// 	</section>
-		// 	{/* <hr className='w-[20%] border-[2px] absolute bottom-0 left-[40%]' /> */}
-		// </header>
 	);
 };
 

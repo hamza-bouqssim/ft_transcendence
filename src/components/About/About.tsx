@@ -7,32 +7,30 @@ const About = () => {
 	const mappedImages = images.map( (el, i) => { 
 			return (
 				<div>
-					<Image className='shrink-0 grow-[1] cursor-pointer transition ease-linear duration-300 hover:scale-125'
+					<Image className='cursor-pointer transition ease-linear duration-300 hover:scale-125 w-16 lg:w-20 2xl:w-24'
 						key={i}
 						src={el}
 						width={100}
 						height={100}
 						alt={el.substring(8)} />
-						<h2 className='text-center'>{el.substring(8, el.lastIndexOf('.'))}</h2>
-				</div> 
+						<h3 className='text-center text-xs lg:text-sm 2xl:text-xl'>{el.substring(8, el.lastIndexOf('.'))}</h3>
+				</div>
 				) } );
 
 	return (
-		<div id='about' className="relative h-[1080px] flex flex-col justify-center items-center py-[59px] px-[15%]">
-			<div  className='flex items-center flex-col font-bold'>
-				<h2 className='text-[80px] mb-[40px]'>About</h2>
-				<p className='sm:w-[700px] mb-[60px] text-[30px] text-center uppercase'>
+		<section id="about" className="py-[59px] px-[15%] flex flex-col items-center gap-6 font-bold md:gap-5 lg:gap-7 lg:mt-8 2xl:mt-10">
+			<div className="uppercase flex flex-col items-center justify-center gap-4 lg:gap-7 2xl:gap-14">
+				<h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl 2xl:text-5xl">About</h2>
+				<p className="text-center text-xs sm:text-sm md:w-96 lg:w-[30rem] lg:text-lg 2xl:w-[38rem] 2xl:text-2xl">
 					ft_transcendence is a real-time multiplayer
 					Pong web project with a chat system.
 					Built with
 				</p>
-				{/* <div className="w-[70%] flex justify-center flex-wrap flex-col sm:flex-row items-center gap-[20px] sm:p-[4px]" data-aos="zoom-in-up"> */}
-				<div className="w-[70%] flex justify-center flex-wrap flex-col sm:flex-row items-center gap-[20px] sm:p-[4px]">
-					{mappedImages}
-				</div>
 			</div>
-			{/* <hr className='w-[20%] border-[2px] absolute bottom-0 left-[40%]' /> */}
-		</div>
+			<div className="flex justify-center gap-2 md:gap-3 lg:gap-4">
+				{mappedImages}
+			</div>
+		</section>
 	)
 }
 
