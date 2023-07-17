@@ -8,13 +8,13 @@ import { faKey, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 
 const Authenticate = () => {
 
-	const containerRef  = useRef<HTMLDivElement | null>(null),
-		subContainerRef = useRef<HTMLDivElement | null>(null),
-		btnSignInRef = useRef<HTMLButtonElement | null>(null),
-		btnSignUpRef = useRef<HTMLButtonElement | null>(null),
-		signInRef = useRef<HTMLFormElement | null>(null),
-		// inpEmailRef = useRef<SVGSVGElement | null>(null),
-		signUpRef = useRef<HTMLFormElement | null>(null);
+	const containerRef  = useRef<HTMLDivElement>(null),
+		subContainerRef = useRef<HTMLDivElement>(null),
+		btnSignInRef = useRef<HTMLButtonElement>(null),
+		btnSignUpRef = useRef<HTMLButtonElement>(null),
+		signInRef = useRef<HTMLFormElement>(null),
+		// inpEmailRef = useRef<SVGSVGElement>(null),
+		signUpRef = useRef<HTMLFormElement>(null);
 
 	const imgArr = [
 		"/assets/google.svg",
@@ -34,42 +34,35 @@ const Authenticate = () => {
 
 	const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => {
 
-	if (
-			containerRef.current &&
-			subContainerRef.current &&
-			btnSignInRef.current &&
-			btnSignUpRef.current &&
-			signInRef.current &&
-			signUpRef.current &&
-			getComputedStyle(e.currentTarget).backgroundColor == "rgb(224, 224, 224)")
+	if (getComputedStyle(e.currentTarget).backgroundColor == "rgb(224, 224, 224)")
 		{
 			if (e.currentTarget.textContent === "Sign Up")
 			{
 				if (window.innerWidth >= 768)
 				{
-					containerRef.current.style.transform = "rotate(-90deg)";
-					subContainerRef.current.style.transform = "rotate(90deg)";
+					containerRef.current!.style.transform = "rotate(-90deg)";
+					subContainerRef.current!.style.transform = "rotate(90deg)";
 				}
-				btnSignInRef.current.classList.remove("active-btn-style");
-				btnSignInRef.current.classList.add("disabled-btn-style");
-				btnSignUpRef.current.classList.remove("disabled-btn-style");
-				btnSignUpRef.current.classList.add("active-btn-style");
-				signInRef.current.style.display = "none";
-				signUpRef.current.style.display = "block";
+				btnSignInRef.current?.classList.remove("active-btn-style");
+				btnSignInRef.current?.classList.add("disabled-btn-style");
+				btnSignUpRef.current?.classList.remove("disabled-btn-style");
+				btnSignUpRef.current?.classList.add("active-btn-style");
+				signInRef.current!.style.display = "none";
+				signUpRef.current!.style.display = "block";
 			}
 			else if (e.currentTarget.textContent === "Sign In")
 			{
 				if (window.innerWidth >= 768)
 				{
-					containerRef.current.style.transform = "rotate(0deg)";
-					subContainerRef.current.style.transform = "rotate(0deg)";
+					containerRef.current!.style.transform = "rotate(0deg)";
+					subContainerRef.current!.style.transform = "rotate(0deg)";
 				}
-				btnSignInRef.current.classList.remove("disabled-btn-style");
-				btnSignInRef.current.classList.add("active-btn-style");
-				btnSignUpRef.current.classList.remove("active-btn-style");
-				btnSignUpRef.current.classList.add("disabled-btn-style");
-				signInRef.current.style.display = "block";
-				signUpRef.current.style.display = "none";
+				btnSignInRef.current?.classList.remove("disabled-btn-style");
+				btnSignInRef.current?.classList.add("active-btn-style");
+				btnSignUpRef.current?.classList.remove("active-btn-style");
+				btnSignUpRef.current?.classList.add("disabled-btn-style");
+				signInRef.current!.style.display = "block";
+				signUpRef.current!.style.display = "none";
 			}
 		}
 	};
@@ -181,7 +174,7 @@ const SignUp = forwardRef((props: any, ref: any) => {
 						<input
 							type="password"
 							{...register("password", {required: true, minLength: 8})}
-							className="input-password-style rounded-bl-[37px] rounded-tl-[268px] rounded-r-[80px]"
+							className="input-password-style rounded-bl-[37px] rounded-tl-[268px] rounded-r-[40px]"
 							placeholder="password" />
 					</div>
 					<div className="relative">
@@ -191,7 +184,7 @@ const SignUp = forwardRef((props: any, ref: any) => {
 						<input
 							type="password"
 							{...register("repassword", {required: true, minLength: 8})}
-							className="input-password-style rounded-br-[268px] rounded-tr-[37px] rounded-l-[80px]"
+							className="input-password-style rounded-br-[268px] rounded-tr-[37px] rounded-l-[40px]"
 							placeholder="confirm" />
 					</div>
 				</div>

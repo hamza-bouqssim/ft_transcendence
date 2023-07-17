@@ -7,22 +7,13 @@
   src: url('/public/fonts/Whitney-Sans-Font/whitney.ttf');
 }
 
-/* .link-style {
-  @apply w-[100%] sm:w-[90px] h-[40px] leading-[40px] text-center inline-block hover:text-[var(--pink-color)] hover:rotate-12 hover:scale-150 hover:transition ease-in-out duration-300;
-
-} */
-
-/* .btn-style {
-  @apply bg-[--purple-color] text-white px-[80px] sm:px-4 py-2 rounded-[30px] hover:bg-[--pink-color] transition ease-in-out duration-300;
-} */
-
 .link-style {
   @apply px-28 py-3 hover:text-[var(--pink-color)] cursor-pointer hover:rotate-12 hover:scale-150 hover:transition ease-in-out duration-300 sm:px-2;
   
 }
 
 .btn-style {
-  @apply px-10 py-2 font-bold bg-[--purple-color] rounded-2xl hover:bg-[--pink-color] transition ease-in-out duration-300 sm:py-3 sm:px-12;
+  @apply px-10 py-2 font-bold bg-[--purple-color] rounded-2xl cursor-pointer hover:bg-[--pink-color] transition ease-in-out duration-300 sm:py-3 sm:px-12;
 }
 
 .glassmorphism {

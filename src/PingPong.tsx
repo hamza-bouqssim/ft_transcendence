@@ -5,7 +5,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 const PingPong = (props : any) => {
 
-	const threeContainer = useRef<HTMLDivElement | null>(null);
+	const threeContainer = useRef<HTMLDivElement>(null);
 
 	useEffect( () => {
 
@@ -26,8 +26,7 @@ const PingPong = (props : any) => {
 		camera.updateProjectionMatrix();
 		renderer.setSize( window.outerWidth, 600 );
 	} )
-	if (threeContainer.current)
-		threeContainer.current.appendChild(renderer.domElement);
+	threeContainer.current?.appendChild(renderer.domElement);
 
 	const controls: OrbitControls = new OrbitControls( camera, renderer.domElement );
 	renderer.domElement.style.cursor = 'grab';

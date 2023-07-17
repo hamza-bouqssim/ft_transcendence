@@ -7,32 +7,29 @@ import { useRef } from "react";
 
 const Header = () => {
 
-	const navRef = useRef<HTMLDivElement | null>(null),
-		barsIconRef = useRef<HTMLDivElement | null>(null),
-		xMarkIconRef = useRef<HTMLDivElement | null>(null);
+	const navRef = useRef<HTMLDivElement>(null),
+		barsIconRef = useRef<HTMLDivElement>(null),
+		xMarkIconRef = useRef<HTMLDivElement>(null);
 
 	const handleClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
 
-		if (navRef.current && barsIconRef.current && xMarkIconRef.current)
+		if (e.currentTarget === barsIconRef.current)
 		{
-			if (e.currentTarget === barsIconRef.current)
-			{
-				barsIconRef.current.classList.remove('block');
-				barsIconRef.current.classList.add('hidden');
-				xMarkIconRef.current.classList.remove('hidden');
-				xMarkIconRef.current.classList.add('block');
-				navRef.current.classList.remove('hidden');
-				navRef.current.classList.add('block');
-			}
-			else
-			{
-				xMarkIconRef.current.classList.remove('block');
-				xMarkIconRef.current.classList.add('hidden');
-				barsIconRef.current.classList.remove('hidden');
-				barsIconRef.current.classList.add('block');
-				navRef.current.classList.remove('block');
-				navRef.current.classList.add('hidden');
-			}
+			barsIconRef.current.classList.remove('block');
+			barsIconRef.current.classList.add('hidden');
+			xMarkIconRef.current?.classList.remove('hidden');
+			xMarkIconRef.current?.classList.add('block');
+			navRef.current?.classList.remove('hidden');
+			navRef.current?.classList.add('block');
+		}
+		else
+		{
+			xMarkIconRef.current?.classList.remove('block');
+			xMarkIconRef.current?.classList.add('hidden');
+			barsIconRef.current?.classList.remove('hidden');
+			barsIconRef.current?.classList.add('block');
+			navRef.current?.classList.remove('block');
+			navRef.current?.classList.add('hidden');
 		}
 	}
 
