@@ -51,7 +51,7 @@ const Header = () => {
 				<div ref={barsIconRef} className="text-2xl cursor-pointer hover:text-red-500 sm:hidden" onClick={(e) => handleClick(e)}>
 					<FontAwesomeIcon icon={faBars} />
 				</div>
-				<div className="absolute z-10 top-12 left-1/2 translate-x-[-50%] glassmorphism rounded-xl flex flex-col-reverse items-end default-styles">
+				<div className="absolute z-10 top-12 left-1/2 translate-x-[-50%] glassmorphism backdrop-blur-[25px] rounded-xl flex flex-col-reverse items-end default-styles">
 					<div ref={navRef} className="hidden sm:block">
 						<nav className="flex flex-col items-center gap-3 text-xs p-2 pb-6 sm:flex-row sm:p-0 md:text-sm">
 							<a className="link-style" onClick={() => {
@@ -88,11 +88,11 @@ const Header = () => {
 				</div>
 
 				<div className="flex justify-center pointer-events-none">
-					<Image className="mix-blend-lighten border-solid border-white border-2 rotate-[-18deg] shadow-[0_0_50px_2px_var(--blue-color)] rounded-2xl lg:w-80 xl:w-96 2xl:w-[32rem]"
+					<Image className="mix-blend-lighten border-solid border-white border-2 rotate-[-18deg] shadow-[0_0_50px_2px_var(--blue-color)] rounded-2xl sm:w-64 lg:w-80 xl:w-96 2xl:w-[32rem]"
 						key={1}
 						src="/assets/ping-pong.gif"
-						width={240}
-						height={240}
+						width={190}
+						height={190}
 						alt="ping-pong" />
 				</div>
 			</section>

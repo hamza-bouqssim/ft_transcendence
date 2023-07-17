@@ -24,7 +24,7 @@ const Authenticate = () => {
 
 	const icons: JSX.Element[] = imgArr.map((el, i): JSX.Element => (
 		<Image
-			className="hover:transform hover:scale-150 hover:transition hover:ease-in-out hover:duration-300 w-7"
+			className="hover:transform hover:scale-150 hover:transition hover:ease-in-out hover:duration-300 w-5 sm:w-6 md:w-7"
 			key={i}
 			src={el}
 			width={40}
@@ -75,23 +75,22 @@ const Authenticate = () => {
 	};
 
 	return (
-			<div id="authenticate" className="absolute h-full w-full md:w-1/2 glassmorphism flex flex-col items-center justify-center">
-				<div ref={containerRef} className="bg-red-800 custom-shape">
-					<div ref={subContainerRef} className="bg-white custom-shape transition ease-in-out duration-700 flex flex-col items-center gap-6 py-10 px-6">
-						{/* <div className="relative h-36 w-full flex flex-col items-center justify-center gap-6 border-b-[1px] border-solid border-[#8E8E8E] z-20"> */}
-							<div className="transition-all duration-300 w-80 h-10 md:w-[554px] md:h-[70px] bg-[var(--gray-color)] rounded-tr-[37px] rounded-br-[268px] rounded-bl-[37px] rounded-tl-[268px] flex items-center justify-center">
-								<button ref={btnSignInRef} className="h-[80%] w-[48%] bg-white text-black rounded-r-[120px] rounded-bl-[37px] rounded-tl-[268px] text-sm transition ease-in-out duration-500 md:w-[264px] md:h-[57px]" onClick={(e) => handleClick(e)} >
+			<div id="authenticate" className="absolute h-full w-full glassmorphism backdrop-blur-[5px] flex flex-col items-center justify-center">
+				<div ref={containerRef} className="absolute bg-transparent custom-shape sm:left-[15%] md:bg-white md:py-8 md:px-8 transition-all ease-in-out duration-700">
+					<div ref={subContainerRef} className="bg-white custom-shape py-7 px-4 transition-all ease-in-out duration-700 flex flex-col items-center gap-4 sm:py-10 sm:px-9 sm:gap-5 md:bg-transparent md:py-4 md:px-6">
+							<div className="transition-all duration-300 w-44 h-8 bg-[var(--gray-color)] rounded-tr-[37px] rounded-br-[268px] rounded-bl-[37px] rounded-tl-[268px] flex items-center justify-center sm:w-64 sm:h-11 md:w-72 md:h-12">
+								<button ref={btnSignInRef} className="h-[80%] w-[48%] bg-white text-black rounded-r-[120px] rounded-bl-[37px] rounded-tl-[268px] text-[.7rem] transition ease-in-out duration-500 sm:text-sm" onClick={(e) => handleClick(e)} >
 									Sign In
 								</button>
-								<button ref={btnSignUpRef} className="h-[80%] w-[48%] bg-[#E0E0E0] text-[#949494] rounded-l-[120px] rounded-br-[268px] rounded-tr-[37px] text-sm transition ease-in-out duration-500 md:w-[264px] md:h-[57px]" onClick={(e) => handleClick(e)} >
+								<button ref={btnSignUpRef} className="h-[80%] w-[48%] bg-[#E0E0E0] text-[#949494] rounded-l-[120px] rounded-br-[268px] rounded-tr-[37px] text-[.7rem] transition ease-in-out duration-500 sm:text-sm" onClick={(e) => handleClick(e)} >
 									Sign Up
 								</button>
 							</div>
-							<div className="flex justify-center items-center gap-4 cursor-pointer md:gap-[30px]">
+							<div className="flex justify-center items-center gap-4 cursor-pointer">
 								{icons}
 							</div>
-							<div className="h-[2px] bg-[#8E8E8E] relative w-72">
-								<span className="absolute bg-white text-[#8E8E8E] px-2 top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]">OR</span>
+							<div className="h-[2px] bg-[#8E8E8E] relative w-56 md:w-[17rem]">
+								<span className="absolute bg-white text-[#8E8E8E] text-[.7rem] px-2 top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] sm:text-sm md:text-[.9rem]">OR</span>
 							</div>
 						{/* <div className="h-[280px] w-[403px]"> */}
 						<div>
@@ -101,30 +100,6 @@ const Authenticate = () => {
 					</div>
 				</div>
 			</div>
-		// <div id='authenticate' className="relative px-[15%]">
-		// 	<div ref={containerRef} className="absolute mt-[160px] custom-shape bg-white h-[777px] w-[683px] flex flex-col items-center justify-center transition ease-in-out duration-300 shadow-[0_0_20px_2px_black]">
-		// 		<div ref={subContainerRef} className="relative transition ease-in-out duration-700 flex flex-col items-center justify-center w-[100%] h-[100%]">
-		// 			<div className="relative h-[180px] flex flex-col items-center justify-center border-b-[1px] gap-[20px] border-solid border-[#8E8E8E]">
-		// 				<div className="transition-all duration-300 w-[554px] h-[70px] bg-[var(--gray-color)] rounded-tr-[37px] rounded-br-[268px] rounded-bl-[37px] rounded-tl-[268px] flex items-center justify-evenly">
-		// 					<button ref={btnSignInRef} className="transition ease-in-out duration-500 bg-white text-black w-[264px] rounded-r-[120px] rounded-bl-[37px] rounded-tl-[268px] h-[57px] flex items-center justify-center" onClick={(e) => handleClick(e)} >
-		// 						Sign In
-		// 					</button>
-		// 					<button ref={btnSignUpRef} className="transition ease-in-out duration-500 bg-[#E0E0E0] text-[#949494] w-[264px] rounded-l-[120px] rounded-br-[268px] rounded-tr-[37px] h-[57px] flex items-center justify-center" onClick={(e) => handleClick(e)} >
-		// 						Sign Up
-		// 					</button>
-		// 				</div>
-		// 				<div className="flex justify-center items-center cursor-pointer gap-[30px]">
-		// 					{icons}
-		// 				</div>
-		// 				<h2 className="absolute bg-white px-2 bottom-[-11px] text-[#8E8E8E]">OR</h2>
-		// 			</div>
-		// 			<div>
-		// 				<SignIn ref={signInRef} />
-		// 				<SignUp ref={signUpRef} />
-		// 			</div>
-		// 		</div>
-		// 	</div>
-		// </div>
 	);
 };
 
@@ -146,25 +121,25 @@ console.log(errors);
 		<div ref={ref}>
 			<form
 				action=""
-				className="relative h-full w-full flex items-center justify-center flex-col gap-5"
+				className="relative h-full w-full flex items-center justify-center flex-col gap-3 sm:gap-4"
 				onSubmit={handleSubmit( (data) => {
 					console.log(data); } )}
 				// onSubmit={onSubmit}
 					>
 				<div className="relative">
-					<FontAwesomeIcon icon={faEnvelope} className="absolute top-[40%] left-[7%] text-black text-sm md:w-[16px]" />
+					<FontAwesomeIcon icon={faEnvelope} className="absolute top-[50%] left-[10%] transform translate-y-[-50%] text-black text-[.7rem] md:text-sm" />
 					<input
 						type="email"
 						className="custom-shape input-style" placeholder="email"
 						{...register("email", {required: "true"}) } />
 				</div>
 				<div className="relative">
-					<FontAwesomeIcon icon={faKey} className="absolute top-[40%] left-[7%] text-black text-sm md:w-[16px]" />
+					<FontAwesomeIcon icon={faKey} className="absolute top-[50%] left-[10%] transform translate-y-[-50%] text-black text-[.7rem] md:text-sm" />
 					<input type="password"
 						className="custom-shape input-style" placeholder="password"
 						{...register("password", {required: true, minLength: 8})}  />
 				</div>
-				<button type="submit" className="custom-shape btn-style px-7 py-4 text:sm md:w-[216px] md:h-[57px] bg-[var(--purple-color)] transition ease-in-out duration-700" >
+				<button type="submit" className="custom-shape btn-style text-[.7rem] bg-[var(--purple-color)] transition ease-in-out duration-700 sm:text-sm md:text-[1rem] md:py-4 md:w-[166px]" >
 					Sign In
 				</button>
 			</form>
@@ -187,22 +162,22 @@ const SignUp = forwardRef((props: any, ref: any) => {
 		<div ref={ref} className="hidden">
 			<form
 				action=""
-				className="relative h-full w-full flex items-center justify-center flex-col gap-5"
+				className="relative h-full w-full flex items-center justify-center flex-col gap-3 sm:gap-4"
 				onSubmit={handleSubmit((data) => {
 					console.log(data); })}
 				>
 				<div className="relative">
-					<FontAwesomeIcon icon={faEnvelope} className="absolute top-[40%] left-[7%] text-black w-[16px]" />
+				<FontAwesomeIcon icon={faEnvelope} className="absolute top-[50%] left-[10%] transform translate-y-[-50%] text-black text-[.7rem] md:text-sm" />
 					<input
 						type="email"
 						className="custom-shape input-style" placeholder="email"
 						{...register("email", {required: "true"}) } />
 				</div>
-				<div className="relative w-72 flex justify-between" >
+				<div className="relative w-56 flex justify-between sm:w-60 md:w-[17rem]" >
 					<div className="relative">
 						<FontAwesomeIcon
 							icon={faKey}
-							className="absolute top-[40%] left-[7%] text-black w-[16px]" />
+							className="absolute top-[50%] left-[10%] transform translate-y-[-50%] text-black text-[.7rem] md:text-sm" />
 						<input
 							type="password"
 							{...register("password", {required: true, minLength: 8})}
@@ -212,7 +187,7 @@ const SignUp = forwardRef((props: any, ref: any) => {
 					<div className="relative">
 						<FontAwesomeIcon
 							icon={faKey}
-							className="absolute top-[40%] left-[7%] text-black w-[16px]" />
+							className="absolute top-[50%] left-[10%] transform translate-y-[-50%] text-black text-[.7rem] md:text-sm" />
 						<input
 							type="password"
 							{...register("repassword", {required: true, minLength: 8})}
@@ -222,7 +197,7 @@ const SignUp = forwardRef((props: any, ref: any) => {
 				</div>
 				<button
 					type="submit"
-					className="custom-shape btn-style px-7 py-4 text:sm md:w-[216px] md:h-[57px] bg-[var(--purple-color)] transition ease-in-out duration-700" >
+					className="custom-shape btn-style text-[.7rem] bg-[var(--purple-color)] transition ease-in-out duration-700 sm:text-sm md:text-[1rem] md:py-4 md:w-[166px]" >
 					Sign Up
 				</button>
 			</form>

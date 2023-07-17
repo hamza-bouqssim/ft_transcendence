@@ -10,7 +10,7 @@ const PingPong = (props : any) => {
 	useEffect( () => {
 
 	const scene: THREE.Scene = new THREE.Scene();
-	const camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera( 45, window.innerWidth / 1080, 0.1, 700 );
+	const camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera( 45, window.innerWidth / 600, 0.1, 700 );
 
 	scene.background = new THREE.Color(0x272040);
 	camera.position.set( 0, 4, 100 );
@@ -19,12 +19,12 @@ const PingPong = (props : any) => {
 
 	const renderer: THREE.WebGLRenderer = new THREE.WebGLRenderer();
 	
-	renderer.setSize( window.innerWidth, 1080 );
+	renderer.setSize( window.innerWidth, 600 );
 
 	window.addEventListener( 'resize', () => {
-		camera.aspect = innerWidth / 1080;
+		camera.aspect = innerWidth / 600;
 		camera.updateProjectionMatrix();
-		renderer.setSize( window.innerWidth, 1080 );
+		renderer.setSize( window.outerWidth, 600 );
 	} )
 	if (threeContainer.current)
 		threeContainer.current.appendChild(renderer.domElement);
@@ -72,7 +72,7 @@ const PingPong = (props : any) => {
 	}, [] );
 	
 	return (
-		<div ref={threeContainer} className="relative h-[1080px]" >{props.children}</div>
+		<div ref={threeContainer} className="relative h-[600px]" >{props.children}</div>
 	)
 }
 
