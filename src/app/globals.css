@@ -1,10 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+ 
 @font-face {
   font-family: 'Whitney';
-  src: url('/public/fonts/Whitney-Sans-Font/whitney.ttf');
+  src: url('../fonts/Whitney-Sans-Font/whitney.ttf');
 }
 
 .link-style {

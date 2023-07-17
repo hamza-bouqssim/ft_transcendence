@@ -1,5 +1,5 @@
 "use client";
-import React, { ForwardedRef, forwardRef, useRef } from "react";
+import React, { forwardRef, useRef } from "react";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import "./Authenticate.css";
@@ -109,7 +109,7 @@ const SignIn = forwardRef( (props: any, ref: any) => {
 	// const onSubmit = () => {
 	// 	if (errors.email?)
 	// };
-console.log(errors);
+// console.log(errors);
 	return (
 		<div ref={ref}>
 			<form
