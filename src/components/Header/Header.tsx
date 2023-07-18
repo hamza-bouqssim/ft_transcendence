@@ -70,12 +70,12 @@ const Header = () => {
 			</section>
 
 			<section className="flex flex-col items-center justify-between gap-10 mt-16 md:flex-row md:mt-24 xl:mt-36">
-				<div className="flex flex-col items-center gap-7 sm:px-0 xl:gap-10">
+				<div className="flex flex-col items-center gap-7 sm:pt-12 sm:px-0 xl:gap-10">
 					<div className="text-center text-xl font-bold md:text-3xl md:w-80 lg:w-96 xl:text-4xl 2xl:text-5xl 2xl:w-[32rem]">
 						<h1>Brace yourself for the epic battle ahead</h1>
 					</div>
-					<div className="flex flex-col items-center gap-7">
-						<div className="md:text-xl xl:text-2xl" >
+					<div className="flex flex-col items-center gap-12">
+						<div className="md:text-xl xl:text-2xl py-2">
 							<a href="#" className="btn-style">Play</a>
 						</div>
 						<div className='hover:cursor-pointer animate-bounce text-3xl hover:text-[var(--pink-color)] transition ease-in-out duration-300 2xl:text-4xl'>
