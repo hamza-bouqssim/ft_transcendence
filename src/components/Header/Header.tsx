@@ -69,7 +69,7 @@ const Header = () => {
 				</div>
 			</section>
 
-			<section className="flex flex-col items-center justify-between gap-10 mt-16 md:flex-row md:mt-24 xl:mt-36">
+			<section className="flex flex-col items-center justify-between gap-10 mt-16 md:flex-row md:mt-24 xl:mt-44">
 				<div className="flex flex-col items-center gap-7 sm:pt-12 sm:px-0 xl:gap-10">
 					<div className="text-center text-xl font-bold md:text-3xl md:w-80 lg:w-96 xl:text-4xl 2xl:text-5xl 2xl:w-[32rem]">
 						<h1>Brace yourself for the epic battle ahead</h1>

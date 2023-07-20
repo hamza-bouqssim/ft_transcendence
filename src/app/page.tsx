@@ -2,7 +2,7 @@ import Header from "@/components/Header/Header"
 import About from "@/components/About/About"
 import Team from "@/components/Team/Team"
 import Footer from "@/components/Footer/Footer"
-import PingPong from "@/PingPong"
+import PingPong from "@/components/PingPong"
 import Authenticate from "@/components/Authenticate/Authenticate"
 
 // import localFont from 'next/font/local'

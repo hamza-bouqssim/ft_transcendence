@@ -15,7 +15,7 @@ const Team = () => {
 		/> );
 
 	return (
-		<section id='team' className="py-[59px] px-[15%] flex flex-col items-center gap-6 md:gap-5 lg:gap-7">
+		<section id='team' className="py-[120px] px-[15%] flex flex-col items-center gap-6 md:gap-5 lg:gap-7">
 			<h2 className="uppercase font-bold text-2xl sm:text-3xl md:text-4xl lg:text-5xl 2xl:text-5xl">Team</h2>
 			<div className="flex gap-6 flex-wrap justify-center">
 				{mappedNames}

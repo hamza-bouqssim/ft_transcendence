@@ -1,10 +1,13 @@
 "use client";
-import React, { forwardRef, useRef } from "react";
+import React, { useRef } from "react";
 import Image from "next/image";
-import { useForm, SubmitHandler } from "react-hook-form";
 import "./Authenticate.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faKey, faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import SignInForm from "../SignInForm";
+import SignUpForm from "../SignUpForm";
+import {
+		GoogleSignInButton,
+		IntraSignInButton,
+		GithubSignInButton } from "../AuthButtons";
 
 const Authenticate = () => {
 
@@ -13,7 +16,6 @@ const Authenticate = () => {
 		btnSignInRef = useRef<HTMLButtonElement>(null),
 		btnSignUpRef = useRef<HTMLButtonElement>(null),
 		signInRef = useRef<HTMLFormElement>(null),
-		// inpEmailRef = useRef<SVGSVGElement>(null),
 		signUpRef = useRef<HTMLFormElement>(null);
 
 	const imgArr = [
@@ -23,13 +25,14 @@ const Authenticate = () => {
 	];
 
 	const icons: JSX.Element[] = imgArr.map((el, i): JSX.Element => (
-		<Image
-			className="hover:transform hover:scale-150 hover:transition hover:ease-in-out hover:duration-300 w-5 sm:w-6 md:w-7"
-			key={i}
-			src={el}
-			width={40}
-			height={40}
-			alt={el.substring(8)} />
+		<button key={i}>
+			<Image
+				className="hover:transform hover:scale-150 hover:transition hover:ease-in-out hover:duration-300 w-5 sm:w-6 md:w-7"
+				src={el}
+				width={40}
+				height={40}
+				alt={el.substring(8)} />
+		</button>
 	));
 
 	const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => {
@@ -80,149 +83,21 @@ const Authenticate = () => {
 								</button>
 							</div>
 							<div className="flex justify-center items-center gap-4 cursor-pointer">
-								{icons}
+								<GoogleSignInButton />
+								<IntraSignInButton />
+								<GithubSignInButton />
 							</div>
 							<div className="h-[2px] bg-[#8E8E8E] relative w-56 md:w-[17rem]">
 								<span className="absolute bg-white text-[#8E8E8E] text-[.7rem] px-2 top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] sm:text-sm md:text-[.9rem]">OR</span>
 							</div>
-						{/* <div className="h-[280px] w-[403px]"> */}
 						<div>
-							<SignIn ref={signInRef} />
-							<SignUp ref={signUpRef} />
+							<SignInForm ref={signInRef} />
+							<SignUpForm ref={signUpRef} />
 						</div>
 					</div>
 				</div>
 			</div>
 	);
 };
-
-// Sign In Component :)
-const SignIn = forwardRef( (props: any, ref: any) => {
-
-	// const emailInputRef = useRef<HTMLInputElement>(null),
-	// 	passInputRef = useRef<HTMLInputElement>(null);
-
-	type FormData = {
-		email: string;
-		password: string;
-	};
-
-	const { register, handleSubmit, formState: {errors} } = useForm<FormData>();
-
-	const onSubmit: SubmitHandler<FormData> = (data) =>  {
-		// console.log(data)
-
-		const emailInput = ref.current?.querySelector('input[type="email"]'),
-				passInput = ref.current?.querySelector('input[type="password"]');
-
-		// console.log("email:" + data.email);
-		// console.log("password " + data.password);
-		if (!data.email.length)
-		{
-			emailInput.parentNode.classList.add("animate-wiggle");
-			emailInput.style.cssText = "border: 3px solid red";
-			emailInput.parentNode.addEventListener( 'animationend', () => {
-				emailInput.parentNode.classList.remove("animate-wiggle");
-				emailInput.style.removeProperty("border");
-			} );
-		}
-		if (!data.password.length)
-		{
-			passInput.parentNode.classList.add("animate-wiggle");
-			passInput.style.cssText = "border: 3px solid red";
-			passInput.parentNode.addEventListener( 'animationend', () => {
-				passInput.parentNode.classList.remove("animate-wiggle");
-				passInput.style.removeProperty("border");
-			} );
-		}
-	};
-
-// console.log(errors);
-	return (
-		<div ref={ref}>
-			<form
-				action=""
-				className="relative h-full w-full flex items-center justify-center flex-col gap-3 sm:gap-4"
-				onSubmit={handleSubmit(onSubmit)} >
-				<div className="relative">
-					<FontAwesomeIcon icon={faEnvelope} className="absolute top-[50%] left-[10%] transform translate-y-[-50%] text-black text-[.7rem] md:text-sm" />
-					<input
-						type="email"
-						className="custom-shape input-style" placeholder="email"
-						{...register("email") } />
-				</div>
-				<div className="relative">
-					<FontAwesomeIcon icon={faKey} className="absolute top-[50%] left-[10%] transform translate-y-[-50%] text-black text-[.7rem] md:text-sm" />
-					<input
-						// ref={passInputRef}
-						type="password"
-						className="custom-shape input-style" placeholder="password"
-						{...register("password")}  />
-				</div>
-				<button type="submit" className="custom-shape btn-style text-[.7rem] bg-[var(--purple-color)] transition ease-in-out duration-700 sm:text-sm md:text-[1rem] md:py-4 md:w-[166px]" >
-					Sign In
-				</button>
-			</form>
-		</div>
-	);
-});
-
-// Sign Up Component :)
-const SignUp = forwardRef((props: any, ref: any) => {
-
-	type FormData = {
-		email: string;
-		password: string;
-		repassword: string;
-	};
-
-	const { register, handleSubmit } = useForm<FormData>();
-
-	return (
-		<div ref={ref} className="hidden">
-			<form
-				action=""
-				className="relative h-full w-full flex items-center justify-center flex-col gap-3 sm:gap-4"
-				onSubmit={handleSubmit((data) => {
-					console.log(data); })}
-				>
-				<div className="relative">
-				<FontAwesomeIcon icon={faEnvelope} className="absolute top-[50%] left-[10%] transform translate-y-[-50%] text-black text-[.7rem] md:text-sm" />
-					<input
-						type="email"
-						className="custom-shape input-style" placeholder="email"
-						{...register("email", {required: "true"}) } />
-				</div>
-				<div className="relative w-56 flex justify-between sm:w-60 md:w-[17rem]" >
-					<div className="relative">
-						<FontAwesomeIcon
-							icon={faKey}
-							className="absolute top-[50%] left-[10%] transform translate-y-[-50%] text-black text-[.7rem] md:text-sm" />
-						<input
-							type="password"
-							{...register("password", {required: true, minLength: 8})}
-							className="input-password-style rounded-bl-[37px] rounded-tl-[268px] rounded-r-[40px]"
-							placeholder="password" />
-					</div>
-					<div className="relative">
-						<FontAwesomeIcon
-							icon={faKey}
-							className="absolute top-[50%] left-[10%] transform translate-y-[-50%] text-black text-[.7rem] md:text-sm" />
-						<input
-							type="password"
-							{...register("repassword", {required: true, minLength: 8})}
-							className="input-password-style rounded-br-[268px] rounded-tr-[37px] rounded-l-[40px]"
-							placeholder="confirm" />
-					</div>
-				</div>
-				<button
-					type="submit"
-					className="custom-shape btn-style text-[.7rem] bg-[var(--purple-color)] transition ease-in-out duration-700 sm:text-sm md:text-[1rem] md:py-4 md:w-[166px]" >
-					Sign Up
-				</button>
-			</form>
-		</div>
-	);
-});
 
 export default Authenticate;

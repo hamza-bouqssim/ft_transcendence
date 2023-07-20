@@ -8,7 +8,8 @@ module.exports = {
   theme: {
     extend: {
       animation: {
-        wiggle: 'wiggle 1.2s linear',
+        wiggle: 'wiggle 1s linear',
+        // shake: 'shake 1s linear'
       },
       keyframes: {
         wiggle: {
@@ -19,14 +20,15 @@ module.exports = {
           '30%': { transform: 'rotateZ(6deg)' },
           '35%': { transform: 'rotateZ(-4deg)' },
           '40%, 100%': { transform: 'rotateZ(0)' },
-        }
+        },
+        // shake: {
+        //   '0%': { transform: 'translateX(0)' },
+        //   '25%': { transform: 'translateX(5px)' },
+        //   '50%': { transform: 'translateX(-5px)' },
+        //   '75%': { transform: 'translateX(5px)' },
+        //   '100%': { transform: 'translateX(0)' },
+        // },
       },
-      // keyframes: {
-      //   wiggle: {
-      //     '0%, 100%': { transform: 'rotate(-3deg)' },
-      //     '50%': { transform: 'rotate(3deg)' },
-      //   }
-      // },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':
