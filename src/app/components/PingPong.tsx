@@ -71,7 +71,7 @@ const PingPong = (props : any) => {
 	}, [] );
 	
 	return (
-		<div ref={threeContainer} className="relative h-[600px]" >{props.children}</div>
+		<div ref={threeContainer} className="relative h-[600px] flex justify-center items-center" >{props.children}</div>
 	)
 }
 

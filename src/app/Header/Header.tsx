@@ -1,9 +1,9 @@
 "use client";
 import "./Header.css";
+import { useRef } from "react";
 import Image from 'next/image'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleArrowDown, faBars, faXmark } from '@fortawesome/free-solid-svg-icons'
-import { useRef } from "react";
 
 const Header = () => {
 

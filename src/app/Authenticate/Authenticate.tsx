@@ -2,12 +2,12 @@
 import React, { useRef } from "react";
 import Image from "next/image";
 import "./Authenticate.css";
-import SignInForm from "../SignInForm";
-import SignUpForm from "../SignUpForm";
+import SignInForm from "../components/SignInForm";
+import SignUpForm from "../components/SignUpForm";
 import {
 		GoogleSignInButton,
 		IntraSignInButton,
-		GithubSignInButton } from "../AuthButtons";
+		GithubSignInButton } from "../components/AuthButtons";
 
 const Authenticate = () => {
 
@@ -71,32 +71,30 @@ const Authenticate = () => {
 	};
 
 	return (
-			<div id="authenticate" className="absolute h-full w-full glassmorphism backdrop-blur-[5px] flex flex-col items-center justify-center">
-				<div ref={containerRef} className="absolute bg-transparent custom-shape sm:left-[15%] md:bg-white md:py-8 md:px-8 transition-all ease-in-out duration-700">
-					<div ref={subContainerRef} className="bg-white custom-shape py-7 px-4 transition-all ease-in-out duration-700 flex flex-col items-center gap-4 sm:py-10 sm:px-9 sm:gap-5 md:bg-transparent md:py-4 md:px-6">
-							<div className="transition-all duration-300 w-44 h-8 bg-[var(--gray-color)] rounded-tr-[37px] rounded-br-[268px] rounded-bl-[37px] rounded-tl-[268px] flex items-center justify-center sm:w-64 sm:h-11 md:w-72 md:h-12">
-								<button ref={btnSignInRef} className="h-[80%] w-[48%] bg-white text-black rounded-r-[120px] rounded-bl-[37px] rounded-tl-[268px] text-[.7rem] transition ease-in-out duration-500 sm:text-sm" onClick={(e) => handleClick(e)} >
-									Sign In
-								</button>
-								<button ref={btnSignUpRef} className="h-[80%] w-[48%] bg-[#E0E0E0] text-[#949494] rounded-l-[120px] rounded-br-[268px] rounded-tr-[37px] text-[.7rem] transition ease-in-out duration-500 sm:text-sm" onClick={(e) => handleClick(e)} >
-									Sign Up
-								</button>
-							</div>
-							<div className="flex justify-center items-center gap-4 cursor-pointer">
-								<GoogleSignInButton />
-								<IntraSignInButton />
-								<GithubSignInButton />
-							</div>
-							<div className="h-[2px] bg-[#8E8E8E] relative w-56 md:w-[17rem]">
-								<span className="absolute bg-white text-[#8E8E8E] text-[.7rem] px-2 top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] sm:text-sm md:text-[.9rem]">OR</span>
-							</div>
-						<div>
-							<SignInForm ref={signInRef} />
-							<SignUpForm ref={signUpRef} />
-						</div>
+		<div ref={containerRef} className="absolute bg-transparent custom-shape sm:left-[15%] md:bg-white md:py-8 md:px-8 transition-all ease-in-out duration-700">
+			<div ref={subContainerRef} className="bg-white custom-shape py-7 px-4 transition-all ease-in-out duration-700 flex flex-col items-center gap-4 sm:py-10 sm:px-9 sm:gap-5 md:bg-transparent md:py-4 md:px-6">
+					<div className="transition-all duration-300 w-44 h-8 bg-[var(--gray-color)] rounded-tr-[37px] rounded-br-[268px] rounded-bl-[37px] rounded-tl-[268px] flex items-center justify-center sm:w-64 sm:h-11 md:w-72 md:h-12">
+						<button ref={btnSignInRef} className="h-[80%] w-[48%] bg-white text-black rounded-r-[120px] rounded-bl-[37px] rounded-tl-[268px] text-[.7rem] transition ease-in-out duration-500 sm:text-sm" onClick={(e) => handleClick(e)} >
+							Sign In
+						</button>
+						<button ref={btnSignUpRef} className="h-[80%] w-[48%] bg-[#E0E0E0] text-[#949494] rounded-l-[120px] rounded-br-[268px] rounded-tr-[37px] text-[.7rem] transition ease-in-out duration-500 sm:text-sm" onClick={(e) => handleClick(e)} >
+							Sign Up
+						</button>
 					</div>
+					<div className="flex justify-center items-center gap-4 cursor-pointer">
+						<GoogleSignInButton />
+						<IntraSignInButton />
+						<GithubSignInButton />
+					</div>
+					<div className="h-[2px] bg-[#8E8E8E] relative w-56 md:w-[17rem]">
+						<span className="absolute bg-white text-[#8E8E8E] text-[.7rem] px-2 top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] sm:text-sm md:text-[.9rem]">OR</span>
+					</div>
+				<div>
+					<SignInForm ref={signInRef} />
+					<SignUpForm ref={signUpRef} />
 				</div>
 			</div>
+		</div>
 	);
 };
 

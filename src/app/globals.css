@@ -4,7 +4,7 @@
  
 @font-face {
   font-family: 'Whitney';
-  src: url('../fonts/Whitney-Sans-Font/whitney.ttf');
+  src: url('./fonts/Whitney-Sans-Font/whitney.ttf');
 }
 
 .link-style {
