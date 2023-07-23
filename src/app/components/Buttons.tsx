@@ -40,3 +40,13 @@ export const GithubSignInButton = () => {
 		</button>
 	)
 }
+
+export const SignButton = (props: any) => {
+	return (
+		<button
+			type="submit"
+			className="custom-shape btn-style text-[.7rem] bg-[var(--purple-color)] transition ease-in-out duration-700 sm:text-sm md:text-[1rem] md:py-4 md:w-[166px]" >
+			{props.value}
+		</button>
+	);
+}

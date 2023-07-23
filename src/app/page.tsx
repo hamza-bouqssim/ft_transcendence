@@ -3,7 +3,7 @@ import About from "@/app/About/About"
 import Team from "@/app/Team/Team"
 import Footer from "@/app/Footer/Footer"
 import PingPong from "@/app/components/PingPong"
-import Authenticate from "@/app/Authenticate/Authenticate"
+import Authenticate from "@/app/components/Authenticate"
 
 const Home = () => {
   return (
@@ -11,9 +11,9 @@ const Home = () => {
       <Header/>
       <About />
       <Team />
-      <PingPong >
+      {/* <PingPong >
         <Authenticate />
-      </PingPong>
+      </PingPong> */}
       <Footer />
     </main>
   )

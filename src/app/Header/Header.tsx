@@ -1,7 +1,8 @@
 "use client";
 import "./Header.css";
 import { useRef } from "react";
-import Image from 'next/image'
+import Image from 'next/image';
+import Link from "next/link";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleArrowDown, faBars, faXmark } from '@fortawesome/free-solid-svg-icons'
 
@@ -58,9 +59,10 @@ const Header = () => {
 								document.getElementById('team')?.scrollIntoView({block: "center"});
 							}}>Team</a>
 							<a href="#featues" className="link-style">Features</a>
-							<a className="btn-style" onClick={() => {
+							{/* <a className="btn-style" onClick={() => {
 								document.getElementById('authenticate')?.scrollIntoView({block: "center"});
-							}}>Sign In</a>
+							}}>Sign In</a> */}
+							<Link className="btn-style" href={'/Login'}>Sign In</Link>
 						</nav>
 					</div>
 					<div ref={xMarkIconRef} className="hidden text-2xl cursor-pointer mr-5 mt-3 w-fit hover:text-red-500 sm:hidden" onClick={(e) => handleClick(e)}>
@@ -69,7 +71,7 @@ const Header = () => {
 				</div>
 			</section>
 
-			<section className="flex flex-col items-center justify-between gap-10 mt-16 md:flex-row md:mt-24 xl:mt-44">
+			<section className="flex flex-col items-center justify-between gap-10 mt-16 md:flex-row md:mt-24 xl:mt-36">
 				<div className="flex flex-col items-center gap-7 sm:pt-12 sm:px-0 xl:gap-10">
 					<div className="text-center text-xl font-bold md:text-3xl md:w-80 lg:w-96 xl:text-4xl 2xl:text-5xl 2xl:w-[32rem]">
 						<h1>Brace yourself for the epic battle ahead</h1>

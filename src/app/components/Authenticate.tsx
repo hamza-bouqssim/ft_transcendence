@@ -1,13 +1,12 @@
 "use client";
 import React, { useRef } from "react";
 import Image from "next/image";
-import "./Authenticate.css";
-import SignInForm from "../components/SignInForm";
-import SignUpForm from "../components/SignUpForm";
+import SignInForm from "./SignInForm";
+import SignUpForm from "./SignUpForm";
 import {
 		GoogleSignInButton,
 		IntraSignInButton,
-		GithubSignInButton } from "../components/AuthButtons";
+		GithubSignInButton } from "./Buttons";
 
 const Authenticate = () => {
 
@@ -71,7 +70,7 @@ const Authenticate = () => {
 	};
 
 	return (
-		<div ref={containerRef} className="absolute bg-transparent custom-shape sm:left-[15%] md:bg-white md:py-8 md:px-8 transition-all ease-in-out duration-700">
+		<div ref={containerRef} className="absolute bg-red-900 custom-shape sm:left-[15%] md:bg-white md:py-8 md:px-8 transition-all ease-in-out duration-700">
 			<div ref={subContainerRef} className="bg-white custom-shape py-7 px-4 transition-all ease-in-out duration-700 flex flex-col items-center gap-4 sm:py-10 sm:px-9 sm:gap-5 md:bg-transparent md:py-4 md:px-6">
 					<div className="transition-all duration-300 w-44 h-8 bg-[var(--gray-color)] rounded-tr-[37px] rounded-br-[268px] rounded-bl-[37px] rounded-tl-[268px] flex items-center justify-center sm:w-64 sm:h-11 md:w-72 md:h-12">
 						<button ref={btnSignInRef} className="h-[80%] w-[48%] bg-white text-black rounded-r-[120px] rounded-bl-[37px] rounded-tl-[268px] text-[.7rem] transition ease-in-out duration-500 sm:text-sm" onClick={(e) => handleClick(e)} >

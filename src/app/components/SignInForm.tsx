@@ -1,9 +1,13 @@
-import { forwardRef } from "react";
+import { forwardRef, useRef, useState } from "react";
+import { SignButton } from "./Buttons";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faKey, faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import { faKey, faEnvelope, faEye, faEyeSlash, IconDefinition } from "@fortawesome/free-solid-svg-icons";
 
 const SignInForm = forwardRef( (props: any, ref: any) => {
+	const [show, setShow] = useState<boolean>(false);
+	const faEyeRef = useRef<SVGSVGElement>(null),
+			faEyeSlashRef = useRef<SVGSVGElement>(null);
 
 	type FormData = {
 		email: string;
@@ -37,6 +41,20 @@ const SignInForm = forwardRef( (props: any, ref: any) => {
 		}
 	};
 
+	const handleClick = (e: any): void => {
+		if (e.currentTarget === faEyeRef.current)
+		{
+			faEyeRef.current?.classList.replace('block', 'hidden');
+			faEyeSlashRef.current?.classList.replace('hidden', 'block');
+		}
+		else
+		{
+			faEyeSlashRef.current?.classList.replace('block', 'hidden');
+			faEyeRef.current?.classList.replace('hidden', 'block');
+		}
+		setShow(!show);
+	};
+
 // console.log(errors);
 	return (
 		<div ref={ref}>
@@ -45,22 +63,22 @@ const SignInForm = forwardRef( (props: any, ref: any) => {
 				className="relative h-full w-full flex items-center justify-center flex-col gap-3 sm:gap-4"
 				onSubmit={handleSubmit(onSubmit)} >
 				<div className="relative">
-					<FontAwesomeIcon icon={faEnvelope} className="absolute top-[50%] left-[10%] transform translate-y-[-50%] text-black text-[.7rem] md:text-sm" />
+					<FontAwesomeIcon icon={faEnvelope} className="icon-style left-[10%]" />
 					<input
 						type="email"
 						className="custom-shape input-style" placeholder="email"
 						{...register("email") } />
 				</div>
 				<div className="relative">
-					<FontAwesomeIcon icon={faKey} className="absolute top-[50%] left-[10%] transform translate-y-[-50%] text-black text-[.7rem] md:text-sm" />
+					<FontAwesomeIcon icon={faKey} className="icon-style left-[10%]" />
 					<input
-						type="password"
+						type={show ? "text" : "password" }
 						className="custom-shape input-style" placeholder="password"
 						{...register("password")}  />
+					<FontAwesomeIcon ref={faEyeRef} icon={faEye} name="fe-eye" className="icon-style block right-[10%] cursor-pointer" onClick={(e) => handleClick(e)} />
+					<FontAwesomeIcon ref={faEyeSlashRef} icon={faEyeSlash} name="fa-eye-slash" className="hidden icon-style right-[10%] cursor-pointer" onClick={(e) => handleClick(e)} />
 				</div>
-				<button type="submit" className="custom-shape btn-style text-[.7rem] bg-[var(--purple-color)] transition ease-in-out duration-700 sm:text-sm md:text-[1rem] md:py-4 md:w-[166px]" >
-					Sign In
-				</button>
+				<SignButton value={'Sign In'} />
 			</form>
 		</div>
 	);

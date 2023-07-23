@@ -1,4 +1,6 @@
 import { forwardRef } from "react";
+import EmailInput from "./EmailInput";
+import { SignButton } from "./Buttons";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faKey, faEnvelope } from "@fortawesome/free-solid-svg-icons";
@@ -58,17 +60,18 @@ const SignUpForm = forwardRef((props: any, ref: any) => {
 				<div className="relative">
 					<FontAwesomeIcon
 						icon={faEnvelope}
-						className="absolute top-[50%] left-[10%] transform translate-y-[-50%] text-black text-[.7rem] md:text-sm" />
+						className="icon-style left-[10%]" />
 					<input
 						type="email"
 						className="custom-shape input-style" placeholder="email"
 						{...register("email") } />
 				</div>
+				{/* <EmailInput {...register("email") } /> */}
 				<div className="relative w-56 flex justify-between sm:w-60 md:w-[17rem]" >
 					<div className="relative">
 						<FontAwesomeIcon
 							icon={faKey}
-							className="absolute top-[50%] left-[10%] transform translate-y-[-50%] text-black text-[.7rem] md:text-sm" />
+							className="icon-style left-[10%]" />
 						<input
 							type="password"
 							{...register("password")}
@@ -78,7 +81,7 @@ const SignUpForm = forwardRef((props: any, ref: any) => {
 					<div className="relative">
 						<FontAwesomeIcon
 							icon={faKey}
-							className="absolute top-[50%] left-[10%] transform translate-y-[-50%] text-black text-[.7rem] md:text-sm" />
+							className="icon-style left-[10%]" />
 						<input
 							type="password"
 							{...register("repassword")}
@@ -86,11 +89,7 @@ const SignUpForm = forwardRef((props: any, ref: any) => {
 							placeholder="confirm" />
 					</div>
 				</div>
-				<button
-					type="submit"
-					className="custom-shape btn-style text-[.7rem] bg-[var(--purple-color)] transition ease-in-out duration-700 sm:text-sm md:text-[1rem] md:py-4 md:w-[166px]" >
-					Sign Up
-				</button>
+				<SignButton value={'Sign Up'} />
 			</form>
 		</div>
 	);
