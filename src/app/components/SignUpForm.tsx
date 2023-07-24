@@ -1,11 +1,14 @@
-import { forwardRef } from "react";
+import { forwardRef, useRef, useState } from "react";
 import EmailInput from "./EmailInput";
 import { SignButton } from "./Buttons";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faKey, faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import { faKey, faEnvelope, faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 const SignUpForm = forwardRef((props: any, ref: any) => {
+	const [show, setShow] = useState<boolean>(false),
+			faEyeRef = useRef<SVGSVGElement>(null),
+			faEyeSlashRef = useRef<SVGSVGElement>(null);
 
 	type FormData = {
 		email: string;
@@ -51,6 +54,20 @@ const SignUpForm = forwardRef((props: any, ref: any) => {
 		}
 	}
 
+	const handleClick = (e: any): void => {
+		if (e.currentTarget === faEyeRef.current)
+		{
+			faEyeRef.current?.classList.replace('block', 'hidden');
+			faEyeSlashRef.current?.classList.replace('hidden', 'block');
+		}
+		else
+		{
+			faEyeSlashRef.current?.classList.replace('block', 'hidden');
+			faEyeRef.current?.classList.replace('hidden', 'block');
+		}
+		setShow(!show);
+	};
+
 	return (
 		<div ref={ref} className="hidden">
 			<form
@@ -63,7 +80,7 @@ const SignUpForm = forwardRef((props: any, ref: any) => {
 						className="icon-style left-[10%]" />
 					<input
 						type="email"
-						className="custom-shape input-style" placeholder="email"
+						className="custom-shape input-style" placeholder="Email"
 						{...register("email") } />
 				</div>
 				{/* <EmailInput {...register("email") } /> */}
@@ -73,20 +90,24 @@ const SignUpForm = forwardRef((props: any, ref: any) => {
 							icon={faKey}
 							className="icon-style left-[10%]" />
 						<input
-							type="password"
+							type={show ? "text" : "password" }
 							{...register("password")}
 							className="input-password-style rounded-bl-[37px] rounded-tl-[268px] rounded-r-[40px]"
-							placeholder="password" />
+							placeholder="Password" />
+						<FontAwesomeIcon ref={faEyeRef} icon={faEye} className="icon-style block right-[10%] cursor-pointer" onClick={(e) => handleClick(e)} />
+						<FontAwesomeIcon ref={faEyeSlashRef} icon={faEyeSlash} className="hidden icon-style right-[10%] cursor-pointer" onClick={(e) => handleClick(e)} />
 					</div>
 					<div className="relative">
 						<FontAwesomeIcon
 							icon={faKey}
 							className="icon-style left-[10%]" />
 						<input
-							type="password"
+							type={show ? "text" : "password" }
 							{...register("repassword")}
 							className="input-password-style rounded-br-[268px] rounded-tr-[37px] rounded-l-[40px]"
-							placeholder="confirm" />
+							placeholder="Confirm" />
+						<FontAwesomeIcon ref={faEyeRef} icon={faEye} className="icon-style block right-[10%] cursor-pointer" onClick={(e) => handleClick(e)} />
+						<FontAwesomeIcon ref={faEyeSlashRef} icon={faEyeSlash} className="hidden icon-style right-[10%] cursor-pointer" onClick={(e) => handleClick(e)} />
 					</div>
 				</div>
 				<SignButton value={'Sign Up'} />

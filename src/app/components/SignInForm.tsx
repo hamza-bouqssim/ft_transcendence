@@ -2,11 +2,11 @@ import { forwardRef, useRef, useState } from "react";
 import { SignButton } from "./Buttons";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faKey, faEnvelope, faEye, faEyeSlash, IconDefinition } from "@fortawesome/free-solid-svg-icons";
+import { faKey, faEnvelope, faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 const SignInForm = forwardRef( (props: any, ref: any) => {
-	const [show, setShow] = useState<boolean>(false);
-	const faEyeRef = useRef<SVGSVGElement>(null),
+	const [show, setShow] = useState<boolean>(false),
+			faEyeRef = useRef<SVGSVGElement>(null),
 			faEyeSlashRef = useRef<SVGSVGElement>(null);
 
 	type FormData = {
@@ -66,17 +66,19 @@ const SignInForm = forwardRef( (props: any, ref: any) => {
 					<FontAwesomeIcon icon={faEnvelope} className="icon-style left-[10%]" />
 					<input
 						type="email"
-						className="custom-shape input-style" placeholder="email"
-						{...register("email") } />
+						{...register("email") }
+						className="custom-shape input-style"
+						placeholder="Email" />
 				</div>
 				<div className="relative">
 					<FontAwesomeIcon icon={faKey} className="icon-style left-[10%]" />
 					<input
 						type={show ? "text" : "password" }
-						className="custom-shape input-style" placeholder="password"
-						{...register("password")}  />
-					<FontAwesomeIcon ref={faEyeRef} icon={faEye} name="fe-eye" className="icon-style block right-[10%] cursor-pointer" onClick={(e) => handleClick(e)} />
-					<FontAwesomeIcon ref={faEyeSlashRef} icon={faEyeSlash} name="fa-eye-slash" className="hidden icon-style right-[10%] cursor-pointer" onClick={(e) => handleClick(e)} />
+						{...register("password")}
+						className="custom-shape input-style"
+						placeholder="Password" />
+					<FontAwesomeIcon ref={faEyeRef} icon={faEye} className="icon-style block right-[10%] cursor-pointer" onClick={(e) => handleClick(e)} />
+					<FontAwesomeIcon ref={faEyeSlashRef} icon={faEyeSlash} className="hidden icon-style right-[10%] cursor-pointer" onClick={(e) => handleClick(e)} />
 				</div>
 				<SignButton value={'Sign In'} />
 			</form>

@@ -7,6 +7,16 @@
   src: url('./fonts/Whitney-Sans-Font/whitney.ttf');
 }
 
+@font-face {
+  font-family: 'Whitney BlackSC';
+  src: url('./fonts/Whitney-Sans-Font/whitney-blacksc.otf');
+}
+
+@font-face {
+  font-family: 'Whitney Semibold';
+  src: url('./fonts/Whitney-Sans-Font/whitney-semibold.otf');
+}
+
 .link-style {
   @apply px-28 py-3 hover:text-[var(--pink-color)] cursor-pointer hover:rotate-12 hover:scale-150 hover:transition ease-in-out duration-300 sm:px-2;
   
@@ -30,7 +40,7 @@
 }
 
 .input-style {
-  @apply w-56 h-9 selection:bg-[--purple-color] selection:text-white outline-[--purple-color] px-[48px] text-black text-sm border-2 border-solid border-[#8E8E8E] placeholder:text-[.7rem] sm:w-60 sm:h-10 sm:placeholder:text-sm md:w-[17rem] md:h-12 md:text-[1.1rem];
+  @apply w-56 h-9 font-['Whitney_Semibold'] selection:bg-[--purple-color] selection:text-white outline-[--purple-color] px-[48px] text-black text-sm border-2 border-solid border-[#8E8E8E] placeholder:text-[.7rem] sm:w-60 sm:h-10 sm:placeholder:text-sm md:w-[17rem] md:h-12 md:text-[1.1rem];
 }
 
 .input-password-style {

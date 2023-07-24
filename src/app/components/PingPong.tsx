@@ -71,7 +71,7 @@ const PingPong = (props : any) => {
 	}, [] );
 	
 	return (
-		<div ref={threeContainer} className="relative font-Whitney h-[100vh] flex justify-center items-center" >{props.children}</div>
+		<div ref={threeContainer} className="relative font-['Whitney_Semibold'] h-[100vh] flex justify-center items-center" >{props.children}</div>
 	)
 }
 

@@ -35,7 +35,9 @@ module.exports = {
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
       fontFamily: {
-        'Whitney': ['Whitney', 'sans-serif']
+        'Whitney': ['Whitney', 'sans-serif'],
+        'Whitney BlackSC': ['Whitney BlackSC', 'sans-serif'],
+        'Whitney Semibold': ['Whitney Semibold', 'sans-serif'],
       }
     },
   },
