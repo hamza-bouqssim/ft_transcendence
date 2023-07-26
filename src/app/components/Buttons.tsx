@@ -6,7 +6,7 @@ export const GoogleSignInButton = ()=> {
 	return (
 		<button onClick={() => signIn("google")}>
 			<Image
-				className="hover:transform hover:scale-150 hover:transition hover:ease-in-out hover:duration-300 w-5 sm:w-6 md:w-7"
+				className="hover:transform hover:scale-150 hover:transition hover:ease-in-out hover:duration-300 w-5 sm:w-6 md:w-7 2xl:w-[38px]"
 				src={require("../../../public/assets/google.svg")}
 				width={40}
 				height={40}
@@ -19,7 +19,7 @@ export const IntraSignInButton = () => {
 	return (
 		<button>
 			<Image
-				className="hover:transform hover:scale-150 hover:transition hover:ease-in-out hover:duration-300 w-5 sm:w-6 md:w-7"
+				className="hover:transform hover:scale-150 hover:transition hover:ease-in-out hover:duration-300 w-5 sm:w-6 md:w-7 2xl:w-[38px]"
 				src={require("../../../public/assets/42-auth.svg")}
 				width={40}
 				height={40}
@@ -32,7 +32,7 @@ export const GithubSignInButton = () => {
 	return (
 		<button onClick={() => signIn("github")}>
 			<Image
-				className="hover:transform hover:scale-150 hover:transition hover:ease-in-out hover:duration-300 w-5 sm:w-6 md:w-7"
+				className="hover:transform hover:scale-150 hover:transition hover:ease-in-out hover:duration-300 w-5 sm:w-6 md:w-7 2xl:w-[38px]"
 				src={require("../../../public/assets/github.svg")}
 				width={40}
 				height={40}

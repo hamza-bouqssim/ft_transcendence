@@ -77,18 +77,18 @@ const SignUpForm = forwardRef((props: any, ref: any) => {
 				<div className="relative">
 					<FontAwesomeIcon
 						icon={faEnvelope}
-						className="icon-style left-[10%]" />
+						className="icon-style left-[25px]" />
 					<input
 						type="email"
 						className="custom-shape input-style" placeholder="Email"
 						{...register("email") } />
 				</div>
 				{/* <EmailInput {...register("email") } /> */}
-				<div className="relative w-56 flex justify-between sm:w-60 md:w-[17rem]" >
-					<div className="relative">
+				<div className="relative w-56 flex justify-between sm:w-60 md:w-[17rem] 2xl:w-[403px]" >
+					<div className="relative 2xl:w-[48%]">
 						<FontAwesomeIcon
 							icon={faKey}
-							className="icon-style left-[10%]" />
+							className="icon-style left-[20px]" />
 						<input
 							type={show ? "text" : "password" }
 							{...register("password")}
@@ -97,10 +97,10 @@ const SignUpForm = forwardRef((props: any, ref: any) => {
 						<FontAwesomeIcon ref={faEyeRef} icon={faEye} className="icon-style block right-[10%] cursor-pointer" onClick={(e) => handleClick(e)} />
 						<FontAwesomeIcon ref={faEyeSlashRef} icon={faEyeSlash} className="hidden icon-style right-[10%] cursor-pointer" onClick={(e) => handleClick(e)} />
 					</div>
-					<div className="relative">
+					<div className="relative 2xl:w-[48%]">
 						<FontAwesomeIcon
 							icon={faKey}
-							className="icon-style left-[10%]" />
+							className="icon-style left-[20px]" />
 						<input
 							type={show ? "text" : "password" }
 							{...register("repassword")}

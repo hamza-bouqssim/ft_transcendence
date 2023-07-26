@@ -36,15 +36,15 @@
 }
 
 .custom-shape {
-  @apply rounded-tr-xl rounded-br-[100px] rounded-bl-xl rounded-tl-[100px];
+  @apply rounded-tr-xl rounded-br-[100px] rounded-bl-xl rounded-tl-[100px] 2xl:rounded-tl-[268px] 2xl:rounded-tr-[37px] 2xl:rounded-br-[268px] 2xl:rounded-bl-[37px];
 }
 
 .input-style {
-  @apply w-56 h-9 font-['Whitney_Semibold'] selection:bg-[--purple-color] selection:text-white outline-[--purple-color] px-[48px] text-black text-sm border-2 border-solid border-[#8E8E8E] placeholder:text-[.7rem] sm:w-60 sm:h-10 sm:placeholder:text-sm md:w-[17rem] md:h-12 md:text-[1.1rem];
+  @apply w-56 h-9 font-['Whitney_Semibold'] selection:bg-[--purple-color] selection:text-white outline-[--purple-color] px-[48px] text-black text-sm border-2 border-solid border-[#8E8E8E] placeholder:text-[.7rem] sm:w-60 sm:h-10 sm:placeholder:text-sm md:w-[17rem] md:h-12 md:text-[1.1rem] 2xl:w-[403px] 2xl:h-[59px] 2xl:px-[65px] 2xl:text-xl 2xl:placeholder:text-lg;
 }
 
 .input-password-style {
-  @apply w-[6.8rem] h-9 selection:bg-[--purple-color] selection:text-white px-[35px] outline-[--purple-color] text-black text-sm border-2 border-solid border-[#8E8E8E] placeholder:text-[.7rem] sm:placeholder:text-sm sm:w-[7.4rem] sm:h-10 md:w-[8.4rem] md:h-12 md:text-[1.1rem];
+  @apply w-[6.8rem] h-9 selection:bg-[--purple-color] selection:text-white px-[35px] outline-[--purple-color] text-black text-sm border-2 border-solid border-[#8E8E8E] placeholder:text-[.7rem] sm:placeholder:text-sm sm:w-[7.4rem] sm:h-10 md:w-[8.4rem] md:h-12 md:text-[1.1rem] 2xl:h-[59px] 2xl:text-xl 2xl:placeholder:text-[15px] 2xl:w-full;
 }
 
 .icon-style {
