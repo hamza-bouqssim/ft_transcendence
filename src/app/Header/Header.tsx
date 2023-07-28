@@ -59,10 +59,7 @@ const Header = () => {
 								document.getElementById('team')?.scrollIntoView({block: "center"});
 							}}>Team</a>
 							<a href="#featues" className="link-style">Features</a>
-							{/* <a className="btn-style" onClick={() => {
-								document.getElementById('authenticate')?.scrollIntoView({block: "center"});
-							}}>Sign In</a> */}
-							<Link className="btn-style" href={'/Login'}>Sign In</Link>
+							<Link className="btn-style" href={'/login'}>Sign In</Link>
 						</nav>
 					</div>
 					<div ref={xMarkIconRef} className="hidden text-2xl cursor-pointer mr-5 mt-3 w-fit hover:text-red-500 sm:hidden" onClick={(e) => handleClick(e)}>

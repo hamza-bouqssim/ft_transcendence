@@ -1,7 +1,7 @@
-import Header from "@/app/Header/Header"
-import About from "@/app/About/About"
-import Team from "@/app/Team/Team"
-import Footer from "@/app/Footer/Footer"
+import Header from "@/app/header/Header"
+import About from "@/app/about/About"
+import Team from "@/app/team/Team"
+import Footer from "@/app/footer/Footer"
 
 const Home = () => {
   return (
