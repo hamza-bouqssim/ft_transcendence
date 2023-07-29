@@ -50,3 +50,9 @@ export const SignButton = (props: any) => {
 		</button>
 	);
 }
+
+export const MenuButton = (props: any) => {
+	return (
+		<button className={`w-[225px] h-[35px] ${props.background} ${(props.value === "Logout") ? "text-white" : 'text-black'} rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`}>{props.value}</button>
+	);
+};

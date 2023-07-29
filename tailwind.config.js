@@ -38,6 +38,7 @@ module.exports = {
         'Whitney': ['Whitney', 'sans-serif'],
         'Whitney BlackSC': ['Whitney BlackSC', 'sans-serif'],
         'Whitney Semibold': ['Whitney Semibold', 'sans-serif'],
+        'Whitney Bold': ['Whitney Bold', 'sans-serif'],
       }
     },
   },
