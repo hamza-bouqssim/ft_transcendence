@@ -9,31 +9,74 @@ import PlayerCard from "../components/PlayerCard";
 
 const DashBoard = () => {
 
-	const [change, setChange] = useState<boolean>(true);
+	const [change, setChange] = useState<boolean>(true),
+		[hidden, setHidden] = useState<boolean>(true);
+	// let [lastTarget, setLastTarget] = useState<HTMLDivElement | null>(null);
 	const parentRef = useRef<HTMLUListElement>(null),
-	sideBarRef = useRef<HTMLDivElement>(null);
+		sideBarRef = useRef<HTMLDivElement>(null),
+		asideRef = useRef<HTMLElement>(null);
+	
 	let getLastTarget : HTMLLIElement | null;
 
+	// useEffect(() => {
+	// 	lastTarget = sideBarRef.current!.parentNode as HTMLDivElement;
+	// }, [sideBarRef.current]);
 	useEffect(() => {
 		getLastTarget = sideBarRef.current!.parentNode as HTMLLIElement;
-	}, []);
+	}, [sideBarRef.current]);
+
+	useEffect(() =>
+	{
+		window.addEventListener("resize", () => {
+			document.querySelector("section")!.style.height =
+			window.innerHeight < 830 ? "830px" : "100vh"
+		})
+	}, [])
 
 	const handleClick = (e : React.MouseEvent<HTMLLIElement, MouseEvent>) : void => {
 
 		const firstLiTopValue = 187;
 
-		sideBarRef.current!.style.top = `${e.currentTarget.getBoundingClientRect().top - firstLiTopValue}px`;
-		
+		// sideBarRef.current!.style.top = `${(e.currentTarget.getBoundingClientRect().top + (lastTarget!.getBoundingClientRect().height / 2)) - firstLiTopValue}px`;
+		// console.log(lastTarget!.getBoundingClientRect().height);
+		sideBarRef.current!.style.top = `${(e.currentTarget.getBoundingClientRect().top + 49) - firstLiTopValue}px`;
 		if (getLastTarget)
 			getLastTarget.style.color = "rgba(255,255,255,0.5)";
-		e.currentTarget.style.color = "";
+		e.currentTarget.style.color = "white";
 		getLastTarget = e.currentTarget;
+		// setLastTarget(e.currentTarget);
 	};
 
 	return (
-		<section className="bg-[url('/assets/dashboard.svg')] bg-cover bg-[#1E1B36] flex items-center text-white">
-			<aside className="py-10 w-[123px] h-[100vh] bg-gradient-to-b from-[#5b8cd454] via-[#5b8bd454] to-[#35375f] rounded-r-[40px] flex flex-col items-center gap-24 shadow-[1px_1px_6px_1px_rgba(0,0,0,0.40)]">
-				<div>
+		// <section className={`bg-[url('/assets/dashboard.svg')] ${ window.innerHeight < 830 ? 'h-[830px]' : 'h-[100vh]' } bg-cover bg-[#1E1B36] flex items-center text-white`}>
+		<section className={`bg-[url('/assets/dashboard.svg')] h-[830px] bg-cover bg-[#1E1B36] flex items-center text-white`}>
+			{/* <aside className="py-10 w-[123px] h-[100vh] bg-gradient-to-b from-[#5b8cd454] via-[#5b8bd454] to-[#35375f] rounded-r-[40px] flex flex-col items-center gap-24 shadow-[1px_1px_6px_1px_rgba(0,0,0,0.40)]"> */}
+			<aside ref={asideRef} className="relative py-10 h-full w-[123px] ml-[-115px] bg-gradient-to-b from-[#5b8cd454] via-[#5b8bd454] to-[#35375f] rounded-r-[40px] flex flex-col items-center gap-24 shadow-[1px_1px_6px_1px_rgba(0,0,0,0.40)] ease-in-out duration-300 pointer-events-none">
+				<FontAwesomeIcon icon={faChevronDown} className="absolute w-[25px] h-[25px] p-2 transform rotate-[-90deg] top-9 right-[-22px] bg-[--pink-color] rounded-[50%] ease-in-out duration-300 cursor-pointer xl:hidden pointer-events-auto" onClick={(e) => {
+					if (hidden)
+					{
+						console.log((window.innerHeight < 830) ? 'h-[830px]' : 'h-[100vh]');
+						asideRef.current!.style.cssText = "margin: 0; pointer-events: auto";
+						e.currentTarget.style.cssText = "transform: rotate(90deg); right: -15px; background: #32416A";
+						// asideRef.current!.style.marginLeft = "0";
+						// asideRef.current!.style.pointerEvents = "auto";
+						// e.currentTarget.style.transform = "rotate(90deg)";
+						// e.currentTarget.style.right = "-15px";
+						// e.currentTarget.style.backgroundColor = "#32416A";
+						
+					}
+					// right-[-15px]
+					else
+					{
+						asideRef.current!.style.pointerEvents = "none";
+						asideRef.current!.style.marginLeft = "-115px";
+						e.currentTarget.style.transform = "rotate(-90deg)";
+						e.currentTarget.style.right = "-22px";
+						e.currentTarget.style.backgroundColor = "var(--pink-color)";
+					}
+					setHidden(!hidden);
+				}} />
+				{/* <div>
 					<Image className="mix-blend-lighten"
 						key={0}
 						src={'/assets/42-dash.svg'}
@@ -41,10 +84,19 @@ const DashBoard = () => {
 						height={51}
 						alt="42logo"
 					/>
+				</div> */}
+				<div className="w-[50px] h-[50px]">
+					<Image className="mix-blend-lighten"
+						key={0}
+						src={'/assets/42-dash.svg'}
+						width={50}
+						height={50}
+						alt="42logo"
+					/>
 				</div>
 				<ul className="relative w-full h-full" ref={parentRef}>
 					<li className="relative group li-style text-white" onClick={(e) => handleClick(e)} >
-						<div ref={sideBarRef} className="absolute top-0 right-0 h-full border-[3px] border-solid border-white rounded-xl ease-linear duration-150"></div>
+						<div ref={sideBarRef} className="absolute top-[50%] translate-y-[-50%] right-0 h-[50px] border-[3px] border-solid border-white rounded-xl ease-linear duration-150"></div>
 						<FontAwesomeIcon icon={faHouse} className="icon-aside-bar"/>
 					</li>
 					<li className="group li-style text-[rgba(255,255,255,.5)]" onClick={(e) => handleClick(e)}>
@@ -65,7 +117,7 @@ const DashBoard = () => {
 				</ul>
 			</aside>
 
-			<div className="w-full h-[100vh] p-10">
+			{/* <div className="w-full h-[100vh] p-10">
 				<div className="flex items-center justify-end gap-10">
 					<div className="relative group w-[64px] h-[64px] bg-[rgba(255,255,255,0.22)] rounded-[50%] cursor-pointer">
 						<FontAwesomeIcon icon={faBell} className="text-3xl absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] group-hover:text-[--pink-color]" />
@@ -133,7 +185,7 @@ const DashBoard = () => {
 
 					</div>
 				</div>
-			</div>
+			</div> */}
 		</section>
 	);
 }
