@@ -69,7 +69,7 @@
 }
 
 .icon-aside-bar {
-  @apply w-[30px] h-[30px] inline-block group-hover:text-[rgba(255,255,255,0.5)] transition ease-in-out duration-500;
+  @apply w-[30px] h-[30px] inline-block group-hover:text-white transition ease-in-out duration-500;
 }
 
 .custom-hidden {

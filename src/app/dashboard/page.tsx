@@ -25,8 +25,8 @@ const DashBoard = () => {
 		sideBarRef.current!.style.top = `${e.currentTarget.getBoundingClientRect().top - firstLiTopValue}px`;
 		
 		if (getLastTarget)
-			getLastTarget.style.color = "white";
-		e.currentTarget.style.color = "rgba(255,255,255,0.5)";
+			getLastTarget.style.color = "rgba(255,255,255,0.5)";
+		e.currentTarget.style.color = "";
 		getLastTarget = e.currentTarget;
 	};
 
@@ -43,17 +43,17 @@ const DashBoard = () => {
 					/>
 				</div>
 				<ul className="relative w-full h-full" ref={parentRef}>
-					<li className="relative group li-style text-[rgba(255,255,255,0.5)]" onClick={(e) => handleClick(e)} >
+					<li className="relative group li-style text-white" onClick={(e) => handleClick(e)} >
 						<div ref={sideBarRef} className="absolute top-0 right-0 h-full border-[3px] border-solid border-white rounded-xl ease-linear duration-150"></div>
 						<FontAwesomeIcon icon={faHouse} className="icon-aside-bar"/>
 					</li>
-					<li className="group li-style" onClick={(e) => handleClick(e)}>
+					<li className="group li-style text-[rgba(255,255,255,.5)]" onClick={(e) => handleClick(e)}>
 						<FontAwesomeIcon icon={faComment} className="icon-aside-bar" />
 					</li>
-					<li className="group li-style" onClick={(e) => handleClick(e)}>
+					<li className="group li-style text-[rgba(255,255,255,.5)]" onClick={(e) => handleClick(e)}>
 						<FontAwesomeIcon icon={faGamepad} className="icon-aside-bar" />
 					</li>
-					<li className="group li-style" onClick={(e) => handleClick(e)}>
+					<li className="group li-style text-[rgba(255,255,255,.5)]" onClick={(e) => handleClick(e)}>
 						<FontAwesomeIcon icon={faGear} className="icon-aside-bar" />
 					</li>
 					{/* <li className="py-8 bg-green-400">
@@ -108,7 +108,7 @@ const DashBoard = () => {
 							<PlayerCard img="/assets/unknown.png" name="" username="" />
 						</div>
 
-						<div className="border-t-2 border-solid border-white w-[360px] h-[200px] flex flex-col items-center justify-evenly">
+						<div className="border-t-2 border-solid border-white w-[360px] h-[250px] flex flex-col items-center gap-12 justify-end">
 							<h2 className="text-[20px] w-[400px] font-['Whitney_SemiBold'] text-center">Select Bot Opponent or Await Player Joining</h2>
 							<button className="w-[248px] h-[59px] bg-white rounded-[40px] text-black text-[20px] font-['Whitney_SemiBold'] ease-in-out duration-[30ms] hover:bg-[--pink-color]">
 								<FontAwesomeIcon icon={faRobot} />
