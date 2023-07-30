@@ -1,29 +1,33 @@
 "use client";
 import Image from "next/image";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faHouse, faComment, faGamepad, faGear, faRightFromBracket, faChevronDown, faBell } from '@fortawesome/free-solid-svg-icons'
-import { useRef, useState } from "react";
+import { faHouse, faComment, faGamepad, faGear, faRightFromBracket, faChevronDown, faBell, faRobot } from '@fortawesome/free-solid-svg-icons'
+import { useEffect, useRef, useState } from "react";
 import { MenuButton } from "../components/Buttons";
 import InviteField from "../components/InviteField";
+import PlayerCard from "../components/PlayerCard";
 
 const DashBoard = () => {
 
 	const [change, setChange] = useState<boolean>(true);
+	const parentRef = useRef<HTMLUListElement>(null),
+	sideBarRef = useRef<HTMLDivElement>(null);
+	let getLastTarget : HTMLLIElement | null;
 
-	const parentRef = useRef<HTMLUListElement>(null);
+	useEffect(() => {
+		getLastTarget = sideBarRef.current!.parentNode as HTMLLIElement;
+	}, []);
 
 	const handleClick = (e : React.MouseEvent<HTMLLIElement, MouseEvent>) : void => {
 
-		const collection = parentRef.current!.children;
+		const firstLiTopValue = 187;
 
-		for (let i = 0; i < 5; i++)
-		{
-			collection[i].classList.remove("bg-[--dark-purple-color]");
-			collection[i].children[0].classList.remove("translate-x-[25px]", "scale-150", "text-[--pink-color]");
-		}
-
-		e.currentTarget.classList.add("bg-[--dark-purple-color]");
-		e.currentTarget.children[0].classList.add("translate-x-[25px]", "scale-150", "text-[--pink-color]");
+		sideBarRef.current!.style.top = `${e.currentTarget.getBoundingClientRect().top - firstLiTopValue}px`;
+		
+		if (getLastTarget)
+			getLastTarget.style.color = "white";
+		e.currentTarget.style.color = "rgba(255,255,255,0.5)";
+		getLastTarget = e.currentTarget;
 	};
 
 	return (
@@ -39,8 +43,9 @@ const DashBoard = () => {
 					/>
 				</div>
 				<ul className="relative w-full h-full" ref={parentRef}>
-					<li className="group li-style bg-[--dark-purple-color]" onClick={(e) => handleClick(e)} >
-						<FontAwesomeIcon icon={faHouse} className="icon-aside-bar translate-x-[25px] scale-150 text-[--pink-color]"/>
+					<li className="relative group li-style text-[rgba(255,255,255,0.5)]" onClick={(e) => handleClick(e)} >
+						<div ref={sideBarRef} className="absolute top-0 right-0 h-full border-[3px] border-solid border-white rounded-xl ease-linear duration-150"></div>
+						<FontAwesomeIcon icon={faHouse} className="icon-aside-bar"/>
 					</li>
 					<li className="group li-style" onClick={(e) => handleClick(e)}>
 						<FontAwesomeIcon icon={faComment} className="icon-aside-bar" />
@@ -60,7 +65,7 @@ const DashBoard = () => {
 				</ul>
 			</aside>
 
-			<section className="w-full h-[100vh] p-10">
+			<div className="w-full h-[100vh] p-10">
 				<div className="flex items-center justify-end gap-10">
 					<div className="relative group w-[64px] h-[64px] bg-[rgba(255,255,255,0.22)] rounded-[50%] cursor-pointer">
 						<FontAwesomeIcon icon={faBell} className="text-3xl absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] group-hover:text-[--pink-color]" />
@@ -97,12 +102,29 @@ const DashBoard = () => {
 
 				<div className="w-full h-[92%] mt-8 flex justify-between">
 
-					<div className="w-[80%] h-full"></div>
+					<div className="w-[80%] h-full flex flex-col items-center justify-evenly flex-wrap">
+						<div className="flex items-center gap-72">
+							<PlayerCard img="/assets/hamza.png" name="Hamza BouQssim" username="@hbouqssi" />
+							<PlayerCard img="/assets/unknown.png" name="" username="" />
+						</div>
 
-					<div className="w-[420px] h-full bg-white rounded-[40px] py-12 px-4 flex flex-col items-center gap-10">
-						<button className="w-[80%] h-[54px] bg-[#5B8CD4] rounded-[40px] text-[25px] font-['Whitney_BlackSC']">invite a friend</button>
+						<div className="border-t-2 border-solid border-white w-[360px] h-[200px] flex flex-col items-center justify-evenly">
+							<h2 className="text-[20px] w-[400px] font-['Whitney_SemiBold'] text-center">Select Bot Opponent or Await Player Joining</h2>
+							<button className="w-[248px] h-[59px] bg-white rounded-[40px] text-black text-[20px] font-['Whitney_SemiBold'] ease-in-out duration-[30ms] hover:bg-[--pink-color]">
+								<FontAwesomeIcon icon={faRobot} />
+								<span className="ml-2">Play With Bot</span>
+							</button>
+						</div>
+					</div>
 
-						<div className="w-full h-full flex flex-col gap-4 overflow-y-auto pr-3">
+					<div className="w-[435px] h-full bg-white rounded-[40px] py-12 px-4 flex flex-col items-center gap-10">
+						<div className="w-[80%] h-[54px] bg-[#5B8CD4] rounded-[40px] text-[25px] font-['Whitney_BlackSC'] text-center pt-1">invite a friend</div>
+
+						<div className="w-full h-full flex flex-col gap-4 overflow-y-auto">
+							<InviteField />
+							<InviteField />
+							<InviteField />
+							<InviteField />
 							<InviteField />
 							<InviteField />
 							<InviteField />
@@ -111,7 +133,7 @@ const DashBoard = () => {
 
 					</div>
 				</div>
-			</section>
+			</div>
 		</section>
 	);
 }

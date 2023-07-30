@@ -69,7 +69,7 @@
 }
 
 .icon-aside-bar {
-  @apply w-[30px] h-[30px] inline-block group-hover:text-[var(--pink-color)] group-hover:scale-150 transition ease-in-out duration-500;
+  @apply w-[30px] h-[30px] inline-block group-hover:text-[rgba(255,255,255,0.5)] transition ease-in-out duration-500;
 }
 
 .custom-hidden {
@@ -96,10 +96,14 @@ body {
   background-size: cover;
   overflow-x: hidden;
 }
-
 * {
   box-sizing: border-box;
   scroll-behavior: smooth;
+}
+
+*::selection {
+  background: var(--purple-color);
+  color: white;
 }
 
 /* main { */
