@@ -72,10 +72,6 @@
   @apply w-[30px] h-[30px] inline-block group-hover:text-white transition ease-in-out duration-500;
 }
 
-.custom-hidden {
-  @apply hidden;
-}
-
 :root {
   /* --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -92,6 +88,7 @@ body {
   padding: 0;
   background-color: var(--dark-purple-color);
   background-image: url('/assets/background.svg');
+  background-attachment: fixed;
   background-repeat: no-repeat;
   background-size: cover;
   overflow-x: hidden;
