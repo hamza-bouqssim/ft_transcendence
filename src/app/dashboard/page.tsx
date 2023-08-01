@@ -9,29 +9,33 @@ import PlayerCard from "../components/PlayerCard";
 
 const DashBoard = () => {
 
-	const [change, setChange] = useState<boolean>(true),
-		[hidden, setHidden] = useState<boolean>(true);
+	const [change, setChange] = useState<{
+			sideBar: boolean,
+			chatBox: boolean
+		}>({
+			sideBar: false,
+			chatBox: false
+		});
 	// let [lastTarget, setLastTarget] = useState<HTMLDivElement | null>(null);
 	const parentRef = useRef<HTMLUListElement>(null),
-		sideBarRef = useRef<HTMLDivElement>(null),
-		asideRef = useRef<HTMLElement>(null);
+		barRef = useRef<HTMLDivElement>(null);
 	
 	let getLastTarget : HTMLLIElement | null;
 
 	// useEffect(() => {
-	// 	lastTarget = sideBarRef.current!.parentNode as HTMLDivElement;
-	// }, [sideBarRef.current]);
+	// 	lastTarget = barRef.current!.parentNode as HTMLDivElement;
+	// }, [barRef.current]);
 	useEffect(() => {
-		getLastTarget = sideBarRef.current!.parentNode as HTMLLIElement;
-	}, [sideBarRef.current]);
+		getLastTarget = barRef.current!.parentNode as HTMLLIElement;
+	}, [barRef.current]);
 
 	const handleClick = (e : React.MouseEvent<HTMLLIElement, MouseEvent>) : void => {
 
 		const firstLiTopValue = 187;
 
-		// sideBarRef.current!.style.top = `${(e.currentTarget.getBoundingClientRect().top + (lastTarget!.getBoundingClientRect().height / 2)) - firstLiTopValue}px`;
+		// barRef.current!.style.top = `${(e.currentTarget.getBoundingClientRect().top + (lastTarget!.getBoundingClientRect().height / 2)) - firstLiTopValue}px`;
 		// console.log(lastTarget!.getBoundingClientRect().height);
-		sideBarRef.current!.style.top = `${(e.currentTarget.getBoundingClientRect().top + 49) - firstLiTopValue}px`;
+		barRef.current!.style.top = `${(e.currentTarget.getBoundingClientRect().top + 49) - firstLiTopValue}px`;
 		if (getLastTarget)
 			getLastTarget.style.color = "rgba(255,255,255,0.5)";
 		e.currentTarget.style.color = "white";
@@ -44,23 +48,8 @@ const DashBoard = () => {
 		// <aside className="py-10 w-[123px] h-[100vh] bg-gradient-to-b from-[#5b8cd454] via-[#5b8bd454] to-[#35375f] rounded-r-[40px] flex flex-col items-center gap-24 shadow-[1px_1px_6px_1px_rgba(0,0,0,0.40)]"> */}
 		<section className="fixed bg-[url('/assets/dashboard.svg')] bg-cover bg-fixed h-[100vh] w-full bg-[#1E1B36] text-white overflow-y-auto">
 			<div className="relative min-h-[830px] h-full py-8">
-				<aside ref={asideRef} className="absolute z-10 mt-[-32px] py-10 h-full w-[123px] ml-[-115px] bg-gradient-to-b from-[#5b8cd454] via-[#5b8bd454] to-[#35375f] rounded-r-[40px] flex flex-col items-center gap-24 shadow-[1px_1px_6px_1px_rgba(0,0,0,0.40)] ease-in-out duration-300 pointer-events-none">
-					<FontAwesomeIcon icon={faChevronDown} className="absolute w-[25px] h-[25px] p-2 transform rotate-[-90deg] top-9 right-[-22px] bg-[--pink-color] rounded-[50%] ease-in-out duration-300 cursor-pointer xl:hidden pointer-events-auto" onClick={(e) => {
-						if (hidden)
-						{
-							asideRef.current!.style.cssText = "margin-left: 0; pointer-events: auto";
-							e.currentTarget.style.cssText = "transform: rotate(90deg); right: -15px; background: #32416A";
-						}
-						else
-						{
-							asideRef.current!.style.pointerEvents = "none";
-							asideRef.current!.style.marginLeft = "-115px";
-							e.currentTarget.style.transform = "rotate(-90deg)";
-							e.currentTarget.style.right = "-22px";
-							e.currentTarget.style.backgroundColor = "var(--pink-color)";
-						}
-						setHidden(!hidden);
-					}} />
+				<aside className={`absolute z-10 mt-[-32px] py-10 h-full ${change.sideBar ? 'ml-0 pointer-events-auto' : 'ml-[-115px] pointer-events-none'} w-[100px] bg-gradient-to-b from-[#2E2F54] via-[#3B5282] to-[#2E2F54] rounded-r-[40px] flex flex-col items-center gap-24 shadow-[1px_1px_6px_1px_rgba(0,0,0,0.40)] ease-in-out duration-300 z-30`}>
+					<FontAwesomeIcon icon={faChevronDown} className={`absolute w-[25px] h-[25px] p-2 transform top-9 rounded-[50%] ease-in-out duration-300 cursor-pointer pointer-events-auto ${change.sideBar ? 'rotate-[90deg] right-[-21px] bg-[#32416A]' : 'rotate-[-90deg] right-[-43px] bg-[--pink-color]' } xl:hidden`} onClick={() => setChange({ ...change, sideBar: !change.sideBar}) } />
 					{/* <div>
 						<Image className="mix-blend-lighten"
 							key={0}
@@ -81,7 +70,7 @@ const DashBoard = () => {
 					</div>
 					<ul className="relative w-full h-full" ref={parentRef}>
 						<li className="relative group li-style text-white" onClick={(e) => handleClick(e)} >
-							<div ref={sideBarRef} className="absolute top-[50%] translate-y-[-50%] right-0 h-[50px] border-[3px] border-solid border-white rounded-xl ease-linear duration-150"></div>
+							<div ref={barRef} className="absolute top-[50%] translate-y-[-50%] right-0 h-[50px] border-[3px] border-solid border-white rounded-xl ease-linear duration-150"></div>
 							<FontAwesomeIcon icon={faHouse} className="icon-aside-bar"/>
 						</li>
 						<li className="group li-style text-[rgba(255,255,255,.5)]" onClick={(e) => handleClick(e)}>
@@ -99,7 +88,7 @@ const DashBoard = () => {
 					</ul>
 				</aside>
 
-				<div className="fixed flex items-center flex-wrap w-full justify-end gap-4">
+				<div className="fixed flex items-center flex-wrap w-full justify-end gap-4 z-10">
 					<div className="relative w-[45px] h-[45px] bg-[rgba(255,255,255,0.22)] rounded-[50%] cursor-pointer shrink-0 hover:bg-[--pink-color]">
 						<FontAwesomeIcon icon={faBell} className="w-[20px] h-[20px] absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]" />
 					</div>
@@ -127,7 +116,35 @@ const DashBoard = () => {
 					</div> */}
 				</div>
 
-				<FontAwesomeIcon icon={faUserGroup} className="fixed bottom-4 right-4 w-[20px] h-[20px] bg-[#ffffff38] p-3 rounded-[50%] cursor-pointer hover:bg-[--pink-color]" />
+				<div className="relative w-[85%] h-[85%] m-auto mt-[70px]">
+					<div className="relative w-full h-[70%] px-2">
+						<PlayerCard img="/assets/hamza.png" name="Hamza BouQssim" username="@hbouqssi" direction="top-2" />
+						<PlayerCard img="/assets/unknown.png" name="" username="" direction="right-2 bottom-2" />
+					</div>
+
+					<div className="absolute left-[50%] translate-x-[-50%] bottom-4 border-t-2 border-solid border-white w-[200px] h-[25%] flex flex-col items-center gap-4 justify-end py-2">
+						<h2 className="text-[20px] min-w-[290px] font-['Whitney_SemiBold'] text-center">Select Bot Opponent or Await Player Joining</h2>
+						<button className="w-[215px] h-[50px] bg-white rounded-[40px] text-black text-lg font-bold font-['Whitney_SemiBold'] ease-in-out duration-[30ms] hover:bg-[--pink-color]">
+							<FontAwesomeIcon icon={faRobot} />
+							<span className="ml-2">Play With Bot</span>
+						</button>
+					</div>
+				</div>
+
+				<FontAwesomeIcon icon={faUserGroup} className={`fixed bottom-4 right-4 w-[20px] h-[20px] bg-[#ffffff38] p-3 rounded-[50%] cursor-pointer hover:bg-[--pink-color]`} onClick={() => setChange({...change, chatBox: !change.chatBox})} />
+				<div className={`fixed w-[85%] h-[350px] bg-white rounded-[20px] py-6 px-4 ${change.chatBox ?  'flex' : 'hidden'} flex-col items-center gap-5 left-[50%] translate-x-[-50%] bottom-[80px]`}>
+					<div className="w-[80%] h-[54px] bg-[#5B8CD4] rounded-[40px] text-[25px] font-['Whitney_BlackSC'] text-center">invite a friend</div>
+					<div className="w-full h-full flex flex-col gap-4 overflow-y-auto ">
+						<InviteField />
+						<InviteField />
+						<InviteField />
+						<InviteField />
+						<InviteField />
+						<InviteField />
+						<InviteField />
+						<InviteField />
+					</div>
+				</div>
 			</div>
 
 

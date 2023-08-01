@@ -2,19 +2,19 @@ import Image from "next/image";
 
 const PlayerCard = (props: any) => {
 	return (
-		<div className="w-[365px] h-[464px] bg-white rounded-[40px] overflow-hidden pointer-events-none">
-			<div className="bg-blue-100 rounded-[40px] overflow-hidden">
-				<Image className="w-full"
+		<div className={`absolute w-[180px] h-[180px] p-4 rounded-[40px] overflow-hidden pointer-events-none ${props.direction}`}>
+			<div className="bg-blue-100 rounded-[50%] overflow-hidden w-[120px] h-[120px] m-auto">
+				<Image className="w-full h-full"
 					key={0}
 					src={props.img}
-					width={72}
-					height={51}
-					alt="img"
+					width={200}
+					height={200}
+					alt="user-img"
 				/>
 			</div>
-			<div className="h-full text-center p-2 text-black font-['Whitney_Bold']"> 
-				<h3 className="text-[30px]">{props.name}</h3>
-				<span className="text-[20px]">{props.username}</span>
+			<div className="h-full text-center p-2 text-white font-['Whitney_Bold'] leading-[2px]"> 
+				<h3 className="text-sm">{props.name}</h3>
+				<span className="text-xs">{props.username}</span>
 			</div>
 		</div>
 	);
