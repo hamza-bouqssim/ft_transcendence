@@ -65,7 +65,7 @@
 }
 
 .li-style {
-  @apply py-8 text-center cursor-pointer;
+  @apply py-8 text-center cursor-pointer font-bold;
 }
 
 .icon-aside-bar {
@@ -88,7 +88,7 @@ body {
   padding: 0;
   background-color: var(--dark-purple-color);
   background-image: url('/assets/background.svg');
-  background-attachment: fixed;
+  /* background-attachment: fixed; */
   background-repeat: no-repeat;
   background-size: cover;
   overflow-x: hidden;

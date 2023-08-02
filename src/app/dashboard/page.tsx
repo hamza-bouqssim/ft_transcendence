@@ -11,10 +11,12 @@ const DashBoard = () => {
 
 	const [change, setChange] = useState<{
 			sideBar: boolean,
-			chatBox: boolean
+			chatBox: boolean,
+			menu: boolean
 		}>({
 			sideBar: false,
-			chatBox: false
+			chatBox: false,
+			menu: false
 		});
 	// let [lastTarget, setLastTarget] = useState<HTMLDivElement | null>(null);
 	const parentRef = useRef<HTMLUListElement>(null),
@@ -48,8 +50,8 @@ const DashBoard = () => {
 		// <aside className="py-10 w-[123px] h-[100vh] bg-gradient-to-b from-[#5b8cd454] via-[#5b8bd454] to-[#35375f] rounded-r-[40px] flex flex-col items-center gap-24 shadow-[1px_1px_6px_1px_rgba(0,0,0,0.40)]"> */}
 		<section className="fixed bg-[url('/assets/dashboard.svg')] bg-cover bg-fixed h-[100vh] w-full bg-[#1E1B36] text-white overflow-y-auto">
 			<div className="relative min-h-[830px] h-full py-8">
-				<aside className={`absolute z-10 mt-[-32px] py-10 h-full ${change.sideBar ? 'ml-0 pointer-events-auto' : 'ml-[-115px] pointer-events-none'} w-[100px] bg-gradient-to-b from-[#2E2F54] via-[#3B5282] to-[#2E2F54] rounded-r-[40px] flex flex-col items-center gap-24 shadow-[1px_1px_6px_1px_rgba(0,0,0,0.40)] ease-in-out duration-300 z-30`}>
-					<FontAwesomeIcon icon={faChevronDown} className={`absolute w-[25px] h-[25px] p-2 transform top-9 rounded-[50%] ease-in-out duration-300 cursor-pointer pointer-events-auto ${change.sideBar ? 'rotate-[90deg] right-[-21px] bg-[#32416A]' : 'rotate-[-90deg] right-[-43px] bg-[--pink-color]' } xl:hidden`} onClick={() => setChange({ ...change, sideBar: !change.sideBar}) } />
+				<aside className={`absolute z-10 mt-[-32px] py-10 h-full ${change.sideBar ? 'ml-0 pointer-events-auto' : 'ml-[-85%]'} w-[85%] bg-gradient-to-b from-[#2E2F54] via-[#3B5282] to-[#2E2F54] rounded-r-[40px] flex flex-col items-center gap-24 shadow-[1px_1px_6px_1px_rgba(0,0,0,0.40)] ease-in-out duration-300 z-30`}>
+					<FontAwesomeIcon icon={faChevronDown} className={`fixed z-20 w-[25px] h-[25px] p-2 transform top-9 rounded-[50%] bg-[--pink-color] ease-in-out duration-300 cursor-pointer pointer-events-auto ${change.sideBar ? 'rotate-[90deg] left-[80%]' : 'rotate-[-90deg] left-[-12px]' } xl:hidden`} onClick={() => setChange({ ...change, menu: false, chatBox: false, sideBar: !change.sideBar}) } />
 					{/* <div>
 						<Image className="mix-blend-lighten"
 							key={0}
@@ -71,19 +73,34 @@ const DashBoard = () => {
 					<ul className="relative w-full h-full" ref={parentRef}>
 						<li className="relative group li-style text-white" onClick={(e) => handleClick(e)} >
 							<div ref={barRef} className="absolute top-[50%] translate-y-[-50%] right-0 h-[50px] border-[3px] border-solid border-white rounded-xl ease-linear duration-150"></div>
-							<FontAwesomeIcon icon={faHouse} className="icon-aside-bar"/>
+							<div className="flex items-center pl-[10%]">
+								<FontAwesomeIcon icon={faHouse} className="icon-aside-bar"/>
+								<span className="text-xl ml-10">Home</span>
+							</div>
 						</li>
 						<li className="group li-style text-[rgba(255,255,255,.5)]" onClick={(e) => handleClick(e)}>
-							<FontAwesomeIcon icon={faComment} className="icon-aside-bar" />
+							<div className="flex items-center pl-[10%] ">
+								<FontAwesomeIcon icon={faComment} className="icon-aside-bar" />
+								<span className="text-xl ml-10">Chat</span>
+							</div>
 						</li>
 						<li className="group li-style text-[rgba(255,255,255,.5)]" onClick={(e) => handleClick(e)}>
-							<FontAwesomeIcon icon={faGamepad} className="icon-aside-bar" />
+							<div className="flex items-center pl-[10%]">
+								<FontAwesomeIcon icon={faGamepad} className="icon-aside-bar" />
+								<span className="text-xl ml-10">Game</span>
+							</div>
 						</li>
 						<li className="group li-style text-[rgba(255,255,255,.5)]" onClick={(e) => handleClick(e)}>
-							<FontAwesomeIcon icon={faGear} className="icon-aside-bar" />
+							<div className="flex items-center pl-[10%]">
+								<FontAwesomeIcon icon={faGear} className="icon-aside-bar" />
+								<span className="text-xl ml-10">Settings</span>
+							</div>
 						</li>
-						<li className="group li-style absolute w-full bottom-0 transform rotate-[-180deg] ">
-							<FontAwesomeIcon icon={faRightFromBracket} className="icon-aside-bar" />
+						<li className="group li-style absolute w-full bottom-0 ">
+							<div className="flex items-center pl-[15%]">
+								<FontAwesomeIcon icon={faRightFromBracket} className="icon-aside-bar transform rotate-[-180deg]" />
+								<span className="text-xl ml-10">LogOut</span>
+							</div>
 						</li>
 					</ul>
 				</aside>
@@ -108,22 +125,32 @@ const DashBoard = () => {
 							<span className="text-xs">@hbouqssi</span>
 						</div>
 					</div>
-					{/* <FontAwesomeIcon icon={faBars} className="fixed right-4 bottom-4 text-lg" onClick={() => setChange(!change)} />
+					{/* <FontAwesomeIcon icon={faBars} className="fixed right-4 bottom-4 text-lg" />
 						<div className={`fixed ${!change ? 'flex' : 'hidden'} w-[247px] h-[134px] bg-white bottom-12 right-4 rounded-[15px] items-center justify-center flex-col gap-1 font-['Whitney_Semibold'] border-2 border-solid border-[#8E8E8E]`}>
 						<MenuButton background={"bg-[#d9d9d9]"} value="View Profile" />
 						<MenuButton background={"bg-[#BBBBBB]"} value="Settings" />
 						<MenuButton background={"bg-[#EA7F87]"} value="Logout" />
 					</div> */}
+
+					<div className="absolute group right-8 cursor-pointer">
+						<FontAwesomeIcon icon={faChevronDown} className={`text-2xl mt-[22px] mr-[-18px] ease-in-out duration-500 group-hover:text-[--pink-color] transform ${change.menu ? 'rotate-[180deg]' : 'rotate-0'}`} onClick={() => setChange({...change, sideBar: false, chatBox: false ,menu: !change.menu})} />  
+					</div>
+					<div className={`absolute ${change.menu ? 'flex' : 'hidden'} w-[247px] h-[134px] bg-white top-[64px] right-[18px] rounded-[15px] items-center justify-center flex-col gap-1 font-['Whitney_Semibold'] border-2 border-solid border-[#8E8E8E]`}>
+						<MenuButton background={"bg-[#d9d9d9]"} value="View Profile" />
+						<MenuButton background={"bg-[#BBBBBB]"} value="Settings" />
+						<MenuButton background={"bg-[#EA7F87]"} value="Logout" />
+					</div>
 				</div>
 
 				<div className="relative w-[85%] h-[85%] m-auto mt-[70px]">
 					<div className="relative w-full h-[70%] px-2">
 						<PlayerCard img="/assets/hamza.png" name="Hamza BouQssim" username="@hbouqssi" direction="top-2" />
+						<h3 className="absolute top-[50%] left-[50%] translate-y-[-50%] translate-x-[-50%] text-5xl font-bold font-['Whitney_BlackSc'] sm:text-7xl">Vs</h3>
 						<PlayerCard img="/assets/unknown.png" name="" username="" direction="right-2 bottom-2" />
 					</div>
 
 					<div className="absolute left-[50%] translate-x-[-50%] bottom-4 border-t-2 border-solid border-white w-[200px] h-[25%] flex flex-col items-center gap-4 justify-end py-2">
-						<h2 className="text-[20px] min-w-[290px] font-['Whitney_SemiBold'] text-center">Select Bot Opponent or Await Player Joining</h2>
+						<h2 className="text-[20px] min-w-[280px] font-['Whitney_SemiBold'] text-center">Select Bot Opponent or Await Player Joining</h2>
 						<button className="w-[215px] h-[50px] bg-white rounded-[40px] text-black text-lg font-bold font-['Whitney_SemiBold'] ease-in-out duration-[30ms] hover:bg-[--pink-color]">
 							<FontAwesomeIcon icon={faRobot} />
 							<span className="ml-2">Play With Bot</span>
@@ -131,8 +158,8 @@ const DashBoard = () => {
 					</div>
 				</div>
 
-				<FontAwesomeIcon icon={faUserGroup} className={`fixed bottom-4 right-4 w-[20px] h-[20px] bg-[#ffffff38] p-3 rounded-[50%] cursor-pointer hover:bg-[--pink-color]`} onClick={() => setChange({...change, chatBox: !change.chatBox})} />
-				<div className={`fixed w-[85%] h-[350px] bg-white rounded-[20px] py-6 px-4 ${change.chatBox ?  'flex' : 'hidden'} flex-col items-center gap-5 left-[50%] translate-x-[-50%] bottom-[80px]`}>
+				<FontAwesomeIcon icon={faUserGroup} className={`fixed bottom-4 right-4 w-[20px] h-[20px] bg-[#ffffff38] p-3 rounded-[50%] cursor-pointer hover:bg-[--pink-color]`} onClick={() => setChange({...change, menu: false, sideBar: false, chatBox: !change.chatBox})} />
+				<div className={`fixed w-[85%] max-w-[350px] h-[360px] bg-white rounded-[20px] py-6 px-4 ${change.chatBox ?  'flex' : 'hidden'} flex-col items-center gap-5 right-4 bottom-[80px]`}>
 					<div className="w-[80%] h-[54px] bg-[#5B8CD4] rounded-[40px] text-[25px] font-['Whitney_BlackSC'] text-center">invite a friend</div>
 					<div className="w-full h-full flex flex-col gap-4 overflow-y-auto ">
 						<InviteField />

@@ -50,7 +50,7 @@ const Header = () => {
 				<div ref={barsIconRef} className="text-2xl cursor-pointer hover:text-red-500 sm:hidden" onClick={(e) => handleClick(e)}>
 					<FontAwesomeIcon icon={faBars} />
 				</div>
-				<div className="absolute z-10 top-12 left-1/2 translate-x-[-50%] glassmorphism backdrop-blur-[25px] rounded-xl flex flex-col-reverse items-end default-styles">
+				<div className="absolute z-50 top-12 left-1/2 translate-x-[-50%] glassmorphism backdrop-blur-xl rounded-xl flex flex-col-reverse items-end default-styles">
 					<div ref={navRef} className="hidden sm:block">
 						<nav className="flex flex-col items-center gap-3 text-xs p-2 pb-6 sm:flex-row sm:p-0 md:text-sm">
 							<a className="link-style" onClick={() => {
