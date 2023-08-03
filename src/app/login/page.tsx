@@ -1,13 +1,13 @@
 import PingPong from "../components/PingPong";
 import Authenticate from "../components/Authenticate";
-import './login.css'
+import "./login.css";
 
 const Login = () => {
 	return (
-		<PingPong >
+		<PingPong>
 			<Authenticate />
 		</PingPong>
 	);
-}
+};
 
-export default Login
+export default Login;
