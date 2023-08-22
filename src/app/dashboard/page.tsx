@@ -1,25 +1,21 @@
 "use client";
 import Image from "next/image";
+import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-	faHouse,
-	faComment,
-	faGamepad,
-	faGear,
-	faRightFromBracket,
 	faChevronDown,
 	faBell,
 	faRobot,
 	faUserGroup,
 } from "@fortawesome/free-solid-svg-icons";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { MenuButton } from "../components/Buttons";
 import InviteField from "../components/InviteField";
 import PlayerCard from "../components/PlayerCard";
-import ListItem from "../components/ListItem";
+import SideBar from "../components/SideBar";
+import TopRightBar from "../components/TopRightBar";
 
 const DashBoard = () => {
-	const ulRef = useRef<HTMLUListElement>(null);
 	const [change, setChange] = useState<{
 		sideBar: boolean;
 		chatBox: boolean;
@@ -30,123 +26,32 @@ const DashBoard = () => {
 		menu: false,
 	});
 
-	const handleClick = (e: any): void => {
-		const listItems = ulRef.current!.querySelectorAll("li");
-		for (let i = 0; i < listItems!.length; i++) {
-			listItems[i].classList.remove(
-				"translate-x-10",
-				"-translate-x-5",
-				"text-[--pink-color]",
-			);
-		}
-
-		e.currentTarget.querySelector("span").textContent === "LogOut"
-			? e.currentTarget.classList.add("-translate-x-5", "text-[--pink-color]")
-			: e.currentTarget.classList.add("translate-x-10", "text-[--pink-color]");
-	};
-
 	return (
 		<section className="relative h-[100vh] min-h-[850px] py-4 text-white">
-			<aside
-				className={`absolute top-0 z-20 h-full w-60 rounded-r-[40px] bg-gradient-to-b from-[#2E2F54] via-[#3B5282] to-[#2E2F54] pb-20 duration-300 ease-in-out min-[1750px]:left-0 min-[1750px]:w-72 ${
-					change.sideBar ? "left-0" : "left-[-240px]"
-				}`}
-			>
-				<ul
-					className="relative h-full rounded-tr-[40px] pt-24 font-bold"
-					ref={ulRef}
-				>
-					<FontAwesomeIcon
-						icon={faChevronDown}
-						className={`fixed left-2 top-5 cursor-pointer rounded-[50%] bg-[--pink-color] p-3 duration-200 ease-in-out hover:bg-[--purple-color] min-[1750px]:hidden
-						${change.sideBar ? "left-[190px] rotate-[-270deg]" : "rotate-[270deg]"}`}
-						onClick={() =>
-							setChange({
-								...change,
-								sideBar: !change.sideBar,
-								chatBox: false,
-								menu: false,
-							})
-						}
-					/>
-					<ListItem
-						icon={faHouse}
-						additionalStyle=""
-						spanText="Home"
-						onClick={handleClick}
-					/>
-					<ListItem
-						icon={faComment}
-						additionalStyle=""
-						spanText="Chat"
-						onClick={handleClick}
-					/>
-					<ListItem
-						icon={faGamepad}
-						additionalStyle=""
-						spanText="Game"
-						onClick={handleClick}
-					/>
-					<ListItem
-						icon={faGear}
-						additionalStyle=""
-						spanText="Settings"
-						onClick={handleClick}
-					/>
-					<ListItem
-						icon={faRightFromBracket}
-						additionalStyle="absolute w-full bottom-0"
-						spanText="LogOut"
-						onClick={handleClick}
-					/>
-				</ul>
-			</aside>
+			<SideBar
+				sideBar={change.sideBar}
+				onClick={() =>
+					setChange({
+						...change,
+						sideBar: !change.sideBar,
+						chatBox: false,
+						menu: false,
+					})
+				}
+			/>
 
 			{/* Top Right Menu */}
-			<div className="fixed right-0 z-10 flex h-12 w-64 items-center justify-end gap-2 rounded-l-3xl lg:right-7 min-[1750px]:h-14 min-[1750px]:w-80 min-[1750px]:gap-4">
-				<FontAwesomeIcon
-					icon={faBell}
-					className="left-0 cursor-pointer rounded-[50%] bg-[#ffffff38] p-3 hover:bg-[--pink-color] min-[1750px]:h-6 min-[1750px]:w-6"
-				/>
-				<div className="flex h-full w-52 items-center justify-between rounded-l-3xl bg-[#ffffff38] pl-1 pr-4 lg:w-56 lg:rounded-3xl min-[1750px]:w-64">
-					<Image
-						className="h-10 w-10 rounded-[50%] bg-black min-[1750px]:h-12 min-[1750px]:w-12"
-						key={0}
-						src={"/assets/hamza.png"}
-						width={72}
-						height={51}
-						alt="user"
-					/>
-					<div className="font-['Whitney_Bold'] leading-3">
-						<h6 className="text-sm min-[1750px]:text-lg">Hamza BouQssim</h6>
-						<span className="text-xs min-[1750px]:text-sm">@hbouqssi</span>
-					</div>
-
-					<FontAwesomeIcon
-						icon={faChevronDown}
-						className={`transform cursor-pointer text-2xl duration-500 ease-in-out hover:text-[--pink-color] lg:text-3xl ${
-							change.menu ? "rotate-[180deg]" : "rotate-0"
-						}`}
-						onClick={() =>
-							setChange({
-								...change,
-								sideBar: false,
-								chatBox: false,
-								menu: !change.menu,
-							})
-						}
-					/>
-					<div
-						className={`absolute ${
-							change.menu ? "flex" : "hidden"
-						} right-4 top-14 h-[134px] w-[247px] flex-col items-center justify-center gap-1 rounded-[15px] border-2 border-solid border-[#8E8E8E] bg-white font-['Whitney_Semibold'] lg:right-[32px] lg:top-[64px]`}
-					>
-						<MenuButton background={"bg-[#d9d9d9]"} value="View Profile" />
-						<MenuButton background={"bg-[#BBBBBB]"} value="Settings" />
-						<MenuButton background={"bg-[#EA7F87]"} value="Logout" />
-					</div>
-				</div>
-			</div>
+			<TopRightBar
+				menu={change.menu}
+				onClick={() =>
+					setChange({
+						...change,
+						sideBar: false,
+						chatBox: false,
+						menu: !change.menu,
+					})
+				}
+			/>
 
 			{/* Match Box */}
 			<div className="mt-[70px] h-[85%] w-full lg:flex lg:items-center lg:justify-evenly min-[1750px]:ml-72 min-[1750px]:mt-[90px] min-[1750px]:w-[86%]">
@@ -174,7 +79,10 @@ const DashBoard = () => {
 						</h2>
 						<button className="h-[50px] w-[215px] rounded-[40px] bg-white font-['Whitney_SemiBold'] text-lg font-bold text-black duration-[30ms] ease-in-out hover:bg-[--pink-color] min-[1750px]:text-xl">
 							<FontAwesomeIcon icon={faRobot} />
-							<span className="ml-2">Play With Bot</span>
+							{/* <span className="ml-2">Play With Bot</span> */}
+							<Link href={"/dashboard/game"} className="ml-2">
+								Play With Bot
+							</Link>
 						</button>
 					</div>
 				</div>
