@@ -2,7 +2,7 @@
 import SideBar from "@/app/components/SideBar";
 import { useState } from "react";
 import TopRightBar from "@/app/components/TopRightBar";
-import Pong from "../Pong";
+import Pongg from "./Pongg";
 
 const Game = () => {
 	const [change, setChange] = useState<{
@@ -39,7 +39,7 @@ const Game = () => {
 					})
 				}
 			/>
-			<Pong />
+			<Pongg />
 		</section>
 	);
 };
