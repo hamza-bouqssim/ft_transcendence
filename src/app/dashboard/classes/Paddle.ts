@@ -36,7 +36,9 @@ class Paddle {
 			this.width,
 			this.height,
 			{
-				render: { fillStyle: this.color },
+				render: {
+					fillStyle: this.color,
+				},
 				isStatic: true,
 			},
 		);

@@ -1,5 +1,7 @@
 import Matter from "matter-js";
+import { Howl, Howler } from "howler";
 import Paddle from "./Paddle";
+
 const Bodies = Matter.Bodies;
 
 class Ball {
@@ -11,6 +13,14 @@ class Ball {
 	xVelocity: number = -1;
 	yVelocity: number = -1;
 	speed: number = 3;
+	sound = {
+		leftPaddleSound: new Howl({
+			src: ["/assets/sounds/leftPaddle.wav"],
+		}),
+		rightPaddleSound: new Howl({
+			src: ["/assets/sounds/rightPaddle.wav"],
+		}),
+	};
 
 	constructor(xCord: number, yCord: number, radius: number, color: string) {
 		this.xCord = xCord;
@@ -65,8 +75,10 @@ class Ball {
 				left.body.position.x + left.width / 2 &&
 			this.body.position.y >= left.body.position.y - left.height / 2 &&
 			this.body.position.y <= left.body.position.y + left.height / 2
-		)
+		) {
+			this.sound.leftPaddleSound.play();
 			return true;
+		}
 		return false;
 	};
 
@@ -76,14 +88,17 @@ class Ball {
 				right.body.position.x - right.width / 2 &&
 			this.body.position.y >= right.body.position.y - right.height / 2 &&
 			this.body.position.y <= right.body.position.y + right.height / 2
-		)
+		) {
+			this.sound.rightPaddleSound.play();
 			return true;
+		}
 		return false;
 	};
 
 	checkBallHit = (left: Paddle, right: Paddle): void => {
-		if (this.isCollidedLeft(left) || this.isCollidedRight(right))
+		if (this.isCollidedLeft(left) || this.isCollidedRight(right)) {
 			this.xVelocity = -this.xVelocity;
+		}
 	};
 }
 

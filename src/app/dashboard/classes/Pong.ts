@@ -16,17 +16,20 @@ class Pong {
 	right: Paddle;
 	left: Paddle;
 	ball: Ball;
+	paused: boolean;
 
 	constructor(
 		canvas: HTMLCanvasElement,
 		right: Paddle,
 		left: Paddle,
 		ball: Ball,
+		paused: boolean,
 	) {
 		this.canvas = canvas;
 		this.right = right;
 		this.left = left;
 		this.ball = ball;
+		this.paused = paused;
 	}
 
 	init = (): void => {
@@ -64,6 +67,7 @@ class Pong {
 		this.left.move(render, this.ball);
 
 		setTimeout(() => {
+			if (this.paused) return;
 			Runner.run(runner, engine);
 
 			// Add a listener to update the ball's velocity
