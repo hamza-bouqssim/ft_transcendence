@@ -62,6 +62,7 @@ const Pongg = () => {
 				<span className="absolute -top-5 left-[50%] -translate-x-[50%] rounded-3xl border-b-2 border-solid border-[#CFF4FF] bg-[--purple-color] px-7 py-2 font-['Whitney_Bold'] text-2xl font-bold shadow-[0_0_50px_2px_var(--blue-color)]">
 					Settings
 				</span>
+
 				<div className="relative flex w-[70%] items-center justify-between border-b-2 border-solid border-[#CFF4FF] p-1">
 					<span>Sounds</span>
 					<FontAwesomeIcon

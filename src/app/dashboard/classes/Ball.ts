@@ -4,6 +4,7 @@ import Paddle from "./Paddle";
 
 const Bodies = Matter.Bodies;
 
+
 class Ball {
 	xCord: number;
 	yCord: number;
