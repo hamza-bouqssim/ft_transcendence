@@ -147,7 +147,7 @@ const Pong = (props: any) => {
 		props.paddleColor,
 		props.ballSpeed,
 	]);
-
+	
 	return (
 		<div className="relative flex h-[95%] w-full max-w-[750px] flex-col items-center justify-center gap-4 rounded-3xl lg:w-[90%] lg:justify-end min-[1750px]:h-full min-[1750px]:w-full min-[1750px]:max-w-[1100px]">
 			<div className="flex h-[22%] w-full items-center justify-between lg:px-10 lg:py-4 min-[1750px]:h-full">
