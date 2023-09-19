@@ -10,7 +10,9 @@ class Paddle {
 	height: number;
 	color: string;
 	body: any;
+	render: any;
 	currentRightPaddlePos: number;
+	score: number = 0;
 
 	constructor(
 		xCord: number,
@@ -18,6 +20,7 @@ class Paddle {
 		width: number,
 		height: number,
 		color: string,
+		render: any,
 	) {
 		this.xCord = xCord;
 		this.yCord = yCord;
@@ -26,6 +29,7 @@ class Paddle {
 		this.width = width;
 		this.height = height;
 		this.color = color;
+		this.render = render;
 		this.currentRightPaddlePos = this.yCord;
 	}
 
@@ -44,12 +48,16 @@ class Paddle {
 		);
 	};
 
-	currentRightPaddlePosition = (render: any, ball: Ball): void => {
+	setNewPaddleColor = (): void => {
+		this.body.render.fillStyle = this.color;
+	};
+
+	currentRightPaddlePosition = (ball: Ball): void => {
 		if (
-			this.body.position.y + this.height / 2 >= render.canvas.height &&
-			ball.body.position.y >= render.canvas.height - this.height / 2
+			this.body.position.y + this.height / 2 >= this.render.canvas.height &&
+			ball.body.position.y >= this.render.canvas.height - this.height / 2
 		)
-			this.currentRightPaddlePos = render.canvas.height - this.height / 2;
+			this.currentRightPaddlePos = this.render.canvas.height - this.height / 2;
 		else if (
 			this.body.position.y - this.height / 2 <= 0 &&
 			ball.body.position.y <= this.height / 2
@@ -63,14 +71,14 @@ class Paddle {
 		});
 	};
 
-	applyMoving = (render: any, steps: any, key: any): void => {
+	applyMoving = (steps: any, key: any): void => {
 		if (this.body.position.y <= this.height / 2 && key == "w")
 			this.yCord = this.height / 2;
 		else if (
-			this.body.position.y + this.height / 2 >= render.canvas.height &&
+			this.body.position.y + this.height / 2 >= this.render.canvas.height &&
 			key == "s"
 		)
-			this.yCord = render.canvas.height - this.height / 2;
+			this.yCord = this.render.canvas.height - this.height / 2;
 		else this.yCord += steps;
 
 		Matter.Body.setPosition(this.body, {
@@ -79,15 +87,32 @@ class Paddle {
 		});
 	};
 
-	move = (render: any, ball: Ball): void => {
-		if (this.xCord < render.canvas.width / 2) {
-			document.addEventListener("keydown", (e) => {
-				if (e.key === "w") this.applyMoving(render, -15, e.key);
-				else if (e.key === "s") this.applyMoving(render, 15, e.key);
+	handleKeyDown = (e: KeyboardEvent): void => {
+		if (e.key === "w") this.applyMoving(-15, e.key);
+		else if (e.key === "s") this.applyMoving(15, e.key);
+	};
+
+	handleMouseMouve = (e: MouseEvent): void => {
+		if (e.clientX < this.render.canvas.width / 2) {
+			Matter.Body.setPosition(this.body, {
+				x: this.xCord,
+				y: e.clientY - this.height / 2,
 			});
 		}
-		if (this.xCord > render.canvas.width / 2)
-			this.currentRightPaddlePosition(render, ball);
+	};
+
+	stopMoving = () => {
+		document.removeEventListener("keydown", this.handleKeyDown);
+	};
+
+	move = (ball: Ball): void => {
+		if (this.xCord < this.render.canvas.width / 2) {
+			document.addEventListener("keydown", this.handleKeyDown);
+			this.render.canvas.addEventListener("mousemove", this.handleMouseMouve);
+		}
+
+		if (this.xCord > this.render.canvas.width / 2)
+			this.currentRightPaddlePosition(ball);
 	};
 
 	reset = (): void => {

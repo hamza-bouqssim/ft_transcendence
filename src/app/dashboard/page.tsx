@@ -11,7 +11,7 @@ import {
 import { useState } from "react";
 import { MenuButton } from "../components/Buttons";
 import InviteField from "../components/InviteField";
-import PlayerCard from "../components/PlayerCard";
+import {PlayerCard} from "../components/PlayerCard";
 import SideBar from "../components/SideBar";
 import TopRightBar from "../components/TopRightBar";
 
