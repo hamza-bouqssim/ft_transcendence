@@ -4,6 +4,7 @@ import Matter from "matter-js";
 import Ball from "../classes/Ball";
 import Paddle from "../classes/Paddle";
 
+
 const Pong = (props: any) => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const Render = Matter.Render;
