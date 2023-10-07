@@ -1,0 +1,5 @@
+.git
+.gitignore
+/next-app/node_modules
+/next-app/.next
+.next
