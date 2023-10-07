@@ -1,8 +1,8 @@
 services:
   frontend:
-    build: .
-    image: frontend:frontend
-    container_name: frontend
+    build: ./frontend/.
+    image: frontend:nextJs
+    container_name: nextJs
     restart: "true"
     ports:
       - "3000:3000"
