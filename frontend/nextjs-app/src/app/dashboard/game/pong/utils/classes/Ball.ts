@@ -1,16 +1,16 @@
 import Matter from "matter-js";
 import { Howl } from "howler";
 import Paddle from "./Paddle";
-import { useAppDispatch } from "@/redux_toolkit/hooks";
-import {
-	incrementLeftScore,
-	incrementRightScore,
-} from "@/redux_toolkit/game/gameSlice";
+// import { useAppDispatch } from "@/redux_toolkit/hooks";
+// import {
+// 	incrementLeftScore,
+// 	incrementRightScore,
+// } from "@/redux_toolkit/game/gameSlice";
 
 const Bodies = Matter.Bodies;
 
 class Ball {
-	dispatch = useAppDispatch();
+	// dispatch = useAppDispatch();
 	xCord: number;
 	yCord: number;
 	radius: number;

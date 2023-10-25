@@ -1,15 +1,15 @@
 services:
-  backend:
-    build: ./backend/.
-    image: backend:nestJs
-    container_name: nestJs
-    restart: "true"
-    ports:
-      - "3000:3000"
+  # backend:
+  #   build: ./backend/.
+  #   image: backend:nestJs
+  #   container_name: nestJs
+  #   restart: "true"
+  #   ports:
+  #     - "3000:3000"
   frontend:
     build: ./frontend/.
     image: frontend:nextJs
     container_name: nextJs
-    restart: "true"
+    restart: "always"
     ports:
       - "3000:3000"
