@@ -39,7 +39,7 @@ const SideBar = (props: Change) => {
 
 	const [isLoggedOut, setIsLoggedOut] = useState<boolean>(false);
 
-	const messageBox = () : boolean => {
+	const messageBox = (): boolean => {
 		const MySwal = withReactContent(Swal);
 
 		MySwal.fire({
