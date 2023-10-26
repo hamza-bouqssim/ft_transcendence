@@ -1,4 +1,6 @@
 "use client";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
 	faHouse,
@@ -9,7 +11,7 @@ import {
 	faChevronDown,
 } from "@fortawesome/free-solid-svg-icons";
 import ListItem from "./ListItem";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 
 type Change = {
@@ -33,6 +35,28 @@ const SideBar = (props: Change) => {
 		e.currentTarget.querySelector("span")!.textContent === "LogOut"
 			? e.currentTarget.classList.add("-translate-x-5", "text-[--pink-color]")
 			: e.currentTarget.classList.add("translate-x-10", "text-[--pink-color]");
+	};
+
+	const [isLoggedOut, setIsLoggedOut] = useState<boolean>(false);
+
+	const messageBox = () : boolean => {
+		const MySwal = withReactContent(Swal);
+
+		MySwal.fire({
+			title: "Are You Sure?",
+			color: "#ffff",
+			icon: "question",
+			iconColor: "#498cda",
+			showCancelButton: true,
+			background: "#2E2F54",
+			confirmButtonColor: "#fc7785",
+			cancelButtonColor: "#6a67f3",
+			confirmButtonText: "Yes, Log Out!",
+			customClass: "rounded-[30px] font-['Whitney_BlackSc'] text-sm",
+		}).then((result) => {
+			if (result.isConfirmed) return true;
+		});
+		return false;
 	};
 
 	return (
@@ -79,12 +103,19 @@ const SideBar = (props: Change) => {
 						onClick={(e: any) => handleClick(e)}
 					/>
 				</Link>
-				<ListItem
-					icon={faRightFromBracket}
-					additionalStyle="absolute w-full bottom-0"
-					spanText="LogOut"
-					onClick={(e: any) => handleClick(e)}
-				/>
+				<Link
+					href={"/"}
+					onClick={(e) => {
+						if (!messageBox()) e.preventDefault();
+					}}
+				>
+					<ListItem
+						icon={faRightFromBracket}
+						additionalStyle="absolute w-full bottom-0"
+						spanText="LogOut"
+						onClick={(e: any) => handleClick(e)}
+					/>
+				</Link>
 			</ul>
 		</aside>
 	);
