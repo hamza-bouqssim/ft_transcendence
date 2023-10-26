@@ -2,7 +2,7 @@ FROM node
 
 WORKDIR /usr/src/app
 
-COPY ./nextjs-app/ .
+COPY ./nextjs/ .
 
 RUN npm install
 
