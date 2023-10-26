@@ -3,10 +3,10 @@ import "./About.css";
 
 const About = () => {
 	const images: string[] = [
-		"/assets/NextJs.svg",
-		"/assets/NestJs.svg",
-		"/assets/Docker.svg",
-		"/assets/PostgreSql.svg",
+		"/assets/nextJs.svg",
+		"/assets/nestJs.svg",
+		"/assets/docker.svg",
+		"/assets/postgreSql.svg",
 	];
 	const mappedImages = images.map((el, i) => {
 		return (

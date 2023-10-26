@@ -10,6 +10,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import ListItem from "./ListItem";
 import { useRef } from "react";
+import Link from "next/link";
 
 type Change = {
 	sideBar: boolean;
@@ -19,7 +20,7 @@ type Change = {
 const SideBar = (props: Change) => {
 	const ulRef = useRef<HTMLUListElement>(null);
 
-	const handleClick = (e: any): void => {
+	const handleClick = (e: React.MouseEvent<HTMLLIElement>): void => {
 		const listItems = ulRef.current!.querySelectorAll("li");
 		for (let i = 0; i < listItems!.length; i++) {
 			listItems[i].classList.remove(
@@ -29,7 +30,7 @@ const SideBar = (props: Change) => {
 			);
 		}
 
-		e.currentTarget.querySelector("span").textContent === "LogOut"
+		e.currentTarget.querySelector("span")!.textContent === "LogOut"
 			? e.currentTarget.classList.add("-translate-x-5", "text-[--pink-color]")
 			: e.currentTarget.classList.add("translate-x-10", "text-[--pink-color]");
 	};
@@ -54,31 +55,35 @@ const SideBar = (props: Change) => {
 					icon={faHouse}
 					additionalStyle=""
 					spanText="Home"
-					onClick={handleClick}
+					onClick={(e: any) => handleClick(e)}
 				/>
 				<ListItem
 					icon={faComment}
 					additionalStyle=""
 					spanText="Chat"
-					onClick={handleClick}
+					onClick={(e: any) => handleClick(e)}
 				/>
-				<ListItem
-					icon={faGamepad}
-					additionalStyle=""
-					spanText="Game"
-					onClick={handleClick}
-				/>
-				<ListItem
-					icon={faGear}
-					additionalStyle=""
-					spanText="Settings"
-					onClick={handleClick}
-				/>
+				<Link href={"/dashboard/game"}>
+					<ListItem
+						icon={faGamepad}
+						additionalStyle=""
+						spanText="Game"
+						onClick={(e: any) => handleClick(e)}
+					/>
+				</Link>
+				<Link href={"/dashboard/settings"}>
+					<ListItem
+						icon={faGear}
+						additionalStyle=""
+						spanText="Settings"
+						onClick={(e: any) => handleClick(e)}
+					/>
+				</Link>
 				<ListItem
 					icon={faRightFromBracket}
 					additionalStyle="absolute w-full bottom-0"
 					spanText="LogOut"
-					onClick={handleClick}
+					onClick={(e: any) => handleClick(e)}
 				/>
 			</ul>
 		</aside>

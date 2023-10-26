@@ -1,58 +1,17 @@
 "use client";
-import Image from "next/image";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-	faChevronDown,
-	faBell,
-	faRobot,
-	faUserGroup,
-} from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";
-import { MenuButton } from "../../components/Buttons";
+import { faRobot, faUserGroup } from "@fortawesome/free-solid-svg-icons";
 import InviteField from "../../components/InviteField";
 import { PlayerCard } from "../../components/PlayerCard";
-import SideBar from "../../components/SideBar";
-import TopRightBar from "../../components/TopRightBar";
+import { ChangeContext } from "../layout";
+import { useContext } from "react";
 
 const DashBoard = () => {
-	const [change, setChange] = useState<{
-		sideBar: boolean;
-		chatBox: boolean;
-		menu: boolean;
-	}>({
-		sideBar: false,
-		chatBox: false,
-		menu: false,
-	});
+	const { change, setChange } = useContext(ChangeContext);
 
 	return (
 		<section className="relative h-[100vh] min-h-[850px] py-4 text-white">
-			<SideBar
-				sideBar={change.sideBar}
-				onClick={() =>
-					setChange({
-						...change,
-						sideBar: !change.sideBar,
-						chatBox: false,
-						menu: false,
-					})
-				}
-			/>
-
-			{/* Top Right Menu */}
-			<TopRightBar
-				menu={change.menu}
-				onClick={() =>
-					setChange({
-						...change,
-						sideBar: false,
-						chatBox: false,
-						menu: !change.menu,
-					})
-				}
-			/>
-
 			{/* Match Box */}
 			<div className="mt-[70px] h-[85%] w-full lg:flex lg:items-center lg:justify-evenly min-[1750px]:ml-72 min-[1750px]:mt-[90px] min-[1750px]:w-[86%]">
 				<div className="relative m-auto h-full w-full lg:mx-0 lg:w-[70%]">
@@ -79,7 +38,6 @@ const DashBoard = () => {
 						</h2>
 						<button className="h-[50px] w-[215px] rounded-[40px] bg-white font-['Whitney_SemiBold'] text-lg font-bold text-black duration-[30ms] ease-in-out hover:bg-[--pink-color] min-[1750px]:text-xl">
 							<FontAwesomeIcon icon={faRobot} />
-							{/* <span className="ml-2">Play With Bot</span> */}
 							<Link href={"/dashboard/game"} className="ml-2">
 								Play With Bot
 							</Link>

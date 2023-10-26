@@ -1,6 +1,6 @@
 import PingPong from "../components/PingPong";
 import Authenticate from "../components/Authenticate";
-import "./login.css";
+import "./Login.css";
 
 const Login = () => {
 	return (
