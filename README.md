@@ -9,7 +9,7 @@
 - `make remove-images`: Remove all Docker images.
 - `make remove-volumes`: Remove all Docker volumes.
 
-### for windowz
+### for windows
 ```
 sed -i 's/\r$//' init.sh
 ```
