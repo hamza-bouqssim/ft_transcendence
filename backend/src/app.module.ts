@@ -15,17 +15,25 @@ import { ParticipentModule } from './Participent/Participent.module';
 import { MessagesModule } from './messages/messages.module';
 import { FriendRequestModule } from './friend-request/friend-request.module';
 import { GameModule } from './game/game.module';
+import { GatewayModule } from './game/gateway/gateway.module';
 
 @Module({
   imports: [
     PrismaClient,
-    AuthModule, 
+    AuthModule,
     JwtModule.register({
-      secret: 'my-secret'
+      secret: 'my-secret',
     }),
-    PassportModule.register({session: true}), UserModule, ConversationsModule, ParticipentModule, MessagesModule, FriendRequestModule, GameModule],
+    PassportModule.register({ session: true }),
+    UserModule,
+    ConversationsModule,
+    ParticipentModule,
+    MessagesModule,
+    FriendRequestModule,
+    GameModule,
+    GatewayModule,
+  ],
   controllers: [AppController, UserController],
   providers: [AppService, UserService, PrismaService],
-  
 })
 export class AppModule {}

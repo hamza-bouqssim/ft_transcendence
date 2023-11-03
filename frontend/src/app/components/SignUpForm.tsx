@@ -73,7 +73,9 @@ const SignUpForm = forwardRef((props: any, ref: any) => {
 						id="display_name"
 						className="custom-shape input-style"
 						placeholder="Display Name"
-						{...register("display_name", { required: "Display Name is required" })}
+						{...register("display_name", {
+							required: "Display Name is required",
+						})}
 					/>
 				</div>
 				<div className="relative">
@@ -94,7 +96,9 @@ const SignUpForm = forwardRef((props: any, ref: any) => {
 					<input
 						type={show ? "text" : "password"}
 						id="password_hashed"
-						{...register("password_hashed", { required: "Password is required" })}
+						{...register("password_hashed", {
+							required: "Password is required",
+						})}
 						className="custom-shape input-style"
 						placeholder="Passsword"
 					/>
