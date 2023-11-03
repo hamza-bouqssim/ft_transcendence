@@ -1,0 +1,32 @@
+        .form {
+            width: 800px;
+        }
+        
+        .Row {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            margin: 8px 0;
+        }
+        
+        .btn {
+            margin: 8px 0;
+        }
+        
+        .inputPass {
+            margin: 8px 0;
+        }
+        
+        .user {
+            & :last-child {
+                text-decoration: underline;
+                color: #6a67f3;
+            }
+            margin: 14px 0;
+            text-align: center;
+        }
+        
+        .formConversation {
+            width: 100%;
+        }

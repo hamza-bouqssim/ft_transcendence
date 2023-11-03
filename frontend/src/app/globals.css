@@ -1,0 +1,132 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+	font-family: "Whitney";
+	src: url("./fonts/Whitney-Sans-Font/whitney.ttf");
+}
+
+@font-face {
+	font-family: "Whitney BlackSC";
+	src: url("./fonts/Whitney-Sans-Font/whitney-blacksc.otf");
+}
+
+@font-face {
+	font-family: "Whitney Semibold";
+	src: url("./fonts/Whitney-Sans-Font/whitney-semibold.otf");
+}
+
+@font-face {
+	font-family: "Whitney Bold";
+	src: url("./fonts/Whitney-Sans-Font/whitney-bold.otf");
+}
+
+.link-style {
+	@apply cursor-pointer px-28 py-3 duration-300 ease-in-out hover:rotate-12 hover:scale-150 hover:text-[var(--pink-color)] hover:transition sm:px-2;
+}
+
+.btn-style {
+	@apply cursor-pointer rounded-2xl bg-[--purple-color] px-10 py-2 font-bold text-white transition duration-300 ease-in-out hover:bg-[--pink-color] sm:px-12 sm:py-3;
+}
+
+.glassmorphism {
+	@apply bg-[rgba(255,255,255,0.09)] shadow-[0_4px_30px_rgba(0,0,0,.1)];
+	/* -webkit-backdrop-filter: blur(7.6px);
+  -webkit-border-radius: 25px;
+  -moz-border-radius: 25px;
+  -ms-border-radius: 25px;
+  -o-border-radius: 25px; */
+}
+
+.custom-shape {
+	@apply rounded-bl-xl rounded-br-[100px] rounded-tl-[100px] rounded-tr-xl 2xl:rounded-bl-[37px] 2xl:rounded-br-[268px] 2xl:rounded-tl-[268px] 2xl:rounded-tr-[37px];
+}
+
+.input-style {
+	@apply h-9 w-56 border-2 border-solid border-[#8E8E8E] px-[48px] font-['Whitney_Semibold'] text-sm text-black outline-[--purple-color] selection:bg-[--purple-color] selection:text-white placeholder:text-[.7rem] sm:h-10 sm:w-60 sm:placeholder:text-sm md:h-12 md:w-[17rem] md:text-[1.1rem] 2xl:h-[59px] 2xl:w-[403px] 2xl:px-[60px] 2xl:text-xl 2xl:placeholder:text-[15px];
+}
+
+.input-password-style {
+	@apply h-9 w-[6.8rem] border-2 border-solid border-[#8E8E8E] px-[35px] text-sm text-black outline-[--purple-color] selection:bg-[--purple-color] selection:text-white placeholder:text-[.7rem] sm:h-10 sm:w-[7.4rem] sm:placeholder:text-sm md:h-12 md:w-[8.4rem] md:text-[1.1rem] 2xl:h-[59px] 2xl:w-full 2xl:px-[60px] 2xl:text-xl 2xl:placeholder:text-[15px];
+}
+
+.icon-style {
+	@apply absolute top-[50%] translate-y-[-50%] transform text-[.7rem] text-black md:text-sm 2xl:text-[1rem];
+}
+
+.active-btn-style {
+	@apply bg-white text-black;
+}
+
+.disabled-btn-style {
+	@apply bg-[rgb(224,224,224)] text-[#949494];
+}
+
+.li-style {
+	@apply cursor-pointer py-8 text-center font-bold;
+}
+
+.icon-aside-bar {
+	@apply inline-block h-[30px] w-[30px] transition duration-500 ease-in-out group-hover:text-white;
+}
+
+:root {
+	/* --foreground-rgb: 0, 0, 0;
+	--background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255; */
+	--pink-color: #fc7785;
+	--purple-color: #6a67f3;
+	--dark-purple-color: #1e1b34;
+	--blue-color: #498cda;
+	--gray-color: #ececec;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	background-color: var(--dark-purple-color);
+	background-image: url("/assets/background.svg");
+	/* background-attachment: fixed; */
+	background-repeat: no-repeat;
+	background-size: cover;
+	overflow-x: hidden;
+}
+* {
+	box-sizing: border-box;
+	scroll-behavior: smooth;
+	-webkit-tap-highlight-color: transparent;
+}
+
+*::selection {
+	background: var(--purple-color);
+	color: white;
+}
+
+/* main { */
+/* position: absolute;
+	top: 0;
+	width: 100%;*/
+/* background: rgba(255, 255, 255, 0);
+	box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+	backdrop-filter: blur(5px);
+	-webkit-backdrop-filter: blur(5px); */
+/* height: 100%; */
+/* } */
+
+/* @media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+} */

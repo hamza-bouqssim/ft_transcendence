@@ -1,0 +1,147 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+
+enum Status {
+  PENDING
+  ACCEPTED
+  BLOCKED
+}
+
+enum Result {
+  WIN
+  LOSS
+  UNPROCESSED
+}
+
+enum EventType {
+  BALL_HIT
+  SCORE
+  UNPROCESSED
+}
+
+model User {
+  id String @id @default(uuid())
+  username String @unique
+  email String @unique
+  password String
+  display_name String
+  avatar_url String
+  two_factor_auth String
+  two_factor_secret_key String
+  rank String
+  friend Friend[] @relation("UserToFriend")
+  friends Friend[] @relation("Friend")
+  senderOfChatParticipents ChatParticipents[] @relation("sender")
+  recipientOfChatParticipents ChatParticipents[] @relation("recipient")
+  senderOfmessage Message[] @relation("senderMessage")
+  RecipientOfmessage Message[] @relation("recipientMessage")
+  notifications Notification[]
+  player1 Pong_match[] @relation("player1")
+  player2 Pong_match[] @relation("player2")
+  matchEvent match_events[] @relation("match_event")
+  Member  Member[]
+}
+
+model Friend {
+  id String @id @default(uuid())
+  user_id String
+  friend_id String
+  status Status @default(PENDING)
+  created_at DateTime
+  user User @relation("UserToFriend", fields: [user_id], references: [id])
+  friends User @relation("Friend", fields: [friend_id], references: [id])
+}
+
+model ChatParticipents {
+  id          String      @id @default(uuid())
+  sender      User     @relation("sender", fields: [senderId], references: [id])
+  senderId    String
+  recipient   User     @relation("recipient", fields: [recipientId], references: [id])
+  recipientId String
+  messages    Message[] @relation("participentsMessages")
+  lastMessageSent Message[] @relation("lastMessageSent")
+}
+
+
+
+model Message {
+  id String @id @default(uuid())
+  content String?
+  sender User @relation("senderMessage", fields: [senderId], references: [id])
+  senderId String
+  recipient User @relation("recipientMessage", fields: [recipientId], references: [id])
+  recipientId String
+  participents ChatParticipents @relation("participentsMessages", fields: [participentsId], references: [id])
+  participentsId String
+  lastMessageFor ChatParticipents? @relation("lastMessageSent", fields: [lastMessageForId], references: [id])
+  lastMessageForId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ChatRoom       ChatRoom    @relation(fields: [id], references: [id])
+}
+
+model Notification {
+  id String @id @default(uuid())
+  user_id String
+  content String
+  user User @relation(fields: [user_id], references: [id])
+}
+
+model match_events {
+  id String @id @default(uuid())
+  match_id String
+  player_id String
+  event_type EventType @default(UNPROCESSED)
+  timestamp DateTime
+  match Pong_match @relation("pong_match", fields: [match_id], references: [id])
+  user User @relation("match_event", fields: [player_id], references: [id])
+}
+
+model Pong_match {
+  id String @id @default(uuid())
+  player1_id String
+  player2_id String
+  created_at DateTime
+  updated_at DateTime
+  playerOne User @relation("player1", fields: [player1_id], references: [id])
+  playerTwo User @relation("player2", fields: [player2_id], references: [id])
+  matchEvents match_events[] @relation("pong_match")
+}
+
+
+
+model ChatRoom {
+  id        String @id @default(uuid())
+  name      String    @unique
+  type      String
+  Privacy   String    @default("private")
+  password  String?
+  picture   String?   @default("https://images.squarespace-cdn.com/content/v1/5f60d7057b9b7d7609ef628f/1603219780222-V253F1WLHBH8HNHXIFUX/group.png")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  members   Member[]
+  message  Message[]
+}
+
+model Member {
+  id          String @id @default(uuid())
+  user_id     String
+  ChatRoomId  String
+  isAdmin     Boolean
+  user        User        @relation(fields: [user_id], references: [id])
+  chatRoom    ChatRoom    @relation(fields: [ChatRoomId], references: [id])
+}
+
+model Session {
+  id String @id @default(uuid())
+  sid String @unique
+  data String
+  expiresAt DateTime
+}

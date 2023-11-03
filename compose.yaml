@@ -1,0 +1,50 @@
+version: '3.1'
+services:
+  postgres:
+    image: postgres
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: transcandance800
+        POSTGRES_DB: transcandance
+    volumes:
+      - $PWD/db:/var/lib/postgresql/data
+    networks:
+      - mynetwork  
+
+  frontend:
+    build: ./frontend/.
+    image: frontend:nextJs
+    container_name: nextJs
+    restart: "always"
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app/
+      - /app/node_modules
+    networks:
+      - mynetwork 
+
+  api:
+    build: ./backend/.
+    image: backend:nestJs
+    container_name: nestJs
+    restart: "always"
+    ports:
+      - "8000:8000"
+      - "5555:5555"
+    environment:
+      DATABASE_URL: postgres://postgres:transcandance800@postgres:5432/transcandance?schema=public
+      PORT: 8000
+    volumes:
+      - ./backend:/app/
+      - /app/node_modules
+    depends_on:
+      - postgres
+    networks:
+      - mynetwork  
+
+networks:
+  mynetwork:  
