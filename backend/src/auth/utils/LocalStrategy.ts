@@ -1,6 +1,9 @@
+/* eslint-disable prettier/prettier */
 import { Injectable } from "@nestjs/common";
 import { PassportStrategy} from '@nestjs/passport'
+// eslint-disable-next-line prettier/prettier
 import {Strategy} from 'passport-local'
+// eslint-disable-next-line prettier/prettier
 import { AuthService } from "../auth.service";
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy)

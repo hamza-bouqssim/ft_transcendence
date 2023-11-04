@@ -71,6 +71,21 @@ model ChatParticipents {
 
 
 
+// model Message {
+//   id String @id @default(uuid())
+//   content String?
+//   sender User @relation("senderMessage", fields: [senderId], references: [id])
+//   senderId String
+//   recipient User @relation("recipientMessage", fields: [recipientId], references: [id])
+//   recipientId String
+//   participents ChatParticipents @relation("participentsMessages", fields: [participentsId], references: [id])
+//   participentsId String
+//   lastMessageFor ChatParticipents? @relation("lastMessageSent", fields: [lastMessageForId], references: [id])
+//   lastMessageForId String
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+//   ChatRoom       ChatRoom    @relation(fields: [id], references: [id])
+// }
 model Message {
   id String @id @default(uuid())
   content String?
@@ -84,8 +99,8 @@ model Message {
   lastMessageForId String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  ChatRoom       ChatRoom    @relation(fields: [id], references: [id])
 }
+
 
 model Notification {
   id String @id @default(uuid())
@@ -127,7 +142,7 @@ model ChatRoom {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   members   Member[]
-  message  Message[]
+  // message  Message[]
 }
 
 model Member {

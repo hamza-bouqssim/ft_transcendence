@@ -9,7 +9,7 @@ export class UserService {
 
     async findUser( username: string)
     {
-        const data = await this.prisma.user.findFirst({where: {
+        const data = await this.prisma.user.findUnique({where: {
             username,
         }})
 
@@ -19,8 +19,8 @@ export class UserService {
             throw new NotFoundException('User with this name : '+ username + ' not found !')
         }
        
-            const {id, display_name, avatar_url} = data;
-            return {id, username, display_name, avatar_url};
+            const {display_name, avatar_url} = data;
+            return {username, display_name, avatar_url};
         
     }
 

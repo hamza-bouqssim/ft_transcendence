@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { BadRequestException, ConflictException, ForbiddenException, HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { AuthDto } from './dto/auth.dto';
@@ -8,6 +9,7 @@ import { LocalAuthDto } from './dto/local.auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from 'src/user/dto/auth.dto';
 import { UserService } from 'src/user/user.service';
+// import { compareHash } from 'src/utils/healpers';
 
 @Injectable()
 export class AuthService {
@@ -144,6 +146,7 @@ export class AuthService {
             console.log(password)
             return result;
        }
+      // const validePassword = await compareHash(dto.password, user.password);
        /*if this condition here is not correct which means that the email and the password are not correct 
        so we should throw an exeption */
        return null;

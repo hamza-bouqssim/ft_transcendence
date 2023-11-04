@@ -1,10 +1,12 @@
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faBell } from "@fortawesome/free-solid-svg-icons";
-import { MenuButton } from "./Buttons";
+import { LogoutButton, MenuButton } from "./Buttons";
 import { useEffect, useState } from "react";
-import { getAuthUser } from "../utils/api";
+import { getAuthUser, getlogout } from "../utils/api";
 import { User } from "../utils/types";
+import { useRouter } from "next/navigation";
+import { deleteCookie } from "cookies-next";
 
 type Change = {
 	menu: boolean;
@@ -13,22 +15,26 @@ type Change = {
 
 const TopRightBar = (props: Change) => {
 	const [ user, setUser] = useState<User | undefined>();
-	const controller = new AbortController();
 
     const [loading, setLoading] = useState<boolean>(false);
     useEffect(() => {
-            setLoading(true);
-            // console.log(loading);
-            getAuthUser().then(({data}) => {
-                setUser(data);
-				// console.log("avatar")
-				// console.log(user?.avatarUrl);
-                setLoading(false)})
-				
-            .catch((err)=> {console.log(err); setLoading(false);});
-            return controller.abort();
+        setLoading(true);
+        getAuthUser().then(({data}) => {
+            setUser(data);
+        }).catch((err)=> {console.log(err);});
     }, [])
-	console.log(user?.avatar_url);
+	const router = useRouter();
+
+	const logout =  () =>{
+		try {
+			getlogout();
+			deleteCookie('logged');
+			router.push("/", { scroll: false });
+		} catch (err) {
+			alert("failed to logout");
+			console.log(err);
+		}
+	}
 	return (
 		<div className="fixed right-0 z-10 flex h-12 w-64 items-center justify-end gap-2 rounded-l-3xl lg:right-7 min-[1750px]:h-14 min-[1750px]:w-80 min-[1750px]:gap-4">
 			<FontAwesomeIcon
@@ -66,7 +72,7 @@ const TopRightBar = (props: Change) => {
 				>
 					<MenuButton background={"bg-[#d9d9d9]"} value="View Profile" />
 					<MenuButton background={"bg-[#BBBBBB]"} value="Settings" />
-					<MenuButton background={"bg-[#EA7F87]"} value="Logout" />
+					<LogoutButton  background={"bg-[#EA7F87]"} value="Logout" />
 				</div>
 			</div>
 		</div>
@@ -74,3 +80,7 @@ const TopRightBar = (props: Change) => {
 };
 
 export default TopRightBar;
+function setCookie(arg0: string, arg1: boolean) {
+	throw new Error("Function not implemented.");
+}
+

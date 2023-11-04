@@ -24,24 +24,27 @@ const CoversationSideBar: FC <Props>  = ({conversations}) => {
 
     useEffect(() => {
             setLoading(true);
-            // console.log(loading);
             getAuthUser().then(({data}) => {
                 setUser(data);
-				console.log(data);
                 setLoading(false)})
             .catch((err)=> {console.log(err); setLoading(false);});
-            return controller.abort();
-    }, [])
+    }, [user])
 	const router = useRouter();
 
 	const [show, setShow] = useState<any>(false);
-	// const {user} = useContext(AuthContext)
 	const getDisplayUser = (conversation : ConversationTypes) => {
-		const userId = user?.id;
+		const userId = user?.username;
+		
+		
 		let test;
-		conversation.recipient.id !== userId ? test = conversation.recipient : test = conversation.sender;
-		console.log(user);
-		console.log(conversation.sender);
+		if(conversation.sender.username!= userId)
+		{
+		
+			test = conversation.sender
+		}else if(conversation.sender.username == userId)
+		{
+			test = conversation.recipient;
+		}	
 		return test;
 	}
 
@@ -77,7 +80,7 @@ const CoversationSideBar: FC <Props>  = ({conversations}) => {
 							<ConversationSideBarItem key={elem.id}>
 								<div className={styles.avatar}></div>
 								<div>
-					 				<span onClick={handleClick} className={styles.ConversationName}>{getDisplayUser(elem).username}</span>
+					 				<span onClick={handleClick} className={styles.ConversationName}>{getDisplayUser(elem)?.username}</span>
 					 				<span className={styles.lastName}>text Message</span>
 					 			</div>
 							</ConversationSideBarItem>

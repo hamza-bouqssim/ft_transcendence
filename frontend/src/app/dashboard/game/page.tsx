@@ -5,7 +5,10 @@ import { faRobot, faUserGroup } from "@fortawesome/free-solid-svg-icons";
 import InviteField from "../../components/InviteField";
 import { PlayerCard } from "../../components/PlayerCard";
 import { ChangeContext } from "../layout";
-import { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { getAuthUser } from "@/app/utils/api";
+import { useRouter } from "next/navigation";
+import { User } from "@/app/utils/types";
 
 const DashBoard = () => {
 	const { change, setChange } = useContext(ChangeContext);

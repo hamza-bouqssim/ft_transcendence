@@ -1,4 +1,5 @@
-import { Controller, Get, Param, Patch, Post, Put, Req, Request, UnauthorizedException, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+/* eslint-disable prettier/prettier */
+import { Controller, Get, Param, Post, Put, Req, UnauthorizedException, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthenticatedGuard } from 'src/auth/guards/GlobalGuard';
 import { UserService } from './user.service';
 import { JwtService } from '@nestjs/jwt';
@@ -24,6 +25,7 @@ export class UserController {
       const user = await whichWithAuthenticated(req, this.jwtService, this.prisma);
 
       return {
+        email : user.email,
         username: user.username,
         display_name: user.display_name,
         avatar_url: user.avatar_url,

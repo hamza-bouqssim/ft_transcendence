@@ -1,9 +1,10 @@
 import Image from "next/image";
 import { signIn, signOut } from "next-auth/react";
-import { loginGoogle, postLoginUser } from "../utils/api";
+import { getlogout, loginGoogle, postLoginUser } from "../utils/api";
 import { UserCredentialsParams } from "../utils/types";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { deleteCookie } from "cookies-next";
 
 export const GoogleSignInButton = () => {
 
@@ -18,8 +19,6 @@ export const GoogleSignInButton = () => {
 	const onSubmit = async (data: UserCredentialsParams) => {
 		try {
 			await loginGoogle();
-			// console.log(data);
-			// router.push("/dashboard", { scroll: false });
 		} catch (err) {
 			alert("failed to login");
 			console.log(err);
@@ -79,8 +78,31 @@ export const SignButton = (props: any) => {
 };
 
 export const MenuButton = (props: any) => {
+	
 	return (
 		<button
+			className={`h-[35px] w-[225px] ${props.background} ${
+				props.value === "Logout" ? "text-white" : "text-black"
+			} rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`}
+		>
+			{props.value}
+		</button>
+	);
+};
+export const LogoutButton = (props: any) => {
+	const router = useRouter();
+	const logoutFunction =  async () =>{
+		try {
+			await getlogout();
+			deleteCookie('logged');
+			router.push("/", { scroll: false });
+		} catch (err) {
+			alert("failed to logout");
+			console.log(err);
+		}
+	}
+	return (
+		<button onClick={logoutFunction}
 			className={`h-[35px] w-[225px] ${props.background} ${
 				props.value === "Logout" ? "text-white" : "text-black"
 			} rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`}
