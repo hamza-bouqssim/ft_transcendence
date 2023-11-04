@@ -9,7 +9,7 @@ export class UserService {
 
     async findUser( username: string)
     {
-        const data = await this.prisma.user.findUnique({where: {
+        const data = await this.prisma.user.findFirst({where: {
             username,
         }})
 
@@ -19,8 +19,8 @@ export class UserService {
             throw new NotFoundException('User with this name : '+ username + ' not found !')
         }
        
-            const {display_name, avatar_url} = data;
-            return {username, display_name, avatar_url};
+            const {id, display_name, avatar_url} = data;
+            return {id, username, display_name, avatar_url};
         
     }
 
@@ -85,6 +85,22 @@ export class UserService {
         
             return updatedAvatar;
     }
+
+    async listFriends()
+    {
+        return await this.prisma.friend.findMany({where: {status: 'ACCEPTED'}, select: {user: {select: {id: true, username: true, display_name: true, avatar_url:true}}}});
+    }
+
+    async pendingRequests()
+    {
+        return await this.prisma.friend.findMany({where: {status: 'PENDING'}, select: {user: {select: {id: true, username: true, display_name: true, avatar_url:true}}}});
+    }
+
+    async blockedFriends()
+    {
+        return await this.prisma.friend.findMany({where: {status: 'BLOCKED'}, select: {user: {select: {id: true, username: true, display_name: true, avatar_url:true}}}});
+    }
+    
     //------------SOUKAINA PART 
     async findByEmail(email : string)
     {

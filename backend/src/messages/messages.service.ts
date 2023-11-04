@@ -29,7 +29,6 @@ export class MessagesService {
                 recipient: true,
               }
           });
-          console.log(chat);
           if(!chat)
             throw new HttpException('Conversation not found', HttpStatus.BAD_REQUEST)
         // const {sende, recipient } = chat;
@@ -79,6 +78,7 @@ export class MessagesService {
                 id: chat.id, // Replace with the actual ChatParticipents ID
               },
             },
+           
           },
           include: {
             sender: true,

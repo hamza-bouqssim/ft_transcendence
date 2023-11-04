@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 export enum Routes {
     AUTH = 'auth',
     USER = 'user',

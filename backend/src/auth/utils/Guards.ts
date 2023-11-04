@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { ExecutionContext, Injectable } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { CanActivate } from "@nestjs/common";

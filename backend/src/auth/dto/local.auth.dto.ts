@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 // import { IsNotEmpty, IsString } from "class-validator";
 
 // export class LocalAuthDto{
@@ -35,7 +34,7 @@ import { IsNotEmpty, IsString } from "class-validator";
 export class LocalAuthDto {
     @IsString()
     @IsNotEmpty()
-    username?: string;
+    username: string;
 
     @IsString()
     @IsNotEmpty()
@@ -43,7 +42,7 @@ export class LocalAuthDto {
 
     @IsString()
     @IsNotEmpty()
-    display_name?: string;
+    display_name: string;
 
     @IsString()
     @IsNotEmpty()

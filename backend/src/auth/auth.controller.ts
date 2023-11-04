@@ -1,11 +1,12 @@
 /* eslint-disable prettier/prettier */
-import { Body, Controller, Get, Post, Req,  Res,  UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req,    Res,  UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthDto } from './dto/local.auth.dto';
 import { AuthenticatedGuard} from './guards/GlobalGuard';
 import { Request,  Response } from 'express';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
+import { LocalAuthGuards } from './utils/Guards';
 
 
 @Controller('auth')
@@ -15,20 +16,15 @@ export class AuthController {
                  private jwtService: JwtService){}
 
    
+    
 
+    
     @Post('signin')
     signIn(@Body() dto: LocalAuthDto, @Req() req: Request, @Res() res: Response)
     {
         
         return this.authService.signIn(dto, req, res);
     }
-
-    @Get('signout')
-    signOut(@Req() req : Request, @Res() res: Response)
-    {
-        return this.authService.signOut(req, res);
-    }
-
 
     @Post('signup')
     signUp(@Body() dto: LocalAuthDto){
@@ -43,7 +39,12 @@ export class AuthController {
         return { message: 'this shit is working!' };
     }
 
-    
+    @Get('signout')
+    signOut(@Req() req : Request, @Res() res: Response)
+    {
+        return this.authService.signOut(req, res);
+    }
+
     @Get('google/login')
     @UseGuards(AuthGuard('google'))
     async googleLogin(@Res() res: Response, @Req() req)

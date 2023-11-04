@@ -14,6 +14,7 @@ import { ConversationsModule } from './conversations/conversations.module';
 import { ParticipentModule } from './Participent/Participent.module';
 import { MessagesModule } from './messages/messages.module';
 import { FriendRequestModule } from './friend-request/friend-request.module';
+import { GameModule } from './game/game.module';
 import { GatewayModule } from './gateway/gateway.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 
@@ -24,7 +25,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     JwtModule.register({
       secret: 'my-secret'
     }),
-    PassportModule.register({session: true}), UserModule, ConversationsModule, ParticipentModule, MessagesModule, FriendRequestModule, GatewayModule, EventEmitterModule.forRoot()],
+    PassportModule.register({session: true}), UserModule, ConversationsModule, ParticipentModule, MessagesModule, FriendRequestModule, GameModule, GatewayModule, EventEmitterModule.forRoot()],
   controllers: [AppController, UserController],
   providers: [AppService, UserService, PrismaService],
   
