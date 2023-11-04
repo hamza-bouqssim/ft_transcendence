@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
@@ -52,7 +53,7 @@ export class ParticipentService {
 //     },
 //   });
 
-//   // Combine the sender and recipient chat participents
+//   // Combine the sender and recipient chat participents`
 //   const chatParticipents = [
 //     ...checkuser.senderOfChatParticipents,
 //     ...checkuser.recipientOfChatParticipents,
