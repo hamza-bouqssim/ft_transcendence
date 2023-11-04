@@ -1,4 +1,5 @@
-import { Controller, Get, Param, Patch, Post, Put, Req, Request, UnauthorizedException, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+/* eslint-disable prettier/prettier */
+import { Controller, Get, Param,  Post, Put, Req,  UnauthorizedException, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthenticatedGuard } from 'src/auth/guards/GlobalGuard';
 import { UserService } from './user.service';
 import { JwtService } from '@nestjs/jwt';
@@ -25,6 +26,7 @@ export class UserController {
 
       return {
         username: user.username,
+        email : user.email,
         display_name: user.display_name,
         avatar_url: user.avatar_url,
       };
@@ -103,5 +105,27 @@ export class UserController {
         throw new Error('Failed to update the Avatar');
       }
     }
+
+    @Get('my-friends')
+    @UseGuards(AuthenticatedGuard)
+    async listFriends()
+    {
+      return await this.userService.listFriends();
+    }
+
+    @Get('pending-requests')
+    @UseGuards(AuthenticatedGuard)
+    async pendingRequests()
+    {
+      return await this.userService.pendingRequests();
+    }
+
+    @Get('blocked-friends')
+    @UseGuards(AuthenticatedGuard)
+    async blockedFriends()
+    {
+      return await this.userService.blockedFriends();
+    }
+    
 }
 

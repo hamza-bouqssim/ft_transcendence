@@ -1,20 +1,22 @@
+/* eslint-disable prettier/prettier */
 import { HttpException, HttpStatus, Injectable} from '@nestjs/common';
 import { User } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
 import { ParticipentService } from 'src/Participent/Participent.service';
 import { CreateMessageParams } from 'src/utils/types';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class MessagesService {
 
 
-    constructor(private prisma : PrismaService, private participentService : ParticipentService)
+    constructor(private prisma : PrismaService, private participentService : ParticipentService, private EventEmitter: EventEmitter2)
     {
 
     }
 
 
-    async createMessags(user : User, params: CreateMessageParams){
+    async createMessags(user : User, params: CreateMessageParams) {
       let recipientUser;
       let senderUser;
         const chat = await this.prisma.chatParticipents.findUnique({
@@ -27,7 +29,6 @@ export class MessagesService {
                 recipient: true,
               }
           });
-          console.log(chat);
           if(!chat)
             throw new HttpException('Conversation not found', HttpStatus.BAD_REQUEST)
         // const {sende, recipient } = chat;
@@ -77,13 +78,14 @@ export class MessagesService {
                 id: chat.id, // Replace with the actual ChatParticipents ID
               },
             },
+           
           },
           include: {
             sender: true,
             recipient: true,
           },
         });
-        return message;
+        return this.EventEmitter.emit('message.create', message);
       }
 
  

@@ -1,6 +1,6 @@
 "use client";
 import "./Header.css";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,8 +9,22 @@ import {
 	faBars,
 	faXmark,
 } from "@fortawesome/free-solid-svg-icons";
+import { getAuthUser, getlogout } from "../utils/api";
+import { User } from "../utils/types";
+import { useRouter } from "next/navigation";
+import { deleteCookie } from "cookies-next";
 
 const Header = () => {
+	const [ user, setUser] = useState<User | undefined>();
+    const [loading, setLoading] = useState<boolean>(false);
+    const controller = new AbortController();
+    useEffect(() => {
+            setLoading(true);
+            getAuthUser().then(({data}) => {
+                setUser(data);
+                setLoading(false)})
+            .catch((err)=> {console.log(err); setLoading(false);});
+    },[])
 	const navRef = useRef<HTMLDivElement>(null),
 		barsIconRef = useRef<HTMLDivElement>(null),
 		xMarkIconRef = useRef<HTMLDivElement>(null);
@@ -32,6 +46,20 @@ const Header = () => {
 			navRef.current?.classList.add("hidden");
 		}
 	};
+	const router = useRouter();
+	const logoutFunction =  async () =>{
+		console.log("this one")
+		try {
+			await getlogout();
+			let data;
+			deleteCookie('logged');
+			setUser(data);
+			router.push("/", { scroll: false });
+		} catch (err) {
+			alert("failed to logout");
+			console.log(err);
+		}
+	}
 
 	return (
 		<header className="px-[15%] py-[59px]">
@@ -79,9 +107,9 @@ const Header = () => {
 							<a href="#featues" className="link-style">
 								Features
 							</a>
-							<Link className="btn-style" href={"/signIn"}>
+							{!user ? <Link className="btn-style" href={"/signIn"}>
 								Sign In
-							</Link>
+							</Link> : <button onClick={logoutFunction} className="btn-style">Sign Out</button>}
 						</nav>
 					</div>
 					<div

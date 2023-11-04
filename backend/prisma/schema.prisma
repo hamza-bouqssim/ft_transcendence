@@ -84,7 +84,7 @@ model Message {
   lastMessageForId String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  ChatRoom       ChatRoom    @relation(fields: [id], references: [id])
+  // ChatRoom       ChatRoom    @relation(fields: [id], references: [id])
 }
 
 model Notification {
@@ -127,7 +127,7 @@ model ChatRoom {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   members   Member[]
-  message  Message[]
+  // message  Message[]
 }
 
 model Member {

@@ -16,20 +16,15 @@ export class AuthController {
                  private jwtService: JwtService){}
 
    
-    @Post('signin')
-    @UseGuards(AuthenticatedGuard)
-    loginUser()
-    {
-        console.log('login succefully');
-    }
+    
 
     
-    // @Post('signin')
-    // signIn(@Body() dto: LocalAuthDto, @Req() req: Request, @Res() res: Response)
-    // {
+    @Post('signin')
+    signIn(@Body() dto: LocalAuthDto, @Req() req: Request, @Res() res: Response)
+    {
         
-    //     return this.authService.signIn(dto, req, res);
-    // }
+        return this.authService.signIn(dto, req, res);
+    }
 
     @Post('signup')
     signUp(@Body() dto: LocalAuthDto){
@@ -41,7 +36,6 @@ export class AuthController {
     @Get('test')
     @UseGuards(AuthenticatedGuard)
     testEndpoint() {
-         // this endpoint just to check if it is protected to be accessible if  user is not authenticated !
         return { message: 'this shit is working!' };
     }
 

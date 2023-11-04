@@ -11,13 +11,14 @@ export type createUserParams = {
 
 export type UserCredentialsParams = {
     email: string;
-    password: string;
+    password_hashed: string;
 }
 
 export type User = {
     id: string;
     email: string;
     username : string;
+    display_name : string;
     avatar_url : string;
 }
 export type chat = {

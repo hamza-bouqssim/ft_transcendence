@@ -1,3 +1,4 @@
+/* eslint-disable react/display-name */
 import { forwardRef, useRef, useState } from "react";
 import { SignButton } from "./Buttons";
 import { useForm } from "react-hook-form";
@@ -11,6 +12,7 @@ import {
 import { useRouter } from "next/navigation";
 import { UserCredentialsParams } from "../utils/types";
 import { postLoginUser } from "../utils/api";
+import { setCookie } from "cookies-next";
 
 const SignInForm = forwardRef((props: any, ref: any) => {
 	const [show, setShow] = useState<boolean>(false),
@@ -19,7 +21,7 @@ const SignInForm = forwardRef((props: any, ref: any) => {
 
 	type FormData = {
 		email: string;
-		password: string;
+		password_hashed: string;
 	};
 
 	const {
@@ -43,7 +45,7 @@ const SignInForm = forwardRef((props: any, ref: any) => {
 	const onSubmit = async (data: UserCredentialsParams) => {
 		try {
 			await postLoginUser(data);
-			console.log(data);
+			setCookie('logged', true);
 			router.push("/dashboard", { scroll: false });
 		} catch (err) {
 			alert("failed to login");
@@ -74,7 +76,7 @@ const SignInForm = forwardRef((props: any, ref: any) => {
 					<FontAwesomeIcon icon={faKey} className="icon-style left-[30px]" />
 					<input
 						type={show ? "text" : "password"}
-						{...register("password", { required: "Password is required" })}
+						{...register("password_hashed", { required: "Password is required" })}
 						className="custom-shape input-style"
 						placeholder="Password"
 					/>
