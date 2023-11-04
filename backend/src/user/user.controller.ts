@@ -103,5 +103,27 @@ export class UserController {
         throw new Error('Failed to update the Avatar');
       }
     }
+
+    @Get('my-friends')
+    @UseGuards(AuthenticatedGuard)
+    async listFriends()
+    {
+      return await this.userService.listFriends();
+    }
+
+    @Get('pending-requests')
+    @UseGuards(AuthenticatedGuard)
+    async pendingRequests()
+    {
+      return await this.userService.pendingRequests();
+    }
+
+    @Get('blocked-friends')
+    @UseGuards(AuthenticatedGuard)
+    async blockedFriends()
+    {
+      return await this.userService.blockedFriends();
+    }
+    
 }
 

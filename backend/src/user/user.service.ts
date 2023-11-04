@@ -85,6 +85,22 @@ export class UserService {
         
             return updatedAvatar;
     }
+
+    async listFriends()
+    {
+        return await this.prisma.friend.findMany({where: {status: 'ACCEPTED'}, select: {user: {select: {id: true, username: true, display_name: true, avatar_url:true}}}});
+    }
+
+    async pendingRequests()
+    {
+        return await this.prisma.friend.findMany({where: {status: 'PENDING'}, select: {user: {select: {id: true, username: true, display_name: true, avatar_url:true}}}});
+    }
+
+    async blockedFriends()
+    {
+        return await this.prisma.friend.findMany({where: {status: 'BLOCKED'}, select: {user: {select: {id: true, username: true, display_name: true, avatar_url:true}}}});
+    }
+    
     //------------SOUKAINA PART 
     async findByEmail(email : string)
     {
