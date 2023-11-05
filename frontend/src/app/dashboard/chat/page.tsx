@@ -14,9 +14,7 @@ import { ConversationTypes, User} from "@/app/utils/types";
 import TopRightBar from "@/app/components/TopRightBar";
 import { useRouter } from "next/navigation";
 import { getSession } from "next-auth/react";
-
-
-
+import { socket, socketContext } from "@/app/utils/context/socketContext";
 
 const CoversationPage = () =>
 {
@@ -31,12 +29,13 @@ const CoversationPage = () =>
 	}, [conversation])
 	
 		return (
-			<Page display="flex">
-			
-				<CoversationSideBar conversations={conversation}/>
-				<ConversationPanel/> 
-			
-			</Page>)
+			<socketContext.Provider value={socket}>
+				<Page display="flex">
+					<CoversationSideBar conversations={conversation}/>
+					<ConversationPanel/> 
+				</Page>
+			</socketContext.Provider>
+)
 	
 			
 

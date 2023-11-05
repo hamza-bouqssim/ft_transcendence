@@ -3,7 +3,7 @@
 import CoversationSideBar from "@/app/components/CoversationSideBar/page";
 import { ConversationChannelStyle, Page} from "@/app/utils/styles";
 import { useContext, useEffect, useState } from "react";
-import { ConversationTypes, User, messageTypes } from "@/app/utils/types";
+import { ConversationTypes, User, messageEventPayload, messageTypes } from "@/app/utils/types";
 import { getAuthUser, getConversation, getConversationMessage } from "@/app/utils/api";
 import { useParams } from "next/navigation";
 import MessagePanel from "@/app/components/messages/MessagePanel";
@@ -35,8 +35,6 @@ const ConversationChannelPage = () => {
 	useEffect(() => {
 		getConversation().then(({data}) =>{
 			setConversation(data)
-      console.log("conversation")
-      console.log(conversation)
 		}).catch((err)=> console.log(err))
 	}, [conversation])
 
@@ -58,13 +56,21 @@ const ConversationChannelPage = () => {
 
       // for sockets
       useEffect(()=>{
-          socket.on('connect', () => console.log("socket here"));
+          socket.on('connected', () => console.log("socket here connected"));
+          socket.on('onMessage', (payload : messageEventPayload) => {
+            console.log("message received");
+            //get the conversation
+            // const {conversation, ...msg} = payload;
+            console.log(payload);
+            setMessage((prev) => [payload, ...prev]);
+          });
           return () =>{
-            socket.off('connect');
+            socket.off('connected');
+            socket.off('onMessage');
           }
       })
     return ( 
-      <socketContext.Provider value={socket}>
+      // <socketContext.Provider value={socket}>
           
             <Page display="flex">
                 <CoversationSideBar conversations={conversation}/>
@@ -72,7 +78,7 @@ const ConversationChannelPage = () => {
                     <MessagePanel messages={message}></MessagePanel> 
                 </ConversationChannelStyle>
             </Page>
-      </socketContext.Provider >
+      // </socketContext.Provider >
 
             
       

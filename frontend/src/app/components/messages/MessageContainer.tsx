@@ -13,20 +13,17 @@ const MessageContainer  : FC<Props>  = ({messages}) => {
     const controller = new AbortController();
     useEffect(() => {
             setLoading(true);
-            // console.log(loading);
-            getAuthUser().then(({data}) => {
-                // console.log("hello")
-                // console.log(data);
+            getAuthUser().then(({data}) => {  
                 setUser(data);
-                // console.log("user here");
                 setLoading(false)})
             .catch((err)=> {console.log(err); setLoading(false);});
-            return controller.abort();
     }, [])
+    console.log("messgaes here");
+    console.log(messages);
     return (
     <MessageContainerStyle>
          {messages.map((m) =>(
-            <MessageItemContainer>
+            <MessageItemContainer key={m.id}>
                     <MessageItemAvatar/>
                         <MessageItemDetails>
                             <MessageItemHeader>

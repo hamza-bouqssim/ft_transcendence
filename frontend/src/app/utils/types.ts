@@ -1,5 +1,4 @@
 
-
 export type createUserParams = {
     username : string,
     email : string;
@@ -37,7 +36,16 @@ export type   ConversationTypes= {
 export type messageTypes = {
     id : string;
     content : string;
+    conversation: ConversationTypes;
     createdAt : string;
     sender : User;
+    recipient : User;
+}
+export type messageEventPayload = {
+    id : string;
+    createdAt : string;
+    conversation: ConversationTypes;
+    sender : User;
+    content : string;
     recipient : User;
 }

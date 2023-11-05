@@ -12,6 +12,18 @@ export const InputField = styled.input`
 
 `;
 
+
+
+export const Body = styled.body`
+    margin: 0;
+    padding: 0;
+    background-color: var(--dark-purple-color);
+    background-image: url("/assets/background.svg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    overflow-x: hidden;
+`;
+
 export const InputContainer = styled.div<InputContainerProps>`
     background-color: ${(prop) => prop.backgroundColor || '#1e1b34'};
     padding: 12px 16px;
@@ -85,7 +97,7 @@ export const Conversation = styled.aside`
         padding : 0 57px;
         
     }
-    & ::-webkit-scrollbar{
+    &::-webkit-scrollbar{
        
        display: none;
     }
@@ -198,11 +210,36 @@ export const MessagePanelStyle = styled.div `
 
     background : inherit;
     height : 100%;
-    display: flex;
-    flex-direction : column;
-    padding : 4px;
     box-sizing : border-box;
+    position : relative;
+    display: flex;
+    width: 100%;
+    justify-content: ;
 `;
+export const MessagePannelBody = styled.div `
+
+    height: 100%;
+    display : flex;
+    flex-direction : column;
+    padding : 32px;
+    box-sizing : border-box;
+`
+
+export const MessagePannelHeaderStyle = styled.header `
+    backgound-color: #fff;
+    border-buttom: 1px solid #5454543d;
+    border-left : 1px solid #5454543d;
+    heigt: 100px;
+    display: flex;
+    justify-content : space-between;
+    align-items: center;
+    padding : 0 32px;
+    box-sizing : border-box;
+    position : absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+`
 
 export const MessageContainerStyle = styled.div `
     height: 100%;
@@ -211,6 +248,9 @@ export const MessageContainerStyle = styled.div `
     display : flex;
     flex-direction : column-reverse;
     overflow-y : scroll;
+    &::-webkit-scrollbar {
+        display: none;
+    }
 `;
 
 export const MessageInputFieldContainer = styled.div `
@@ -273,7 +313,7 @@ export const MessageItemHeader = styled.div `
 `;
 
 export const  MessageItemContent = styled.div `
-
+      
 `;
 
 export const Dark = '#131313'

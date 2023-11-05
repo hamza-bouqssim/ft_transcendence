@@ -13,3 +13,19 @@
 
 }
 
+body {
+	margin: 0;
+	padding: 0;
+	background-color: var(--dark-purple-color);
+	background-image: url("/assets/background.svg");
+	/* background-attachment: fixed; */
+	background-repeat: no-repeat;
+	background-size: cover;
+	overflow-x: hidden;
+}
+* {
+	box-sizing: border-box;
+	scroll-behavior: smooth;
+	-webkit-tap-highlight-color: transparent;
+}
+
