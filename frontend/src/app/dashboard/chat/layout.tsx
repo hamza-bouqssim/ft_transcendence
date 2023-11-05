@@ -1,5 +1,5 @@
 import CoversationSideBar from "@/app/components/CoversationSideBar/page";
-import style from "./page.module.css"
+import './styles.css'
 // import { socket, socketContext } from "@/app/utils/context/socketContext";
 export default async function UserLayout ({
     children
@@ -7,11 +7,9 @@ export default async function UserLayout ({
     children: React.ReactNode;
 }) {
     return (
-        // <socketContext.Provider value={socket}>
-            <div className="h-full">
+            <div>
                 {children} 
             </div>
-        // </socketContext.Provider>
            
    )
 }
