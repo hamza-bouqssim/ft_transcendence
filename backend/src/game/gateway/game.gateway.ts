@@ -1,8 +1,16 @@
-import { WebSocketGateway } from '@nestjs/websockets';
+import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { Server } from 'socket.io';
 import { Howl } from 'howler';
+import Matter from 'matter-js';
+import { OnModuleInit } from '@nestjs/common';
+
+const Bodies = Matter.Bodies;
 
 @WebSocketGateway()
-export class GameGateway {
+export class GameGateway implements OnModuleInit {
+	@WebSocketServer()
+	server: Server;
+
 	xCord: number;
 	yCord: number;
 	radius: number;
