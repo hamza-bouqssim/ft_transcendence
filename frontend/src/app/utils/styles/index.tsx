@@ -80,7 +80,6 @@ export const Conversation = styled.aside`
     top: 0;
     left: 0;
     height: 100%;
-    margin-left: 90px;
     width: 350px;
     background-color: #fff;
     border-right: 1px solid #5454543d;
@@ -120,7 +119,7 @@ export const Conversation = styled.aside`
 export const ConversationChannelStyle = styled.div`
     position: absolute;
     top:0;
-    margin-left: 440px;
+    margin-left: 350px;
     width: 35rem;
     height: 100%;
     align-items: center;
@@ -131,13 +130,13 @@ export const ConversationChannelStyle = styled.div`
 `;
 
 export const ConversationPannelStyle = styled.div`
-    position: absolute;
-    top:0;
+    position: absolute; 
+    top:0;  
     margin-left: 350px;
     width: 35rem;
     height: 100%;
     align-items: center;
-    overflow-y: scroll;
+    background-color: #1d1a33;
    
     
     &::-webkit-scrollbar {
@@ -317,7 +316,7 @@ export const MessageInput = styled.input `
     background-color: inherit;
     outline: none;
     border: none;
-    color: #454545;
+    color: #fff;
     font-family: 'Inter';
     box-sizing: border-box;
     font-size: 18px;

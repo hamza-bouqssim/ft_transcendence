@@ -14,8 +14,9 @@
 }
 
 body {
-	background-color: #fc7785;
-	height: 100%;
+	
+	all:unset;
+	background-color: #1d1a33;
 }
 
 
