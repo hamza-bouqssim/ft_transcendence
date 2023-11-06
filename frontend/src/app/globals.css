@@ -92,6 +92,7 @@ body {
 	background-size: cover;
 	overflow-x: hidden;
 }
+
 * {
 	box-sizing: border-box;
 	scroll-behavior: smooth;

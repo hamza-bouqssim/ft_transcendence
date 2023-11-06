@@ -11,6 +11,8 @@ export class GameGateway implements OnModuleInit {
 	@WebSocketServer()
 	server: Server;
 
+	onModuleInit() {}
+
 	xCord: number;
 	yCord: number;
 	radius: number;

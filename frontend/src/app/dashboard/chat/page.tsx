@@ -14,6 +14,7 @@ import { ConversationTypes, User} from "@/app/utils/types";
 import TopRightBar from "@/app/components/TopRightBar";
 import { useRouter } from "next/navigation";
 import { getSession } from "next-auth/react";
+import './style.css'
 
 
 
