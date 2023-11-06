@@ -49,3 +49,9 @@ export type messageEventPayload = {
     content : string;
     recipient : User;
 }
+
+
+export type CreateMessageParams = {
+    content : string;
+    participentsId : string;
+}

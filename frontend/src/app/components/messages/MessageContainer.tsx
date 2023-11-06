@@ -18,8 +18,7 @@ const MessageContainer  : FC<Props>  = ({messages}) => {
                 setLoading(false)})
             .catch((err)=> {console.log(err); setLoading(false);});
     }, [])
-    console.log("messgaes here");
-    console.log(messages);
+
     return (
     <MessageContainerStyle>
          {messages.map((m) =>(

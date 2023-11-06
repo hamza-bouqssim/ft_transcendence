@@ -1,5 +1,5 @@
 import axios, { Axios, AxiosRequestConfig } from 'axios'
-import { User, UserCredentialsParams, createUserParams } from './types';
+import { CreateMessageParams, User, UserCredentialsParams, createUserParams } from './types';
 
 
 const config : AxiosRequestConfig = { withCredentials: true}
@@ -22,3 +22,5 @@ export const getConversationMessage = (id : string) => axios.get(`http://localho
 export const loginGoogle = () => axios.get(`http://localhost:8000/auth/google/login`, config)
 
 export const getlogout = () => axios.get(`http://localhost:8000/auth/signout`, config);
+
+export const postNewMessage = async (data : CreateMessageParams) => axios.post(`http://localhost:8000/messages/create_messages`, data, config);
