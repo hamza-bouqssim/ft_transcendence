@@ -26,7 +26,7 @@ export default function RootLayout({
 		<html lang="en">
 			<body>
 				<div className="relative h-[100vh] min-h-[850px] py-4 text-white">
-					{/* <SideBar
+					<SideBar
 						sideBar={change.sideBar}
 						onClick={() =>
 							setChange({
@@ -48,7 +48,7 @@ export default function RootLayout({
 								menu: !change.menu,
 							})
 						}
-					/> */}
+					/>
 
 					{/* <div className="mt-[70px] h-[85%] w-full lg:flex lg:items-center lg:justify-evenly min-[1750px]:ml-72 min-[1750px]:mt-[90px] min-[1750px]:w-[86%]">
 						{children}

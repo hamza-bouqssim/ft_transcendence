@@ -123,7 +123,7 @@ export const ConversationChannelStyle = styled.div`
     width: 35rem;
     height: 100%;
     align-items: center;
-    background-color: #1d1a33;
+    background-color: #232039;
   
 
     
