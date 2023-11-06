@@ -2,7 +2,7 @@
 
 import CoversationSideBar from "@/app/components/CoversationSideBar/page";
 import { ConversationChannelStyle, Page} from "@/app/utils/styles";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState , PropsWithChildren} from "react";
 import { ConversationTypes, User, messageEventPayload, messageTypes } from "@/app/utils/types";
 import { getAuthUser, getConversation, getConversationMessage } from "@/app/utils/api";
 import { useParams } from "next/navigation";
@@ -10,6 +10,27 @@ import MessagePanel from "@/app/components/messages/MessagePanel";
 import TopRightBar from "@/app/components/TopRightBar";
 import SideBar from "@/app/components/SideBar";
 import { socket, socketContext } from "@/app/utils/context/socketContext";
+import { Socket } from "socket.io-client";
+import { store } from "@/app/store";
+import {Provider as ReduxProvider} from 'react-redux'
+
+
+type Props = {
+	user?: User;
+	setUser : React.Dispatch<React.SetStateAction<User | undefined>>;
+	socket : Socket;
+}
+
+function AppWithProviders({children, user, setUser,} : PropsWithChildren & Props){
+	return (
+		<ReduxProvider store={store}>
+			<socketContext.Provider value={socket}>
+				{children}
+			</socketContext.Provider>
+		</ReduxProvider>
+	)
+
+}
 
 const ConversationChannelPage = () => {
   const socket = useContext(socketContext)
@@ -59,8 +80,7 @@ const ConversationChannelPage = () => {
           socket.on('connected', () => console.log("socket here connected"));
           socket.on('onMessage', (payload : messageEventPayload) => {
             console.log("message received");
-            //get the conversation
-            // const {conversation, ...msg} = payload;
+            
             console.log(payload);
             setMessage((prev) => [payload, ...prev]);
           });
@@ -70,15 +90,16 @@ const ConversationChannelPage = () => {
           }
       })
     return ( 
-      // <socketContext.Provider value={socket}>
-          
+      <AppWithProviders user={user} setUser={setUser} socket={socket}> 
+
             <Page display="flex">
                 <CoversationSideBar conversations={conversation}/>
                 <ConversationChannelStyle>
                     <MessagePanel messages={message}></MessagePanel> 
                 </ConversationChannelStyle>
             </Page>
-      // </socketContext.Provider >
+        </AppWithProviders>
+
 
             
       

@@ -41,32 +41,31 @@ export const InputLabel = styled.label`
 
 `;
 
-// export const Button = styled.button`
-//     width: 100%;
-//     background-color: #fc7785;
-//     color: #1e1b3;
-//     border: none;
-//     outline: none;
-//     font-family: 'Inter'
-//     font-size: 12px;
-//     border-radius: 10px;
-//     padding: 10px 0;
-//     font-weight: 500;
-//     transition: 250ms background-color ease;
-//     &:focus{
-//         background-color: #972f39;
-//         border: 2px solid #fff;
-//     }
-//     &:hover {
-//         cursor: pointer;
-//         background-color: #972f39;
-//         border: 2px solid #fff;
-//     }
-//     &:active {
-//         background-color: #498cda;
-//     }
+export const Button = styled.button`
+    width: 100%;
+    background-color: #fc7785;
+    border: none;
+    outline: none;
+    font-family: 'Inter';
+    font-size: 12px;
+    border-radius: 10px;
+    padding: 10px 0;
+    font-weight: 500;
+    transition: 250ms background-color ease;
+    &:focus{
+        background-color: #972f39;
+        border: 2px solid #fff;
+    }
+    &:hover {
+        cursor: pointer;
+        background-color: #972f39;
+        border: 2px solid #fff;
+    }
+    &:active {
+        background-color: #498cda;
+    }
 
-// `;
+`;
 export const Page = styled.div<PageProps>`
    
     height: 100%;

@@ -34,8 +34,6 @@ function AppWithProviders({children, user, setUser,} : PropsWithChildren & Props
 			</socketContext.Provider>
 		</ReduxProvider>
 	)
-	
-	
 
 }
 	

@@ -16,6 +16,7 @@ export const conversationsSlice = createSlice({
   reducers: {
         // this is for adding a conversations 
     addConversation: (state , action : PayloadAction<ConversationTypes>) => {
+        console.log('add conversation');
         state.conversations.push(action.payload);
     }
   },

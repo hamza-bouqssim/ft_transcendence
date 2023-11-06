@@ -25,7 +25,7 @@ const MessageContainer  : FC<Props>  = ({messages}) => {
             <MessageItemContainer key={m.id}>
                     <MessageItemAvatar/>
                         <MessageItemDetails>
-                            <MessageItemHeader>
+                            <MessageItemHeader key={m.id}>
                             <span className="senderName" style={{color : user?.id === m.sender.id ? '#8982a6' : '#778ba5'}}>
                                 {m.sender.username}
                             </span>

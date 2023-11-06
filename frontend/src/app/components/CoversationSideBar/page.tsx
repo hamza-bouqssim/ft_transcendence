@@ -12,12 +12,15 @@ import { Overlay } from "../Overlay"
 import { CreateConversationModal } from "../modals/CreateConversationModal"
 import { AuthContext } from "@/app/utils/context/AuthContext"
 import { getAuthUser } from "@/app/utils/api"
+import { RootState } from "@/app/store"
+import { useDispatch, useSelector } from "react-redux"
 
 type Props = {
 	conversations: ConversationTypes[];
 }
 
 const CoversationSideBar: FC <Props>  = ({conversations}) => {
+	const conversation = useSelector((state: RootState) => state.conversation.conversations);
 	const [ user, setUser] = useState<User | undefined>();
     const [loading, setLoading] = useState<boolean>(false);
 	const controller = new AbortController();
@@ -49,7 +52,7 @@ const CoversationSideBar: FC <Props>  = ({conversations}) => {
 	}
 
 	
-    // console.log(user);
+
     return (
 		<Page>
 			{show && <CreateConversationModal   setShow={setShow} />   }

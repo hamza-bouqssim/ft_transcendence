@@ -55,3 +55,7 @@ export type CreateMessageParams = {
     content : string;
     participentsId : string;
 }
+
+export type CreateConversationParams = {
+    recipient : string;
+}
