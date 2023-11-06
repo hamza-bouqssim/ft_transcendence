@@ -15,18 +15,27 @@ import { ParticipentModule } from './Participent/Participent.module';
 import { MessagesModule } from './messages/messages.module';
 import { FriendRequestModule } from './friend-request/friend-request.module';
 import { GameModule } from './game/game.module';
-import { GatewayModule } from './game/gateway/gateway.module';
+import { GatewayModule } from './gateway/gateway.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
-  imports: [
-    PrismaClient,
-    AuthModule,
-    JwtModule.register({
-      secret: 'my-secret',
-    }),
-    PassportModule.register({session: true}), UserModule, ConversationsModule, ParticipentModule, MessagesModule, FriendRequestModule, GameModule, GatewayModule, EventEmitterModule.forRoot()],
-  controllers: [AppController, UserController],
-  providers: [AppService, UserService, PrismaService],
+	imports: [
+		PrismaClient,
+		AuthModule,
+		JwtModule.register({
+			secret: 'my-secret',
+		}),
+		PassportModule.register({ session: true }),
+		UserModule,
+		ConversationsModule,
+		ParticipentModule,
+		MessagesModule,
+		FriendRequestModule,
+		GameModule,
+		GatewayModule,
+		EventEmitterModule.forRoot(),
+	],
+	controllers: [AppController, UserController],
+	providers: [AppService, UserService, PrismaService],
 })
 export class AppModule {}

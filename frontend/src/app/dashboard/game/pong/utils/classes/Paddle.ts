@@ -48,79 +48,79 @@ class Paddle {
 		);
 	};
 
-	setNewPaddleColor = (): void => {
-		this.body.render.fillStyle = this.color;
-	};
+	// setNewPaddleColor = (): void => {
+	// 	this.body.render.fillStyle = this.color;
+	// };
 
-	currentRightPaddlePosition = (ball: Ball): void => {
-		if (
-			this.body.position.y + this.height / 2 >= this.render.canvas.height &&
-			ball.body.position.y >= this.render.canvas.height - this.height / 2
-		)
-			this.currentRightPaddlePos = this.render.canvas.height - this.height / 2;
-		else if (
-			this.body.position.y - this.height / 2 <= 0 &&
-			ball.body.position.y <= this.height / 2
-		)
-			this.currentRightPaddlePos = this.height / 2;
-		else this.currentRightPaddlePos = ball.body.position.y;
+	// currentRightPaddlePosition = (ball: Ball): void => {
+	// 	if (
+	// 		this.body.position.y + this.height / 2 >= this.render.canvas.height &&
+	// 		ball.body.position.y >= this.render.canvas.height - this.height / 2
+	// 	)
+	// 		this.currentRightPaddlePos = this.render.canvas.height - this.height / 2;
+	// 	else if (
+	// 		this.body.position.y - this.height / 2 <= 0 &&
+	// 		ball.body.position.y <= this.height / 2
+	// 	)
+	// 		this.currentRightPaddlePos = this.height / 2;
+	// 	else this.currentRightPaddlePos = ball.body.position.y;
 
-		Matter.Body.setPosition(this.body, {
-			x: this.body.position.x,
-			y: this.currentRightPaddlePos,
-		});
-	};
+	// 	Matter.Body.setPosition(this.body, {
+	// 		x: this.body.position.x,
+	// 		y: this.currentRightPaddlePos,
+	// 	});
+	// };
 
-	applyMoving = (steps: any, key: any): void => {
-		if (this.body.position.y <= this.height / 2 && key == "w")
-			this.yCord = this.height / 2;
-		else if (
-			this.body.position.y + this.height / 2 >= this.render.canvas.height &&
-			key == "s"
-		)
-			this.yCord = this.render.canvas.height - this.height / 2;
-		else this.yCord += steps;
+	// applyMoving = (steps: any, key: any): void => {
+	// 	if (this.body.position.y <= this.height / 2 && key == "w")
+	// 		this.yCord = this.height / 2;
+	// 	else if (
+	// 		this.body.position.y + this.height / 2 >= this.render.canvas.height &&
+	// 		key == "s"
+	// 	)
+	// 		this.yCord = this.render.canvas.height - this.height / 2;
+	// 	else this.yCord += steps;
 
-		Matter.Body.setPosition(this.body, {
-			x: this.xCord,
-			y: this.yCord,
-		});
-	};
+	// 	Matter.Body.setPosition(this.body, {
+	// 		x: this.xCord,
+	// 		y: this.yCord,
+	// 	});
+	// };
 
-	handleKeyDown = (e: KeyboardEvent): void => {
-		if (e.key === "w") this.applyMoving(-15, e.key);
-		else if (e.key === "s") this.applyMoving(15, e.key);
-	};
+	// handleKeyDown = (e: KeyboardEvent): void => {
+	// 	if (e.key === "w") this.applyMoving(-15, e.key);
+	// 	else if (e.key === "s") this.applyMoving(15, e.key);
+	// };
 
-	handleMouseMouve = (e: MouseEvent): void => {
-		if (e.clientX < this.render.canvas.width / 2) {
-			Matter.Body.setPosition(this.body, {
-				x: this.xCord,
-				y: e.clientY - this.height / 2,
-			});
-		}
-	};
+	// handleMouseMouve = (e: MouseEvent): void => {
+	// 	if (e.clientX < this.render.canvas.width / 2) {
+	// 		Matter.Body.setPosition(this.body, {
+	// 			x: this.xCord,
+	// 			y: e.clientY - this.height / 2,
+	// 		});
+	// 	}
+	// };
 
-	stopMoving = () => {
-		document.removeEventListener("keydown", this.handleKeyDown);
-	};
+	// stopMoving = () => {
+	// 	document.removeEventListener("keydown", this.handleKeyDown);
+	// };
 
-	move = (ball: Ball): void => {
-		if (this.xCord < this.render.canvas.width / 2) {
-			document.addEventListener("keydown", this.handleKeyDown);
-			this.render.canvas.addEventListener("mousemove", this.handleMouseMouve);
-		}
+	// move = (ball: Ball): void => {
+	// 	if (this.xCord < this.render.canvas.width / 2) {
+	// 		document.addEventListener("keydown", this.handleKeyDown);
+	// 		this.render.canvas.addEventListener("mousemove", this.handleMouseMouve);
+	// 	}
 
-		if (this.xCord > this.render.canvas.width / 2)
-			this.currentRightPaddlePosition(ball);
-	};
+	// 	if (this.xCord > this.render.canvas.width / 2)
+	// 		this.currentRightPaddlePosition(ball);
+	// };
 
-	reset = (): void => {
-		Matter.Body.setPosition(this.body, {
-			x: this.resetX,
-			y: this.resetY,
-		});
-	};
+	// reset = (): void => {
+	// 	Matter.Body.setPosition(this.body, {
+	// 		x: this.resetX,
+	// 		y: this.resetY,
+	// 	});
+	// };
 }
 
 export default Paddle;

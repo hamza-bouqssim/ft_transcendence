@@ -1,128 +1,123 @@
-import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import {
+	SubscribeMessage,
+	WebSocketGateway,
+	WebSocketServer,
+} from '@nestjs/websockets';
 import { Server } from 'socket.io';
-import { Howl } from 'howler';
 import Matter from 'matter-js';
+// import Ball from './classes/Ball';
+// import Paddle from './classes/Paddle';
 import { OnModuleInit } from '@nestjs/common';
 
-const Bodies = Matter.Bodies;
+// const Bodies = Matter.Bodies;
+// const Render = Matter.Render;
+// const Engine = Matter.Engine;
+// const Runner = Matter.Runner;
+// const Composite = Matter.Composite;
 
-@WebSocketGateway()
+// const engine = Engine.create();
+// const runner = Runner.create();
+
+@WebSocketGateway({
+	cors: {
+		origin: ['http://localhost:3000'],
+	},
+})
 export class GameGateway implements OnModuleInit {
 	@WebSocketServer()
 	server: Server;
 
-	onModuleInit() {}
+	// constructor(
+	// 	private ball: Ball,
+	// 	private rightPaddle: Paddle,
+	// 	private leftPaddle: Paddle,
+	// ) {}
 
-	xCord: number;
-	yCord: number;
-	radius: number;
-	color: string;
-	body: any;
-	xVelocity: number = -1;
-	yVelocity: number = -1;
-	speed: number = 2;
-	isPaused: boolean;
-	isSilenced: boolean;
-	sound = {
-		leftPaddleSound: new Howl({
-			src: ['/assets/sounds/leftPaddle.wav'],
-		}),
-		rightPaddleSound: new Howl({
-			src: ['/assets/sounds/rightPaddle.wav'],
-		}),
-		win: new Howl({
-			src: ['/assets/sounds/winSound.mp3'],
-		}),
-	};
+	onModuleInit() {
+		this.server.on('connection', () =>
+			console.log('A Pong Player Is Connected!'),
+		);
+	}
 
-	setNewCircleColor = (): void => {
-		this.body.render.fillStyle = this.color;
-	};
-
-	drawBall = (): void => {
-		this.body = Bodies.circle(this.xCord, this.yCord, this.radius, {
-			render: {
-				fillStyle: this.color,
-			},
+	@SubscribeMessage("setDefaultPosition")
+	setDefaultPosition() {
+		this.server.emit("defaultPosition", {
+			x : 0,
+			y : 0,
 		});
-	};
-
-	reset = (): void => {
-		Matter.Body.setPosition(this.body, {
-			x: this.xCord,
-			y: this.yCord,
-		});
-	};
-
-	setBallSpeed = (): void => {
-		Matter.Body.setVelocity(this.body, {
-			x: this.xVelocity * this.speed,
-			y: this.yVelocity * this.speed,
-		});
-	};
+	}
 
 	// If the ball reaches the canvas boundary, reverse its vertical velocity
-	move = (render: any, left: Paddle, right: Paddle): void => {
-		if (
-			this.body.position.y + this.body.circleRadius - 1 >=
-				render.canvas.height ||
-			this.body.position.y - this.body.circleRadius <= 0
-		)
-			this.yVelocity = -this.yVelocity;
-
-		if (
-			this.body.position.x > render.canvas.width ||
-			this.body.position.x < 0
-		) {
-			this.body.position.x < 0 ? right.score++ : left.score++;
-			this.reset();
-			left.reset();
-			right.reset();
-		}
-		this.setBallSpeed();
-	};
+	// move = (render: any): void => {
+	// 	if (
+	// 		this.ball.body.position.y + this.ball.body.circleRadius - 1 >=
+	// 			render.canvas.height ||
+	// 		this.ball.body.position.y - this.ball.body.circleRadius <= 0
+	// 	)
+	// 		this.ball.yVelocity = -this.ball.yVelocity;
+	// 	if (
+	// 		this.ball.body.position.x > render.canvas.width ||
+	// 		this.ball.body.position.x < 0
+	// 	) {
+	// 		this.ball.body.position.x < 0
+	// 			? this.rightPaddle.score++
+	// 			: this.leftPaddle.score++;
+	// 		this.ball.resetPosition();
+	// 		this.leftPaddle.resetPosition();
+	// 		this.rightPaddle.resetPosition();
+	// 	}
+	// 	this.ball.setBallSpeed();
+	// };
 
 	// delete two this methods and make just one is better
-	isCollidedLeft = (left: Paddle): boolean => {
-		if (
-			this.body.position.x - this.body.circleRadius <=
-				left.body.position.x + left.width / 2 &&
-			this.body.position.y >= left.body.position.y - left.height / 2 &&
-			this.body.position.y <= left.body.position.y + left.height / 2
-		) {
-			this.isSilenced
-				? this.sound.leftPaddleSound.pause()
-				: this.sound.leftPaddleSound.play();
-			return true;
-		} else if (this.body.position.x < left.body.position.x) {
-			this.isSilenced ? this.sound.win.pause() : this.sound.win.play();
-		}
-		return false;
-	};
+	// isCollidedLeft = (): boolean => {
+	// 	if (
+	// 		this.ball.body.position.x - this.ball.body.circleRadius <=
+	// 			this.leftPaddle.body.position.x + this.leftPaddle.width / 2 &&
+	// 		this.ball.body.position.y >=
+	// 			this.leftPaddle.body.position.y - this.leftPaddle.height / 2 &&
+	// 		this.ball.body.position.y <=
+	// 			this.leftPaddle.body.position.y + this.leftPaddle.height / 2
+	// 	) {
+	// 		this.ball.isSilenced
+	// 			? this.ball.sound.leftPaddleSound.pause()
+	// 			: this.ball.sound.leftPaddleSound.play();
+	// 		return true;
+	// 	} else if (this.ball.body.position.x < this.leftPaddle.body.position.x) {
+	// 		this.ball.isSilenced
+	// 			? this.ball.sound.win.pause()
+	// 			: this.ball.sound.win.play();
+	// 	}
+	// 	return false;
+	// };
 
-	isCollidedRight = (right: Paddle): boolean => {
-		if (
-			this.body.position.x + this.body.circleRadius >=
-				right.body.position.x - right.width / 2 &&
-			this.body.position.y >= right.body.position.y - right.height / 2 &&
-			this.body.position.y <= right.body.position.y + right.height / 2
-		) {
-			this.isSilenced
-				? this.sound.rightPaddleSound.pause()
-				: this.sound.rightPaddleSound.play();
-			return true;
-		} else if (
-			this.body.position.x + this.body.circleRadius >
-			right.body.position.x
-		) {
-			this.isSilenced ? this.sound.win.pause() : this.sound.win.play();
-		}
-		return false;
-	};
+	// isCollidedRight = (): boolean => {
+	// 	if (
+	// 		this.ball.body.position.x + this.ball.body.circleRadius >=
+	// 			this.rightPaddle.body.position.x - this.rightPaddle.width / 2 &&
+	// 		this.ball.body.position.y >=
+	// 			this.rightPaddle.body.position.y - this.rightPaddle.height / 2 &&
+	// 		this.ball.body.position.y <=
+	// 			this.rightPaddle.body.position.y + this.rightPaddle.height / 2
+	// 	) {
+	// 		this.ball.isSilenced
+	// 			? this.ball.sound.rightPaddleSound.pause()
+	// 			: this.ball.sound.rightPaddleSound.play();
+	// 		return true;
+	// 	} else if (
+	// 		this.ball.body.position.x + this.ball.body.circleRadius >
+	// 		this.rightPaddle.body.position.x
+	// 	) {
+	// 		this.ball.isSilenced
+	// 			? this.ball.sound.win.pause()
+	// 			: this.ball.sound.win.play();
+	// 	}
+	// 	return false;
+	// };
 
-	checkBallHit = (left: Paddle, right: Paddle): void => {
-		if (this.isCollidedLeft(left) || this.isCollidedRight(right)) {
-			this.xVelocity = -this.xVelocity;
-		}
-	};
+	// checkBallHit = (): void => {
+	// 	if (this.isCollidedLeft() || this.isCollidedRight()) {
+	// 		this.ball.xVelocity = -this.ball.xVelocity;
+	// 	}
+	// };
 }
