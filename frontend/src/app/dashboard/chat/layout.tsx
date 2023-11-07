@@ -7,6 +7,9 @@ import { User } from "@/app/utils/types";
 import { PropsWithChildren } from "react";
 import { store } from "@/app/store";
 import { socket, socketContext } from "@/app/utils/context/socketContext";
+import {enableMapSet} from 'immer';
+
+enableMapSet();
 
 type Props = {
 	// user?: User;

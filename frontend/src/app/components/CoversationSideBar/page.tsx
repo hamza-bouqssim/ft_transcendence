@@ -22,6 +22,7 @@ type Props = {
 const CoversationSideBar: FC <Props>  = ({conversations}) => {
 	// we use useSelector to select state
 	const conversation = useSelector((state: RootState) => state.conversation.conversations);
+	
 	const [ user, setUser] = useState<User | undefined>();
     const [loading, setLoading] = useState<boolean>(false);
 	const controller = new AbortController();
@@ -75,7 +76,7 @@ const CoversationSideBar: FC <Props>  = ({conversations}) => {
 				 */}
 
 				<ConversationSideBarContainer>
-					{conversations.map(function(elem){
+					{Array.from(conversation, ([_, conversation]) => conversation).map(function(elem){
 						function handleClick()
 						{
 							router.push(`/dashboard/chat/${elem.id}`)

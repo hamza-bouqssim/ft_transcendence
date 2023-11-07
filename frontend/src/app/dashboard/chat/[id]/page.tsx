@@ -101,7 +101,7 @@ const ConversationChannelPage = () => {
           console.log(err);
         }
         );
-      }, [])
+      },)
 
       // for sockets
       useEffect(()=>{
