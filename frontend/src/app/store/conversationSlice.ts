@@ -1,6 +1,7 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { ConversationTypes } from '../utils/types'
+import { getConversation } from '../utils/api';
 
 export interface ConversationsState {
   conversations : ConversationTypes[]; 
@@ -9,6 +10,9 @@ export interface ConversationsState {
 const initialState: ConversationsState = {
   conversations: [],
 }
+
+export const fetchConversationThunk = createAsyncThunk('conversations/fetch', async() =>{getConversation()})
+
 
 export const conversationsSlice = createSlice({
   name: 'conversations',

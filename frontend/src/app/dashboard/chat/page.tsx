@@ -16,50 +16,55 @@ import { useRouter } from "next/navigation";
 import { getSession } from "next-auth/react";
 import { socket, socketContext } from "@/app/utils/context/socketContext";
 import { Socket } from "socket.io-client";
-import {Provider as ReduxProvider} from 'react-redux'
-import { store } from "@/app/store";
+import {Provider ,  useDispatch} from 'react-redux'
+import { AppDispatch, store } from "@/app/store";
+import { fetchConversationThunk } from "@/app/store/conversationSlice";
 
 
-type Props = {
-	user?: User;
-	setUser : React.Dispatch<React.SetStateAction<User | undefined>>;
-	socket : Socket;
-}
+// type Props = {
+// 	user?: User;
+// 	setUser : React.Dispatch<React.SetStateAction<User | undefined>>;
+// 	socket : Socket;
+// }
 
-function AppWithProviders({children, user, setUser,} : PropsWithChildren & Props){
-	return (
-		<ReduxProvider store={store}>
-			<socketContext.Provider value={socket}>
-				{children}
-			</socketContext.Provider>
-		</ReduxProvider>
-	)
+// function AppWithProviders({children, user, setUser,} : PropsWithChildren & Props){
 
-}
+// 	return (
+// 		<Provider store={store}>
+// 			<socketContext.Provider value={socket}>
+// 				{children}
+// 			</socketContext.Provider>
+// 		</Provider>
+// 	)
+
+// }
 	
 
 const CoversationPage = () =>
 {
 	
 	const {id} = useParams();
-	const [conversation , setConversation] = useState<ConversationTypes[]>([])
+	const [conversation , setConversation] = useState<ConversationTypes[]>([]);
+	const dispatch = useDispatch<AppDispatch>();
+
+	// useEffect(() => {
+	// 	getConversation().then(({data}) =>{
+	// 		setConversation(data)
+	// 	}).catch((err)=> console.log(err))
+	// }, [conversation])
 
 	useEffect(() => {
-		getConversation().then(({data}) =>{
-			setConversation(data)
-		}).catch((err)=> console.log(err))
-	}, [conversation])
-
-	
+		dispatch(fetchConversationThunk());
+	})
 	const [user, setUser] = useState<User>();
 	
 		return (
-			<AppWithProviders user={user} setUser={setUser} socket={socket}> 
+			// <AppWithProviders user={user} setUser={setUser} socket={socket}> 
 				<Page display="flex">
 					<CoversationSideBar conversations={conversation}/>
 					<ConversationPanel/> 
 				</Page>
-			</AppWithProviders>
+			// </AppWithProviders>
 )
 
 
