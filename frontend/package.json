@@ -11,6 +11,7 @@
     "dependencies": {
         "@fortawesome/free-solid-svg-icons": "^6.4.0",
         "@fortawesome/react-fontawesome": "^0.2.0",
+        "@redux-devtools/extension": "^3.2.6",
         "@reduxjs/toolkit": "^1.9.7",
         "@types/node": "20.3.1",
         "@types/react": "18.2.14",
@@ -48,11 +49,11 @@
         "@types/aos": "^3.0.4",
         "@types/howler": "^2.2.9",
         "@types/matter-js": "^0.19.0",
-        "@types/three": "^0.152.1",
-        "prettier": "^3.0.1",
         "@types/remarkable": "^2.0.3",
+        "@types/three": "^0.152.1",
         "bufferutil": "^4.0.7",
+        "prettier": "^3.0.1",
         "supports-color": "^8.1.1",
-        "utf-8-validate": "^5.0.10" 
+        "utf-8-validate": "^5.0.10"
     }
 }

@@ -40,15 +40,11 @@ export const conversationsSlice = createSlice({
 
         // state.conversations.set(action.payload.data[0].id.toString(), action.payload.data[0])
         action.payload.data.forEach((conversation : any)=>{
-          console.log(conversation);
           state.conversations.set(conversation.id, conversation);
         });
-        console.log(state.conversations);
     })
     .addCase(fetchMessagesThunk.fulfilled, (state, action) =>{
-      console.log("fetch messages")
-      console.log(state);
-      console.log(action.payload.data);
+     
     })
   }
 })

@@ -94,9 +94,6 @@ const ConversationChannelPage = () => {
         .unwrap()
         .then(({data}) => {
           setMessage(data);
-          console.log("data here");
-          console.log(data);
-          console.log('success');
         }).catch((err)=>{
           console.log(err);
         }
