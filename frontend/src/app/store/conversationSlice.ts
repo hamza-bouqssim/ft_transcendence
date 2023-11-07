@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { ConversationTypes } from '../utils/types'
-import { getConversation } from '../utils/api';
+import { getConversation, getConversationMessage } from '../utils/api';
 
 export interface ConversationsState {
   conversations : ConversationTypes[]; 
@@ -13,10 +13,14 @@ const initialState: ConversationsState = {
 
 export const fetchConversationThunk = createAsyncThunk('conversations/fetch', async () => {
   const response = await getConversation();
-  console.log(response.data);
   return response; // Assuming your API response has a 'data' property
 
 });
+
+export const fetchMessagesThunk = createAsyncThunk('messages/fetch', async (id : string) => {
+  const response = await getConversationMessage(id);
+  return response;
+})
 
 export const conversationsSlice = createSlice({
   name: 'conversations',
@@ -24,10 +28,21 @@ export const conversationsSlice = createSlice({
   reducers: {
         // this is for adding a conversations 
     addConversation: (state , action : PayloadAction<ConversationTypes>) => {
-        console.log('add conversation');
         state.conversations.push(action.payload);
     }
   },
+
+  extraReducers: (builder) => {
+    builder
+    .addCase(fetchConversationThunk.fulfilled, (state, action) => {
+        state.conversations = action.payload.data;
+    })
+    .addCase(fetchMessagesThunk.fulfilled, (state, action) =>{
+      console.log("fetch messages")
+      console.log(state);
+      console.log(action.payload.data);
+    })
+  }
 })
 
 // Action creators are generated for each case reducer function

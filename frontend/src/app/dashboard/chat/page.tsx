@@ -58,8 +58,6 @@ const CoversationPage = () =>
 		.unwrap()
 		.then(({data}) => {
 			setConversation(data);
-			console.log(data);
-			console.log('success');
 		}).catch((err)=>{
 			console.log(err);
 		}

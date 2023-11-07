@@ -13,7 +13,7 @@ import { socket, socketContext } from "@/app/utils/context/socketContext";
 import { Socket } from "socket.io-client";
 import { AppDispatch, store } from "@/app/store";
 import {Provider as ReduxProvider, useDispatch} from 'react-redux'
-import { fetchConversationThunk } from "@/app/store/conversationSlice";
+import { fetchConversationThunk, fetchMessagesThunk } from "@/app/store/conversationSlice";
 
 
 type Props = {
@@ -60,8 +60,6 @@ const ConversationChannelPage = () => {
 		.unwrap()
 		.then(({data}) => {
 			setConversation(data);
-			console.log(data);
-			console.log('success');
 		}).catch((err)=>{
 			console.log(err);
 		}
@@ -79,16 +77,31 @@ const ConversationChannelPage = () => {
     const {id} = useParams();
     const [message , setMessage] = useState<messageTypes[]>([])
 
-    useEffect(() => {
-        if (typeof id === 'string') {
-          const conversationId = id;
-          getConversationMessage(conversationId)
-            .then(({ data }) => {
-              setMessage(data);
-            })
-            .catch((err) => console.log(err));
+    // useEffect(() => {
+    //     if (typeof id === 'string') {
+    //       const conversationId = id;
+    //       getConversationMessage(conversationId)
+    //         .then(({ data }) => {
+    //           setMessage(data);
+    //         })
+    //         .catch((err) => console.log(err));
+    //     }
+    //   }, [id]);
+
+      useEffect (() => {
+        const conversationId = id;
+        dispatch(fetchMessagesThunk(conversationId))
+        .unwrap()
+        .then(({data}) => {
+          setConversation(data);
+          console.log("data here");
+          console.log(data);
+          console.log('success');
+        }).catch((err)=>{
+          console.log(err);
         }
-      }, [id]);
+        );
+      }, [])
 
       // for sockets
       useEffect(()=>{
