@@ -1,6 +1,6 @@
 "use client"
 import CoversationSideBar from "@/app/components/CoversationSideBar/page";
-import './styles.css'
+// import './styles.css'
 import { Provider } from "react-redux";
 import { Socket } from "socket.io-client";
 import { User } from "@/app/utils/types";

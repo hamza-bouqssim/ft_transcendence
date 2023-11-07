@@ -47,7 +47,7 @@ export default function RootLayout({
 		<html lang="en">
 			<body>
 				<div className="relative h-[100vh] min-h-[850px] py-4 text-white">
-					<SideBar
+					{/* <SideBar
 						sideBar={change.sideBar}
 						onClick={() =>
 							setChange({
@@ -69,7 +69,7 @@ export default function RootLayout({
 								menu: !change.menu,
 							})
 						}
-					/>
+					/> */}
 
 				
 					<ChangeContext.Provider value={changeValues}>
