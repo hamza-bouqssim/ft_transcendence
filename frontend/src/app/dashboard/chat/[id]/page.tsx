@@ -93,7 +93,7 @@ const ConversationChannelPage = () => {
         dispatch(fetchMessagesThunk(conversationId))
         .unwrap()
         .then(({data}) => {
-          setConversation(data);
+          setMessage(data);
           console.log("data here");
           console.log(data);
           console.log('success');
