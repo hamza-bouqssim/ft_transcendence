@@ -11,8 +11,9 @@ import TopRightBar from "@/app/components/TopRightBar";
 import SideBar from "@/app/components/SideBar";
 import { socket, socketContext } from "@/app/utils/context/socketContext";
 import { Socket } from "socket.io-client";
-import { store } from "@/app/store";
-import {Provider as ReduxProvider} from 'react-redux'
+import { AppDispatch, store } from "@/app/store";
+import {Provider as ReduxProvider, useDispatch} from 'react-redux'
+import { fetchConversationThunk } from "@/app/store/conversationSlice";
 
 
 type Props = {
@@ -52,12 +53,26 @@ const ConversationChannelPage = () => {
                 setLoading(false)})
             .catch((err)=> {console.log(err); setLoading(false);});
     },[])
-	const [conversation , setConversation] = useState<ConversationTypes[]>([])
-	useEffect(() => {
-		getConversation().then(({data}) =>{
-			setConversation(data)
-		}).catch((err)=> console.log(err))
-	}, [conversation])
+	const [conversation , setConversation] = useState<ConversationTypes[]>([]);
+  const dispatch = useDispatch<AppDispatch>();
+  useEffect(() => {
+		dispatch(fetchConversationThunk())
+		.unwrap()
+		.then(({data}) => {
+			setConversation(data);
+			console.log(data);
+			console.log('success');
+		}).catch((err)=>{
+			console.log(err);
+		}
+		);
+	})
+
+	// useEffect(() => {
+	// 	getConversation().then(({data}) =>{
+	// 		setConversation(data)
+	// 	}).catch((err)=> console.log(err))
+	// }, [conversation])
 
 
 

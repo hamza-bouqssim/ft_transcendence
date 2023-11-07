@@ -11,8 +11,12 @@ const initialState: ConversationsState = {
   conversations: [],
 }
 
-export const fetchConversationThunk = createAsyncThunk('conversations/fetch', async() =>{getConversation()})
+export const fetchConversationThunk = createAsyncThunk('conversations/fetch', async () => {
+  const response = await getConversation();
+  console.log(response.data);
+  return response; // Assuming your API response has a 'data' property
 
+});
 
 export const conversationsSlice = createSlice({
   name: 'conversations',

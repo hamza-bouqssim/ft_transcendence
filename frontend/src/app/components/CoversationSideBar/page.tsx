@@ -20,6 +20,7 @@ type Props = {
 }
 
 const CoversationSideBar: FC <Props>  = ({conversations}) => {
+	// we use useSelector to select state
 	const conversation = useSelector((state: RootState) => state.conversation.conversations);
 	const [ user, setUser] = useState<User | undefined>();
     const [loading, setLoading] = useState<boolean>(false);

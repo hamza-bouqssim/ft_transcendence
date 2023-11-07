@@ -54,7 +54,16 @@ const CoversationPage = () =>
 	// }, [conversation])
 
 	useEffect(() => {
-		dispatch(fetchConversationThunk());
+		dispatch(fetchConversationThunk())
+		.unwrap()
+		.then(({data}) => {
+			setConversation(data);
+			console.log(data);
+			console.log('success');
+		}).catch((err)=>{
+			console.log(err);
+		}
+		);
 	})
 	const [user, setUser] = useState<User>();
 	
