@@ -119,19 +119,20 @@ export const Conversation = styled.aside`
 export const ConversationChannelStyle = styled.div`
     position: absolute;
     padding: 20px;
+    margin-top: 50px;
     margin-left: 550px;
     width: 35rem;
-    height: 35rem;
+    height: 30rem;
     align-items: center;
     background-color: #fff;
-    border-radius: 60px;
+    border-radius: 50px;
   
 
     
 `;
 
 export const ConversationPannelStyle = styled.div`
-    position: absolute; 
+    /* position: absolute; 
     top:0;  
     margin-left: 350px;
     width: 35rem;
@@ -153,7 +154,16 @@ export const ConversationPannelStyle = styled.div`
     }
 
 
-    background-color: #1d1a33;
+    background-color: #1d1a33; */
+    & h1{
+        margin-left: 500px;
+        text-align: center;
+        padding :100px;
+        margin-top : 160px;
+        font-weight: bold;
+
+        
+    }
 
 `;
 
@@ -263,16 +273,17 @@ export const MessagePannelHeaderStyle = styled.header `
     background-color: #E0E3FF;
     border-radius: 50px;
     height: 70px;
-    padding: 10px; 
     box-sizing: border-box;
     color: #151515;
     width: 100%;
+    font-weight: bold;
     flex-shrink: 0;
     border-bottom: 1px solid #49494925;
     display: flex;
     text-align: center;
     align-items: center;
-    justify-content: space-between;
+    gap: 10px;
+    padding: 10px;
 `
 
 export const MessageContainerStyle = styled.div `
@@ -298,7 +309,7 @@ export const MessageContainerStyle = styled.div `
 export const MessageInputFieldContainer = styled.div `
     box-sizing : border-box;
     margin: 12px;
-    background-color : #F2F3FD;
+    background-color : #cfd3ff;
     border-radius : 5px;
 `;
 
@@ -310,6 +321,8 @@ export const MessageInput = styled.input `
     font-family: 'Inter';
     box-sizing: border-box;
     font-size: 18px;
+    font-weight: bold;
+
     width: 30rem;
     padding: 0;
     margin: 4px 0;
@@ -333,6 +346,13 @@ export const MessageItemAvatar = styled.div`
     background-color : #1e1b34;
     border-radius : 50%;
 `;
+export const AvatarStyle = styled.div `
+    width : 40px;
+    height: 40px;
+    background-color: #1e1b34;
+    border-radius: 50%;
+
+`
 
 
 export const MessageItemDetails = styled.div `

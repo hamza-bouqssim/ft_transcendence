@@ -1,7 +1,10 @@
-import { MessagePannelHeaderStyle } from "@/app/utils/styles"
+import { AvatarStyle, MessageItemAvatar, MessagePannelHeaderStyle } from "@/app/utils/styles"
 
 const MessagePanelHeader = () => {
-    return (<MessagePannelHeaderStyle>soukaina ouchen</MessagePannelHeaderStyle>)
+    return (<MessagePannelHeaderStyle>
+                <AvatarStyle/>
+                    <h1>soukaina ouchen</h1>
+        </MessagePannelHeaderStyle>)
 }
 
 
