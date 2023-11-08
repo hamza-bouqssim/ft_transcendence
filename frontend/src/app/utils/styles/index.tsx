@@ -75,10 +75,7 @@ export const Page = styled.div<PageProps>`
 
 
 export const Conversation = styled.aside`
-    position: absolute;
    
-    height: 35rem;
-    width: 350px;
     background-color: #fff;
     border-right: 5px solid #0000003a;
     margin-left : 80px;

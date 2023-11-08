@@ -61,20 +61,18 @@ const SideBar = (props: Change) => {
 
 	return (
 		<aside
-			className={`absolute top-0 z-20 h-full w-60 rounded-r-[40px] bg-gradient-to-b from-[#2E2F54] via-[#3B5282] to-[#2E2F54] pb-20 text-white duration-300 ease-in-out min-[1750px]:left-0 min-[1750px]:w-72 ${
-				props.sideBar ? "left-0" : "left-[-240px]"
-			}`}
+			className={` z-20 h-full  bg-gradient-to-b from-[#2E2F54] via-[#3B5282] to-[#2E2F54]  text-white duration-300 ease-in-out flex flex-col items-center justify-between`}
 		>
 			<ul
-				className="relative h-full rounded-tr-[40px] pt-24 font-bold"
+				className=" h-full  font-bold"
 				ref={ulRef}
 			>
-				<FontAwesomeIcon
+				{/* <FontAwesomeIcon
 					icon={faChevronDown}
-					className={`fixed left-2 top-5 cursor-pointer rounded-[50%] bg-[--pink-color] p-3 duration-200 ease-in-out hover:bg-[--purple-color] min-[1750px]:hidden
-				${props.sideBar ? "left-[190px] rotate-[-270deg]" : "rotate-[270deg]"}`}
+					className={`fixed left-2 top-5 cursor-pointer rounded-[50%] bg-[--pink-color] p-3 duration-200 ease-in-out hover:bg-[--purple-color] 
+				${props.sideBar ? "left-[230px] rotate-[-270deg]" : "rotate-[270deg]"}`}
 					onClick={props.onClick}
-				/>
+				/> */}
 				<ListItem
 					icon={faHouse}
 					additionalStyle=""
@@ -105,6 +103,8 @@ const SideBar = (props: Change) => {
 						onClick={(e: any) => handleClick(e)}
 					/>
 				</Link>
+			</ul>
+			<ul>
 				<Link
 					href={"/"}
 					onClick={(e) => {
@@ -113,7 +113,7 @@ const SideBar = (props: Change) => {
 				>
 					<ListItem
 						icon={faRightFromBracket}
-						additionalStyle="absolute w-full bottom-0"
+						additionalStyle=" w-full"
 						spanText="LogOut"
 						onClick={(e: any) => handleClick(e)}
 					/>

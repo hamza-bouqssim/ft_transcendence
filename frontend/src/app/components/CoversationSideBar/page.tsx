@@ -26,6 +26,8 @@ const CoversationSideBar: FC <Props>  = ({conversations}) => {
 	const [ user, setUser] = useState<User | undefined>();
     const [loading, setLoading] = useState<boolean>(false);
 	const controller = new AbortController();
+	const [newRooms, setnewRooms] = useState<boolean>(false);
+	const [selectRome , setSelectRome]  = useState<string>("chats")
 
     useEffect(() => {
             setLoading(true);
@@ -56,25 +58,22 @@ const CoversationSideBar: FC <Props>  = ({conversations}) => {
 	
 
     return (
-		<Page>
-			{show && <CreateConversationModal   setShow={setShow} />   }
+		<div className="w-full h-full relative p-2  xl:rounded-[20px] pt-4 bg-white">
+			{/* {show &&  <CreateConversationModal   setShow={setShow} />   } */}
+			<div className="flex items-center rounded-full justify-between w-3/4 mb-4  mx-auto  bg-[#DFDFDF]">
+
+				<button
+					onClick={()=>{setSelectRome("chats")}}
+					className={`${(selectRome ==='chats') ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-1/2`}>Chats
+				</button>
+				<button 
+					onClick={()=>{setSelectRome("group")}}
+					className={`${(selectRome ==='group') ? 'bg-[#5B8CD3]' : ''} rounded-full p-4 w-1/2`}>Group
+				</button>
+			</div>
+			<hr  className="bg-[#DFDFDF] w-1/2 mx-auto mt-5"/>
+
 			<Conversation>
-				<header className={styles.header}>
-					<h1 className={styles.h1}>Conversations</h1>
-					<div onClick={() => setShow(!show)}>
-						<MdPostAdd size={30}/>
-					</div>
-					
-
-				</header>
-				<div>
-					<ConversationSearch/>
-				</div>
-				{/* <div>
-					<ChatOrGroups/>
-				</div>
-				 */}
-
 				<ConversationSideBarContainer>
 					{Array.from(conversation, ([_, conversation]) => conversation).map(function(elem){
 						function handleClick()
@@ -94,9 +93,10 @@ const CoversationSideBar: FC <Props>  = ({conversations}) => {
 					}) }
 				</ConversationSideBarContainer>
 			</Conversation>
+			<button onClick={()=>{setnewRooms(true)}} className="absolute right-5 p-4 bottom-5 bg-[#5B8CD3] rounded-full ">add</button>
 
 
-		</Page>
+		</div>
         
 			
 			
