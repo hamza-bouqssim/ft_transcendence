@@ -1,10 +1,30 @@
 "use client";
-import { useState, createContext } from "react";
+import { useState, createContext, PropsWithChildren } from "react";
 import SideBar from "../components/SideBar";
 import TopRightBar from "../components/TopRightBar";
 
-export const ChangeContext: React.Context<any> = createContext(null);
+import { Provider } from "react-redux";
+import { socket, socketContext } from "../utils/context/socketContext";
+import { store } from "../store";
+import { Socket } from "socket.io-client";
 
+export const ChangeContext: React.Context<any> = createContext(null);
+type Props = {
+	// user?: User;
+	// setUser : React.Dispatch<React.SetStateAction<User | undefined>>;
+	socket : Socket;
+}
+function AppWithProviders({children} : PropsWithChildren & Props){
+
+	return (
+		<Provider store={store}>
+			<socketContext.Provider value={socket}>
+				{children}
+			</socketContext.Provider>
+		</Provider>
+	)
+
+}
 export default function RootLayout({
 	children,
 }: {
@@ -54,13 +74,15 @@ export default function RootLayout({
 						{children}
 					</div> */}
 
-
+				<AppWithProviders  socket={socket}>
 					<ChangeContext.Provider value={changeValues}>
 						<div className="w-full h-full">
 
 							{children}
 						</div>
 					</ChangeContext.Provider>
+				</AppWithProviders>
+
 				</div>
 			</body>
 		</html>

@@ -47,22 +47,25 @@ const CoversationPage = () =>
 	const [conversation , setConversation] = useState<ConversationTypes[]>([]);
 	const dispatch = useDispatch<AppDispatch>();
 
-	// useEffect(() => {
-	// 	getConversation().then(({data}) =>{
-	// 		setConversation(data)
-	// 	}).catch((err)=> console.log(err))
-	// }, [conversation])
-
 	useEffect(() => {
-		dispatch(fetchConversationThunk())
-		.unwrap()
-		.then(({data}) => {
+		getConversation().then(({data}) =>{
 			setConversation(data);
-		}).catch((err)=>{
-			console.log(err);
-		}
-		);
-	})
+			console.log(data);
+		}).catch((err)=> console.log(err))
+	}, [conversation])
+
+	// useEffect(() => {
+	// 	dispatch(fetchConversationThunk())
+	// 	.unwrap()
+	// 	.then(({data}) => {
+	// 		console.log("conversation here");
+	// 		console.log(data);
+	// 		setConversation(data);
+	// 	}).catch((err)=>{
+	// 		console.log(err);
+	// 	}
+	// 	);
+	// })
 	const [user, setUser] = useState<User>();
 	
 		return (

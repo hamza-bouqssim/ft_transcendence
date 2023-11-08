@@ -78,7 +78,7 @@ export const Conversation = styled.aside`
    
     background-color: #fff;
     border-right: 5px solid #0000003a;
-    margin-left : 80px;
+   
     overflow-y: scroll;
     
     /* &::-webkit-scrollbar {
@@ -165,7 +165,7 @@ export const ConversationPannelStyle = styled.div`
 `;
 
 export const ConversationSideBarContainer = styled.div `
-    padding: 40px;
+    padding: 10px;
 `;
 
 export const ConversationSideBarItem = styled.div `
