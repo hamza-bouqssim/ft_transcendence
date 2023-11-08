@@ -55,38 +55,38 @@ const ConversationChannelPage = () => {
     },[])
 	const [conversation , setConversation] = useState<ConversationTypes[]>([]);
   const dispatch = useDispatch<AppDispatch>();
-  useEffect(() => {
-		dispatch(fetchConversationThunk())
-		.unwrap()
-		.then(({data}) => {
-			setConversation(data);
-		}).catch((err)=>{
-			console.log(err);
-		}
-		);
-	})
+  // useEffect(() => {
+	// 	dispatch(fetchConversationThunk())
+	// 	.unwrap()
+	// 	.then(({data}) => {
+	// 		setConversation(data);
+	// 	}).catch((err)=>{
+	// 		console.log(err);
+	// 	}
+	// 	);
+	// })
 
-	// useEffect(() => {
-	// 	getConversation().then(({data}) =>{
-	// 		setConversation(data)
-	// 	}).catch((err)=> console.log(err))
-	// }, [conversation])
+	useEffect(() => {
+		getConversation().then(({data}) =>{
+			setConversation(data)
+		}).catch((err)=> console.log(err))
+	}, [conversation])
 
 
 
     const {id} = useParams();
     const [message , setMessage] = useState<messageTypes[]>([])
 
-    // useEffect(() => {
-    //     if (typeof id === 'string') {
-    //       const conversationId = id;
-    //       getConversationMessage(conversationId)
-    //         .then(({ data }) => {
-    //           setMessage(data);
-    //         })
-    //         .catch((err) => console.log(err));
-    //     }
-    //   }, [id]);
+    useEffect(() => {
+        if (typeof id === 'string') {
+          const conversationId = id;
+          getConversationMessage(conversationId)
+            .then(({ data }) => {
+              setMessage(data);
+            })
+            .catch((err) => console.log(err));
+        }
+      }, [id]);
 
       useEffect (() => {
         const conversationId = id;
@@ -115,15 +115,15 @@ const ConversationChannelPage = () => {
           }
       })
     return ( 
-      <AppWithProviders user={user} setUser={setUser} socket={socket}> 
 
-            <Page display="flex">
+            <div className=" flex h-screen  xl:container xl:mx-auto">
+              <div className ="hidden xl:block h-full w-[35%] p-10 pl-5 pr-2 ">
                 <CoversationSideBar conversations={conversation}/>
-                <ConversationChannelStyle>
+              </div>
+                <div className="bg-white xl:m-10  xl:mr-10 xl:ml-2 w-full xl:w-[65%]  xl:rounded-[20px] xl:mt-32">
                     <MessagePanel messages={message}></MessagePanel> 
-                </ConversationChannelStyle>
-            </Page>
-        </AppWithProviders>
+                </div>
+            </div>
 
 
             

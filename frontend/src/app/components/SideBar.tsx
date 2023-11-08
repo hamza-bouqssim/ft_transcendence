@@ -22,20 +22,6 @@ type Change = {
 const SideBar = (props: Change) => {
 	const ulRef = useRef<HTMLUListElement>(null);
 
-	const handleClick = (e: React.MouseEvent<HTMLLIElement>): void => {
-		const listItems = ulRef.current!.querySelectorAll("li");
-		for (let i = 0; i < listItems!.length; i++) {
-			listItems[i].classList.remove(
-				"translate-x-10",
-				"-translate-x-5",
-				"text-[--pink-color]",
-			);
-		}
-
-		e.currentTarget.querySelector("span")!.textContent === "LogOut"
-			? e.currentTarget.classList.add("-translate-x-5", "text-[--pink-color]")
-			: e.currentTarget.classList.add("translate-x-10", "text-[--pink-color]");
-	};
 
 	const [isLoggedOut, setIsLoggedOut] = useState<boolean>(false);
 
@@ -61,32 +47,30 @@ const SideBar = (props: Change) => {
 
 	return (
 		<aside
-			className={`absolute top-0 z-20 h-full w-60 rounded-r-[40px] bg-gradient-to-b from-[#2E2F54] via-[#3B5282] to-[#2E2F54] pb-20 text-white duration-300 ease-in-out min-[1750px]:left-0 min-[1750px]:w-72 ${
-				props.sideBar ? "left-0" : "left-[-240px]"
-			}`}
+			className={` z-20 h-full  bg-gradient-to-b from-[#2E2F54] via-[#3B5282] to-[#2E2F54]  text-white duration-300 ease-in-out flex flex-col items-center justify-between`}
 		>
 			<ul
-				className="relative h-full rounded-tr-[40px] pt-24 font-bold"
+				className=" h-full  font-bold"
 				ref={ulRef}
 			>
-				<FontAwesomeIcon
+				{/* <FontAwesomeIcon
 					icon={faChevronDown}
-					className={`fixed left-2 top-5 cursor-pointer rounded-[50%] bg-[--pink-color] p-3 duration-200 ease-in-out hover:bg-[--purple-color] min-[1750px]:hidden
-				${props.sideBar ? "left-[190px] rotate-[-270deg]" : "rotate-[270deg]"}`}
+					className={`fixed left-2 top-5 cursor-pointer rounded-[50%] bg-[--pink-color] p-3 duration-200 ease-in-out hover:bg-[--purple-color] 
+				${props.sideBar ? "left-[230px] rotate-[-270deg]" : "rotate-[270deg]"}`}
 					onClick={props.onClick}
-				/>
+				/> */}
 				<ListItem
 					icon={faHouse}
 					additionalStyle=""
 					spanText="Home"
-					onClick={(e: any) => handleClick(e)}
+					
 				/>
 				<Link href={"/dashboard/chat"}>
 				<ListItem
 					icon={faComment}
 					additionalStyle=""
 					spanText="Chat"
-					onClick={(e: any) => handleClick(e)}
+					
 				/>
 				</Link>
 				<Link href={"/dashboard/game"}>
@@ -94,7 +78,7 @@ const SideBar = (props: Change) => {
 						icon={faGamepad}
 						additionalStyle=""
 						spanText="Game"
-						onClick={(e: any) => handleClick(e)}
+						
 					/>
 				</Link>
 				<Link href={"/dashboard/settings"}>
@@ -102,9 +86,11 @@ const SideBar = (props: Change) => {
 						icon={faGear}
 						additionalStyle=""
 						spanText="Settings"
-						onClick={(e: any) => handleClick(e)}
+						
 					/>
 				</Link>
+			</ul>
+			<ul>
 				<Link
 					href={"/"}
 					onClick={(e) => {
@@ -113,9 +99,9 @@ const SideBar = (props: Change) => {
 				>
 					<ListItem
 						icon={faRightFromBracket}
-						additionalStyle="absolute w-full bottom-0"
+						additionalStyle=" w-full"
 						spanText="LogOut"
-						onClick={(e: any) => handleClick(e)}
+						
 					/>
 				</Link>
 			</ul>
