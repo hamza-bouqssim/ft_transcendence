@@ -22,20 +22,6 @@ type Change = {
 const SideBar = (props: Change) => {
 	const ulRef = useRef<HTMLUListElement>(null);
 
-	const handleClick = (e: React.MouseEvent<HTMLLIElement>): void => {
-		const listItems = ulRef.current!.querySelectorAll("li");
-		for (let i = 0; i < listItems!.length; i++) {
-			listItems[i].classList.remove(
-				"translate-x-10",
-				"-translate-x-5",
-				"text-[--pink-color]",
-			);
-		}
-
-		e.currentTarget.querySelector("span")!.textContent === "LogOut"
-			? e.currentTarget.classList.add("-translate-x-5", "text-[--pink-color]")
-			: e.currentTarget.classList.add("translate-x-10", "text-[--pink-color]");
-	};
 
 	const [isLoggedOut, setIsLoggedOut] = useState<boolean>(false);
 
@@ -77,14 +63,14 @@ const SideBar = (props: Change) => {
 					icon={faHouse}
 					additionalStyle=""
 					spanText="Home"
-					onClick={(e: any) => handleClick(e)}
+					
 				/>
 				<Link href={"/dashboard/chat"}>
 				<ListItem
 					icon={faComment}
 					additionalStyle=""
 					spanText="Chat"
-					onClick={(e: any) => handleClick(e)}
+					
 				/>
 				</Link>
 				<Link href={"/dashboard/game"}>
@@ -92,7 +78,7 @@ const SideBar = (props: Change) => {
 						icon={faGamepad}
 						additionalStyle=""
 						spanText="Game"
-						onClick={(e: any) => handleClick(e)}
+						
 					/>
 				</Link>
 				<Link href={"/dashboard/settings"}>
@@ -100,7 +86,7 @@ const SideBar = (props: Change) => {
 						icon={faGear}
 						additionalStyle=""
 						spanText="Settings"
-						onClick={(e: any) => handleClick(e)}
+						
 					/>
 				</Link>
 			</ul>
@@ -115,7 +101,7 @@ const SideBar = (props: Change) => {
 						icon={faRightFromBracket}
 						additionalStyle=" w-full"
 						spanText="LogOut"
-						onClick={(e: any) => handleClick(e)}
+						
 					/>
 				</Link>
 			</ul>
