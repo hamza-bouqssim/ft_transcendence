@@ -71,12 +71,17 @@ export default function RootLayout({
 						}
 					/>
 
-				
+				<AppWithProviders  socket={socket}>
 					<ChangeContext.Provider value={changeValues}>
 						{children}
 					</ChangeContext.Provider>
+				</AppWithProviders>
+
 				</div>
 			</body>
 		</html>
 	);
 }
+
+	
+

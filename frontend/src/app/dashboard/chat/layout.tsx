@@ -11,33 +11,15 @@ import {enableMapSet} from 'immer';
 
 enableMapSet();
 
-type Props = {
-	// user?: User;
-	// setUser : React.Dispatch<React.SetStateAction<User | undefined>>;
-	socket : Socket;
-}
-
-function AppWithProviders({children} : PropsWithChildren & Props){
-
+export default function RootLayout({
+	children,
+}: {
+	children: React.ReactNode;
+}) {
 	return (
-		<Provider store={store}>
-			<socketContext.Provider value={socket}>
-				{children}
-			</socketContext.Provider>
-		</Provider>
-	)
-
-}
-	
-export default async function UserLayout ({children}: {children: React.ReactNode;}) {
-    return (
-        <AppWithProviders  socket={socket}> 
-
-            <div>
-                {children} 
-            </div>
-        </AppWithProviders>
-
-           
-   )
+		<div>
+			{children}
+		</div>
+			
+	);
 }
