@@ -40,22 +40,7 @@ const CoversationSideBar: FC <Props>  = ({conversations}) => {
 	const router = useRouter();
 
 	const [show, setShow] = useState<any>(false);
-	const getDisplayUser = (conversation : ConversationTypes) => {
-		const userId = user?.username;
-		
-		
-		let test;
-		if(conversation.sender.username!= userId)
-		{
-		
-			test = conversation.sender
-		}else if(conversation.sender.username == userId)
-		{
-			test = conversation.recipient;
-		}
-		return test;
-	}
-
+	
 	
 
     return (

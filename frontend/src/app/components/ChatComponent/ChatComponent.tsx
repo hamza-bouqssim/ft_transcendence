@@ -2,13 +2,25 @@
 import { Conversation, ConversationSideBarContainer, ConversationSideBarItem } from "@/app/utils/styles"
 import { ConversationTypes, User } from "@/app/utils/types";
 import { useRouter } from "next/navigation";
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
 import "./style.css"
+import { getAuthUser } from "@/app/utils/api";
 type Props = {
 	conversations: ConversationTypes[];
 }
 
 const ChatComponnent: FC <Props>  = ({conversations}) =>{
+    const router = useRouter();
+    const [ user, setUser] = useState<User | undefined>();
+    const [loading, setLoading] = useState<boolean>(false);
+	const controller = new AbortController();
+    useEffect(() => {
+        setLoading(true);
+        getAuthUser().then(({data}) => {
+            setUser(data);
+            setLoading(false)})
+        .catch((err)=> {console.log(err); setLoading(false);});
+    }, [user])
     const getDisplayUser = (conversation : ConversationTypes) => {
 		const userId = user?.username;
 		
@@ -22,12 +34,10 @@ const ChatComponnent: FC <Props>  = ({conversations}) =>{
 		{
 			test = conversation.recipient;
 		}
+   
 		return test;
 	}
-	const router = useRouter();
-    const [ user, setUser] = useState<User | undefined>();
-    const [loading, setLoading] = useState<boolean>(false);
-	const controller = new AbortController();
+	
     return (
         <Conversation>
 

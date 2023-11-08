@@ -55,38 +55,38 @@ const ConversationChannelPage = () => {
     },[])
 	const [conversation , setConversation] = useState<ConversationTypes[]>([]);
   const dispatch = useDispatch<AppDispatch>();
-  useEffect(() => {
-		dispatch(fetchConversationThunk())
-		.unwrap()
-		.then(({data}) => {
-			setConversation(data);
-		}).catch((err)=>{
-			console.log(err);
-		}
-		);
-	})
+  // useEffect(() => {
+	// 	dispatch(fetchConversationThunk())
+	// 	.unwrap()
+	// 	.then(({data}) => {
+	// 		setConversation(data);
+	// 	}).catch((err)=>{
+	// 		console.log(err);
+	// 	}
+	// 	);
+	// })
 
-	// useEffect(() => {
-	// 	getConversation().then(({data}) =>{
-	// 		setConversation(data)
-	// 	}).catch((err)=> console.log(err))
-	// }, [conversation])
+	useEffect(() => {
+		getConversation().then(({data}) =>{
+			setConversation(data)
+		}).catch((err)=> console.log(err))
+	}, [conversation])
 
 
 
     const {id} = useParams();
     const [message , setMessage] = useState<messageTypes[]>([])
 
-    // useEffect(() => {
-    //     if (typeof id === 'string') {
-    //       const conversationId = id;
-    //       getConversationMessage(conversationId)
-    //         .then(({ data }) => {
-    //           setMessage(data);
-    //         })
-    //         .catch((err) => console.log(err));
-    //     }
-    //   }, [id]);
+    useEffect(() => {
+        if (typeof id === 'string') {
+          const conversationId = id;
+          getConversationMessage(conversationId)
+            .then(({ data }) => {
+              setMessage(data);
+            })
+            .catch((err) => console.log(err));
+        }
+      }, [id]);
 
       useEffect (() => {
         const conversationId = id;
