@@ -39,6 +39,8 @@ const MessagePanel : FC<Props> = ({messages}) => {
                     <MessagePannelBody>
                     <MessageContainer messages={messages}/>
                     <MessageInputField content= {content} setContent={setContent} sendMessage={sendMessage}/>
+
+                    
                 </MessagePannelBody>
                 </MessagePanelStyle>
         </>

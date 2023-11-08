@@ -14,6 +14,7 @@ export const InputField = styled.input`
 
 
 
+
 export const Body = styled.body`
     margin: 0;
     padding: 0;
@@ -66,6 +67,15 @@ export const Button = styled.button`
     }
 
 `;
+
+export const BtnStyling = styled.button`
+    width: 80px;
+    background-color: #5B8CD3;
+    border: none;
+    border-radius: 10px;
+    padding: 15px;
+    margin : 11px;
+`;
 export const Page = styled.div<PageProps>`
    
     height: 100%;
@@ -81,18 +91,6 @@ export const Conversation = styled.aside`
    
     overflow-y: scroll;
     
-    /* &::-webkit-scrollbar {
-        width: 8px;
-    }
-    &::-webkit-scrollbar-track {
-        background-color: #fff;
-    }
-    &::-webkit-scrollbar-thumb {
-        background-color: #fc7785;
-        width: 5px;
-        border-radius: 20px;
-    } */
-
     & header{
         background-color:#1e1b34;
         height: 30px;
@@ -104,7 +102,7 @@ export const Conversation = styled.aside`
         align-items : center;
         justify-content: space-between;
         border-bottom: 3px solid #080a0d;
-        padding : 0 57px;
+        padding : 20px;
         
     }
     
@@ -129,29 +127,7 @@ export const ConversationChannelStyle = styled.div`
 `;
 
 export const ConversationPannelStyle = styled.div`
-    /* position: absolute; 
-    top:0;  
-    margin-left: 350px;
-    width: 35rem;
-    height: 100%;
-    align-items: center;
-    background-color: #fff;
    
-    
-    &::-webkit-scrollbar {
-        width: 8px;
-    }
-    &::-webkit-scrollbar-track {
-        background-color: #fff;
-    }
-    &::-webkit-scrollbar-thumb {
-        background-color: #fc7785;
-        width: 5px;
-        border-radius: 20px;
-    }
-
-
-    background-color: #1d1a33; */
     & h1{
         margin-left: 500px;
         text-align: center;
@@ -305,7 +281,7 @@ export const MessageContainerStyle = styled.div `
 
 export const MessageInputFieldContainer = styled.div `
     box-sizing : border-box;
-    margin: 12px;
+    margin: 30px;
     background-color : #cfd3ff;
     border-radius : 5px;
 `;
@@ -317,13 +293,13 @@ export const MessageInput = styled.input `
     color: #151515;
     font-family: 'Inter';
     box-sizing: border-box;
-    font-size: 18px;
+    font-size: 15px;
     font-weight: bold;
 
     width: 30rem;
-    padding: 0;
     margin: 4px 0;
     resize: none;
+    padding : 10px;
 
   
 `;
@@ -381,5 +357,7 @@ export const  MessageItemContent = styled.div `
       padding : 3px;
 
 `;
+
+
 
 export const Dark = '#131313'

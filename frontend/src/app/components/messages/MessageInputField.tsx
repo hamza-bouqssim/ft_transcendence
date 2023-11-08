@@ -1,4 +1,4 @@
-import { MessageInputFieldContainer, MessageInput } from "@/app/utils/styles"
+import { MessageInputFieldContainer, MessageInput, BtnStyling } from "@/app/utils/styles"
 import { Dispatch, SetStateAction, FC } from "react";
 
 
@@ -12,7 +12,9 @@ type props = {
 const MessageInputField: FC<props> = ({content, setContent, sendMessage}) => {
     return (<MessageInputFieldContainer>
         <form onSubmit={sendMessage}>
-            <MessageInput value={content}  onChange={(e) => setContent(e.target.value)}/>
+            <MessageInput placeholder="Create a message" value={content}  onChange={(e) => setContent(e.target.value)}/>
+            <BtnStyling></BtnStyling>
+
         </form>
     </MessageInputFieldContainer>)
 }

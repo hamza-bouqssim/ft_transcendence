@@ -120,7 +120,7 @@ const ConversationChannelPage = () => {
               <div className ="hidden xl:block h-full w-[35%] p-10 pl-5 pr-2 ">
                 <CoversationSideBar conversations={conversation}/>
               </div>
-                <div className="bg-white xl:m-10  xl:mr-10 xl:ml-2 w-full xl:w-[65%]  xl:rounded-[20px] xl:mt-32">
+                <div className="bg-white xl:m-10  xl:mr-10 xl:ml-2 w-full xl:w-[65%]  xl:rounded-[20px]">
                     <MessagePanel messages={message}></MessagePanel> 
                 </div>
             </div>

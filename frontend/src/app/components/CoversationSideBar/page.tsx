@@ -4,7 +4,6 @@ import { Conversation, ConversationSideBarContainer, ConversationSideBarItem, Pa
 import { ConversationTypes, User } from "@/app/utils/types"
 import {MdPostAdd} from 'react-icons/md'
 import { FC, useContext, useEffect, useState } from "react"
-import ConversationSearch from "../ConversationSearch/page"
 import Link from "next/link"
 import {useRouter} from "next/navigation"
 import { userAgent } from "next/server"
@@ -16,6 +15,8 @@ import { RootState } from "@/app/store"
 import { useDispatch, useSelector } from "react-redux"
 import GroupsManagement from "../GroupsManagment/GroupsManagment"
 import ChatComponnent from "../ChatComponent/ChatComponent"
+import Search from "../ConversationSearch/ConversationSearch"
+import ConversationSearch from "../ConversationSearch/ConversationSearch"
 
 type Props = {
 	conversations: ConversationTypes[];
@@ -58,6 +59,9 @@ const CoversationSideBar: FC <Props>  = ({conversations}) => {
 				</button>
 			</div>
 			<hr  className="bg-[#DFDFDF] w-1/2 mx-auto mt-5"/>
+			<div>
+				<ConversationSearch/>
+			</div>
 			{!newRooms && (selectRome === 'chats' ? <ChatComponnent conversations={conversations}/> : <GroupsManagement />)}
 			{newRooms && (selectRome === 'chats' ? <div className="text-black">Addchat</div> :<div className="text-black">AddGroup</div> )}
 			
