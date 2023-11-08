@@ -1,4 +1,5 @@
 import {
+	MessageBody,
 	SubscribeMessage,
 	WebSocketGateway,
 	WebSocketServer,
@@ -7,7 +8,7 @@ import { Server } from 'socket.io';
 import Matter from 'matter-js';
 // import Ball from './classes/Ball';
 // import Paddle from './classes/Paddle';
-import { OnModuleInit } from '@nestjs/common';
+import { Body, OnModuleInit } from '@nestjs/common';
 
 // const Bodies = Matter.Bodies;
 // const Render = Matter.Render;
@@ -34,17 +35,42 @@ export class GameGateway implements OnModuleInit {
 	// ) {}
 
 	onModuleInit() {
-		this.server.on('connection', () =>
-			console.log('A Pong Player Is Connected!'),
-		);
+		this.server.on('connection', (socket) => {
+			console.log(socket.id);
+			console.log('a client connected!');
+		});
+		this.server.on('Position', (payload) => {
+			console.log(payload);
+		});
 	}
 
-	@SubscribeMessage("setDefaultPosition")
-	setDefaultPosition() {
-		this.server.emit("defaultPosition", {
-			x : 0,
-			y : 0,
-		});
+	// @SubscribeMessage('setDefaultPosition')
+	// emitDefaultPosition() {
+	// 	this.server.emit('defaultPosition', {
+	// 		x: 120,
+	// 		y: 120,
+	// 	});
+	// }
+
+	@SubscribeMessage('setDefaultPosition')
+	emitDefaultPosition(@MessageBody() body: any) {
+		console.log(body);
+		// this.server.emit('defaultPosition', {
+		// 	ballCords: {
+		// 		x: 120,
+		// 		y: 120,
+		// 	},
+		// 	paddlesCords: {
+		// 		rightPaddleCord: {
+		// 			x: 120,
+		// 			y: 120,
+		// 		},
+		// 		leftPaddleCord: {
+		// 			x: 120,
+		// 			y: 120,
+		// 		},
+		// 	},
+		// });
 	}
 
 	// If the ball reaches the canvas boundary, reverse its vertical velocity

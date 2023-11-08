@@ -4,10 +4,10 @@ import Matter from "matter-js";
 import { io } from "socket.io-client";
 import Ball from "./classes/Ball";
 import Paddle from "./classes/Paddle";
-
+import PongGame from "./classes/PongGame";
 
 const Pong = (props: any) => {
-	const socket = io('http://localhost:8000');
+	const socket = io("http://localhost:8000");
 
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const Render = Matter.Render;
@@ -153,140 +153,147 @@ const Pong = (props: any) => {
 	// ]);
 
 	useEffect(() => {
-		let data : any;
-		socket.on("connect", () =>{
-		console.log("A Pong Player Is Connected Succefully!");
-			})
-		
-		socket.emit("setDefaultPosition", () => {
-			console.log('ok!');
-		})
+		const canvas = canvasRef.current!;
 
-		socket.on("defaultPosition", (payload: any) => {
-			ball = new Ball(
-				payload.x,
-				payload.y,
-				15,
-				props.ballColor,
-				props.paused,
-				props.silenced,
-				);
-				console.log("hi1")
-			})
-			
-			console.log("hi2")
-			const canvas = canvasRef.current!;
+		const pong = new PongGame(canvas);
+		pong.movePaddle();
+	}, []);
 
-		if (engineRef.current.world.bodies.length) {
-			if (props.paused != ballRef.current.isPaused) {
-				ballRef.current.isPaused = props.paused;
-				if (props.paused) {
-					Runner.stop(runnerRef.current);
-					paddlesRef.current.left.stopMoving();
-				} else {
-					Runner.run(runnerRef.current, engineRef.current);
-					paddlesRef.current.left.move(ballRef.current);
-				}
-			}
-			if (props.silenced != ballRef.current.isSilenced) {
-				ballRef.current.isSilenced = props.silenced;
-				ballRef.current.checkBallHit(
-					paddlesRef.current.left,
-					paddlesRef.current.right,
-				);
-			}
-			if (props.ballColor != ballRef.current.color) {
-				ballRef.current.color = props.ballColor;
-				ballRef.current.setNewCircleColor();
-			}
-			if (props.paddleColor != paddlesRef.current.left.color) {
-				paddlesRef.current.left.color = props.paddleColor;
-				paddlesRef.current.left.setNewPaddleColor();
-			}
-			if (props.ballRef != ballRef.current.speed) {
-				ballRef.current.speed = props.ballSpeed;
-				ballRef.current.setBallSpeed();
-			}
-		} else {
-			renderRef.current = Render.create({
-				canvas: canvas,
-				engine: engineRef.current,
-				context: canvas.getContext("2d")!,
-				options: {
-					background: "#3A3561",
-					wireframes: false,
-				},
-			});
+	// useEffect(() => {
+	// 	let data : any;
+	// 	socket.on("connect", () =>{
+	// 	console.log("A Pong Player Is Connected Succefully!");
+	// 		})
 
-			paddles = {
-				left: new Paddle(
-					50,
-					canvas.height / 2,
-					10,
-					150,
-					props.paddleColor,
-					renderRef.current,
-				),
-				right: new Paddle(
-					canvas.width - 50,
-					canvas.height / 2,
-					10,
-					150,
-					"#4FD6FF",
-					renderRef.current,
-				),
-			};
-			paddlesRef.current = paddles;
-			
-			// ball = new Ball(
-			// 		canvas.width / 2,
-			// 		canvas.height / 2,
-			// 		15,
-			// 		props.ballColor,
-			// 		props.paused,
-			// 		props.silenced,
-			// 	);
+	// 	socket.emit("setDefaultPosition", () => {
+	// 		console.log('ok!');
+	// 	})
 
-			ballRef.current = ball;
+	// 	socket.on("defaultPosition", (payload: any) => {
+	// 		ball = new Ball(
+	// 			payload.x,
+	// 			payload.y,
+	// 			15,
+	// 			props.ballColor,
+	// 			props.paused,
+	// 			props.silenced,
+	// 			);
+	// 			console.log("hi1")
+	// 		})
 
-			paddlesRef.current.left.drawPaddle();
-			paddlesRef.current.right.drawPaddle();
-			ballRef.current.drawBall();
+	// 		console.log("hi2")
+	// 		const canvas = canvasRef.current!;
 
-			Composite.add(engineRef.current.world, [
-				paddlesRef.current.right.body,
-				paddlesRef.current.left.body,
-				ballRef.current.body,
-		]);
+	// 	if (engineRef.current.world.bodies.length) {
+	// 		if (props.paused != ballRef.current.isPaused) {
+	// 			ballRef.current.isPaused = props.paused;
+	// 			if (props.paused) {
+	// 				Runner.stop(runnerRef.current);
+	// 				paddlesRef.current.left.stopMoving();
+	// 			} else {
+	// 				Runner.run(runnerRef.current, engineRef.current);
+	// 				paddlesRef.current.left.move(ballRef.current);
+	// 			}
+	// 		}
+	// 		if (props.silenced != ballRef.current.isSilenced) {
+	// 			ballRef.current.isSilenced = props.silenced;
+	// 			ballRef.current.checkBallHit(
+	// 				paddlesRef.current.left,
+	// 				paddlesRef.current.right,
+	// 			);
+	// 		}
+	// 		if (props.ballColor != ballRef.current.color) {
+	// 			ballRef.current.color = props.ballColor;
+	// 			ballRef.current.setNewCircleColor();
+	// 		}
+	// 		if (props.paddleColor != paddlesRef.current.left.color) {
+	// 			paddlesRef.current.left.color = props.paddleColor;
+	// 			paddlesRef.current.left.setNewPaddleColor();
+	// 		}
+	// 		if (props.ballRef != ballRef.current.speed) {
+	// 			ballRef.current.speed = props.ballSpeed;
+	// 			ballRef.current.setBallSpeed();
+	// 		}
+	// 	} else {
+	// 		renderRef.current = Render.create({
+	// 			canvas: canvas,
+	// 			engine: engineRef.current,
+	// 			context: canvas.getContext("2d")!,
+	// 			options: {
+	// 				background: "#3A3561",
+	// 				wireframes: false,
+	// 			},
+	// 		});
 
-			Render.run(renderRef.current);
+	// 		paddles = {
+	// 			left: new Paddle(
+	// 				50,
+	// 				canvas.height / 2,
+	// 				10,
+	// 				150,
+	// 				props.paddleColor,
+	// 				renderRef.current,
+	// 			),
+	// 			right: new Paddle(
+	// 				canvas.width - 50,
+	// 				canvas.height / 2,
+	// 				10,
+	// 				150,
+	// 				"#4FD6FF",
+	// 				renderRef.current,
+	// 			),
+	// 		};
+	// 		paddlesRef.current = paddles;
 
-			// paddlesRef.current.left.move(renderRef.current, ballRef.current);
+	// 		// ball = new Ball(
+	// 		// 		canvas.width / 2,
+	// 		// 		canvas.height / 2,
+	// 		// 		15,
+	// 		// 		props.ballColor,
+	// 		// 		props.paused,
+	// 		// 		props.silenced,
+	// 		// 	);
 
-			// setTimeout(() => {
-			// 	Runner.run(runnerRef.current, engineRef.current);
-			// 	Matter.Events.on(engineRef.current, "beforeUpdate", () => {
-			// 		ballRef.current.checkBallHit(
-			// 			paddlesRef.current.left,
-			// 			paddlesRef.current.right,
-			// 		);
-			// 		ballRef.current.move(
-			// 			renderRef.current,
-			// 			paddlesRef.current.left,
-			// 			paddlesRef.current.right,
-			// 		);
-			// 		paddlesRef.current.left.move(ballRef.current);
-			// 		paddlesRef.current.right.move(ballRef.current);
-			// 		setScore({
-			// 			...score,
-			// 			leftScore: paddlesRef.current.left.score,
-			// 			rightScore: paddlesRef.current.right.score,
-			// 		});
-			// 	});
-			// }, 1000);
-		}
-	}, [
-	]);
+	// 		ballRef.current = ball;
+
+	// 		paddlesRef.current.left.drawPaddle();
+	// 		paddlesRef.current.right.drawPaddle();
+	// 		ballRef.current.drawBall();
+
+	// 		Composite.add(engineRef.current.world, [
+	// 			paddlesRef.current.right.body,
+	// 			paddlesRef.current.left.body,
+	// 			ballRef.current.body,
+	// 	]);
+
+	// 		Render.run(renderRef.current);
+
+	// 		// paddlesRef.current.left.move(renderRef.current, ballRef.current);
+
+	// 		// setTimeout(() => {
+	// 		// 	Runner.run(runnerRef.current, engineRef.current);
+	// 		// 	Matter.Events.on(engineRef.current, "beforeUpdate", () => {
+	// 		// 		ballRef.current.checkBallHit(
+	// 		// 			paddlesRef.current.left,
+	// 		// 			paddlesRef.current.right,
+	// 		// 		);
+	// 		// 		ballRef.current.move(
+	// 		// 			renderRef.current,
+	// 		// 			paddlesRef.current.left,
+	// 		// 			paddlesRef.current.right,
+	// 		// 		);
+	// 		// 		paddlesRef.current.left.move(ballRef.current);
+	// 		// 		paddlesRef.current.right.move(ballRef.current);
+	// 		// 		setScore({
+	// 		// 			...score,
+	// 		// 			leftScore: paddlesRef.current.left.score,
+	// 		// 			rightScore: paddlesRef.current.right.score,
+	// 		// 		});
+	// 		// 	});
+	// 		// }, 1000);
+	// 	}
+	// }, [
+	// ]);
 
 	return (
 		<div className="relative flex h-[95%] w-full max-w-[750px] flex-col items-center justify-center gap-4 rounded-3xl lg:w-[90%] lg:justify-end min-[1750px]:h-full min-[1750px]:w-full min-[1750px]:max-w-[1100px]">
