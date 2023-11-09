@@ -15,8 +15,7 @@ class Ball {
 	radius: number;
 	color: string;
 	body: any;
-	xVelocity: number = -1;
-	yVelocity: number = -1;
+	direction: number = Math.random() * 4;
 	speed: number = 2;
 	sound = {
 		leftPaddleSound: new Howl({
@@ -48,14 +47,27 @@ class Ball {
 			render: {
 				fillStyle: this.color,
 			},
+			frictionAir: 0,
+			friction: 0,
+			force: { x: -7.5, y: -7.5 },
+			inertia: Infinity,
+			density: 0.5,
 			restitution: 1,
-			force: {
-				x: 0.02,
-				y: 0.006,
-			},
-			mass: 1
 		});
 	};
+
+	// draw = (): void => {
+	// 	this.body = Bodies.circle(this.xCord, this.yCord, this.radius, {
+	// 		render: {
+	// 			fillStyle: this.color,
+	// 		},
+	// 		restitution: 1,
+	// 		velocity: {
+	// 			x: this.direction * this.speed,
+	// 			y: this.direction * this.speed,
+	// 		},
+	// 	});
+	// };
 
 	reset = (): void => {
 		Matter.Body.setPosition(this.body, {
@@ -66,8 +78,8 @@ class Ball {
 
 	setBallSpeed = (): void => {
 		Matter.Body.setVelocity(this.body, {
-			x: this.xVelocity * this.speed,
-			y: this.yVelocity * this.speed,
+			x: this.direction * this.speed,
+			y: this.direction * this.speed,
 		});
 	};
 

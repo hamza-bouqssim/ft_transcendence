@@ -157,6 +157,7 @@ const Pong = (props: any) => {
 
 		const pong = new PongGame(canvas);
 		pong.movePaddle();
+		pong.moveBotPaddle();
 	}, []);
 
 	// useEffect(() => {
@@ -317,7 +318,7 @@ const Pong = (props: any) => {
 				/>
 			</div>
 			<canvas
-				className="h-[200px] w-full rounded-3xl border-2 border-solid border-[#CFF4FF] shadow-[0_0_50px_2px_var(--blue-color)] min-[375px]:h-[250px] min-[490px]:h-[300px] min-[600px]:h-[360px] min-[660px]:h-[400px] md:h-[420px] lg:h-[440px] min-[1750px]:h-[650px]"
+				className="h-[200px] w-full rounded-3xl border-4 border-solid border-[#CFF4FF] shadow-[0_0_50px_2px_var(--blue-color)] min-[375px]:h-[250px] min-[490px]:h-[300px] min-[600px]:h-[360px] min-[660px]:h-[400px] md:h-[420px] lg:h-[440px] min-[1750px]:h-[650px]"
 				ref={canvasRef}
 				width={800}
 				height={600}
