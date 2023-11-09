@@ -2,13 +2,14 @@ import styled from 'styled-components'
 import { InputContainerProps, PageProps } from './styleTypes';
 
 export const InputField = styled.input`
-    background-color: #1e1b34;
+    background-color: #fff;
     border: none;
-    color : #fff;
+    color : #151515;
     font-family: 'Inter';
     font-size: 18px;
     width: 100%;
     margin : 4px 0;
+    border-radius: 20px;
 
 `;
 
@@ -36,8 +37,9 @@ export const InputContainer = styled.div<InputContainerProps>`
 
 export const InputLabel = styled.label`
     display: block;
-    color: 	#808080;
+    color: 	#5e5d5d;
     font-size : 14px;
+    font-weight: 20px;
     margin: 4px 0;
 
 `;
@@ -166,8 +168,9 @@ export const ModalContentBodyStyle = styled.div `
 
 export const OverlayStyle = styled.div `
 
-    height: 100%;
-    width: 100%;
+    height: 400px;
+    width: 400px;
+    margin-left : 300px;
     background-color : #0000008a;
     position: fixed;
     display: flex;
@@ -181,37 +184,38 @@ export const OverlayStyle = styled.div `
 
 export const ModalHeadersStyle = styled.header`
     width: 100%;
-    background-color:#423f5a;
+    background-color:#5B8CD3;
     padding: 10px 18px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     & h2 {
-        font-weight:500;
+        font-weight:300;
         margin: 0;
-        margin-top:23px; 
+        margin-top:3px; 
         
     }
 `;
 
 export const ModalContainerStyle = styled.div `
 
-    background-color: #121212;
-    width: 650px;
+    background-color: #0000008a;
+    width: 300px;
     box-sizing: border-box;
-    border-radius: 10px;
+    border-radius: 40px;
 `;
 
 
 export const TextField = styled.textarea`
     
-    background-color: #1e1b34;
+    background-color: #fff;
     border: none;
-    color : #fff;
+    color : #151515;
     font-family: 'Inter';
     font-size: 18px;
     width: 100%;
     margin : 4px 0;
+    border-radius: 20px;
 `;
 
 export const MessagePanelStyle = styled.div `
@@ -241,22 +245,29 @@ export const MessagePannelBody = styled.div `
    
    
 `
+export const FirstGroup = styled.div `
+    display: flex;
+    gap : 10px;
+    & h2{
+        font-size: 20px;
+        font-weight: bold;
+    }
+`
 
 export const MessagePannelHeaderStyle = styled.header `
     background-color: #E0E3FF;
     border-radius: 50px;
-    height: 70px;
+    height: 80px;
     box-sizing: border-box;
     color: #151515;
     width: 100%;
-    font-weight: bold;
-    flex-shrink: 0;
     border-bottom: 1px solid #49494925;
-    display: flex;
-    text-align: center;
-    align-items: center;
-    gap: 10px;
-    padding: 10px;
+    /* text-align: center;*/
+    /* align-items: center;  */
+    /* gap: 10px; */
+    padding : 17px;
+   
+   
 `
 
 export const MessageContainerStyle = styled.div `
@@ -282,8 +293,8 @@ export const MessageContainerStyle = styled.div `
 export const MessageInputFieldContainer = styled.div `
     box-sizing : border-box;
     margin: 30px;
-    background-color : #cfd3ff;
-    border-radius : 5px;
+    background-color : #dddffe;
+    border-radius : 30px;
 `;
 
 export const MessageInput = styled.input `
@@ -325,6 +336,24 @@ export const AvatarStyle = styled.div `
     background-color: #1e1b34;
     border-radius: 50%;
 
+`
+export const DivStyle = styled.div`
+    display: flex;
+    margin-left: 50px;
+    gap: 8px;
+  
+  
+    & h1{
+        font-size : 9px;
+        font-weight: bold;
+    }
+`
+
+export const OnlineStyle = styled.div`
+    width: 9px;
+    height: 9px;
+    background-color: green;
+    border-radius: 50%;
 `
 
 

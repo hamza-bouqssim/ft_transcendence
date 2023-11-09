@@ -16,7 +16,7 @@ export const CreateConversationModal:FC<props> = ({setShow}) => {
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
         console.log(ref);
-    }, [])
+    })
 
 
     const handleOverlayClick = (e : React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -31,7 +31,7 @@ export const CreateConversationModal:FC<props> = ({setShow}) => {
             <ModalContainer>
                 <ModalHeader>
                 <h2>Create a conversation</h2>
-                <MdClose size={32} color="red"  onClick={() => setShow(false)}/>
+                <MdClose size={20} color="red"  onClick={() => setShow(false)}/>
                 </ModalHeader>
                 <ModalContentBody>
                     <CreateConversationForm/>

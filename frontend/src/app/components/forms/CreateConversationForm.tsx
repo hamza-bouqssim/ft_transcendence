@@ -9,7 +9,7 @@ export const CreateConversationForm = () => {
     return (
         <form className={styles.formConversation}>
           
-                <InputContainer backgroundColor="#423f5a">
+                <InputContainer backgroundColor="#87a2c6">
                     <InputLabel>Recepient</InputLabel>
                     <InputField />
                     <InputLabel>Message</InputLabel>
@@ -17,26 +17,27 @@ export const CreateConversationForm = () => {
                 
                 </InputContainer>
           <Button onClick={(e) => {e.preventDefault(); 
-            dispatch(addConversation({
-                id : "",
-                sender:
-                {
-                    id:"d60d0967-680b-4f5d-95c1-6c35ac01b607" ,
-                    email:"" ,
-                    username:"",
-                    display_name:"",
-                    avatar_url:"",
-                },
-                recipient:
-                {
-                    id:"7dc418be-3d58-47af-b94c-3039fb9b7c5b" ,
-                    email:"" ,
-                    username:"",
-                    display_name:"",
-                    avatar_url:"",
+            // dispatch(addConversation({
+            //     id : "",
+            //     CreatedAt : Date(),
+            //     sender:
+            //     {
+            //         id:"d60d0967-680b-4f5d-95c1-6c35ac01b607" ,
+            //         email:"" ,
+            //         username:"",
+            //         display_name:"",
+            //         avatar_url:"",
+            //     },
+            //     recipient:
+            //     {
+            //         id:"7dc418be-3d58-47af-b94c-3039fb9b7c5b" ,
+            //         email:"" ,
+            //         username:"",
+            //         display_name:"",
+            //         avatar_url:"",
 
-                }
-            }));
+            //     }
+            // }));
           }}>Create Conversation</Button>
         
            

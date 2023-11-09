@@ -29,7 +29,9 @@ const CoversationSideBar: FC <Props>  = ({conversations}) => {
     const [loading, setLoading] = useState<boolean>(false);
 	const controller = new AbortController();
 	const [newRooms, setnewRooms] = useState<boolean>(false);
-	const [selectRome , setSelectRome]  = useState<string>("chats")
+	const [selectRome , setSelectRome]  = useState<string>("chats");
+	const [show, setShow] = useState<any>(false);
+
 
     useEffect(() => {
             setLoading(true);
@@ -39,14 +41,19 @@ const CoversationSideBar: FC <Props>  = ({conversations}) => {
             .catch((err)=> {console.log(err); setLoading(false);});
     }, [user])
 	const router = useRouter();
-
-	const [show, setShow] = useState<any>(false);
+	const handleClick  = () =>{
+		setnewRooms(true);
+		if(newRooms && selectRome === 'chats' )
+		{
+			setShow(!show);
+		}
+	}
 	
 	
 
     return (
 		<div className="w-full h-full relative p-2  xl:rounded-[20px] pt-4 bg-white">
-			{/* {show &&  <CreateConversationModal   setShow={setShow} />   } */}
+			{show &&  <CreateConversationModal   setShow={setShow} />   }
 			<div className="flex items-center rounded-full justify-between w-3/4 mb-4  mx-auto  bg-[#DFDFDF]">
 
 				<button
@@ -63,17 +70,20 @@ const CoversationSideBar: FC <Props>  = ({conversations}) => {
 				<ConversationSearch/>
 			</div>
 			{!newRooms && (selectRome === 'chats' ? <ChatComponnent conversations={conversations}/> : <GroupsManagement />)}
-			{newRooms && (selectRome === 'chats' ? <div className="text-black">Addchat</div> :<div className="text-black">AddGroup</div> )}
+			{newRooms && (selectRome === 'chats' ? <div className="text-black">
+				<ChatComponnent conversations={conversations}/>
 			
-			{/* <button onClick={()=>{setnewRooms(true)}} className="absolute right-5 p-4 bottom-5 bg-[#5B8CD3] rounded-full ">add</button> */}
+			</div> :<div className="text-black">AddGroup</div> )}
+			
+			{/* <button onClick={()=>{setnewRooms(true)}} className="absolute right-5 p-4 bottom-5 bg-[#5B8CD3] rounded-full ">add</button>
+			
+			<button onClick={() => setShow(!show)} className="absolute right-5 p-4 bottom-5 bg-[#5B8CD3] rounded-full ">add</button> */}
+			
 			{!newRooms ?
-			
-			<button onClick={()=>{setnewRooms(true)}} className="absolute right-5 p-4 bottom-5 bg-[#5B8CD3] rounded-full ">add</button>
+			<button onClick={() => {setnewRooms(true); if( selectRome === 'chats' ){setShow(!show)}}} className="absolute right-5 p-4 bottom-5 bg-[#5B8CD3] rounded-full ">add</button>
 			:
 			<button onClick={()=>{setnewRooms(false)}} className="absolute right-5 p-4 bottom-5 bg-[#5B8CD3] rounded-full ">ok</button>
-			
 			}
-
 		</div>
         
 			
