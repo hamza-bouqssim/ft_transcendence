@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
-import { MessagingGateWay } from './websocket.gateway';
+import { MessagingGateWay } from './gateway';
 
 @Module({
     providers:[MessagingGateWay]

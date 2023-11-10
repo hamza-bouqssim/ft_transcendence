@@ -1,6 +1,6 @@
 "use client"
 
-import CoversationSideBar from "@/app/components/CoversationSideBar/page";
+import CoversationSideBar from "@/app/components/CoversationSideBar/ConversationSideBar";
 import { ConversationChannelStyle, Page} from "@/app/utils/styles";
 import { useContext, useEffect, useState , PropsWithChildren} from "react";
 import { ConversationTypes, User, messageEventPayload, messageTypes } from "@/app/utils/types";
@@ -77,16 +77,16 @@ const ConversationChannelPage = () => {
     const {id} = useParams();
     const [message , setMessage] = useState<messageTypes[]>([])
 
-    useEffect(() => {
-        if (typeof id === 'string') {
-          const conversationId = id;
-          getConversationMessage(conversationId)
-            .then(({ data }) => {
-              setMessage(data);
-            })
-            .catch((err) => console.log(err));
-        }
-      }, [id]);
+    // useEffect(() => {
+    //     if (typeof id === 'string') {
+    //       const conversationId = id;
+    //       getConversationMessage(conversationId)
+    //         .then(({ data }) => {
+    //           setMessage(data);
+    //         })
+    //         .catch((err) => console.log(err));
+    //     }
+    //   }, [id]);
 
       useEffect (() => {
         const conversationId = id;
@@ -103,6 +103,7 @@ const ConversationChannelPage = () => {
       // for sockets
       useEffect(()=>{
           socket.on('connected', () => console.log("socket here connected"));
+          //iam listenning to socket-io on onMessage and whenever an message receive we bussically update the state with setMessage
           socket.on('onMessage', (payload : messageEventPayload) => {
             console.log("message received");
             

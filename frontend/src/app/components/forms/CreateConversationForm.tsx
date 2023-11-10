@@ -1,5 +1,5 @@
 import { InputContainer, InputField, InputLabel, TextField } from "@/app/utils/styles"
-import styles  from "./index.module.scss"
+import styles  from "./index.module.css"
 import { Button } from "@/app/utils/styles"
 import { useDispatch } from "react-redux"
 import { addConversation } from "@/app/store/conversationSlice"

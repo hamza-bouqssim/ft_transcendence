@@ -35,6 +35,23 @@ export type   ConversationTypes= {
     messages : messageTypes[];
 }
 
+export type MessageType = {
+    id: number;
+    content: string;
+    createdAt: string;
+    sender: User;
+  };
+
+export type ConversationMessage = {
+    id: number;
+    messages: MessageType[];
+  };
+
+export type FetchMessagePayload = {
+    id: number;
+    messages: MessageType[];
+};
+
 export type messageTypes = {
     id : string;
     content : string;

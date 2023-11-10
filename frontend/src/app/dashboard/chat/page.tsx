@@ -2,12 +2,12 @@
 
 import SideBar from "../../components/SideBar"
 import { deflate } from "zlib";
-import EmptyState from "../../components/CoversationSideBar/page"
+import EmptyState from "../../components/CoversationSideBar/ConversationSideBar"
 import styles from "./page.module.css"
 import React, {FC, PropsWithChildren, useEffect, useLayoutEffect, useState} from "react"
 import { Page } from "@/app/utils/styles"
-import CoversationSideBar from "../../components/CoversationSideBar/page";
-import ConversationPanel from "@/app/components/ConversationPanel/page";
+import CoversationSideBar from "../../components/CoversationSideBar/ConversationSideBar";
+import ConversationPanel from "@/app/components/ConversationPanel/ConversationPanel";
 import { redirect, useParams } from "next/navigation";
 import { getAuthUser, getConversation } from "@/app/utils/api";
 import { ConversationTypes, User} from "@/app/utils/types";
