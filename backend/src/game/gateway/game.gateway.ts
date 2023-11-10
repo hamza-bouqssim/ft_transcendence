@@ -28,6 +28,9 @@ export class GameGateway implements OnModuleInit {
 	@WebSocketServer()
 	server: Server;
 
+	private canvasW = 550;
+	private canvasH = 836;
+
 	// constructor(
 	// 	private ball: Ball,
 	// 	private rightPaddle: Paddle,

@@ -49,9 +49,9 @@ class Ball {
 			},
 			frictionAir: 0,
 			friction: 0,
-			force: { x: -7.5, y: -7.5 },
+			force: { x: 8.5 , y: 8.8 },
 			inertia: Infinity,
-			density: 0.5,
+			density: 0.49,
 			restitution: 1,
 		});
 	};

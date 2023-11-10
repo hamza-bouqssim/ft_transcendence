@@ -12,8 +12,8 @@ class PongGame {
 	private isPaused: boolean = false;
 	private isSilenced: boolean = false;
 	private ball: Ball;
-	private rightPaddle: Paddle;
-	private leftPaddle: Paddle;
+	private topPaddle: Paddle;
+	private bottomPaddle: Paddle;
 	private moveInterval: any;
 
 	constructor(private canvas: HTMLCanvasElement) {
@@ -21,15 +21,15 @@ class PongGame {
 		this.ball = new Ball(canvas.width / 2, canvas.height / 2, 15, "#FFF");
 
 		//Paddles Data
-		this.rightPaddle = new Paddle(
-			canvas.width - 50,
-			canvas.height / 2,
-			10,
-			150,
-			"#4FD6FF",
-		);
+		this.topPaddle = new Paddle(canvas.width / 2, 30, 200, 8, "#4FD6FF");
 
-		this.leftPaddle = new Paddle(50, canvas.height / 2, 10, 150, "#FF5269");
+		this.bottomPaddle = new Paddle(
+			canvas.width / 2,
+			canvas.height - 30,
+			200,
+			8,
+			"#FF5269",
+		);
 
 		const render = Render.create({
 			canvas: canvas,
@@ -41,18 +41,16 @@ class PongGame {
 			},
 		});
 
-		// engine.options.collisionSteps = 10;
-
 		//Draw Objects:
 		this.ball.draw();
-		this.rightPaddle.draw();
-		this.leftPaddle.draw();
+		this.topPaddle.draw();
+		this.bottomPaddle.draw();
 
 		const topRect = Matter.Bodies.rectangle(
 			canvas.width / 2,
 			0,
 			canvas.width,
-			10,
+			20,
 			{
 				render: {
 					fillStyle: "red",
@@ -64,11 +62,11 @@ class PongGame {
 		const rightRect = Matter.Bodies.rectangle(
 			canvas.width,
 			canvas.height / 2,
-			10,
+			20,
 			canvas.height,
 			{
 				render: {
-					fillStyle: "green",
+					fillStyle: "yellow",
 				},
 				isStatic: true,
 			},
@@ -78,7 +76,7 @@ class PongGame {
 			canvas.width / 2,
 			canvas.height,
 			canvas.width,
-			15,
+			20,
 			{
 				render: {
 					fillStyle: "yellow",
@@ -90,11 +88,11 @@ class PongGame {
 		const leftRect = Matter.Bodies.rectangle(
 			0,
 			canvas.height / 2,
-			10,
+			20,
 			canvas.height,
 			{
 				render: {
-					fillStyle: "blue",
+					fillStyle: "red",
 				},
 				isStatic: true,
 			},
@@ -102,12 +100,12 @@ class PongGame {
 
 		Composite.add(engine.world, [
 			this.ball.body,
-			this.rightPaddle.body,
-			this.leftPaddle.body,
-			topRect,
+			this.topPaddle.body,
+			this.bottomPaddle.body,
 			rightRect,
-			bottomRect,
 			leftRect,
+			topRect,
+			bottomRect,
 		]);
 
 		Render.run(render);
@@ -144,38 +142,39 @@ class PongGame {
 	};
 
 	movePaddle = (): void => {
-		let movingUp = false;
-		let movingDown = false;
+		let movingRight = false;
+		let movingLeft = false;
 
 		document.addEventListener("keydown", (e) => {
-			if (e.key === "w") movingUp = true;
-			else if (e.key === "s") movingDown = true;
+			if (e.key === "d" || e.key === "ArrowRight") movingRight = true;
+			else if (e.key === "a" || e.key === "ArrowLeft") movingLeft = true;
 		});
 
 		document.addEventListener("keyup", (e) => {
-			if (e.key === "w") movingUp = false;
-			else if (e.key === "s") movingDown = false;
+			if (e.key === "d" || e.key === "ArrowRight") movingRight = false;
+			else if (e.key === "a" || e.key === "ArrowLeft") movingLeft = false;
 		});
 
 		this.moveInterval = setInterval(() => {
-			let stepY;
-			if (movingUp) {
-				stepY = this.leftPaddle.body.position.y - 3;
-				if (stepY <= this.leftPaddle.height / 2) {
-					stepY = this.leftPaddle.height / 2;
+			let stepX;
+
+			if (movingLeft) {
+				stepX = this.bottomPaddle.body.position.x - 11;
+				if (stepX <= this.bottomPaddle.width / 2) {
+					stepX = this.bottomPaddle.width / 2;
 				}
-				Matter.Body.setPosition(this.leftPaddle.body, {
-					x: this.leftPaddle.body.position.x,
-					y: stepY,
+				Matter.Body.setPosition(this.bottomPaddle.body, {
+					x: stepX,
+					y: this.bottomPaddle.body.position.y,
 				});
-			} else if (movingDown) {
-				stepY = this.leftPaddle.body.position.y + 3;
-				if (stepY >= this.canvas.height - this.leftPaddle.height / 2) {
-					stepY = this.canvas.height - this.leftPaddle.height / 2;
+			} else if (movingRight) {
+				stepX = this.bottomPaddle.body.position.x + 11;
+				if (stepX >= this.canvas.width - this.bottomPaddle.width / 2) {
+					stepX = this.canvas.width - this.bottomPaddle.width / 2;
 				}
-				Matter.Body.setPosition(this.leftPaddle.body, {
-					x: this.leftPaddle.body.position.x,
-					y: stepY,
+				Matter.Body.setPosition(this.bottomPaddle.body, {
+					x: stepX,
+					y: this.bottomPaddle.body.position.y,
 				});
 			}
 		}, 10);
@@ -185,22 +184,18 @@ class PongGame {
 	};
 
 	moveBotPaddle = () => {
-		let currentPositionY;
+		let currentPositionX;
 
-		Matter.Events.on(engine, "collisionStart", (e) => {
-			this.ball.body.velocity.x = -this.ball.body.velocity.x;
-			this.ball.body.velocity.y = -this.ball.body.velocity.y;
+		// Matter.Events.on(engine, "collisionStart", (e) => {
+		// 	this.ball.body.velocity.x = -this.ball.body.velocity.x;
+		// 	this.ball.body.velocity.y = -this.ball.body.velocity.y;
 
-			if (Math.random() < 0.5) this.ball.body.velocity.x *= -1;
-			if (Math.random() < 0.5) this.ball.body.velocity.y *= -1;
-		});
+		// 	if (Math.random() < 0.5) this.ball.body.velocity.x *= -1;
+		// 	if (Math.random() < 0.5) this.ball.body.velocity.y *= -1;
+		// });
 
 		Matter.Events.on(engine, "beforeUpdate", () => {
-			// this.moveBall();
-			// this.checkBallHit();
-			// this.ball.setBallSpeed();
-
-			currentPositionY = this.ball.body.position.y;
+			currentPositionX = this.ball.body.position.x;
 
 			// if (
 			// 	this.ball.body.position.x <
@@ -210,99 +205,79 @@ class PongGame {
 			// )
 			// 	this.resetObjsDefaultPosition();
 			if (
-				this.rightPaddle.body.position.y - this.rightPaddle.height / 2 <= 0 &&
-				this.ball.body.position.y <= this.rightPaddle.height / 2
+				this.topPaddle.body.position.x + this.topPaddle.width / 2 >=
+					this.canvas.width &&
+				this.ball.body.position.x >=
+					this.canvas.width - this.topPaddle.width / 2
 			)
-				currentPositionY = this.rightPaddle.height / 2;
+				currentPositionX = this.canvas.width - this.topPaddle.width / 2;
 			else if (
-				this.rightPaddle.body.position.y + this.rightPaddle.height / 2 >=
-					this.canvas.height &&
-				this.ball.body.position.y >=
-					this.canvas.height - this.rightPaddle.height / 2
+				this.topPaddle.body.position.x - this.topPaddle.width / 2 <= 0 &&
+				this.ball.body.position.x <= this.topPaddle.width / 2
 			)
-				currentPositionY = this.canvas.height - this.rightPaddle.height / 2;
+				currentPositionX = this.topPaddle.width / 2;
 
-			Matter.Body.setPosition(this.rightPaddle.body, {
-				x: this.rightPaddle.body.position.x,
-				y: currentPositionY,
+			Matter.Body.setPosition(this.topPaddle.body, {
+				x: currentPositionX,
+				y: this.topPaddle.body.position.y,
 			});
-			const canvasWidth = this.canvas.width;
-			const canvasHeight = this.canvas.height;
-			const ball = this.ball.body;
-
-			// Update the ball's position and velocity based on the canvas boundaries
-			if (ball.position.x - this.ball.radius < 0) {
-				ball.position.x = this.ball.radius;
-				ball.velocity.x *= -1;
-			} else if (ball.position.x + this.ball.radius > canvasWidth) {
-				ball.position.x = canvasWidth - this.ball.radius;
-				ball.velocity.x *= -1;
-			}
-
-			if (ball.position.y - this.ball.radius < 0) {
-				ball.position.y = this.ball.radius;
-				ball.velocity.y *= -1;
-			} else if (ball.position.y + this.ball.radius > canvasHeight) {
-				ball.position.y = canvasHeight - this.ball.radius;
-				ball.velocity.y *= -1;
-			}
 		});
 	};
 
-	resetObjsDefaultPosition = (): void => {
-		// alert("hi");
-		Matter.Body.setPosition(this.ball.body, {
-			x: this.ball.xCord,
-			y: this.ball.yCord,
-		});
+	// resetObjsDefaultPosition = (): void => {
+	// 	// alert("hi");
+	// 	Matter.Body.setPosition(this.ball.body, {
+	// 		x: this.ball.xCord,
+	// 		y: this.ball.yCord,
+	// 	});
 
-		Matter.Body.setPosition(this.rightPaddle.body, {
-			x: this.rightPaddle.xCord,
-			y: this.rightPaddle.yCord,
-		});
+	// 	Matter.Body.setPosition(this.rightPaddle.body, {
+	// 		x: this.rightPaddle.xCord,
+	// 		y: this.rightPaddle.yCord,
+	// 	});
 
-		// Matter.Body.setPosition(this.leftPaddle.body, {
-		// 	x: this.leftPaddle.xCord,
-		// 	y: this.leftPaddle.yCord,
-		// });
-		// alert(this.moveInterval);
-		// clearInterval(this.moveInterval);
-	};
+	// 	// Matter.Body.setPosition(this.leftPaddle.body, {
+	// 	// 	x: this.leftPaddle.xCord,
+	// 	// 	y: this.leftPaddle.yCord,
+	// 	// });
+	// 	// alert(this.moveInterval);
+	// 	// clearInterval(this.moveInterval);
+	// };
 
-	isCollidedLeft = (): boolean => {
-		if (
-			this.ball.body.position.x - this.ball.body.circleRadius <=
-				this.leftPaddle.body.position.x + this.leftPaddle.width / 2 &&
-			this.ball.body.position.y >=
-				this.leftPaddle.body.position.y - this.leftPaddle.height / 2 &&
-			this.ball.body.position.y <=
-				this.leftPaddle.body.position.y + this.leftPaddle.height / 2
-		)
-			return true;
-		return false;
-	};
+	// isCollidedLeft = (): boolean => {
+	// 	if (
+	// 		this.ball.body.position.x - this.ball.body.circleRadius <=
+	// 			this.leftPaddle.body.position.x + this.leftPaddle.width / 2 &&
+	// 		this.ball.body.position.y >=
+	// 			this.leftPaddle.body.position.y - this.leftPaddle.height / 2 &&
+	// 		this.ball.body.position.y <=
+	// 			this.leftPaddle.body.position.y + this.leftPaddle.height / 2
+	// 	)
+	// 		return true;
+	// 	return false;
+	// };
 
-	isCollidedRight = (): boolean => {
-		if (
-			this.ball.body.position.x + this.ball.body.circleRadius >=
-				this.rightPaddle.body.position.x - this.rightPaddle.width / 2 &&
-			this.ball.body.position.y >=
-				this.rightPaddle.body.position.y - this.rightPaddle.height / 2 &&
-			this.ball.body.position.y <=
-				this.rightPaddle.body.position.y + this.rightPaddle.height / 2
-		)
-			return true;
-		return false;
-	};
+	// isCollidedRight = (): boolean => {
+	// 	if (
+	// 		this.ball.body.position.x + this.ball.body.circleRadius >=
+	// 			this.rightPaddle.body.position.x - this.rightPaddle.width / 2 &&
+	// 		this.ball.body.position.y >=
+	// 			this.rightPaddle.body.position.y - this.rightPaddle.height / 2 &&
+	// 		this.ball.body.position.y <=
+	// 			this.rightPaddle.body.position.y + this.rightPaddle.height / 2
+	// 	)
+	// 		return true;
+	// 	return false;
+	// };
 
-	checkBallHit = (): void => {
-		if (this.isCollidedLeft() || this.isCollidedRight()) {
-			Matter.Body.setVelocity(this.ball.body, {
-				x: -this.ball.body.velocity.x,
-				y: this.ball.body.velocity.y,
-			});
-		}
-	};
+	// checkBallHit = (): void => {
+	// 	if (this.isCollidedLeft() || this.isCollidedRight()) {
+	// 		Matter.Body.setVelocity(this.ball.body, {
+	// 			x: -this.ball.body.velocity.x,
+	// 			y: this.ball.body.velocity.y,
+	// 		});
+	// 	}
+	// };
 }
 
 export default PongGame;
