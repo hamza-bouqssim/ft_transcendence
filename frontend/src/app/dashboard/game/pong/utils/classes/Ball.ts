@@ -49,10 +49,14 @@ class Ball {
 			},
 			frictionAir: 0,
 			friction: 0,
-			force: { x: 8.5 , y: 8.8 },
+			// force: { x: 8.5 , y: 8.8 },
 			inertia: Infinity,
-			density: 0.49,
+			// density: 0.49,
 			restitution: 1,
+		});
+		Matter.Body.setVelocity(this.body, {
+			x: 10,
+			y: 10,
 		});
 	};
 

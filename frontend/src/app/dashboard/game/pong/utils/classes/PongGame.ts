@@ -6,7 +6,13 @@ const Render = Matter.Render;
 const Engine = Matter.Engine;
 const Runner = Matter.Runner;
 const Composite = Matter.Composite;
-const engine = Engine.create();
+const engine = Engine.create({
+	gravity: {
+		x: 0,
+		y: 0,
+		scale: 0.001,
+	},
+});
 
 class PongGame {
 	private isPaused: boolean = false;
