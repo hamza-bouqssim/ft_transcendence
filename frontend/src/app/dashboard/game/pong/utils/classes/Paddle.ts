@@ -42,6 +42,7 @@ class Paddle {
 					fillStyle: this.color,
 				},
 				isStatic: true,
+				chamfer: { radius: 10 },
 			},
 		);
 	};

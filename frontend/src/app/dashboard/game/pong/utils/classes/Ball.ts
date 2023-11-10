@@ -55,8 +55,8 @@ class Ball {
 			restitution: 1,
 		});
 		Matter.Body.setVelocity(this.body, {
-			x: 10,
-			y: 10,
+			x: 8,
+			y: 8,
 		});
 	};
 

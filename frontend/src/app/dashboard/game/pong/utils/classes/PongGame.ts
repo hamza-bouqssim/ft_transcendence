@@ -10,7 +10,6 @@ const engine = Engine.create({
 	gravity: {
 		x: 0,
 		y: 0,
-		scale: 0.001,
 	},
 });
 
@@ -20,29 +19,35 @@ class PongGame {
 	private ball: Ball;
 	private topPaddle: Paddle;
 	private bottomPaddle: Paddle;
+	private divWidth;
+	private divHeight;
 	private moveInterval: any;
 
-	constructor(private canvas: HTMLCanvasElement) {
+	constructor(private parentDiv: HTMLDivElement) {
+		this.divWidth = parentDiv.getBoundingClientRect().width;
+		this.divHeight = parentDiv.getBoundingClientRect().height;
+
 		// Ball Data
-		this.ball = new Ball(canvas.width / 2, canvas.height / 2, 15, "#FFF");
+		this.ball = new Ball(this.divWidth / 2, this.divHeight / 2, 15, "#FFF");
 
 		//Paddles Data
-		this.topPaddle = new Paddle(canvas.width / 2, 30, 200, 8, "#4FD6FF");
+		this.topPaddle = new Paddle(this.divWidth / 2, 30, 170, 15, "#4FD6FF");
 
 		this.bottomPaddle = new Paddle(
-			canvas.width / 2,
-			canvas.height - 30,
-			200,
-			8,
+			this.divWidth / 2,
+			this.divHeight - 30,
+			170,
+			15,
 			"#FF5269",
 		);
 
 		const render = Render.create({
-			canvas: canvas,
+			element: parentDiv,
 			engine: engine,
-			context: canvas.getContext("2d")!,
 			options: {
 				background: "#3A3561",
+				width: this.divWidth,
+				height: this.divHeight,
 				wireframes: false,
 			},
 		});
@@ -53,9 +58,9 @@ class PongGame {
 		this.bottomPaddle.draw();
 
 		const topRect = Matter.Bodies.rectangle(
-			canvas.width / 2,
+			this.divWidth / 2,
 			0,
-			canvas.width,
+			this.divWidth,
 			20,
 			{
 				render: {
@@ -66,22 +71,22 @@ class PongGame {
 		);
 
 		const rightRect = Matter.Bodies.rectangle(
-			canvas.width,
-			canvas.height / 2,
+			this.divWidth,
+			this.divHeight / 2,
 			20,
-			canvas.height,
+			this.divHeight,
 			{
 				render: {
-					fillStyle: "yellow",
+					fillStyle: "#CFF4FF",
 				},
 				isStatic: true,
 			},
 		);
 
 		const bottomRect = Matter.Bodies.rectangle(
-			canvas.width / 2,
-			canvas.height,
-			canvas.width,
+			this.divWidth / 2,
+			this.divHeight,
+			this.divWidth,
 			20,
 			{
 				render: {
@@ -93,12 +98,12 @@ class PongGame {
 
 		const leftRect = Matter.Bodies.rectangle(
 			0,
-			canvas.height / 2,
+			this.divHeight / 2,
 			20,
-			canvas.height,
+			this.divHeight,
 			{
 				render: {
-					fillStyle: "red",
+					fillStyle: "#CFF4FF",
 				},
 				isStatic: true,
 			},
@@ -110,8 +115,6 @@ class PongGame {
 			this.bottomPaddle.body,
 			rightRect,
 			leftRect,
-			topRect,
-			bottomRect,
 		]);
 
 		Render.run(render);
@@ -123,28 +126,12 @@ class PongGame {
 		Runner.run(runner, engine);
 	}
 
-	moveBall = () => {
-		// if (this.ball.body.position.y + this.ball.radius >= this.canvas.height) {
-		// 	Matter.Body.setPosition(this.ball.body, {
-		// 		x: this.ball.body.position.x,
-		// 		y: this.canvas.height - this.ball.radius,
-		// 	});
-		// 	Matter.Body.setVelocity(this.ball.body, {
-		// 		x: -this.ball.body.velocity.x,
-		// 		y: -this.ball.body.velocity.y,
-		// 	});
-		// }
-		// if (this.ball.body.position.y - this.ball.radius <= 0) {
-		// 	Matter.Body.setPosition(this.ball.body, {
-		// 		x: this.ball.body.position.x,
-		// 		y: this.ball.radius,
-		// 	});
-		// 	Matter.Body.setVelocity(this.ball.body, {
-		// 		x: -this.ball.body.velocity.x,
-		// 		y: -this.ball.body.velocity.y,
-		// 	});
-		// }
-		this.ball.setBallSpeed();
+	resetObjsDefaultPosition = (): void => {
+		Matter.Body.setPosition(this.ball.body, {
+			x: this.ball.xCord,
+			y: this.ball.yCord,
+		});
+		// clearInterval(this.moveInterval);
 	};
 
 	movePaddle = (): void => {
@@ -175,8 +162,8 @@ class PongGame {
 				});
 			} else if (movingRight) {
 				stepX = this.bottomPaddle.body.position.x + 11;
-				if (stepX >= this.canvas.width - this.bottomPaddle.width / 2) {
-					stepX = this.canvas.width - this.bottomPaddle.width / 2;
+				if (stepX >= this.divWidth - this.bottomPaddle.width / 2) {
+					stepX = this.divWidth - this.bottomPaddle.width / 2;
 				}
 				Matter.Body.setPosition(this.bottomPaddle.body, {
 					x: stepX,
@@ -204,19 +191,22 @@ class PongGame {
 			currentPositionX = this.ball.body.position.x;
 
 			// if (
-			// 	this.ball.body.position.x <
-			// 	this.leftPaddle.body.position.x - this.leftPaddle.width / 2
-			// 	this.ball.body.position.x >=
-			// 		this.rightPaddle.body.position.x + this.rightPaddle.width / 2
+			// 	this.ball.body.position.y <
+			// 		this.bottomPaddle.body.position.y - this.bottomPaddle.height / 2 ||
+			// 	this.ball.body.position.y >=
+			// 		this.topPaddle.body.position.y + this.topPaddle.height / 2
 			// )
-			// 	this.resetObjsDefaultPosition();
 			if (
-				this.topPaddle.body.position.x + this.topPaddle.width / 2 >=
-					this.canvas.width &&
-				this.ball.body.position.x >=
-					this.canvas.width - this.topPaddle.width / 2
+				this.ball.body.position.y >=
+				this.bottomPaddle.body.position.y + this.bottomPaddle.height / 2
 			)
-				currentPositionX = this.canvas.width - this.topPaddle.width / 2;
+				this.resetObjsDefaultPosition();
+			else if (
+				this.topPaddle.body.position.x + this.topPaddle.width / 2 >=
+					this.divWidth &&
+				this.ball.body.position.x >= this.divWidth - this.topPaddle.width / 2
+			)
+				currentPositionX = this.divWidth - this.topPaddle.width / 2;
 			else if (
 				this.topPaddle.body.position.x - this.topPaddle.width / 2 <= 0 &&
 				this.ball.body.position.x <= this.topPaddle.width / 2
@@ -229,61 +219,6 @@ class PongGame {
 			});
 		});
 	};
-
-	// resetObjsDefaultPosition = (): void => {
-	// 	// alert("hi");
-	// 	Matter.Body.setPosition(this.ball.body, {
-	// 		x: this.ball.xCord,
-	// 		y: this.ball.yCord,
-	// 	});
-
-	// 	Matter.Body.setPosition(this.rightPaddle.body, {
-	// 		x: this.rightPaddle.xCord,
-	// 		y: this.rightPaddle.yCord,
-	// 	});
-
-	// 	// Matter.Body.setPosition(this.leftPaddle.body, {
-	// 	// 	x: this.leftPaddle.xCord,
-	// 	// 	y: this.leftPaddle.yCord,
-	// 	// });
-	// 	// alert(this.moveInterval);
-	// 	// clearInterval(this.moveInterval);
-	// };
-
-	// isCollidedLeft = (): boolean => {
-	// 	if (
-	// 		this.ball.body.position.x - this.ball.body.circleRadius <=
-	// 			this.leftPaddle.body.position.x + this.leftPaddle.width / 2 &&
-	// 		this.ball.body.position.y >=
-	// 			this.leftPaddle.body.position.y - this.leftPaddle.height / 2 &&
-	// 		this.ball.body.position.y <=
-	// 			this.leftPaddle.body.position.y + this.leftPaddle.height / 2
-	// 	)
-	// 		return true;
-	// 	return false;
-	// };
-
-	// isCollidedRight = (): boolean => {
-	// 	if (
-	// 		this.ball.body.position.x + this.ball.body.circleRadius >=
-	// 			this.rightPaddle.body.position.x - this.rightPaddle.width / 2 &&
-	// 		this.ball.body.position.y >=
-	// 			this.rightPaddle.body.position.y - this.rightPaddle.height / 2 &&
-	// 		this.ball.body.position.y <=
-	// 			this.rightPaddle.body.position.y + this.rightPaddle.height / 2
-	// 	)
-	// 		return true;
-	// 	return false;
-	// };
-
-	// checkBallHit = (): void => {
-	// 	if (this.isCollidedLeft() || this.isCollidedRight()) {
-	// 		Matter.Body.setVelocity(this.ball.body, {
-	// 			x: -this.ball.body.velocity.x,
-	// 			y: this.ball.body.velocity.y,
-	// 		});
-	// 	}
-	// };
 }
 
 export default PongGame;

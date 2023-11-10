@@ -45,45 +45,13 @@ type PlayerScoreProps = {
 
 export const PlayerScore = (props: PlayerScoreProps) => {
 	return (
-		// <div
-		// 	className={`flex h-full w-[48%] items-center justify-between ${
-		// 		props.flag === "right" ? "flex-row-reverse" : ""
-		// 	}`}
-		// >
-		// 	<Image
-		// 		className={`h-16 w-16 rounded-[50%] border-2 border-[#CFF4FF] shadow-[0_0_50px_2px_var(--blue-color)]`}
-		// 		style={{ background: props.playerBgColor }}
-		// 		id="0"
-		// 		src={"/assets/hamza.png"}
-		// 		width={40}
-		// 		height={40}
-		// 		alt="player"
-		// 	/>
-		// 	<div
-		// 		className={`font-['Whitney_Bold'] text-white ${
-		// 			props.flag === "right" ? "-mr-6" : "-ml-6"
-		// 		}`}
-		// 	>
-		// 		<h3 className="text-sm lg:text-lg min-[1750px]:text-2xl">
-		// 			{props.name}
-		// 		</h3>
-		// 		<span
-		// 			className={`mt-[-5px] block text-xs lg:text-sm min-[1750px]:text-lg ${
-		// 				props.flag === "right" ? "text-right" : ""
-		// 			}`}
-		// 		>
-		// 			{props.username}
-		// 		</span>
-		// 	</div>
-		// 	<div className={`w-24 text-center font-['Whitney_Bold'] text-5xl`}>
-		// 		{props.score}
-		// 	</div>
-		// </div>
 		<div
-			className={`relative flex h-full w-[48%] flex-col justify-around px-1 py-3 min-[379px]:px-4 md:flex-row md:items-center`}
+			className={`glassmorphism relative flex h-[225px] w-[390px] flex-col items-center gap-6 px-1 py-3 ${
+				props.flag === "right" ? "mb-auto mt-10" : "mb-10 mt-auto"
+			}`}
 		>
 			<div
-				className={`flex items-center justify-between md:w-full ${
+				className={`flex w-full items-center justify-evenly ${
 					props.flag === "right" ? "flex-row-reverse items-end" : ""
 				}`}
 			>
@@ -96,27 +64,27 @@ export const PlayerScore = (props: PlayerScoreProps) => {
 					height={40}
 					alt="player"
 				/>
+
 				<div
-					className={`w-24 text-center font-['Whitney_Bold'] text-4xl md:text-5xl min-[1750px]:text-7xl`}
+					className={`font-['Whitney_Bold'] text-white ${
+						props.flag === "right" ? "right-32 text-right" : "left-32"
+					}`}
 				>
-					{props.score}
+					<h3 className="text-sm md:text-lg min-[1750px]:text-3xl">
+						{props.name}
+					</h3>
+					<span
+						className={`mt-[-5px] block text-xs lg:text-sm min-[1750px]:text-xl`}
+					>
+						{props.username}
+					</span>
 				</div>
 			</div>
+
 			<div
-				className={`font-['Whitney_Bold'] text-white md:absolute ${
-					props.flag === "right"
-						? "text-right md:right-24 min-[1750px]:right-32"
-						: "md:left-24 min-[1750px]:left-32"
-				}`}
+				className={`w-24 text-center font-['Whitney_Bold'] text-4xl md:text-5xl min-[1750px]:text-7xl`}
 			>
-				<h3 className="text-sm md:text-lg min-[1750px]:text-3xl">
-					{props.name}
-				</h3>
-				<span
-					className={`mt-[-5px] block text-xs lg:text-sm min-[1750px]:text-xl`}
-				>
-					{props.username}
-				</span>
+				{props.score}
 			</div>
 		</div>
 	);

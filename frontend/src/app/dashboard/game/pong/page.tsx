@@ -143,7 +143,7 @@ const Game = () => {
 				</Pong>
 
 				{/* Game Settings */}
-				<div className="relative hidden h-[520px] w-[350px] flex-col items-center gap-6 rounded-3xl border-2 border-solid border-[#CFF4FF] py-16 font-['Whitney_Semibold'] text-lg shadow-[0_0_50px_2px_var(--blue-color)] lg:flex">
+				{/* <div className="relative hidden h-[520px] w-[350px] flex-col items-center gap-6 rounded-3xl border-2 border-solid border-[#CFF4FF] py-16 font-['Whitney_Semibold'] text-lg shadow-[0_0_50px_2px_var(--blue-color)] lg:flex">
 					<span className="absolute -top-5 left-[50%] -translate-x-[50%] rounded-3xl border-b-2 border-solid border-[#CFF4FF] bg-[--purple-color] px-7 py-2 font-['Whitney_Bold'] text-2xl font-bold shadow-[0_0_50px_2px_var(--blue-color)]">
 						Settings
 					</span>
@@ -255,7 +255,7 @@ const Game = () => {
 							EXIT
 						</button>
 					</div>
-				</div>
+				</div> */}
 			</div>
 		</section>
 	);
