@@ -58,6 +58,7 @@ const CoversationSideBar: FC <Props>  = ({conversations}) => {
 				</button>
 			</div>
 			<hr  className="bg-[#DFDFDF] w-1/2 mx-auto mt-5"/>
+			<ConversationSearch selectRome={selectRome} ></ConversationSearch>
 			{!newRooms && (selectRome === 'chats' ? <ChatComponnent conversations={conversations}/> : <GroupsManagement />)}
 			{newRooms && (selectRome === 'chats' ? <div className="text-black">Addchat</div> :<div className="text-black">AddGroup</div> )}
 			

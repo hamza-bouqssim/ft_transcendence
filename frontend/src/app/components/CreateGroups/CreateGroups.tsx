@@ -1,4 +1,4 @@
-const GroupsManagement = () =>{
+const CreatGroups = () =>{
     return (
         <div className="text-black">
                 GroupsManagement
@@ -6,4 +6,4 @@ const GroupsManagement = () =>{
     )
 }
 
-export default GroupsManagement;
+export default CreatGroups;

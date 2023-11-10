@@ -47,7 +47,20 @@ model User {
   player2 Pong_match[] @relation("player2")
   matchEvent match_events[] @relation("match_event")
   Member  Member[]
+  blockingUsers       BlockUser[] @relation("blockingUsers")
+  blockedByUsers      BlockUser[] @relation("blockedByUsers")
+
 }
+
+model BlockUser {
+  id             String    @id @default(uuid())
+  userId         String
+  blockedUserId  String
+  createdAt      DateTime
+  blockingUsers   User      @relation("blockingUsers", fields: [userId], references: [id])
+  blockedByUsers    User      @relation("blockedByUsers", fields: [blockedUserId], references: [id])
+}
+
 
 model Friend {
   id String @id @default(uuid())
