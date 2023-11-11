@@ -1,5 +1,6 @@
 import Ball from "./Ball";
 import Paddle from "./Paddle";
+import { Howl } from "howler";
 import Matter from "matter-js";
 
 const Render = Matter.Render;
@@ -20,11 +21,25 @@ class PongGame {
 	private divWidth;
 	private divHeight;
 	private moveInterval: any;
+	private sound = {
+		topPaddleSound: new Howl({
+			src: ["/assets/sounds/leftPaddle.wav"],
+		}),
+		bottomPaddleSound: new Howl({
+			src: ["/assets/sounds/rightPaddle.wav"],
+		}),
+		win: new Howl({
+			src: ["/assets/sounds/winSound.mp3"],
+		}),
+	};
 
-	constructor(private parentDiv: HTMLDivElement) {
+	constructor(
+		private parentDiv: HTMLDivElement,
+		private socket: any,
+	) {
 		this.divWidth = this.parentDiv.getBoundingClientRect().width;
 		this.divHeight = this.parentDiv.getBoundingClientRect().height;
-``
+
 		// Ball Data
 		this.ball = new Ball(this.divWidth / 2, this.divHeight / 2, 15, "#FFF");
 
@@ -118,7 +133,7 @@ class PongGame {
 		Render.run(render);
 
 		// create runner
-		var runner = Runner.create();
+		let runner = Runner.create();
 
 		// run the engine
 		Runner.run(runner, engine);
@@ -132,43 +147,121 @@ class PongGame {
 		// clearInterval(this.moveInterval);
 	};
 
-	movePaddle = (): void => {
-		let movingRight = false;
-		let movingLeft = false;
+	// movePaddle = (): void => {
+	// 	let movingRight = false;
+	// 	let movingLeft = false;
 
+	// 	document.addEventListener("keydown", (e) => {
+	// 		if (e.key === "d" || e.key === "ArrowRight") movingRight = true;
+	// 		else if (e.key === "a" || e.key === "ArrowLeft") movingLeft = true;
+	// 	});
+
+	// 	document.addEventListener("keyup", (e) => {
+	// 		if (e.key === "d" || e.key === "ArrowRight") movingRight = false;
+	// 		else if (e.key === "a" || e.key === "ArrowLeft") movingLeft = false;
+	// 	});
+
+	// 	this.moveInterval = setInterval(() => {
+	// 		let stepX;
+
+	// 		if (movingLeft) {
+	// 			stepX = this.bottomPaddle.body.position.x - 11;
+	// 			if (stepX <= this.bottomPaddle.width / 2) {
+	// 				stepX = this.bottomPaddle.width / 2;
+	// 			}
+	// 			Matter.Body.setPosition(this.bottomPaddle.body, {
+	// 				x: stepX,
+	// 				y: this.bottomPaddle.body.position.y,
+	// 			});
+	// 		} else if (movingRight) {
+	// 			stepX = this.bottomPaddle.body.position.x + 11;
+	// 			if (stepX >= this.divWidth - this.bottomPaddle.width / 2) {
+	// 				stepX = this.divWidth - this.bottomPaddle.width / 2;
+	// 			}
+	// 			Matter.Body.setPosition(this.bottomPaddle.body, {
+	// 				x: stepX,
+	// 				y: this.bottomPaddle.body.position.y,
+	// 			});
+	// 		}
+	// 	}, 10);
+
+	// when a player score a point
+	// clearInterval(moveInterval);
+	// };
+
+	movePaddle = (): void => {
 		document.addEventListener("keydown", (e) => {
-			if (e.key === "d" || e.key === "ArrowRight") movingRight = true;
-			else if (e.key === "a" || e.key === "ArrowLeft") movingLeft = true;
+			if (e.key === "d" || e.key === "ArrowRight")
+				this.socket.emit("keyevent", {
+					key: e.key,
+					state: "keydown",
+				});
+			else if (e.key === "a" || e.key === "ArrowLeft")
+				this.socket.emit("keyevent", {
+					key: e.key,
+					state: "keydown",
+				});
 		});
 
 		document.addEventListener("keyup", (e) => {
-			if (e.key === "d" || e.key === "ArrowRight") movingRight = false;
-			else if (e.key === "a" || e.key === "ArrowLeft") movingLeft = false;
+			if (e.key === "d" || e.key === "ArrowRight")
+				this.socket.emit("keyevent", {
+					key: e.key,
+					state: "keyup",
+				});
+			else if (e.key === "a" || e.key === "ArrowLeft")
+				this.socket.emit("keyevent", {
+					key: e.key,
+					state: "keyup",
+				});
 		});
 
-		this.moveInterval = setInterval(() => {
-			let stepX;
+		this.socket.on("updatePaddlePosition", (data: any) => {
+			console.log(data.xPosition);
+			Matter.Body.setPosition(this.bottomPaddle.body, {
+				x: data.xPosition,
+				y: this.bottomPaddle.body.position.y,
+			});
+		});
 
-			if (movingLeft) {
-				stepX = this.bottomPaddle.body.position.x - 11;
-				if (stepX <= this.bottomPaddle.width / 2) {
-					stepX = this.bottomPaddle.width / 2;
-				}
-				Matter.Body.setPosition(this.bottomPaddle.body, {
-					x: stepX,
-					y: this.bottomPaddle.body.position.y,
-				});
-			} else if (movingRight) {
-				stepX = this.bottomPaddle.body.position.x + 11;
-				if (stepX >= this.divWidth - this.bottomPaddle.width / 2) {
-					stepX = this.divWidth - this.bottomPaddle.width / 2;
-				}
-				Matter.Body.setPosition(this.bottomPaddle.body, {
-					x: stepX,
-					y: this.bottomPaddle.body.position.y,
-				});
-			}
-		}, 10);
+		// document.addEventListener("keydown", (e) => {
+		// 	if (e.key === "d" || e.key === "ArrowRight") {
+		// 		this.socket.emit("movePaddle", () => {
+		// 			movingRight: true;
+		// 		});
+		// 	} else if (e.key === "a" || e.key === "ArrowLeft") {
+		// 		movingLeft: true;
+		// 	}
+		// });
+
+		// document.addEventListener("keyup", (e) => {
+		// 	if (e.key === "d" || e.key === "ArrowRight") movingRight = false;
+		// 	else if (e.key === "a" || e.key === "ArrowLeft") movingLeft = false;
+		// });
+
+		// this.moveInterval = setInterval(() => {
+		// 	let stepX;
+
+		// 	if (movingLeft) {
+		// 		stepX = this.bottomPaddle.body.position.x - 11;
+		// 		if (stepX <= this.bottomPaddle.width / 2) {
+		// 			stepX = this.bottomPaddle.width / 2;
+		// 		}
+		// 		Matter.Body.setPosition(this.bottomPaddle.body, {
+		// 			x: stepX,
+		// 			y: this.bottomPaddle.body.position.y,
+		// 		});
+		// 	} else if (movingRight) {
+		// 		stepX = this.bottomPaddle.body.position.x + 11;
+		// 		if (stepX >= this.divWidth - this.bottomPaddle.width / 2) {
+		// 			stepX = this.divWidth - this.bottomPaddle.width / 2;
+		// 		}
+		// 		Matter.Body.setPosition(this.bottomPaddle.body, {
+		// 			x: stepX,
+		// 			y: this.bottomPaddle.body.position.y,
+		// 		});
+		// 	}
+		// }, 10);
 
 		// when a player score a point
 		// clearInterval(moveInterval);
@@ -176,6 +269,21 @@ class PongGame {
 
 	moveBotPaddle = () => {
 		let currentPositionX;
+
+		Matter.Events.on(engine, "collisionStart", (e) => {
+			const pairs = e.pairs[0];
+			// alert(this.divHeight);
+			if (
+				pairs.bodyA === this.topPaddle.body ||
+				pairs.bodyB === this.topPaddle.body
+			)
+				this.sound.topPaddleSound.play();
+			else if (
+				pairs.bodyA === this.bottomPaddle.body ||
+				pairs.bodyB === this.bottomPaddle.body
+			)
+				this.sound.bottomPaddleSound.play();
+		});
 
 		// Matter.Events.on(engine, "collisionStart", (e) => {
 		// 	this.ball.body.velocity.x = -this.ball.body.velocity.x;
@@ -186,14 +294,10 @@ class PongGame {
 		// });
 
 		Matter.Events.on(engine, "beforeUpdate", () => {
+			if (this.ball.body.position.y + this.ball.radius >= this.divHeight - 8) {
+				this.sound.win.play();
+			}
 			currentPositionX = this.ball.body.position.x;
-
-			// if (
-			// 	this.ball.body.position.y <
-			// 		this.bottomPaddle.body.position.y - this.bottomPaddle.height / 2 ||
-			// 	this.ball.body.position.y >=
-			// 		this.topPaddle.body.position.y + this.topPaddle.height / 2
-			// )
 			if (
 				this.ball.body.position.y >=
 				this.bottomPaddle.body.position.y + this.bottomPaddle.height / 2

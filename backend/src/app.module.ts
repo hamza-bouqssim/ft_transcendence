@@ -34,6 +34,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 		GameModule,
 		GatewayModule,
 		EventEmitterModule.forRoot(),
+		GameModule,
 	],
 	controllers: [AppController, UserController],
 	providers: [AppService, UserService, PrismaService],

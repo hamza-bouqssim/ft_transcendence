@@ -6,8 +6,6 @@ import {
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 import Matter from 'matter-js';
-// import Ball from './classes/Ball';
-// import Paddle from './classes/Paddle';
 import { Body, OnModuleInit } from '@nestjs/common';
 
 // const Bodies = Matter.Bodies;
@@ -21,132 +19,123 @@ import { Body, OnModuleInit } from '@nestjs/common';
 
 @WebSocketGateway({
 	cors: {
-		origin: ['http://localhost:3000'],
+		origin: '*',
 	},
 })
 export class GameGateway implements OnModuleInit {
 	@WebSocketServer()
 	server: Server;
+	
+	private divWidth = 560;
+	private divHeight = 836;
+	private ballXcord;
+	private ballYcord;
+	private topPaddleXCord;
+	private topPaddleYCord;
+	private bottomPaddleXCord;
+	private bottomPaddleYCord;
+	private movingRight = false;
+	private movingLeft = false;
+	private posPaddleX = this.divWidth / 2;
+	private paddleW = 170;
 
-	private canvasW = 550;
-	private canvasH = 836;
-
-	// constructor(
-	// 	private ball: Ball,
-	// 	private rightPaddle: Paddle,
-	// 	private leftPaddle: Paddle,
-	// ) {}
+	constructor()
+	{
+		this.handlePaddleMove();
+	}
 
 	onModuleInit() {
 		this.server.on('connection', (socket) => {
 			console.log(socket.id);
-			console.log('a client connected!');
-		});
-		this.server.on('Position', (payload) => {
-			console.log(payload);
+			console.log('A Pong client connected!');
 		});
 	}
 
-	// @SubscribeMessage('setDefaultPosition')
-	// emitDefaultPosition() {
-	// 	this.server.emit('defaultPosition', {
-	// 		x: 120,
-	// 		y: 120,
-	// 	});
-	// }
+	@SubscribeMessage('keyevent')
+	handleKeyDown(@MessageBody() data: any) {
+		if (data.state === "keydown")
+		{
+			if (data.key === "d" || data.key === "ArrowRight")
+				this.movingRight = true;
+			else if (data.key === "a" || data.key === "ArrowLeft")
+				this.movingLeft = true;
+		}
+		else
+		{
+			if (data.key === "d" || data.key === "ArrowRight")
+				this.movingRight = false;
+			else if (data.key === "a" || data.key === "ArrowLeft")
+				this.movingLeft = false;
+		}
+	}
 
-	@SubscribeMessage('setDefaultPosition')
-	emitDefaultPosition(@MessageBody() body: any) {
-		console.log(body);
-		// this.server.emit('defaultPosition', {
-		// 	ballCords: {
-		// 		x: 120,
-		// 		y: 120,
-		// 	},
-		// 	paddlesCords: {
-		// 		rightPaddleCord: {
-		// 			x: 120,
-		// 			y: 120,
-		// 		},
-		// 		leftPaddleCord: {
-		// 			x: 120,
-		// 			y: 120,
-		// 		},
-		// 	},
+	handlePaddleMove() {
+		const moveInterval = setInterval(() => {
+			let stepX = 0;
+
+			if (this.movingLeft) {
+				stepX = this.posPaddleX	 - 11;
+				if (stepX <= this.paddleW / 2) {
+					stepX = this.paddleW / 2;
+				}
+			} else if (this.movingRight) {
+				stepX = this.posPaddleX + 11;
+				if (stepX >= this.divWidth - this.paddleW / 2) {
+					stepX = this.divWidth - this.paddleW / 2;
+				}
+			}
+			if (stepX != 0)
+			{
+				this.posPaddleX = stepX;
+				this.server.emit('updatePaddlePosition', {
+					paddleLabel: 'bottomPaddle',
+					xPosition: stepX,
+				});
+			}
+		}, 20);
+	}
+
+	@SubscribeMessage('movePaddle')
+	emitMovePaddle(@MessageBody() body: any) {
+		// this.server.emit('reply', {
+		// 	mssj: 'test!',
 		// });
+
+		// document.addEventListener('keydown', (e) => {
+		// 	if (e.key === 'd' || e.key === 'ArrowRight') movingRight = true;
+		// 	else if (e.key === 'a' || e.key === 'ArrowLeft') movingLeft = true;
+		// });
+
+		// document.addEventListener('keyup', (e) => {
+		// 	if (e.key === 'd' || e.key === 'ArrowRight') movingRight = false;
+		// 	else if (e.key === 'a' || e.key === 'ArrowLeft') movingLeft = false;
+		// });
+
+		// const moveInterval = setInterval(() => {
+		// 	let stepX;
+
+		// 	if (this.movingLeft) {
+		// 		stepX = this.bottomPaddle.body.position.x - 11;
+		// 		if (stepX <= this.paddleW / 2) {
+		// 			stepX = this.bottomPaddle.width / 2;
+		// 		}
+		// 		Matter.Body.setPosition(this.bottomPaddle.body, {
+		// 			x: stepX,
+		// 			y: this.bottomPaddle.body.position.y,
+		// 		});
+		// 	} else if (movingRight) {
+		// 		stepX = this.bottomPaddle.body.position.x + 11;
+		// 		if (stepX >= this.divWidth - this.bottomPaddle.width / 2) {
+		// 			stepX = this.divWidth - this.bottomPaddle.width / 2;
+		// 		}
+		// 		Matter.Body.setPosition(this.bottomPaddle.body, {
+		// 			x: stepX,
+		// 			y: this.bottomPaddle.body.position.y,
+		// 		});
+		// 	}
+		// }, 10);
+
+		// when a player score a point
+		// clearInterval(moveInterval);
 	}
-
-	// If the ball reaches the canvas boundary, reverse its vertical velocity
-	// move = (render: any): void => {
-	// 	if (
-	// 		this.ball.body.position.y + this.ball.body.circleRadius - 1 >=
-	// 			render.canvas.height ||
-	// 		this.ball.body.position.y - this.ball.body.circleRadius <= 0
-	// 	)
-	// 		this.ball.yVelocity = -this.ball.yVelocity;
-	// 	if (
-	// 		this.ball.body.position.x > render.canvas.width ||
-	// 		this.ball.body.position.x < 0
-	// 	) {
-	// 		this.ball.body.position.x < 0
-	// 			? this.rightPaddle.score++
-	// 			: this.leftPaddle.score++;
-	// 		this.ball.resetPosition();
-	// 		this.leftPaddle.resetPosition();
-	// 		this.rightPaddle.resetPosition();
-	// 	}
-	// 	this.ball.setBallSpeed();
-	// };
-
-	// delete two this methods and make just one is better
-	// isCollidedLeft = (): boolean => {
-	// 	if (
-	// 		this.ball.body.position.x - this.ball.body.circleRadius <=
-	// 			this.leftPaddle.body.position.x + this.leftPaddle.width / 2 &&
-	// 		this.ball.body.position.y >=
-	// 			this.leftPaddle.body.position.y - this.leftPaddle.height / 2 &&
-	// 		this.ball.body.position.y <=
-	// 			this.leftPaddle.body.position.y + this.leftPaddle.height / 2
-	// 	) {
-	// 		this.ball.isSilenced
-	// 			? this.ball.sound.leftPaddleSound.pause()
-	// 			: this.ball.sound.leftPaddleSound.play();
-	// 		return true;
-	// 	} else if (this.ball.body.position.x < this.leftPaddle.body.position.x) {
-	// 		this.ball.isSilenced
-	// 			? this.ball.sound.win.pause()
-	// 			: this.ball.sound.win.play();
-	// 	}
-	// 	return false;
-	// };
-
-	// isCollidedRight = (): boolean => {
-	// 	if (
-	// 		this.ball.body.position.x + this.ball.body.circleRadius >=
-	// 			this.rightPaddle.body.position.x - this.rightPaddle.width / 2 &&
-	// 		this.ball.body.position.y >=
-	// 			this.rightPaddle.body.position.y - this.rightPaddle.height / 2 &&
-	// 		this.ball.body.position.y <=
-	// 			this.rightPaddle.body.position.y + this.rightPaddle.height / 2
-	// 	) {
-	// 		this.ball.isSilenced
-	// 			? this.ball.sound.rightPaddleSound.pause()
-	// 			: this.ball.sound.rightPaddleSound.play();
-	// 		return true;
-	// 	} else if (
-	// 		this.ball.body.position.x + this.ball.body.circleRadius >
-	// 		this.rightPaddle.body.position.x
-	// 	) {
-	// 		this.ball.isSilenced
-	// 			? this.ball.sound.win.pause()
-	// 			: this.ball.sound.win.play();
-	// 	}
-	// 	return false;
-	// };
-
-	// checkBallHit = (): void => {
-	// 	if (this.isCollidedLeft() || this.isCollidedRight()) {
-	// 		this.ball.xVelocity = -this.ball.xVelocity;
-	// 	}
-	// };
 }

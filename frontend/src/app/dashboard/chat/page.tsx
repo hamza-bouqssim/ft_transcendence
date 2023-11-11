@@ -14,15 +14,12 @@ import { ConversationTypes, User} from "@/app/utils/types";
 import TopRightBar from "@/app/components/TopRightBar";
 import { useRouter } from "next/navigation";
 import { getSession } from "next-auth/react";
-<<<<<<< HEAD
 import './style.css'
-=======
 import { socket, socketContext } from "@/app/utils/context/socketContext";
 import { Socket } from "socket.io-client";
 import {Provider ,  useDispatch} from 'react-redux'
 import { AppDispatch, store } from "@/app/store";
 import { fetchConversationThunk } from "@/app/store/conversationSlice";
->>>>>>> ed740b8e130c7d70825782a5c2da2adc233c552c
 
 
 // type Props = {
