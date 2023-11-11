@@ -4,9 +4,9 @@ import Image from "next/image";
 
 const Settings = () => {
 	return (
-		<div className="min-h-[850px] py-4 text-white">
-			<div className="ml-8 mr-8 md:ml-32 md:mr-24 2xl:ml-96">
-				<div className="my-32  flex  flex-col gap-16 rounded-[40px] bg-white p-4 md:p-10">
+		<div className="xl:container mx-auto py-4 text-white">
+			<div className="">
+				<div className="my-16  flex  flex-col gap-16 rounded-[40px] bg-white p-4 md:p-10">
 					<div className="">
 						<h1 className="font-['Whitney'] text-[2rem] font-bold text-black md:text-[4rem]">
 							Settings

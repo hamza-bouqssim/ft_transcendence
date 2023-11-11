@@ -1,16 +1,24 @@
+"use client"
 import CoversationSideBar from "@/app/components/CoversationSideBar/page";
-// import { socket, socketContext } from "@/app/utils/context/socketContext";
-export default async function UserLayout ({
-    children
+// import './styles.css'
+import { Provider } from "react-redux";
+import { User } from "@/app/utils/types";
+import { PropsWithChildren } from "react";
+import { store } from "@/app/store";
+import { socket, socketContext } from "@/app/utils/context/socketContext";
+import {enableMapSet} from 'immer';
+
+enableMapSet();
+
+export default function RootLayout({
+	children,
 }: {
-    children: React.ReactNode;
+	children: React.ReactNode;
 }) {
-    return (
-        // <socketContext.Provider value={socket}>
-            <div className="h-full">
-                {children} 
-            </div>
-        // </socketContext.Provider>
-           
-   )
+	return (
+		<div>
+			{children}
+		</div>
+			
+	);
 }

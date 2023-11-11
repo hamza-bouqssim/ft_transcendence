@@ -1,5 +1,4 @@
 
-
 export type createUserParams = {
     username : string,
     email : string;
@@ -32,12 +31,33 @@ export type   ConversationTypes= {
     id : string;
     sender : User;
     recipient : User;
+    createdAt : string;
+    messages : messageTypes[];
 }
 
 export type messageTypes = {
     id : string;
     content : string;
+    conversation: ConversationTypes;
     createdAt : string;
     sender : User;
     recipient : User;
+}
+export type messageEventPayload = {
+    id : string;
+    createdAt : string;
+    conversation: ConversationTypes;
+    sender : User;
+    content : string;
+    recipient : User;
+}
+
+
+export type CreateMessageParams = {
+    content : string;
+    participentsId : string;
+}
+
+export type CreateConversationParams = {
+    recipient : string;
 }

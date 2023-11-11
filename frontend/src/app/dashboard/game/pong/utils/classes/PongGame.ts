@@ -14,8 +14,6 @@ const engine = Engine.create({
 });
 
 class PongGame {
-	private isPaused: boolean = false;
-	private isSilenced: boolean = false;
 	private ball: Ball;
 	private topPaddle: Paddle;
 	private bottomPaddle: Paddle;
@@ -24,9 +22,9 @@ class PongGame {
 	private moveInterval: any;
 
 	constructor(private parentDiv: HTMLDivElement) {
-		this.divWidth = parentDiv.getBoundingClientRect().width;
-		this.divHeight = parentDiv.getBoundingClientRect().height;
-
+		this.divWidth = this.parentDiv.getBoundingClientRect().width;
+		this.divHeight = this.parentDiv.getBoundingClientRect().height;
+``
 		// Ball Data
 		this.ball = new Ball(this.divWidth / 2, this.divHeight / 2, 15, "#FFF");
 
@@ -42,7 +40,7 @@ class PongGame {
 		);
 
 		const render = Render.create({
-			element: parentDiv,
+			element: this.parentDiv,
 			engine: engine,
 			options: {
 				background: "#3A3561",

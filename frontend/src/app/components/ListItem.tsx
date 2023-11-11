@@ -19,9 +19,9 @@ const ListItem = (props: ListItemParams) => {
 					props.spanText === "LogOut" ? "rotate-180" : ""
 				}`}
 			/>
-			<span className="ml-8 inline-block duration-150 ease-in-out min-[1750px]:text-xl">
+			{/* <span className="ml-8 inline-block duration-150 ease-in-out min-[1750px]:text-xl">
 				{props.spanText}
-			</span>
+			</span> */}
 		</li>
 	);
 };

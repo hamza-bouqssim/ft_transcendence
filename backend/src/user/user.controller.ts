@@ -108,23 +108,26 @@ export class UserController {
 
     @Get('my-friends')
     @UseGuards(AuthenticatedGuard)
-    async listFriends()
+    async listFriends(@Req() req)
     {
-      return await this.userService.listFriends();
+      const user = await whichWithAuthenticated(req, this.jwtService, this.prisma);
+      return await this.userService.listFriends(user.id);
     }
 
     @Get('pending-requests')
     @UseGuards(AuthenticatedGuard)
-    async pendingRequests()
+    async pendingRequests(@Req() req)
     {
-      return await this.userService.pendingRequests();
+      const user = await whichWithAuthenticated(req, this.jwtService, this.prisma);
+      return await this.userService.pendingRequests(user.id);
     }
 
     @Get('blocked-friends')
     @UseGuards(AuthenticatedGuard)
-    async blockedFriends()
-    {
-      return await this.userService.blockedFriends();
+    async blockedFriends(@Req() req)
+    {     
+      const user = await whichWithAuthenticated(req, this.jwtService, this.prisma);
+      return await this.userService.blockedFriends(user.id);
     }
     
 }

@@ -2,14 +2,36 @@
 
 import CoversationSideBar from "@/app/components/CoversationSideBar/page";
 import { ConversationChannelStyle, Page} from "@/app/utils/styles";
-import { useContext, useEffect, useState } from "react";
-import { ConversationTypes, User, messageTypes } from "@/app/utils/types";
+import { useContext, useEffect, useState , PropsWithChildren} from "react";
+import { ConversationTypes, User, messageEventPayload, messageTypes } from "@/app/utils/types";
 import { getAuthUser, getConversation, getConversationMessage } from "@/app/utils/api";
 import { useParams } from "next/navigation";
 import MessagePanel from "@/app/components/messages/MessagePanel";
 import TopRightBar from "@/app/components/TopRightBar";
 import SideBar from "@/app/components/SideBar";
 import { socket, socketContext } from "@/app/utils/context/socketContext";
+import { Socket } from "socket.io-client";
+import { AppDispatch, store } from "@/app/store";
+import {Provider as ReduxProvider, useDispatch} from 'react-redux'
+import { fetchConversationThunk, fetchMessagesThunk } from "@/app/store/conversationSlice";
+
+
+type Props = {
+	user?: User;
+	setUser : React.Dispatch<React.SetStateAction<User | undefined>>;
+	socket : Socket;
+}
+
+function AppWithProviders({children, user, setUser,} : PropsWithChildren & Props){
+	return (
+		<ReduxProvider store={store}>
+			<socketContext.Provider value={socket}>
+				{children}
+			</socketContext.Provider>
+		</ReduxProvider>
+	)
+
+}
 
 const ConversationChannelPage = () => {
   const socket = useContext(socketContext)
@@ -31,12 +53,22 @@ const ConversationChannelPage = () => {
                 setLoading(false)})
             .catch((err)=> {console.log(err); setLoading(false);});
     },[])
-	const [conversation , setConversation] = useState<ConversationTypes[]>([])
+	const [conversation , setConversation] = useState<ConversationTypes[]>([]);
+  const dispatch = useDispatch<AppDispatch>();
+  // useEffect(() => {
+	// 	dispatch(fetchConversationThunk())
+	// 	.unwrap()
+	// 	.then(({data}) => {
+	// 		setConversation(data);
+	// 	}).catch((err)=>{
+	// 		console.log(err);
+	// 	}
+	// 	);
+	// })
+
 	useEffect(() => {
 		getConversation().then(({data}) =>{
 			setConversation(data)
-      console.log("conversation")
-      console.log(conversation)
 		}).catch((err)=> console.log(err))
 	}, [conversation])
 
@@ -56,23 +88,43 @@ const ConversationChannelPage = () => {
         }
       }, [id]);
 
+      useEffect (() => {
+        const conversationId = id;
+        dispatch(fetchMessagesThunk(conversationId))
+        .unwrap()
+        .then(({data}) => {
+          setMessage(data);
+        }).catch((err)=>{
+          console.log(err);
+        }
+        );
+      },)
+
       // for sockets
       useEffect(()=>{
-          socket.on('connect', () => console.log("socket here"));
+          socket.on('connected', () => console.log("socket here connected"));
+          socket.on('onMessage', (payload : messageEventPayload) => {
+            console.log("message received");
+            
+            console.log(payload);
+            setMessage((prev) => [payload, ...prev]);
+          });
           return () =>{
-            socket.off('connect');
+            socket.off('connected');
+            socket.off('onMessage');
           }
       })
     return ( 
-      <socketContext.Provider value={socket}>
-          
-            <Page display="flex">
+
+            <div className=" flex h-screen  xl:container xl:mx-auto">
+              <div className ="hidden xl:block h-full w-[35%] p-10 pl-5 pr-2 ">
                 <CoversationSideBar conversations={conversation}/>
-                <ConversationChannelStyle>
+              </div>
+                <div className="bg-white xl:m-10  xl:mr-10 xl:ml-2 w-full xl:w-[65%]  xl:rounded-[20px] xl:mt-32">
                     <MessagePanel messages={message}></MessagePanel> 
-                </ConversationChannelStyle>
-            </Page>
-      </socketContext.Provider >
+                </div>
+            </div>
+
 
             
       

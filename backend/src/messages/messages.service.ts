@@ -85,7 +85,7 @@ export class MessagesService {
             recipient: true,
           },
         });
-        return this.EventEmitter.emit('message.create', message);
+        return message;
       }
 
  

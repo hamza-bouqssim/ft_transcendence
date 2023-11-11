@@ -14,9 +14,9 @@ const DashBoard = () => {
 	const { change, setChange } = useContext(ChangeContext);
 
 	return (
-		<section className="relative h-[100vh] min-h-[850px] py-4 text-white">
+		<section className="relative h-[100vh] xl:container   mx-auto py-4 text-white">
 			{/* Match Box */}
-			<div className="mt-[70px] h-[85%] w-full lg:flex lg:items-center lg:justify-evenly min-[1750px]:ml-72 min-[1750px]:mt-[90px] min-[1750px]:w-[86%]">
+			<div className="mt-[70px] h-[85%] w-full lg:flex lg:items-center lg:justify-evenly  gap-10   ">
 				<div className="relative m-auto h-full w-full lg:mx-0 lg:w-[70%]">
 					<div className="relative h-[70%] w-full px-2">
 						<PlayerCard
@@ -72,7 +72,7 @@ const DashBoard = () => {
 								invite a friend
 							</h5>
 						</div>
-						<div className="absolute h-full w-full overflow-y-auto">
+						<div className=" h-full w-full overflow-y-auto">
 							<InviteField />
 							<InviteField />
 							<InviteField />

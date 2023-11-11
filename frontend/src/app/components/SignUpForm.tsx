@@ -17,7 +17,7 @@ import { createUserParams } from "../utils/types";
 import { postRegisterUser } from "../utils/api";
 import { useRouter } from "next/navigation";
 
-const SignUpForm = forwardRef((props: any, ref: any) => {
+const SignUpForm = forwardRef((_props: any, ref: any) => {
 	const [show, setShow] = useState<boolean>(false),
 		faEyeRef = useRef<SVGSVGElement>(null),
 		faEyeSlashRef = useRef<SVGSVGElement>(null);
@@ -114,5 +114,6 @@ const SignUpForm = forwardRef((props: any, ref: any) => {
 		</div>
 	);
 });
+SignUpForm.displayName = 'SignUpForm';
 
 export default SignUpForm;

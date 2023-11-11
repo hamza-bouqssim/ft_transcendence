@@ -1,10 +1,30 @@
 "use client";
-import { useState, createContext } from "react";
+import { useState, createContext, PropsWithChildren } from "react";
 import SideBar from "../components/SideBar";
 import TopRightBar from "../components/TopRightBar";
 
-export const ChangeContext: React.Context<any> = createContext(null);
+import { Provider } from "react-redux";
+import { socket, socketContext } from "../utils/context/socketContext";
+import { store } from "../store";
+import { Socket } from "socket.io-client";
 
+export const ChangeContext: React.Context<any> = createContext(null);
+type Props = {
+	// user?: User;
+	// setUser : React.Dispatch<React.SetStateAction<User | undefined>>;
+	socket : Socket;
+}
+function AppWithProviders({children} : PropsWithChildren & Props){
+
+	return (
+		<Provider store={store}>
+			<socketContext.Provider value={socket}>
+				{children}
+			</socketContext.Provider>
+		</Provider>
+	)
+
+}
 export default function RootLayout({
 	children,
 }: {
@@ -25,7 +45,7 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body>
-				<div className="relative h-[100vh] min-h-[850px] py-4 text-white">
+				<div className=" flex  w-full  h-screen text-white">
 					<SideBar
 						sideBar={change.sideBar}
 						onClick={() =>
@@ -37,8 +57,8 @@ export default function RootLayout({
 							})
 						}
 					/>
-
-					<TopRightBar
+					
+					{/* <TopRightBar
 						menu={change.menu}
 						onClick={() =>
 							setChange({
@@ -48,14 +68,21 @@ export default function RootLayout({
 								menu: !change.menu,
 							})
 						}
-					/>
+					/> */}
 
 					{/* <div className="mt-[70px] h-[85%] w-full lg:flex lg:items-center lg:justify-evenly min-[1750px]:ml-72 min-[1750px]:mt-[90px] min-[1750px]:w-[86%]">
 						{children}
 					</div> */}
+
+				<AppWithProviders  socket={socket}>
 					<ChangeContext.Provider value={changeValues}>
-						{children}
+						<div className="w-full h-full">
+
+							{children}
+						</div>
 					</ChangeContext.Provider>
+				</AppWithProviders>
+
 				</div>
 			</body>
 		</html>
