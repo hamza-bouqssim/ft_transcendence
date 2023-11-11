@@ -3,6 +3,7 @@
 import { MessageBody, OnGatewayConnection, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import {Server, Socket} from "socket.io"
 import { OnEvent } from "@nestjs/event-emitter";
+import { AuthenticatedSocket } from "src/utils/interfaces";
 @WebSocketGateway({
     cors:{
         origin:['http://localhost:3000'],
@@ -23,11 +24,12 @@ import { OnEvent } from "@nestjs/event-emitter";
 
 /****We can use an adapter to apply middleWare on the socket */
 export class MessagingGateWay implements OnGatewayConnection{
-    handleConnection(client: Socket, ...args: any[]) {
+    handleConnection(socket : AuthenticatedSocket, ...args: any[]) {
         console.log("new Incoming connection");
-        client.emit('connected', {status : 'good'})
-        console.log(client.id);
-        console.log(client.rooms)
+        socket.emit('connected', {status : 'good'});
+        console.log("user logged here");
+        console.log(socket.user);
+        console.log(socket.rooms)
     }
     @WebSocketServer()
     server: Server;
