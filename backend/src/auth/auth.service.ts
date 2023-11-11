@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { BadRequestException, ConflictException, ForbiddenException, HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { AuthDto } from './dto/auth.dto';
@@ -40,6 +41,7 @@ export class AuthService {
       throw new ForbiddenException();
     }
     res.cookie('token', token);
+ 
   
     return res.send({ msg: 'local succes' });
   }
@@ -82,12 +84,13 @@ export class AuthService {
     signUser(userId: string, dto: AuthDto, type:string)
     {
       return this.jwtService.sign({
-        sub: userId, 
-        email: dto.email,
-        username: dto.username,
-        display_name: dto.display_name,
-        avatar_url: dto.avatar_url,
-        claim: type,
+          id: userId, 
+          email: dto.email,
+          username: dto.username,
+          display_name: dto.display_name,
+          avatar_url: dto.avatar_url,
+          claim: type,
+        
       });
     }
 

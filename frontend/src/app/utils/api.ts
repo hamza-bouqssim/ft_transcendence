@@ -14,10 +14,10 @@ export const postLoginUser = async (data : UserCredentialsParams) => axios.post(
 // export const getAuthUser = () => axios.get<User>(`http://localhost:8000/chat/status`, config)
 export const getAuthUser = () => axios.get<User>(`http://localhost:8000/user/info`, config)
 
-export const getConversation = () => axios.get<ConversationTypes[]>(`http://localhost:8000/chat/findconversation`, config)
+export const getConversation = () => axios.get(`http://localhost:8000/chat/findconversation`, config)
 
 
-export const getConversationMessage = (id : string) => axios.get<FetchMessagePayload>(`http://localhost:8000/messages/${id}`, config)
+export const getConversationMessage = (id : string) => axios.get(`http://localhost:8000/messages/${id}`, config)
 
 export const loginGoogle = () => axios.get(`http://localhost:8000/auth/google/login`, config)
 

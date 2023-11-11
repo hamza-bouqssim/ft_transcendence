@@ -42,21 +42,18 @@ export class WebSocketAdapter extends IoAdapter {
                 const signedCookies = cookieParser.signedCookie(token, COOKIE_SECRET);
                 console.log("Signed Cookies:", signedCookies);
 
-        //     const sessionDb = await sessionRepository.findOne({id : signedCookies});
-        //     const userDb = plainToInstance(User, JSON.parse(sessionDb.json).passport.user);
-        //     socket.user = userDb;
-        // });
-        
         try {
             // Verify the JWT and decode the payload
             const decodedToken = jwt.verify(token, COOKIE_SECRET) as Record<string, any>;
             console.log("Decoded Token:", decodedToken);
 
             // You can access user information directly from the decoded token
-            const userDb = plainToInstance(User, decodedToken.user);
+            const userDb = plainToInstance(User, decodedToken);
             socket.user = userDb;
-            console.log("user here");
-            console.log(socket);
+            // console.log("socket here");
+            // console.log(socket);
+            // console.log("user here");
+            // console.log(socket.user);
             next();
         } catch (error) {
             console.error("Error verifying JWT:", error);
@@ -66,4 +63,3 @@ export class WebSocketAdapter extends IoAdapter {
         return server;
     }
 }
-

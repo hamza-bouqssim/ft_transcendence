@@ -4,6 +4,10 @@ import { MessageBody, OnGatewayConnection, SubscribeMessage, WebSocketGateway, W
 import {Server, Socket} from "socket.io"
 import { OnEvent } from "@nestjs/event-emitter";
 import { AuthenticatedSocket } from "src/utils/interfaces";
+import { IGateWaySession } from "./gateway.session";
+import { Services } from "src/utils/constants";
+import { Inject } from "@nestjs/common";
+import { Message } from "@prisma/client";
 @WebSocketGateway({
     cors:{
         origin:['http://localhost:3000'],
@@ -24,12 +28,18 @@ import { AuthenticatedSocket } from "src/utils/interfaces";
 
 /****We can use an adapter to apply middleWare on the socket */
 export class MessagingGateWay implements OnGatewayConnection{
+    constructor(@Inject(Services.GATEWAY_SESSION_MANAGER)private readonly sessions : IGateWaySession){}
     handleConnection(socket : AuthenticatedSocket, ...args: any[]) {
         console.log("new Incoming connection");
         socket.emit('connected', {status : 'good'});
         console.log("user logged here");
         console.log(socket.user);
-        console.log(socket.rooms)
+        console.log("the session befaure-->", this.sessions);
+        this.sessions.setUserSocket(socket.user.id,socket)
+        console.log("the session is");
+        console.log(this.sessions);
+        // console.log("rooms");
+        // console.log(socket.rooms)
     }
     @WebSocketServer()
     server: Server;
@@ -39,11 +49,19 @@ export class MessagingGateWay implements OnGatewayConnection{
 
     }
     @OnEvent("message.create")
-    handleMessageCreateEvent(payload : any){
-        console.log("create message");
+    handleMessageCreateEvent(payload : Message){
+        console.log("create message*************");
         console.log(payload);
         // we are going to emit this onMessage event
-        this.server.emit('onMessage', payload);
+        // this.server.emit('onMessage', payload);
+        const { senderId, recipientId } = payload;
+        const senderSocket = this.sessions.getUserSocket(senderId);
+        const recipientSocket = this.sessions.getUserSocket(recipientId);
+        console.log("senderSocket", senderSocket);
+        console.log("recipientSocket", recipientSocket)
+        console.log("senderId", payload.senderId);
+        senderSocket.emit('onMessage', payload);
+        recipientSocket.emit('onMessage', payload);
     }
 
 }
