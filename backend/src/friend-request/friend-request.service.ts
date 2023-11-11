@@ -79,10 +79,17 @@ export class FriendRequestService {
                 ]
             }
         });
+    
         if(!friendship)
-            throw new UnauthorizedException("Friendship doesn't exist");
-
+            throw new UnauthorizedException("Friendship doesn't exist or is not blocked by the user.");
+    
+        
+        if (friendship.user_id !== userId) {
+            throw new UnauthorizedException("You don't have permission to unblock this user.");
+        }
+    
         await this.prisma.friend.update({where: {id: friendship.id}, data: {status: 'ACCEPTED'}});
         return {message: "Unblocked"}
     }
+    
 }
