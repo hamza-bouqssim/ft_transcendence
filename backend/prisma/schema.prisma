@@ -49,6 +49,7 @@ model User {
   Member  Member[]
   blockingUsers       BlockUser[] @relation("blockingUsers")
   blockedByUsers      BlockUser[] @relation("blockedByUsers")
+  messageRome  MessageRome[]
 
 }
 
@@ -97,7 +98,6 @@ model Message {
   lastMessageForId String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  // ChatRoom       ChatRoom    @relation(fields: [id], references: [id])
 }
 
 model Notification {
@@ -133,24 +133,35 @@ model Pong_match {
 model ChatRoom {
   id        String @id @default(uuid())
   name      String    @unique
-  type      String
-  Privacy   String    @default("private")
+  Privacy   String   
   password  String?
   picture   String?   @default("https://images.squarespace-cdn.com/content/v1/5f60d7057b9b7d7609ef628f/1603219780222-V253F1WLHBH8HNHXIFUX/group.png")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   members   Member[]
-  // message  Message[]
+  messageRome  MessageRome[]
 }
 
 model Member {
   id          String @id @default(uuid())
   user_id     String
-  ChatRoomId  String
+  chatRoomId  String
   isAdmin     Boolean
   user        User        @relation(fields: [user_id], references: [id])
-  chatRoom    ChatRoom    @relation(fields: [ChatRoomId], references: [id])
+  chatRoom    ChatRoom    @relation(fields: [chatRoomId], references: [id])
 }
+
+model MessageRome{
+  id          String @id @default(uuid())
+  content     String
+  chatRoomId  String
+  senderId    String
+  createdAt   DateTime @default(now())
+  user        User        @relation(fields: [senderId], references: [id])
+  chatRoom    ChatRoom    @relation(fields: [chatRoomId], references: [id])
+
+}
+
 
 model Session {
   id String @id @default(uuid())
