@@ -25,7 +25,7 @@ import { Body, OnModuleInit } from '@nestjs/common';
 export class GameGateway implements OnModuleInit {
 	@WebSocketServer()
 	server: Server;
-	
+
 	private divWidth = 560;
 	private divHeight = 836;
 	private ballXcord;
@@ -39,8 +39,7 @@ export class GameGateway implements OnModuleInit {
 	private posPaddleX = this.divWidth / 2;
 	private paddleW = 170;
 
-	constructor()
-	{
+	constructor() {
 		this.handlePaddleMove();
 	}
 
@@ -53,18 +52,15 @@ export class GameGateway implements OnModuleInit {
 
 	@SubscribeMessage('keyevent')
 	handleKeyDown(@MessageBody() data: any) {
-		if (data.state === "keydown")
-		{
-			if (data.key === "d" || data.key === "ArrowRight")
+		if (data.state === 'keydown') {
+			if (data.key === 'd' || data.key === 'ArrowRight')
 				this.movingRight = true;
-			else if (data.key === "a" || data.key === "ArrowLeft")
+			else if (data.key === 'a' || data.key === 'ArrowLeft')
 				this.movingLeft = true;
-		}
-		else
-		{
-			if (data.key === "d" || data.key === "ArrowRight")
+		} else {
+			if (data.key === 'd' || data.key === 'ArrowRight')
 				this.movingRight = false;
-			else if (data.key === "a" || data.key === "ArrowLeft")
+			else if (data.key === 'a' || data.key === 'ArrowLeft')
 				this.movingLeft = false;
 		}
 	}
@@ -74,7 +70,7 @@ export class GameGateway implements OnModuleInit {
 			let stepX = 0;
 
 			if (this.movingLeft) {
-				stepX = this.posPaddleX	 - 11;
+				stepX = this.posPaddleX - 11;
 				if (stepX <= this.paddleW / 2) {
 					stepX = this.paddleW / 2;
 				}
@@ -84,8 +80,7 @@ export class GameGateway implements OnModuleInit {
 					stepX = this.divWidth - this.paddleW / 2;
 				}
 			}
-			if (stepX != 0)
-			{
+			if (stepX != 0) {
 				this.posPaddleX = stepX;
 				this.server.emit('updatePaddlePosition', {
 					paddleLabel: 'bottomPaddle',
@@ -93,49 +88,5 @@ export class GameGateway implements OnModuleInit {
 				});
 			}
 		}, 20);
-	}
-
-	@SubscribeMessage('movePaddle')
-	emitMovePaddle(@MessageBody() body: any) {
-		// this.server.emit('reply', {
-		// 	mssj: 'test!',
-		// });
-
-		// document.addEventListener('keydown', (e) => {
-		// 	if (e.key === 'd' || e.key === 'ArrowRight') movingRight = true;
-		// 	else if (e.key === 'a' || e.key === 'ArrowLeft') movingLeft = true;
-		// });
-
-		// document.addEventListener('keyup', (e) => {
-		// 	if (e.key === 'd' || e.key === 'ArrowRight') movingRight = false;
-		// 	else if (e.key === 'a' || e.key === 'ArrowLeft') movingLeft = false;
-		// });
-
-		// const moveInterval = setInterval(() => {
-		// 	let stepX;
-
-		// 	if (this.movingLeft) {
-		// 		stepX = this.bottomPaddle.body.position.x - 11;
-		// 		if (stepX <= this.paddleW / 2) {
-		// 			stepX = this.bottomPaddle.width / 2;
-		// 		}
-		// 		Matter.Body.setPosition(this.bottomPaddle.body, {
-		// 			x: stepX,
-		// 			y: this.bottomPaddle.body.position.y,
-		// 		});
-		// 	} else if (movingRight) {
-		// 		stepX = this.bottomPaddle.body.position.x + 11;
-		// 		if (stepX >= this.divWidth - this.bottomPaddle.width / 2) {
-		// 			stepX = this.divWidth - this.bottomPaddle.width / 2;
-		// 		}
-		// 		Matter.Body.setPosition(this.bottomPaddle.body, {
-		// 			x: stepX,
-		// 			y: this.bottomPaddle.body.position.y,
-		// 		});
-		// 	}
-		// }, 10);
-
-		// when a player score a point
-		// clearInterval(moveInterval);
 	}
 }

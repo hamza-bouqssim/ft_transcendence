@@ -1,7 +1,8 @@
+"use client";
 import { useEffect, useRef, useState } from "react";
 import PlayerScore from "@/app/components/PlayerScore";
 import Matter from "matter-js";
-import PongGame from "./classes/PongGame";
+import PongGame from "../classes/PongGame";
 import { io } from "socket.io-client";
 
 const Pong = (props: any) => {
@@ -57,11 +58,10 @@ const Pong = (props: any) => {
 				className="h-full w-[560px] shadow-[0_0_50px_2px_var(--blue-color)] min-[375px]:h-[250px] min-[490px]:h-[300px] min-[600px]:h-[360px] min-[660px]:h-[400px] md:h-[420px] lg:h-[440px] min-[1750px]:h-full"
 				ref={parentCanvasRef}
 			></div>
-
 			<PlayerScore
 				flag="right"
-				name="hamzaBouQssi"
-				username="@hbouqssi"
+				name="Mr.BOT"
+				username="@bot"
 				score={score.rightScore}
 				playerBgColor={"#4FD6FF"}
 			/>

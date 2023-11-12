@@ -24,7 +24,7 @@ const PlayerScore = (props: PlayerScoreProps) => {
 					className={`h-12 w-12 rounded-[50%] border-2 border-[#CFF4FF] shadow-[0_0_50px_2px_var(--blue-color)] md:h-16 md:w-16 min-[1750px]:h-24 min-[1750px]:w-24`}
 					style={{ background: props.playerBgColor }}
 					id="0"
-					src={"/assets/hamza.png"}
+					src={props.flag === "right" ? "/assets/bot.png" : "/assets/hamza.png"}
 					width={40}
 					height={40}
 					alt="player"
