@@ -35,7 +35,7 @@ class PongGame {
 
 	constructor(
 		private parentDiv: HTMLDivElement,
-		private socket? : any,
+		private socket?: any,
 	) {
 		this.divWidth = this.parentDiv.getBoundingClientRect().width;
 		this.divHeight = this.parentDiv.getBoundingClientRect().height;

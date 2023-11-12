@@ -5,8 +5,8 @@ import {
 	WebSocketServer,
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
-import Matter from 'matter-js';
-import { Body, OnModuleInit } from '@nestjs/common';
+import { OnModuleInit } from '@nestjs/common';
+import PongGame from '../classes/PongGame';
 
 // const Bodies = Matter.Bodies;
 // const Render = Matter.Render;
@@ -39,6 +39,8 @@ export class GameGateway implements OnModuleInit {
 	private posPaddleX = this.divWidth / 2;
 	private paddleW = 170;
 
+	private pong: any;
+
 	constructor() {
 		this.handlePaddleMove();
 	}
@@ -48,6 +50,14 @@ export class GameGateway implements OnModuleInit {
 			console.log(socket.id);
 			console.log('A Pong client connected!');
 		});
+	}
+
+	@SubscribeMessage('launch-game')
+	handleLaunchGame(@MessageBody() data: any) {
+		console.log('parent:', data.parentDiv);
+		console.log('width:', data.parentDivW);
+		console.log('height:', data.parentDivH);
+		// this.pong = new PongGame(data.parentCanvasDiv);
 	}
 
 	@SubscribeMessage('keyevent')
