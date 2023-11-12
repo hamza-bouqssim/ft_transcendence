@@ -69,8 +69,6 @@ const ConversationChannelPage = () => {
 	useEffect(() => {
 		getConversation().then(({data}) =>{
 			setConversation(data);
-      console.log("data here");
-      console.log(data);
 		}).catch((err)=> console.log(err))
 	}, [conversation])
 

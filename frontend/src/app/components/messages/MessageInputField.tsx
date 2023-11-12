@@ -15,7 +15,7 @@ const MessageInputField: FC<props> = ({content, setContent, sendMessage}) => {
         <form onSubmit={sendMessage}>
             <MessageInput placeholder="Create a message" value={content}  onChange={(e) => setContent(e.target.value)}/>
             <BtnStyling>
-                <FontAwesomeIcon icon="paper-plane" className="font"/>
+                {/* <FontAwesomeIcon icon="paper-plane" className="font"/> */}
             </BtnStyling>
 
         </form>

@@ -17,7 +17,6 @@ const MessagePanel : FC<Props> = ({messages}) => {
         
         const sendMessage = async (e : React.FormEvent<HTMLFormElement>) => {
             e.preventDefault();
-            console.log('sending message', content);
             if(!id || !content)
                 return ;
             const participentsId = id;

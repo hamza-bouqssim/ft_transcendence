@@ -33,6 +33,12 @@ export type   ConversationTypes= {
     recipient : User;
     createdAt : string;
     messages : messageTypes[];
+    lastMessage: LastMessage[];
+}
+
+export type LastMessage = {
+    id : string;
+    content : string;
 }
 
 export type MessageType = {

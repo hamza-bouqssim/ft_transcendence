@@ -60,7 +60,7 @@ export class MessagesService {
         }
 
         const content = params.content;
-        const message = await this.prisma.message.create({
+        const messageCreate = await this.prisma.message.create({
           data: {
             content,
             sender: {
@@ -73,11 +73,7 @@ export class MessagesService {
               connect: { id: chat.id }, // Replace with the actual ChatParticipents ID
             },
             
-            lastMessageFor: {
-              connect: {
-                id: chat.id, // Replace with the actual ChatParticipents ID
-              },
-            },
+            
            
           },
           include: {
@@ -85,7 +81,17 @@ export class MessagesService {
             recipient: true,
           },
         });
-        return message;
+
+        await this.prisma.chatParticipents.update({
+          where: { id: chat.id },
+          data: {
+            lastMessageId: messageCreate.id,
+          },
+        });
+
+
+       
+        return messageCreate;
       }
 
  

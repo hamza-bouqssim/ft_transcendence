@@ -37,7 +37,7 @@ async  findConversation(@Req() req: Request){
 async getconversationById(@Param('id') id: string){
     // return this.conversationService.find();
     const conversation = await this.conversationService.findConversationById(id);
-    // console.log(conversation)
+    console.log(conversation)
     return conversation;
 }
 }

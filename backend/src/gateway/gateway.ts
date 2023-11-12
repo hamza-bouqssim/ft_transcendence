@@ -60,8 +60,12 @@ export class MessagingGateWay implements OnGatewayConnection{
         console.log("senderSocket", senderSocket);
         console.log("recipientSocket", recipientSocket)
         console.log("senderId", payload.senderId);
-        senderSocket.emit('onMessage', payload);
-        recipientSocket.emit('onMessage', payload);
+        if (senderSocket && recipientSocket) {
+            senderSocket.emit('onMessage', payload);
+            recipientSocket.emit('onMessage', payload);
+        }else{
+            console.log("The recipient is not authenticated:");
+        }
     }
 
 }

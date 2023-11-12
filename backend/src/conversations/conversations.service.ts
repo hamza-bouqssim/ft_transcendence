@@ -51,6 +51,7 @@ export class ConversationsService  {
             // messages: true,
             sender: true,
             recipient: true,
+            lastMessage: true,
           }
         }
            

@@ -37,6 +37,11 @@ const ChatComponnent: FC <Props>  = ({conversations}) =>{
    
 		return test;
 	}
+	const getDisplayLastMessage = (conversations : ConversationTypes) => {
+		let variable;
+		variable = conversations.lastMessage;
+		return variable;
+	}
 	
     return (
         <Conversation>
@@ -52,7 +57,7 @@ const ChatComponnent: FC <Props>  = ({conversations}) =>{
 								<div className="avatar"></div>
 								<div>
 					 				<span onClick={handleClick} className="ConversationName">{getDisplayUser(elem)?.username}</span>
-					 				<span className="lastName">text Message</span>
+					 				<span className="lastName">{getDisplayLastMessage(elem)}</span>
 					 			</div>
 							</ConversationSideBarItem>
 								
