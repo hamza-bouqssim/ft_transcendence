@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -21,9 +20,8 @@ enum Result {
 }
 
 enum EventType {
-  BALL_HIT
-  SCORE
   UNPROCESSED
+  FINAL
 }
 
 model User {
@@ -35,7 +33,6 @@ model User {
   avatar_url String
   two_factor_auth String
   two_factor_secret_key String
-  rank String
   friend Friend[] @relation("UserToFriend")
   friends Friend[] @relation("Friend")
   senderOfChatParticipents ChatParticipents[] @relation("sender")
@@ -45,8 +42,12 @@ model User {
   notifications Notification[]
   player1 Pong_match[] @relation("player1")
   player2 Pong_match[] @relation("player2")
-  matchEvent match_events[] @relation("match_event")
   Member  Member[]
+  StateGame StateGame?
+  Achivment Achivment[]
+  MatchHistory1 Match_History[] @relation("playerOne")
+  MatchHistory2 Match_History[] @relation("playerTow")
+  queue queue[]
 }
 
 model Friend {
@@ -94,28 +95,61 @@ model Notification {
   user User @relation(fields: [user_id], references: [id])
 }
 
-model match_events {
+
+model StateGame{
   id String @id @default(uuid())
-  match_id String
-  player_id String
-  event_type EventType @default(UNPROCESSED)
-  timestamp DateTime
-  match Pong_match @relation("pong_match", fields: [match_id], references: [id])
-  user User @relation("match_event", fields: [player_id], references: [id])
+  user_id String @unique
+  win Int @default(0)
+  lose Int @default(0)
+  level Float @default(1.0)
+  numberOfMatch Int @default(0)
+  rank Int @default(-1)
+  user User @relation(fields: [user_id],references: [id])
 }
 
+model Achivment{
+  id String @id @default(uuid())
+  user_id String @unique
+  content String
+  type String
+  picture String
+  win Int
+  lose Int
+  level Float
+  user User @relation(fields: [user_id],references: [id])
+}
 model Pong_match {
   id String @id @default(uuid())
   player1_id String
   player2_id String
   created_at DateTime
   updated_at DateTime
+  event_type EventType @default(UNPROCESSED)
   playerOne User @relation("player1", fields: [player1_id], references: [id])
   playerTwo User @relation("player2", fields: [player2_id], references: [id])
-  matchEvents match_events[] @relation("pong_match")
+  matchHistory Match_History[]
+}
+
+model Match_History{
+  id String @id @default(uuid())
+  playerOne String
+  playerTow String
+  playerOne_score Int
+  playerTow_score Int
+  matchId String
+  playerone User @relation("playerOne", fields: [playerOne], references: [id])
+  playertow User @relation("playerTow", fields: [playerTow], references: [id])
+  match Pong_match @relation(fields: [matchId],references: [id])
+
 }
 
 
+model queue{
+  id String @id @default(uuid())
+  userId String
+  user User  @relation(fields: [userId] , references: [id])
+  createdAt DateTime @default(now())
+}
 
 model ChatRoom {
   id        String @id @default(uuid())

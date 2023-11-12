@@ -1,4 +1,11 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Post } from '@nestjs/common';
 
 @Controller('game')
-export class GameController {}
+export class GameController {
+
+    @Post()
+    creatGame()
+    {
+
+    }
+}
