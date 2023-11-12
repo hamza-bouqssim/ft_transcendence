@@ -46,6 +46,12 @@ export class MessagingGateWay implements OnGatewayConnection{
     @SubscribeMessage('createMessage')
     handleCreateMessage(@MessageBody() data: any){
         console.log("create message")
+    }
+
+    @SubscribeMessage('onUserTyping')
+    handleUserTyping(@MessageBody() data : any){
+        console.log(data);
+        console.log("User is typing");
 
     }
     @OnEvent("message.create")

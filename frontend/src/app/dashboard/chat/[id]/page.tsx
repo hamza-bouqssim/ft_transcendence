@@ -107,7 +107,7 @@ const ConversationChannelPage = () => {
           socket.on('onMessage', (payload : messageEventPayload) => {
             console.log("message received");
             
-            console.log(payload);
+            // console.log(payload);
             setMessage((prev) => [payload, ...prev]);
           });
           return () =>{
@@ -115,6 +115,10 @@ const ConversationChannelPage = () => {
             socket.off('onMessage');
           }
       })
+      const sendTypingStatus = () =>{
+        console.log("You are typing a message");
+        socket.emit('onUserTyping', {conversationId : id})
+      }
     return ( 
 
             <div className=" flex h-screen  xl:container xl:mx-auto">
@@ -122,7 +126,7 @@ const ConversationChannelPage = () => {
                 <CoversationSideBar conversations={conversation}/>
               </div>
                 <div className="bg-white xl:m-10  xl:mr-10 xl:ml-2 w-full xl:w-[65%]  xl:rounded-[20px]">
-                    <MessagePanel messages={message}></MessagePanel> 
+                    <MessagePanel messages={message} sendTypingStatus={sendTypingStatus}></MessagePanel> 
                 </div>
             </div>
 

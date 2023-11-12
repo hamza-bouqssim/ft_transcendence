@@ -8,18 +8,26 @@ type props = {
     content : string;
     setContent : Dispatch<SetStateAction<string>>;
     sendMessage : (e: React.FormEvent<HTMLFormElement>) => void;
+    sendTypingStatus : () => void;
 }
 
-const MessageInputField: FC<props> = ({content, setContent, sendMessage}) => {
-    return (<MessageInputFieldContainer>
-        <form onSubmit={sendMessage}>
-            <MessageInput placeholder="Create a message" value={content}  onChange={(e) => setContent(e.target.value)}/>
-            <BtnStyling>
-                {/* <FontAwesomeIcon icon="paper-plane" className="font"/> */}
-            </BtnStyling>
+const MessageInputField: FC<props> = ({content, setContent, sendMessage, sendTypingStatus}) => {
+    return (
+        <>
 
-        </form>
-    </MessageInputFieldContainer>)
+            <MessageInputFieldContainer>
+                <form onSubmit={sendMessage}>
+                    <MessageInput placeholder="Create a message" value={content}  onChange={(e) => setContent(e.target.value)} onKeyDown={sendTypingStatus}/>
+                    <BtnStyling>
+                        {/* <FontAwesomeIcon icon="paper-plane" className="font"/> */}
+                    </BtnStyling>
+
+                </form>
+            </MessageInputFieldContainer>
+            <div>Is typing...</div>
+        </>
+    
+    )
 }
 
 export default MessageInputField

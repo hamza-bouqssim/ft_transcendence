@@ -73,6 +73,7 @@ async  findParticipentChat(user :User) {
     include: {
       sender: true,
       recipient: true,
+      lastMessage: true,
     },
   });
 

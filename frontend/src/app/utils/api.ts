@@ -1,5 +1,5 @@
 import axios, { Axios, AxiosRequestConfig } from 'axios'
-import { ConversationTypes, CreateMessageParams, FetchMessagePayload, User, UserCredentialsParams, createUserParams } from './types';
+import { ConversationTypes, CreateConversationParams, CreateMessageParams, FetchMessagePayload, User, UserCredentialsParams, createUserParams } from './types';
 
 
 const config : AxiosRequestConfig = { withCredentials: true}
@@ -16,7 +16,7 @@ export const getAuthUser = () => axios.get<User>(`http://localhost:8000/user/inf
 
 export const getConversation = () => axios.get(`http://localhost:8000/chat/findconversation`, config)
 
-
+export const createConversation = async (data : CreateConversationParams) => axios.post(`http://localhost:8000/chat/conversation`, config)
 export const getConversationMessage = (id : string) => axios.get(`http://localhost:8000/messages/${id}`, config)
 
 export const loginGoogle = () => axios.get(`http://localhost:8000/auth/google/login`, config)

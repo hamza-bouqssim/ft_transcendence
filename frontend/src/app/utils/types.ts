@@ -32,14 +32,11 @@ export type   ConversationTypes= {
     sender : User;
     recipient : User;
     createdAt : string;
-    messages : messageTypes[];
-    lastMessage: LastMessage[];
+    lastMessage: MessageType;
 }
 
-export type LastMessage = {
-    id : string;
-    content : string;
-}
+
+
 
 export type MessageType = {
     id: number;
@@ -81,6 +78,8 @@ export type CreateMessageParams = {
     participentsId : string;
 }
 
-export type CreateConversationParams = {
-    recipient : string;
+export type CreateConversationParams ={
+    recipientId : string;
+    message : string;
 }
+

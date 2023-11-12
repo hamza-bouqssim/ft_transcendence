@@ -3,6 +3,7 @@ import { CreateConversationForm } from "../forms/CreateConversationForm"
 import { ModalContainer, ModalContentBody, ModalHeader } from "."
 import { Dispatch, FC, createRef, useEffect } from "react"
 import { MdClose } from "react-icons/md"
+import { createConversation } from "@/app/utils/api"
 
 type props = {
    setShow : Dispatch<React.SetStateAction<Boolean>>;
@@ -26,6 +27,18 @@ export const CreateConversationModal:FC<props> = ({setShow}) => {
             console.log('close Modal');
         }
     };
+    // const CreateConversation = async (e : React.FormEvent<HTMLFormElement>) => {
+    //     e.preventDefault();
+  
+    //     try{
+    //         await createConversation({recipientId, message});
+    //         setContent('');
+    //     }catch(err){
+    //         alert("error");
+    //         console.log(err);
+
+    //     }
+    // };
     return (
         <OverlayStyle ref={ref} onClick={handleOverlayClick}>
             <ModalContainer>
