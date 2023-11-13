@@ -16,7 +16,7 @@ export class FriendRequestController {
     @UseGuards(AuthenticatedGuard)
     async sendRequest(@Body() request: {friendUserName: string}, @Req() req){
 
-            console.log("thissss===== : " + request.friendUserName);
+            // console.log("thissss===== : " + request.friendUserName);
             const user = await whichWithAuthenticated(req, this.jwtService, this.prisma)
             return this.friendshipService.sendRequest(request.friendUserName, user.username);
     }

@@ -1,15 +1,13 @@
-"use client"
-import  RegisterForm  from "../../../components/forms/RegisterForm"
+"use client";
+import RegisterForm from "../../../components/forms/RegisterForm";
 import { Page } from "@/app/utils/styles";
-import styles from "./index.module.scss"
-import SideBar from "../../../components/SideBar"
+import styles from "./index.module.scss";
+import SideBar from "../../../components/SideBar";
 import { useState } from "react";
-import {QueryClient, QueryClientProvider} from "@tanstack/react-query"
-
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const AuthentificationPage = () => {
-
-    const [change, setChange] = useState<{
+	const [change, setChange] = useState<{
 		sideBar: boolean;
 		chatBox: boolean;
 		menu: boolean;
@@ -19,10 +17,9 @@ const AuthentificationPage = () => {
 		menu: false,
 	});
 
-           
-    return ( 
-        <div>
-            <SideBar
+	return (
+		<div>
+			<SideBar
 				sideBar={change.sideBar}
 				onClick={() =>
 					setChange({
@@ -32,15 +29,12 @@ const AuthentificationPage = () => {
 						menu: false,
 					})
 				}
-			/> 
-            <Page className={styles.page}>
+			/>
+			<Page className={styles.page}>
 				<RegisterForm />
-                
-            </Page>
-        </div>
-        
-        
-     );
-}
- 
+			</Page>
+		</div>
+	);
+};
+
 export default AuthentificationPage;

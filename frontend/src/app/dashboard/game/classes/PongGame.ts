@@ -1,12 +1,14 @@
-import Ball from "./Ball";
-import Paddle from "./Paddle";
 import { Howl } from "howler";
-import Matter from "matter-js";
+import {
+	Bodies,
+	Body,
+	Composite,
+	Engine,
+	Events,
+	Render,
+	Runner,
+} from "matter-js";
 
-const Render = Matter.Render;
-const Engine = Matter.Engine;
-const Runner = Matter.Runner;
-const Composite = Matter.Composite;
 const engine = Engine.create({
 	gravity: {
 		x: 0,
@@ -15,12 +17,17 @@ const engine = Engine.create({
 });
 
 class PongGame {
-	private ball: Ball;
-	private topPaddle: Paddle;
-	private bottomPaddle: Paddle;
-	private divWidth;
-	private divHeight;
+	private ball: any;
+	private topPaddle: any;
+	private bottomPaddle: any;
+	private rightRect: any;
+	private leftRect: any;
+	private divWidth: number;
+	private divHeight: number;
+	private paddleWidth: number = 170;
 	private moveInterval: any;
+	private handleKeyDown: any;
+	private handleKeyUp: any;
 	private sound = {
 		topPaddleSound: new Howl({
 			src: ["/assets/sounds/leftPaddle.wav"],
@@ -40,63 +47,38 @@ class PongGame {
 		this.divWidth = this.parentDiv.getBoundingClientRect().width;
 		this.divHeight = this.parentDiv.getBoundingClientRect().height;
 
-		// Ball Data
-		this.ball = new Ball(this.divWidth / 2, this.divHeight / 2, 15, "#FFF");
-
-		//Paddles Data
-		this.topPaddle = new Paddle(this.divWidth / 2, 30, 170, 15, "#4FD6FF");
-
-		this.bottomPaddle = new Paddle(
-			this.divWidth / 2,
-			this.divHeight - 30,
-			170,
-			15,
-			"#FF5269",
-		);
-
-		const render = Render.create({
-			element: this.parentDiv,
-			engine: engine,
-			options: {
-				background: "#3A3561",
-				width: this.divWidth,
-				height: this.divHeight,
-				wireframes: false,
+		this.ball = Bodies.circle(this.divWidth / 2, this.divHeight / 2, 15, {
+			label: "ball",
+			render: {
+				fillStyle: "#FFF",
 			},
+			frictionAir: 0,
+			friction: 0,
+			inertia: Infinity,
+			restitution: 1,
 		});
+		if (this.socket) {
+			socket.on("updateBallVelocity", (data: any) => {
+				Body.setVelocity(this.ball, {
+					x: data.x,
+					y: data.y,
+				});
+			});
+		} else {
+			Body.setVelocity(this.ball, {
+				x: 8,
+				y: 8,
+			});
+		}
 
-		//Draw Objects:
-		this.ball.draw();
-		this.topPaddle.draw();
-		this.bottomPaddle.draw();
-
-		const topRect = Matter.Bodies.rectangle(
-			this.divWidth / 2,
-			0,
-			this.divWidth,
-			20,
-			{
-				render: {
-					fillStyle: "red",
-				},
-				isStatic: true,
+		// Create Two Paddles:
+		const topRect = Bodies.rectangle(this.divWidth / 2, 0, this.divWidth, 20, {
+			render: {
+				fillStyle: "red",
 			},
-		);
-
-		const rightRect = Matter.Bodies.rectangle(
-			this.divWidth,
-			this.divHeight / 2,
-			20,
-			this.divHeight,
-			{
-				render: {
-					fillStyle: "#CFF4FF",
-				},
-				isStatic: true,
-			},
-		);
-
-		const bottomRect = Matter.Bodies.rectangle(
+			isStatic: true,
+		});
+		const bottomRect = Bodies.rectangle(
 			this.divWidth / 2,
 			this.divHeight,
 			this.divWidth,
@@ -109,12 +91,51 @@ class PongGame {
 			},
 		);
 
-		const leftRect = Matter.Bodies.rectangle(
+		this.topPaddle = Bodies.rectangle(this.divWidth / 2, 30, 170, 15, {
+			label: "topPaddle",
+			render: {
+				fillStyle: "#4FD6FF",
+			},
+			isStatic: true,
+			chamfer: { radius: 10 },
+		});
+		this.bottomPaddle = Bodies.rectangle(
+			this.divWidth / 2,
+			this.divHeight - 30,
+			170,
+			15,
+			{
+				label: "bottomPaddle",
+				render: {
+					fillStyle: "#FF5269",
+				},
+				isStatic: true,
+				chamfer: { radius: 10 },
+			},
+		);
+
+		// Create Two Boundies:
+		this.rightRect = Bodies.rectangle(
+			this.divWidth,
+			this.divHeight / 2,
+			20,
+			this.divHeight,
+			{
+				label: "rightRect",
+				render: {
+					fillStyle: "#CFF4FF",
+				},
+				isStatic: true,
+			},
+		);
+
+		this.leftRect = Bodies.rectangle(
 			0,
 			this.divHeight / 2,
 			20,
 			this.divHeight,
 			{
+				label: "leftRect",
 				render: {
 					fillStyle: "#CFF4FF",
 				},
@@ -123,164 +144,207 @@ class PongGame {
 		);
 
 		Composite.add(engine.world, [
-			this.ball.body,
-			this.topPaddle.body,
-			this.bottomPaddle.body,
-			rightRect,
-			leftRect,
+			this.ball,
+			this.topPaddle,
+			this.bottomPaddle,
+			this.rightRect,
+			this.leftRect,
+			bottomRect,
+			topRect,
 		]);
+
+		const render = Render.create({
+			element: this.parentDiv,
+			engine: engine,
+			options: {
+				background: "#3A3561",
+				width: this.divWidth,
+				height: this.divHeight,
+				wireframes: false,
+			},
+		});
 
 		Render.run(render);
 
-		// create runner
-		let runner = Runner.create();
-
 		// run the engine
-		Runner.run(runner, engine);
+		Runner.run(Runner.create(), engine);
 	}
 
-	resetObjsDefaultPosition = (): void => {
-		Matter.Body.setPosition(this.ball.body, {
-			x: this.ball.xCord,
-			y: this.ball.yCord,
-		});
-		// clearInterval(this.moveInterval);
+	// resetObjsDefaultPosition = (): void => {
+	// 	Matter.Body.setPosition(this.ball, {
+	// 		x: this.ball.xCord,
+	// 		y: this.ball.yCord,
+	// 	});
+	// clearInterval(this.moveInterval);
+	// };
+
+	movePaddle = (): void => {
+		if (this.socket) {
+			document.addEventListener("keydown", (e) => {
+				if (e.key === "d" || e.key === "ArrowRight")
+					this.socket.emit("keyevent", {
+						key: e.key,
+						state: "keydown",
+					});
+				else if (e.key === "a" || e.key === "ArrowLeft")
+					this.socket.emit("keyevent", {
+						key: e.key,
+						state: "keydown",
+					});
+			});
+
+			document.addEventListener("keyup", (e) => {
+				if (e.key === "d" || e.key === "ArrowRight")
+					this.socket.emit("keyevent", {
+						key: e.key,
+						state: "keyup",
+					});
+				else if (e.key === "a" || e.key === "ArrowLeft")
+					this.socket.emit("keyevent", {
+						key: e.key,
+						state: "keyup",
+					});
+			});
+			this.socket.on("updatePaddlePosition", (data: any) => {
+				Body.setPosition(this.bottomPaddle, {
+					x: data.xPosition,
+					y: this.bottomPaddle.position.y,
+				});
+			});
+		} else {
+			let movingRight = false;
+			let movingLeft = false;
+
+			this.handleKeyDown = (e: KeyboardEvent) => {
+				if (e.key === "d" || e.key === "ArrowRight") movingRight = true;
+				else if (e.key === "a" || e.key === "ArrowLeft") movingLeft = true;
+			};
+
+			this.handleKeyUp = (e: KeyboardEvent) => {
+				if (e.key === "d" || e.key === "ArrowRight") movingRight = false;
+				else if (e.key === "a" || e.key === "ArrowLeft") movingLeft = false;
+			};
+
+			document.addEventListener("keydown", this.handleKeyDown);
+
+			document.addEventListener("keyup", this.handleKeyUp);
+
+			this.moveInterval = setInterval(() => {
+				let stepX;
+
+				if (movingLeft) {
+					stepX = this.bottomPaddle.position.x - 11;
+					if (stepX <= this.paddleWidth / 2) {
+						stepX = this.paddleWidth / 2;
+					}
+					Body.setPosition(this.bottomPaddle, {
+						x: stepX,
+						y: this.bottomPaddle.position.y,
+					});
+				} else if (movingRight) {
+					stepX = this.bottomPaddle.position.x + 11;
+					if (stepX >= this.divWidth - this.paddleWidth / 2) {
+						stepX = this.divWidth - this.paddleWidth / 2;
+					}
+					Body.setPosition(this.bottomPaddle, {
+						x: stepX,
+						y: this.bottomPaddle.position.y,
+					});
+				}
+			}, 10);
+		}
+		//when a player score a point
+		// clearInterval(moveInterval);
 	};
 
 	// movePaddle = (): void => {
-	// 	let movingRight = false;
-	// 	let movingLeft = false;
-
 	// 	document.addEventListener("keydown", (e) => {
-	// 		if (e.key === "d" || e.key === "ArrowRight") movingRight = true;
-	// 		else if (e.key === "a" || e.key === "ArrowLeft") movingLeft = true;
+	// 		if (e.key === "d" || e.key === "ArrowRight")
+	// 			this.socket.emit("keyevent", {
+	// 				key: e.key,
+	// 				state: "keydown",
+	// 			});
+	// 		else if (e.key === "a" || e.key === "ArrowLeft")
+	// 			this.socket.emit("keyevent", {
+	// 				key: e.key,
+	// 				state: "keydown",
+	// 			});
 	// 	});
 
 	// 	document.addEventListener("keyup", (e) => {
-	// 		if (e.key === "d" || e.key === "ArrowRight") movingRight = false;
-	// 		else if (e.key === "a" || e.key === "ArrowLeft") movingLeft = false;
+	// 		if (e.key === "d" || e.key === "ArrowRight")
+	// 			this.socket.emit("keyevent", {
+	// 				key: e.key,
+	// 				state: "keyup",
+	// 			});
+	// 		else if (e.key === "a" || e.key === "ArrowLeft")
+	// 			this.socket.emit("keyevent", {
+	// 				key: e.key,
+	// 				state: "keyup",
+	// 			});
 	// 	});
-
-	// 	this.moveInterval = setInterval(() => {
-	// 		let stepX;
-
-	// 		if (movingLeft) {
-	// 			stepX = this.bottomPaddle.body.position.x - 11;
-	// 			if (stepX <= this.bottomPaddle.width / 2) {
-	// 				stepX = this.bottomPaddle.width / 2;
-	// 			}
-	// 			Matter.Body.setPosition(this.bottomPaddle.body, {
-	// 				x: stepX,
-	// 				y: this.bottomPaddle.body.position.y,
+	// 	if (this.socket) {
+	// 		this.socket.on("updatePaddlePosition", (data: any) => {
+	// 			Body.setPosition(this.bottomPaddle, {
+	// 				x: data.xPosition,
+	// 				y: this.bottomPaddle.position.y,
 	// 			});
-	// 		} else if (movingRight) {
-	// 			stepX = this.bottomPaddle.body.position.x + 11;
-	// 			if (stepX >= this.divWidth - this.bottomPaddle.width / 2) {
-	// 				stepX = this.divWidth - this.bottomPaddle.width / 2;
-	// 			}
-	// 			Matter.Body.setPosition(this.bottomPaddle.body, {
-	// 				x: stepX,
-	// 				y: this.bottomPaddle.body.position.y,
-	// 			});
+	// 		});
+	// 	}
+
+	// document.addEventListener("keydown", (e) => {
+	// 	if (e.key === "d" || e.key === "ArrowRight") {
+	// 		this.socket.emit("movePaddle", () => {
+	// 			movingRight: true;
+	// 		});
+	// 	} else if (e.key === "a" || e.key === "ArrowLeft") {
+	// 		movingLeft: true;
+	// 	}
+	// });
+
+	// document.addEventListener("keyup", (e) => {
+	// 	if (e.key === "d" || e.key === "ArrowRight") movingRight = false;
+	// 	else if (e.key === "a" || e.key === "ArrowLeft") movingLeft = false;
+	// });
+
+	// this.moveInterval = setInterval(() => {
+	// 	let stepX;
+
+	// 	if (movingLeft) {
+	// 		stepX = this.bottomPaddle.body.position.x - 11;
+	// 		if (stepX <= this.bottomPaddle.width / 2) {
+	// 			stepX = this.bottomPaddle.width / 2;
 	// 		}
-	// 	}, 10);
+	// 		Matter.Body.setPosition(this.bottomPaddle.body, {
+	// 			x: stepX,
+	// 			y: this.bottomPaddle.body.position.y,
+	// 		});
+	// 	} else if (movingRight) {
+	// 		stepX = this.bottomPaddle.body.position.x + 11;
+	// 		if (stepX >= this.divWidth - this.bottomPaddle.width / 2) {
+	// 			stepX = this.divWidth - this.bottomPaddle.width / 2;
+	// 		}
+	// 		Matter.Body.setPosition(this.bottomPaddle.body, {
+	// 			x: stepX,
+	// 			y: this.bottomPaddle.body.position.y,
+	// 		});
+	// 	}
+	// }, 10);
 
 	// when a player score a point
 	// clearInterval(moveInterval);
 	// };
 
-	movePaddle = (): void => {
-		document.addEventListener("keydown", (e) => {
-			if (e.key === "d" || e.key === "ArrowRight")
-				this.socket.emit("keyevent", {
-					key: e.key,
-					state: "keydown",
-				});
-			else if (e.key === "a" || e.key === "ArrowLeft")
-				this.socket.emit("keyevent", {
-					key: e.key,
-					state: "keydown",
-				});
-		});
-
-		document.addEventListener("keyup", (e) => {
-			if (e.key === "d" || e.key === "ArrowRight")
-				this.socket.emit("keyevent", {
-					key: e.key,
-					state: "keyup",
-				});
-			else if (e.key === "a" || e.key === "ArrowLeft")
-				this.socket.emit("keyevent", {
-					key: e.key,
-					state: "keyup",
-				});
-		});
-
-		this.socket.on("updatePaddlePosition", (data: any) => {
-			console.log(data.xPosition);
-			Matter.Body.setPosition(this.bottomPaddle.body, {
-				x: data.xPosition,
-				y: this.bottomPaddle.body.position.y,
-			});
-		});
-
-		// document.addEventListener("keydown", (e) => {
-		// 	if (e.key === "d" || e.key === "ArrowRight") {
-		// 		this.socket.emit("movePaddle", () => {
-		// 			movingRight: true;
-		// 		});
-		// 	} else if (e.key === "a" || e.key === "ArrowLeft") {
-		// 		movingLeft: true;
-		// 	}
-		// });
-
-		// document.addEventListener("keyup", (e) => {
-		// 	if (e.key === "d" || e.key === "ArrowRight") movingRight = false;
-		// 	else if (e.key === "a" || e.key === "ArrowLeft") movingLeft = false;
-		// });
-
-		// this.moveInterval = setInterval(() => {
-		// 	let stepX;
-
-		// 	if (movingLeft) {
-		// 		stepX = this.bottomPaddle.body.position.x - 11;
-		// 		if (stepX <= this.bottomPaddle.width / 2) {
-		// 			stepX = this.bottomPaddle.width / 2;
-		// 		}
-		// 		Matter.Body.setPosition(this.bottomPaddle.body, {
-		// 			x: stepX,
-		// 			y: this.bottomPaddle.body.position.y,
-		// 		});
-		// 	} else if (movingRight) {
-		// 		stepX = this.bottomPaddle.body.position.x + 11;
-		// 		if (stepX >= this.divWidth - this.bottomPaddle.width / 2) {
-		// 			stepX = this.divWidth - this.bottomPaddle.width / 2;
-		// 		}
-		// 		Matter.Body.setPosition(this.bottomPaddle.body, {
-		// 			x: stepX,
-		// 			y: this.bottomPaddle.body.position.y,
-		// 		});
-		// 	}
-		// }, 10);
-
-		// when a player score a point
-		// clearInterval(moveInterval);
-	};
-
 	moveBotPaddle = () => {
 		let currentPositionX;
 
-		Matter.Events.on(engine, "collisionStart", (e) => {
+		Events.on(engine, "collisionStart", (e) => {
 			const pairs = e.pairs[0];
-			// alert(this.divHeight);
-			if (
-				pairs.bodyA === this.topPaddle.body ||
-				pairs.bodyB === this.topPaddle.body
-			)
+			if (pairs.bodyA === this.topPaddle || pairs.bodyB === this.topPaddle)
 				this.sound.topPaddleSound.play();
 			else if (
-				pairs.bodyA === this.bottomPaddle.body ||
-				pairs.bodyB === this.bottomPaddle.body
+				pairs.bodyA === this.bottomPaddle ||
+				pairs.bodyB === this.bottomPaddle
 			)
 				this.sound.bottomPaddleSound.play();
 		});
@@ -293,33 +357,51 @@ class PongGame {
 		// 	if (Math.random() < 0.5) this.ball.body.velocity.y *= -1;
 		// });
 
-		Matter.Events.on(engine, "beforeUpdate", () => {
-			if (this.ball.body.position.y + this.ball.radius >= this.divHeight - 8) {
+		Events.on(engine, "beforeUpdate", () => {
+			if (this.ball.position.y + this.ball.circleRadius >= this.divHeight - 8) {
 				this.sound.win.play();
 			}
-			currentPositionX = this.ball.body.position.x;
+			currentPositionX = this.ball.position.x;
+			// if (
+			// 	this.ball.position.y >=
+			// 	this.bottomPaddle.position.y + this.bottomPaddle.height / 2
+			// )
+			// 	this.resetObjsDefaultPosition();
 			if (
-				this.ball.body.position.y >=
-				this.bottomPaddle.body.position.y + this.bottomPaddle.height / 2
+				this.topPaddle.position.x + this.paddleWidth / 2 >= this.divWidth &&
+				this.ball.position.x >= this.divWidth - this.paddleWidth / 2
 			)
-				this.resetObjsDefaultPosition();
+				currentPositionX = this.divWidth - this.paddleWidth / 2;
 			else if (
-				this.topPaddle.body.position.x + this.topPaddle.width / 2 >=
-					this.divWidth &&
-				this.ball.body.position.x >= this.divWidth - this.topPaddle.width / 2
+				this.topPaddle.position.x - this.paddleWidth / 2 <= 0 &&
+				this.ball.position.x <= this.paddleWidth / 2
 			)
-				currentPositionX = this.divWidth - this.topPaddle.width / 2;
-			else if (
-				this.topPaddle.body.position.x - this.topPaddle.width / 2 <= 0 &&
-				this.ball.body.position.x <= this.topPaddle.width / 2
-			)
-				currentPositionX = this.topPaddle.width / 2;
+				currentPositionX = this.paddleWidth / 2;
 
-			Matter.Body.setPosition(this.topPaddle.body, {
+			Body.setPosition(this.topPaddle, {
 				x: currentPositionX,
-				y: this.topPaddle.body.position.y,
+				y: this.topPaddle.position.y,
 			});
 		});
+	};
+
+	clearGame = () => {
+		Composite.remove(engine.world, [
+			this.ball,
+			this.topPaddle,
+			this.bottomPaddle,
+			this.rightRect,
+			this.leftRect,
+			// bottomRect,
+			// topRect,
+		]);
+
+		// ClearInterval Of Paddle Movement:
+		clearInterval(this.moveInterval);
+
+		// Remove Listners:
+		document.removeEventListener("keydown", this.handleKeyDown);
+		document.removeEventListener("keyup", this.handleKeyUp);
 	};
 }
 

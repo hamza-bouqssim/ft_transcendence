@@ -6,16 +6,14 @@ import {
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 import { OnModuleInit } from '@nestjs/common';
-import PongGame from '../classes/PongGame';
+import { Bodies, Composite, Engine, Runner, Body } from 'matter-js';
 
-// const Bodies = Matter.Bodies;
-// const Render = Matter.Render;
-// const Engine = Matter.Engine;
-// const Runner = Matter.Runner;
-// const Composite = Matter.Composite;
-
-// const engine = Engine.create();
-// const runner = Runner.create();
+const engine = Engine.create({
+	gravity: {
+		x: 0,
+		y: 0,
+	},
+});
 
 @WebSocketGateway({
 	cors: {
@@ -26,23 +24,22 @@ export class GameGateway implements OnModuleInit {
 	@WebSocketServer()
 	server: Server;
 
-	private divWidth = 560;
-	private divHeight = 836;
-	private ballXcord;
-	private ballYcord;
-	private topPaddleXCord;
-	private topPaddleYCord;
-	private bottomPaddleXCord;
-	private bottomPaddleYCord;
-	private movingRight = false;
-	private movingLeft = false;
-	private posPaddleX = this.divWidth / 2;
+	private canvasWidth: number = 560;
+	private canvasHeight: number = 836;
+	private ball: any;
+	private topPaddle: any;
+	private bottomPaddle: any;
+	private movingRight: boolean = false;
+	private movingLeft: boolean = false;
+	private posPaddleX = this.canvasWidth / 2;
 	private paddleW = 170;
+	// private newGame: any;
 
 	private pong: any;
 
 	constructor() {
 		this.handlePaddleMove();
+		// console.log("cons")
 	}
 
 	onModuleInit() {
@@ -50,14 +47,122 @@ export class GameGateway implements OnModuleInit {
 			console.log(socket.id);
 			console.log('A Pong client connected!');
 		});
+		this.handleLaunchGame();
 	}
 
-	@SubscribeMessage('launch-game')
-	handleLaunchGame(@MessageBody() data: any) {
-		console.log('parent:', data.parentDiv);
-		console.log('width:', data.parentDivW);
-		console.log('height:', data.parentDivH);
-		// this.pong = new PongGame(data.parentCanvasDiv);
+	handleLaunchGame() {
+		// Create Ball:
+		this.ball = Bodies.circle(this.canvasWidth / 2, this.canvasHeight / 2, 15, {
+			label: 'ball',
+			render: {
+				fillStyle: '#FFF',
+			},
+			frictionAir: 0,
+			friction: 0,
+			inertia: Infinity,
+			restitution: 1,
+		});
+		Body.setVelocity(this.ball, {
+			x: 8,
+			y: 8,
+		});
+
+		// Create Two Paddles:
+		this.topPaddle = Bodies.rectangle(this.canvasWidth / 2, 30, 170, 15, {
+			label: 'topPaddle',
+			render: {
+				fillStyle: '#4FD6FF',
+			},
+			isStatic: true,
+			chamfer: { radius: 10 },
+		});
+		this.bottomPaddle = Bodies.rectangle(
+			this.canvasWidth / 2,
+			this.canvasHeight - 30,
+			170,
+			15,
+			{
+				label: 'bottomPaddle',
+				render: {
+					fillStyle: '#FF5269',
+				},
+				isStatic: true,
+				chamfer: { radius: 10 },
+			},
+		);
+
+		// Create Two Boundies:
+		const topRect = Bodies.rectangle(
+			this.canvasWidth / 2,
+			0,
+			this.canvasWidth,
+			20,
+			{
+				render: {
+					fillStyle: 'red',
+				},
+				isStatic: true,
+			},
+		);
+
+		const bottomRect = Bodies.rectangle(
+			this.canvasWidth / 2,
+			this.canvasHeight,
+			this.canvasWidth,
+			20,
+			{
+				render: {
+					fillStyle: 'yellow',
+				},
+				isStatic: true,
+			},
+		);
+
+		const rightRect = Bodies.rectangle(
+			this.canvasWidth,
+			this.canvasHeight / 2,
+			20,
+			this.canvasHeight,
+			{
+				label: 'rightRect',
+				render: {
+					fillStyle: '#CFF4FF',
+				},
+				isStatic: true,
+			},
+		);
+
+		const leftRect = Bodies.rectangle(
+			0,
+			this.canvasHeight / 2,
+			20,
+			this.canvasHeight,
+			{
+				label: 'leftRect',
+				render: {
+					fillStyle: '#CFF4FF',
+				},
+				isStatic: true,
+			},
+		);
+
+		Composite.add(engine.world, [
+			this.ball,
+			this.topPaddle,
+			this.bottomPaddle,
+			rightRect,
+			leftRect,
+			bottomRect,
+			topRect,
+		]);
+
+		// run the engine:
+		Runner.run(Runner.create(), engine);
+
+		const gameInterval = setInterval(() => {
+			let ballVelocity = engine.world.bodies[0].velocity;
+			this.server.emit('updateBallVelocity', ballVelocity);
+		}, 15);
 	}
 
 	@SubscribeMessage('keyevent')
@@ -78,16 +183,17 @@ export class GameGateway implements OnModuleInit {
 	handlePaddleMove() {
 		const moveInterval = setInterval(() => {
 			let stepX = 0;
+			const paddleWidth = 170;
 
 			if (this.movingLeft) {
-				stepX = this.posPaddleX - 11;
+				stepX = this.posPaddleX - 13;
 				if (stepX <= this.paddleW / 2) {
 					stepX = this.paddleW / 2;
 				}
 			} else if (this.movingRight) {
-				stepX = this.posPaddleX + 11;
-				if (stepX >= this.divWidth - this.paddleW / 2) {
-					stepX = this.divWidth - this.paddleW / 2;
+				stepX = this.posPaddleX + 13;
+				if (stepX >= this.canvasWidth - this.paddleW / 2) {
+					stepX = this.canvasWidth - this.paddleW / 2;
 				}
 			}
 			if (stepX != 0) {
@@ -99,4 +205,33 @@ export class GameGateway implements OnModuleInit {
 			}
 		}, 20);
 	}
+
+	// handlePaddleMove() {
+	// 	const moveInterval = setInterval(() => {
+	// 		let stepX = 0;
+	// 		const paddleWidth = 170;
+
+	// 		if (this.movingLeft) {
+	// 			stepX = this.bottomPaddle.position.x - 11;
+	// 			if (stepX <= paddleWidth / 2) {
+	// 				stepX = paddleWidth / 2;
+	// 			}
+	// 		} else if (this.movingRight) {
+	// 			stepX = this.bottomPaddle.position.x + 11;
+	// 			if (stepX >= this.canvasWidth - paddleWidth / 2) {
+	// 				stepX = this.canvasHeight - paddleWidth / 2;
+	// 			}
+	// 		}
+	// 		if (stepX != 0) {
+	// 			Body.setPosition(this.bottomPaddle, {
+	// 				x: stepX,
+	// 				y: this.bottomPaddle.position.y,
+	// 			});
+	// 			this.server.emit('updatePaddlePosition', {
+	// 				paddleLabel: 'bottomPaddle',
+	// 				xPosition: stepX,
+	// 			});
+	// 		}
+	// 	}, 20);
+	// }
 }

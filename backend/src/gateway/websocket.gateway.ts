@@ -16,20 +16,20 @@ import { OnEvent } from '@nestjs/event-emitter';
 })
 export class MessagingGateWay implements OnGatewayConnection {
 	handleConnection(client: Socket, ...args: any[]) {
-		console.log('new Incoming connection');
-		client.emit('connected', { status: 'good' });
-		console.log(client);
+		// console.log('new Incoming connection');
+		// client.emit('connected', { status: 'good' });
+		// console.log(client);
 	}
 	@WebSocketServer()
 	server: Server;
 	@SubscribeMessage('createMessage')
 	handleCreateMessage(@MessageBody() data: any) {
-		console.log('create message');
+		// console.log('create message');
 	}
 	@OnEvent('message.create')
 	handleMessageCreateEvent(payload: any) {
-		console.log('create message');
-		console.log(payload);
+		// console.log('create message');
+		// console.log(payload);
 		// we are going to emit this onMessage event
 		this.server.emit('onMessage', payload);
 	}

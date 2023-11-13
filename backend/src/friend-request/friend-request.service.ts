@@ -16,8 +16,8 @@ export class FriendRequestService {
             throw new UnauthorizedException('User Not Found !');
         }
 
-        console.log(user.username);
-        console.log(_friendUserName.username);
+        // console.log(user.username);
+        // console.log(_friendUserName.username);
 
         const requestAlreadySent = await this.prisma.friend.findFirst({where: {user_id: user.id, friend_id: _friendUserName.id}});
 

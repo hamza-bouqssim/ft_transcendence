@@ -37,7 +37,7 @@ const Pong = (props: any) => {
 				name="hamzaBouQssi"
 				username="@hbouqssi"
 				score={score.leftScore}
-				playerBgColor={props.paddleColor}
+				playerBgColor={"#FF5269"}
 				isBotPlayer={false}
 			/>
 			<div

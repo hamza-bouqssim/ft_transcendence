@@ -11,7 +11,7 @@ const PlayMode = () => {
 				</div>
 				<Link
 					href={"/dashboard/game/bot_game"}
-					className="w-[80%] rounded-3xl bg-[--pink-color] px-5 py-4 text-center font-['Whitney_Bold'] text-2xl ease-in-out hover:bg-[--purple-color]"
+					className="w-[80%] rounded-3xl bg-[--pink-color] px-5 py-4 text-center font-['Whitney_Bold'] text-2xl duration-100 ease-in-out hover:bg-[--purple-color]"
 				>
 					Play With Bot
 				</Link>
@@ -23,7 +23,7 @@ const PlayMode = () => {
 				</div>
 				<Link
 					href={"/dashboard/game/online_game"}
-					className="w-[80%] rounded-3xl bg-[--pink-color] px-5 py-4 text-center font-['Whitney_Bold'] text-2xl ease-in-out hover:bg-[--purple-color]"
+					className="w-[80%] rounded-3xl bg-[--pink-color] px-5 py-4 text-center font-['Whitney_Bold'] text-2xl duration-100 ease-in-out hover:bg-[--purple-color]"
 				>
 					Online Game
 				</Link>
