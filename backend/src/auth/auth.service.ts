@@ -72,7 +72,6 @@ export class AuthService {
             avatar_url: "../../../../frontend/nextjs/public/assets/user.jpeg",
             two_factor_auth: "",
             two_factor_secret_key: "",
-            rank: "",
           },
         });
        
@@ -111,7 +110,6 @@ export class AuthService {
           avatar_url: dto.avatar_url,
           two_factor_auth: "",
           two_factor_secret_key: "",
-          rank: "",
         },
       });
     

@@ -68,9 +68,9 @@ async function seed() {
         data: generateFakeFriends(createdUsers),
     });
 
-    const blockUser = await prisma.blockUser.createMany({
-        data: generateFakeBlockUser(createdUsers),
-    });
+    // const blockUser = await prisma.blockUser.createMany({
+    //     data: generateFakeBlockUser(createdUsers),
+    // });
    
     console.log('User and Friend data inserted successfully');
   } else {

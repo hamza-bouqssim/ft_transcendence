@@ -1,10 +1,10 @@
-generator client {
+q1agenerator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
-  url = env("DATABASE_URL")
+  url      = env("DATABASE_URL")
 }
 
 enum Status {
@@ -25,139 +25,135 @@ enum EventType {
 }
 
 model User {
-  id String @id @default(uuid())
-  username String @unique
-  email String @unique
-  password String
-  display_name String
-  avatar_url String
-  two_factor_auth String
-  two_factor_secret_key String
-  friend Friend[] @relation("UserToFriend")
-  friends Friend[] @relation("Friend")
-  senderOfChatParticipents ChatParticipents[] @relation("sender")
+  id                          String             @id @default(uuid())
+  username                    String             @unique
+  email                       String             @unique
+  password                    String
+  display_name                String
+  avatar_url                  String
+  two_factor_auth             String
+  two_factor_secret_key       String
+  friend                      Friend[]           @relation("UserToFriend")
+  friends                     Friend[]           @relation("Friend")
+  senderOfChatParticipents    ChatParticipents[] @relation("sender")
   recipientOfChatParticipents ChatParticipents[] @relation("recipient")
-  senderOfmessage Message[] @relation("senderMessage")
-  RecipientOfmessage Message[] @relation("recipientMessage")
-  notifications Notification[]
-  player1 Pong_match[] @relation("player1")
-  player2 Pong_match[] @relation("player2")
-  Member  Member[]
-  StateGame StateGame?
-  Achivment Achivment[]
-  MatchHistory1 Match_History[] @relation("playerOne")
-  MatchHistory2 Match_History[] @relation("playerTow")
-  queue queue[]
+  senderOfmessage             Message[]          @relation("senderMessage")
+  RecipientOfmessage          Message[]          @relation("recipientMessage")
+  notifications               Notification[]
+  player1                     Pong_match[]       @relation("player1")
+  player2                     Pong_match[]       @relation("player2")
+  Member                      Member[]
+  StateGame                   StateGame?
+  Achivment                   Achivment[]
+  MatchHistory1               Match_History[]    @relation("playerOne")
+  MatchHistory2               Match_History[]    @relation("playerTow")
+  queue                       queue[]
 }
 
 model Friend {
-  id String @id @default(uuid())
-  user_id String
-  friend_id String
-  status Status @default(PENDING)
+  id         String   @id @default(uuid())
+  user_id    String
+  friend_id  String
+  status     Status   @default(PENDING)
   created_at DateTime
-  user User @relation("UserToFriend", fields: [user_id], references: [id])
-  friends User @relation("Friend", fields: [friend_id], references: [id])
+  user       User     @relation("UserToFriend", fields: [user_id], references: [id])
+  friends    User     @relation("Friend", fields: [friend_id], references: [id])
 }
 
 model ChatParticipents {
-  id          String      @id @default(uuid())
-  sender      User     @relation("sender", fields: [senderId], references: [id])
-  senderId    String
-  recipient   User     @relation("recipient", fields: [recipientId], references: [id])
-  recipientId String
-  messages    Message[] @relation("participentsMessages")
+  id              String    @id @default(uuid())
+  sender          User      @relation("sender", fields: [senderId], references: [id])
+  senderId        String
+  recipient       User      @relation("recipient", fields: [recipientId], references: [id])
+  recipientId     String
+  messages        Message[] @relation("participentsMessages")
   lastMessageSent Message[] @relation("lastMessageSent")
 }
 
-
-
 model Message {
-  id String @id @default(uuid())
-  content String?
-  sender User @relation("senderMessage", fields: [senderId], references: [id])
-  senderId String
-  recipient User @relation("recipientMessage", fields: [recipientId], references: [id])
-  recipientId String
-  participents ChatParticipents @relation("participentsMessages", fields: [participentsId], references: [id])
-  participentsId String
-  lastMessageFor ChatParticipents? @relation("lastMessageSent", fields: [lastMessageForId], references: [id])
+  id               String            @id @default(uuid())
+  content          String?
+  sender           User              @relation("senderMessage", fields: [senderId], references: [id])
+  senderId         String
+  recipient        User              @relation("recipientMessage", fields: [recipientId], references: [id])
+  recipientId      String
+  participents     ChatParticipents  @relation("participentsMessages", fields: [participentsId], references: [id])
+  participentsId   String
+  lastMessageFor   ChatParticipents? @relation("lastMessageSent", fields: [lastMessageForId], references: [id])
   lastMessageForId String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
   // ChatRoom       ChatRoom    @relation(fields: [id], references: [id])
 }
 
 model Notification {
-  id String @id @default(uuid())
+  id      String @id @default(uuid())
   user_id String
   content String
-  user User @relation(fields: [user_id], references: [id])
+  user    User   @relation(fields: [user_id], references: [id])
 }
 
-
-model StateGame{
-  id String @id @default(uuid())
-  user_id String @unique
-  win Int @default(0)
-  lose Int @default(0)
-  level Float @default(1.0)
-  numberOfMatch Int @default(0)
-  rank Int @default(-1)
-  user User @relation(fields: [user_id],references: [id])
+model StateGame {
+  id            String @id @default(uuid())
+  user_id       String @unique
+  win           Int    @default(0)
+  lose          Int    @default(0)
+  level         Float  @default(1.0)
+  numberOfMatch Int    @default(0)
+  rank          Int    @default(-1)
+  user          User   @relation(fields: [user_id], references: [id])
 }
 
-model Achivment{
-  id String @id @default(uuid())
+model Achivment {
+  id      String @id @default(uuid())
   user_id String @unique
   content String
-  type String
+  type    String
   picture String
-  win Int
-  lose Int
-  level Float
-  user User @relation(fields: [user_id],references: [id])
+  win     Int
+  lose    Int
+  level   Float
+  user    User   @relation(fields: [user_id], references: [id])
 }
+
 model Pong_match {
-  id String @id @default(uuid())
-  player1_id String
-  player2_id String
-  created_at DateTime
-  updated_at DateTime
-  event_type EventType @default(UNPROCESSED)
-  playerOne User @relation("player1", fields: [player1_id], references: [id])
-  playerTwo User @relation("player2", fields: [player2_id], references: [id])
+  id           String          @id @default(uuid())
+  player1_id   String
+  player2_id   String
+  created_at   DateTime
+  updated_at   DateTime
+  event_type   EventType     @default(UNPROCESSED)
+  playerOne    User            @relation("player1", fields: [player1_id], references: [id])
+  playerTwo    User            @relation("player2", fields: [player2_id], references: [id])
   matchHistory Match_History[]
 }
 
-model Match_History{
-  id String @id @default(uuid())
-  playerOne String
-  playerTow String
+model Match_History {
+  id              String     @id @default(uuid())
+  playerOne       String
+  playerTow       String
   playerOne_score Int
   playerTow_score Int
-  matchId String
-  playerone User @relation("playerOne", fields: [playerOne], references: [id])
-  playertow User @relation("playerTow", fields: [playerTow], references: [id])
-  match Pong_match @relation(fields: [matchId],references: [id])
-
+  matchId         String
+  playerone       User       @relation("playerOne", fields: [playerOne], references: [id])
+  playertow       User       @relation("playerTow", fields: [playerTow], references: [id])
+  match           Pong_match @relation(fields: [matchId], references: [id])
 }
 
-
-model queue{
-  id String @id @default(uuid())
-  userId String
-  user User  @relation(fields: [userId] , references: [id])
+model queue {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
 }
 
 model ChatRoom {
-  id        String @id @default(uuid())
-  name      String    @unique
+  id        String   @id @default(uuid())
+  name      String   @unique
   type      String
-  Privacy   String    @default("private")
+  Privacy   String   @default("private")
   password  String?
-  picture   String?   @default("https://images.squarespace-cdn.com/content/v1/5f60d7057b9b7d7609ef628f/1603219780222-V253F1WLHBH8HNHXIFUX/group.png")
+  picture   String?  @default("https://images.squarespace-cdn.com/content/v1/5f60d7057b9b7d7609ef628f/1603219780222-V253F1WLHBH8HNHXIFUX/group.png")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   members   Member[]
@@ -165,17 +161,17 @@ model ChatRoom {
 }
 
 model Member {
-  id          String @id @default(uuid())
-  user_id     String
-  ChatRoomId  String
-  isAdmin     Boolean
-  user        User        @relation(fields: [user_id], references: [id])
-  chatRoom    ChatRoom    @relation(fields: [ChatRoomId], references: [id])
+  id         String   @id @default(uuid())
+  user_id    String
+  ChatRoomId String
+  isAdmin    Boolean
+  user       User     @relation(fields: [user_id], references: [id])
+  chatRoom   ChatRoom @relation(fields: [ChatRoomId], references: [id])
 }
 
 model Session {
-  id String @id @default(uuid())
-  sid String @unique
-  data String
+  id        String   @id @default(uuid())
+  sid       String   @unique
+  data      String
   expiresAt DateTime
 }
