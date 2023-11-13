@@ -58,7 +58,7 @@ export default function RootLayout({
 						}
 					/>
 					
-					{/* <TopRightBar
+					<TopRightBar
 						menu={change.menu}
 						onClick={() =>
 							setChange({
@@ -68,7 +68,7 @@ export default function RootLayout({
 								menu: !change.menu,
 							})
 						}
-					/> */}
+					/>
 
 					{/* <div className="mt-[70px] h-[85%] w-full lg:flex lg:items-center lg:justify-evenly min-[1750px]:ml-72 min-[1750px]:mt-[90px] min-[1750px]:w-[86%]">
 						{children}

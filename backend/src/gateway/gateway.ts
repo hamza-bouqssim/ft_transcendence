@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { MessageBody, OnGatewayConnection, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
+import { ConnectedSocket, MessageBody, OnGatewayConnection, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import {Server, Socket} from "socket.io"
 import { OnEvent } from "@nestjs/event-emitter";
 import { AuthenticatedSocket } from "src/utils/interfaces";
@@ -8,6 +8,7 @@ import { IGateWaySession } from "./gateway.session";
 import { Services } from "src/utils/constants";
 import { Inject } from "@nestjs/common";
 import { Message } from "@prisma/client";
+import { Client } from "socket.io/dist/client";
 @WebSocketGateway({
     cors:{
         origin:['http://localhost:3000'],
@@ -29,30 +30,38 @@ import { Message } from "@prisma/client";
 /****We can use an adapter to apply middleWare on the socket */
 export class MessagingGateWay implements OnGatewayConnection{
     constructor(@Inject(Services.GATEWAY_SESSION_MANAGER)private readonly sessions : IGateWaySession){}
+    @WebSocketServer()
+    server: Server;
     handleConnection(socket : AuthenticatedSocket, ...args: any[]) {
         console.log("new Incoming connection");
+        // console.log("user logged here");
+        // console.log(socket.user);
+        // console.log("the session befaure-->", this.sessions);
+        this.sessions.setUserSocket(socket.user.id,socket);
         socket.emit('connected', {status : 'good'});
-        console.log("user logged here");
-        console.log(socket.user);
-        console.log("the session befaure-->", this.sessions);
-        this.sessions.setUserSocket(socket.user.id,socket)
+
         console.log("the session is");
         console.log(this.sessions);
         // console.log("rooms");
         // console.log(socket.rooms)
     }
-    @WebSocketServer()
-    server: Server;
+    
     @SubscribeMessage('createMessage')
     handleCreateMessage(@MessageBody() data: any){
         console.log("create message")
     }
 
-    @SubscribeMessage('onUserTyping')
-    handleUserTyping(@MessageBody() data : any){
-        console.log(data);
-        console.log("User is typing");
+    // @SubscribeMessage('onUserTyping')
+    // handleUserTyping(@MessageBody() data : any){
+    //     console.log(data);
+    //     console.log("User is typing");
 
+    // }
+    @SubscribeMessage('onClientConnect')
+    onClientConnect(@MessageBody() data : any, @ConnectedSocket() Client : AuthenticatedSocket){
+        // console.log("onClient connect");
+        console.log(data);
+        // console.log(Client.user);
     }
     @OnEvent("message.create")
     handleMessageCreateEvent(payload : Message){

@@ -16,7 +16,7 @@ export type findUserParams = Partial <{
 
 export type CreateConversationParams = {
 
-    recipientId: string;
+    display_name: string;
     message: string;
 
 }

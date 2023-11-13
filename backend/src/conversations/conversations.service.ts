@@ -18,7 +18,7 @@ export class ConversationsService  {
 
     async createConversations(user : User  ,params : CreateConversationParams) {
      
-      const recipient = await this.userService.findById(params.recipientId)
+      const recipient = await this.userService.findByDisplayName(params.display_name)
       if(!recipient)
             throw new HttpException('User not found so cannot create Conversation' , HttpStatus.BAD_REQUEST)
       
@@ -30,10 +30,12 @@ export class ConversationsService  {
           const newParticipant = this.participentService.CreateParticipent(params, user);
 
           return newParticipant;
+      }else{
+        throw new HttpException('This conversation alrighdy exist' , HttpStatus.BAD_REQUEST)
+
       }
         
       
-      console.log(Participent);
      
    
   }

@@ -101,8 +101,14 @@ const ConversationChannelPage = () => {
       },)
 
       // for sockets
+
+      //whenever we enter to channel page we subscribe to connected and onMessage
       useEffect(()=>{
-          socket.on('connected', () => console.log("socket here connected"));
+        socket.emit('onClientConnect', {conversationId : id});
+        socket.on('connected', ()=> {
+          console.log("connected");
+        })
+          // socket.on('connected', () => console.log("socket here connected"));
           //iam listenning to socket-io on onMessage and whenever an message receive we bussically update the state with setMessage
           socket.on('onMessage', (payload : messageEventPayload) => {
             console.log("message received");
@@ -114,7 +120,7 @@ const ConversationChannelPage = () => {
             socket.off('connected');
             socket.off('onMessage');
           }
-      })
+      }, [id])
       const sendTypingStatus = () =>{
         console.log("You are typing a message");
         socket.emit('onUserTyping', {conversationId : id})

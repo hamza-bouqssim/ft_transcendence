@@ -22,20 +22,30 @@ const ChatComponnent: FC <Props>  = ({conversations}) =>{
         .catch((err)=> {console.log(err); setLoading(false);});
     }, [user])
     const getDisplayUser = (conversation : ConversationTypes) => {
-		const userId = user?.username;
+		const userId = user?.display_name;
 		
 		
 		let test;
-		if(conversation.sender.username!= userId)
+		if(conversation.sender.display_name!= userId)
 		{
 		
 			test = conversation.sender
-		}else if(conversation.sender.username == userId)
+		}else if(conversation.sender.display_name == userId)
 		{
 			test = conversation.recipient;
 		}
    
 		return test;
+	}
+	const getDisplayLastMessage = (conversation : ConversationTypes) =>{
+
+		let lastMessage = null;
+		lastMessage = conversation.lastMessage;
+		if(lastMessage == null)
+			return null;
+		else
+			return lastMessage.content;
+		
 	}
 
 	
@@ -52,8 +62,8 @@ const ChatComponnent: FC <Props>  = ({conversations}) =>{
 							<ConversationSideBarItem key={elem.id}>
 								<div className="avatar"></div>
 								<div>
-					 				<span onClick={handleClick} className="ConversationName">{getDisplayUser(elem)?.username}</span>
-					 				<span className="lastName">{elem.lastMessage.content}</span>
+					 				<span onClick={handleClick} className="ConversationName">{getDisplayUser(elem)?.username} {getDisplayUser(elem)?.display_name}</span>
+					 				<span className="lastName">{getDisplayLastMessage(elem)}</span>
 					 			</div>
 							</ConversationSideBarItem>
 								

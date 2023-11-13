@@ -54,8 +54,8 @@ const TopRightBar = (props: Change) => {
 					/>
 )}
 				<div className="font-['Whitney_Bold'] leading-3">
-					<h6 className="text-sm min-[1750px]:text-lg">{user?.username}</h6>
-					<span className="text-xs min-[1750px]:text-sm">{user?.email}</span>
+					<h6 className="text-sm min-[1750px]:text-lg">{user?.display_name}</h6>
+					<span className="text-xs min-[1750px]:text-sm">{user?.username}</span>
 				</div>
 
 				<FontAwesomeIcon
