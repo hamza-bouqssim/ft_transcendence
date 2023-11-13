@@ -7,20 +7,30 @@ import { useForm } from "react-hook-form"
 import { CreateConversationParams, createUserParams } from "@/app/utils/types"
 import { AppDispatch } from "@/app/store"
 import { createConversation } from "@/app/utils/api"
-export const CreateConversationForm = () => {
+import { Dispatch, FC } from "react"
+
+type Props = {
+  
+  setShow: Dispatch<React.SetStateAction<boolean>> 
+
+}
+
+export const CreateConversationForm: FC<Props> = ({setShow}) => {
         const {register, handleSubmit, formState: { errors }} = useForm<CreateConversationParams>();
         const dispatch = useDispatch<AppDispatch>();
 
         const onSubmit = async  (data : CreateConversationParams) => {
           console.log(data);
           // dispatch(createConversationThunk(data));
-          try {
-            await createConversation(data);
+        
+            dispatch(createConversationThunk(data)).then(()=>{
+              console.log("done");
+              setShow(false);
+            }).catch((err)=>{
+             console.log(err); 
+            })
 
-          }catch(err){
-            console.log(err);
 
-          }
         }
     return (
         <form className={styles.formConversation} onSubmit={handleSubmit(onSubmit)}>

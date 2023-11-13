@@ -16,28 +16,12 @@ import { useRouter } from "next/navigation";
 import { getSession } from "next-auth/react";
 import { socket, socketContext } from "@/app/utils/context/socketContext";
 import { Socket } from "socket.io-client";
-import {Provider ,  useDispatch} from 'react-redux'
-import { AppDispatch, store } from "@/app/store";
+import {Provider ,  useDispatch, useSelector} from 'react-redux'
+import { AppDispatch, RootState, store } from "@/app/store";
 import { fetchConversationThunk } from "@/app/store/conversationSlice";
 
 
-// type Props = {
-// 	user?: User;
-// 	setUser : React.Dispatch<React.SetStateAction<User | undefined>>;
-// 	socket : Socket;
-// }
 
-// function AppWithProviders({children, user, setUser,} : PropsWithChildren & Props){
-
-// 	return (
-// 		<Provider store={store}>
-// 			<socketContext.Provider value={socket}>
-// 				{children}
-// 			</socketContext.Provider>
-// 		</Provider>
-// 	)
-
-// }
 	
 
 const CoversationPage = () =>
@@ -46,32 +30,21 @@ const CoversationPage = () =>
 	const {id} = useParams();
 	const [conversation , setConversation] = useState<ConversationTypes[]>([]);
 	const dispatch = useDispatch<AppDispatch>();
+	const conversations = useSelector(
+	  (state: RootState) => state.conversation.conversations
+	);
+	
 
 	useEffect(() => {
-		getConversation().then(({data}) =>{
-			setConversation(data);
-			console.log(data);
-		}).catch((err)=> console.log(err))
-	}, [conversation])
-
-	// useEffect(() => {
-	// 	dispatch(fetchConversationThunk())
-	// 	.unwrap()
-	// 	.then(({data}) => {
-	// 		console.log("conversation here");
-	// 		console.log(data);
-	// 		setConversation(data);
-	// 	}).catch((err)=>{
-	// 		console.log(err);
-	// 	}
-	// 	);
-	// })
+		console.log('Fetching Conversations in ConversationPage');
+		dispatch(fetchConversationThunk());
+	  }, []);
 	const [user, setUser] = useState<User>();
 	
 		return (
 			<div className="flex  w-full h-screen xl:container xl:mx-auto">
 				<div className ="w-full  h-full xl:w-[35%] xl:p-10 xl:pl-5  xl:pr-2 ">
-					<CoversationSideBar conversations={conversation}/>
+					<CoversationSideBar conversations={conversations}/>
 				</div>
 				<div className="xl:my-10 xl:mr-10  w-full xl:ml-2 xl:w-[65%]  xl:rounded-[20px] xl:mt-32 hidden xl:flex items-center justify-center">INITIATE A CONVERSATION WITH A FRIEND YOU WANT TO PLAY WITH</div>
 			</div>

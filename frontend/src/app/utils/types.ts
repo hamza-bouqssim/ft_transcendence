@@ -71,6 +71,10 @@ export type messageEventPayload = {
     content : string;
     recipient : User;
 }
+export type MessageEventPayload = {
+    message: MessageType;
+    conversation: ConversationTypes;
+  };
 
 
 export type CreateMessageParams = {

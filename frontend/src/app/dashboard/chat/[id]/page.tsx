@@ -11,9 +11,10 @@ import TopRightBar from "@/app/components/TopRightBar";
 import SideBar from "@/app/components/SideBar";
 import { socket, socketContext } from "@/app/utils/context/socketContext";
 import { Socket } from "socket.io-client";
-import { AppDispatch, store } from "@/app/store";
-import {Provider as ReduxProvider, useDispatch} from 'react-redux'
-import { fetchConversationThunk, fetchMessagesThunk } from "@/app/store/conversationSlice";
+import { AppDispatch, RootState, store } from "@/app/store";
+import {Provider as ReduxProvider, useDispatch, useSelector} from 'react-redux'
+import { fetchMessagesThunk } from "@/app/store/messageSlice";
+import { fetchConversationThunk } from "@/app/store/conversationSlice";
 
 
 type Props = {
@@ -55,51 +56,29 @@ const ConversationChannelPage = () => {
     },[])
 	const [conversation , setConversation] = useState<ConversationTypes[]>([]);
   const dispatch = useDispatch<AppDispatch>();
-  // useEffect(() => {
-	// 	dispatch(fetchConversationThunk())
-	// 	.unwrap()
-	// 	.then(({data}) => {
-	// 		setConversation(data);
-	// 	}).catch((err)=>{
-	// 		console.log(err);
-	// 	}
-	// 	);
-	// })
-
-	useEffect(() => {
-		getConversation().then(({data}) =>{
-			setConversation(data);
-		}).catch((err)=> console.log(err))
-	}, [conversation])
-
-
-
     const {id} = useParams();
     const [message , setMessage] = useState<messageTypes[]>([])
 
-    // useEffect(() => {
-    //     if (typeof id === 'string') {
-    //       const conversationId = id;
-    //       getConversationMessage(conversationId)
-    //         .then(({ data }) => {
-    //           setMessage(data);
-    //         })
-    //         .catch((err) => console.log(err));
-    //     }
-    //   }, [id]);
-
-      useEffect (() => {
-        const conversationId = id;
-        dispatch(fetchMessagesThunk(conversationId))
-        .unwrap()
-        .then(({data}) => {
-          setMessage(data);
-        }).catch((err)=>{
-          console.log(err);
+    useEffect(() => {
+        if (typeof id === 'string') {
+          const conversationId = id;
+          getConversationMessage(conversationId)
+            .then(({ data }) => {
+              setMessage(data);
+            })
+            .catch((err) => console.log(err));
         }
-        );
-      },)
-
+      }, [id]);
+      const conversations = useSelector(
+        (state: RootState) => state.conversation.conversations
+      );
+    
+      useEffect(() => {
+        console.log('Fetching Conversations in ConversationPage');
+        dispatch(fetchConversationThunk());
+      }, []);
+    
+    
       // for sockets
 
       //whenever we enter to channel page we subscribe to connected and onMessage
@@ -129,7 +108,7 @@ const ConversationChannelPage = () => {
 
             <div className=" flex h-screen  xl:container xl:mx-auto">
               <div className ="hidden xl:block h-full w-[35%] p-10 pl-5 pr-2 ">
-                <CoversationSideBar conversations={conversation}/>
+                <CoversationSideBar conversations={conversations}/>
               </div>
                 <div className="bg-white xl:m-10  xl:mr-10 xl:ml-2 w-full xl:w-[65%]  xl:rounded-[20px]">
                     <MessagePanel messages={message} sendTypingStatus={sendTypingStatus}></MessagePanel> 
