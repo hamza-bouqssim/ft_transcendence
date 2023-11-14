@@ -26,14 +26,14 @@ export const messagesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(fetchMessagesThunk.fulfilled, (state, action) => {
-       const { id, messages } = action.payload.data;
-       const index : any = state.messages.findIndex((cm) => cm.id === id);
-       const exists = state.messages.find((cm) => cm.id === id);
-       if (exists) {
-         state.messages[index] = action.payload.data;
-       } else {
-         state.messages.push(action.payload.data);
-       }
+      //  const { id, messages } = action.payload.data;
+      //  const index : any = state.messages.findIndex((cm) => cm.id === id);
+      //  const exists = state.messages.find((cm) => cm.id === id);
+      //  if (exists) {
+      //    state.messages[index] = action.payload.data;
+      //  } else {
+      //    state.messages.push(action.payload.data);
+      //  }
     });
   }
 });

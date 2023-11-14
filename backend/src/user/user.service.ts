@@ -87,9 +87,14 @@ export class UserService {
             return updatedAvatar;
     }
 
-    async listFriends()
+    async  listFriends()
     {
-        return await this.prisma.friend.findMany({where: {status: 'ACCEPTED'}, select: {user: {select: {id: true, username: true, display_name: true, avatar_url:true}}}});
+        return await this.prisma.friend.findMany(
+            {
+                where: {status: 'ACCEPTED'}, 
+                select: {
+                    friends: {
+                        select: {id: true, username: true, display_name: true, avatar_url:true}}}});
     }
 
     async pendingRequests()

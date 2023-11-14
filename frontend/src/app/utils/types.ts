@@ -35,6 +35,13 @@ export type   ConversationTypes= {
     lastMessage: MessageType;
 }
 
+export type FriendsTypes = {
+    id : string;
+    username : string;
+    display_name: string;
+    friends : User;
+}
+
 
 
 

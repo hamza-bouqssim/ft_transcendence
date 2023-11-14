@@ -30,21 +30,21 @@ const CoversationPage = () =>
 	const {id} = useParams();
 	const [conversation , setConversation] = useState<ConversationTypes[]>([]);
 	const dispatch = useDispatch<AppDispatch>();
-	const conversations = useSelector(
-	  (state: RootState) => state.conversation.conversations
-	);
+	// const conversations = useSelector(
+	//   (state: RootState) => state.conversation.conversations
+	// );
 	
 
-	useEffect(() => {
-		console.log('Fetching Conversations in ConversationPage');
-		dispatch(fetchConversationThunk());
-	  }, []);
+	// useEffect(() => {
+	// 	console.log('Fetching Conversations in ConversationPage');
+	// 	dispatch(fetchConversationThunk());
+	//   }, []);
 	const [user, setUser] = useState<User>();
 	
 		return (
 			<div className="flex  w-full h-screen xl:container xl:mx-auto">
 				<div className ="w-full  h-full xl:w-[35%] xl:p-10 xl:pl-5  xl:pr-2 ">
-					<CoversationSideBar conversations={conversations}/>
+					<CoversationSideBar />
 				</div>
 				<div className="xl:my-10 xl:mr-10  w-full xl:ml-2 xl:w-[65%]  xl:rounded-[20px] xl:mt-32 hidden xl:flex items-center justify-center">INITIATE A CONVERSATION WITH A FRIEND YOU WANT TO PLAY WITH</div>
 			</div>

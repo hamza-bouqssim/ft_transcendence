@@ -35,7 +35,7 @@ export class MessagingGateWay implements OnGatewayConnection{
     handleConnection(socket : AuthenticatedSocket, ...args: any[]) {
         console.log("new Incoming connection");
         // console.log("user logged here");
-        // console.log(socket.user);
+        console.log(socket.user);
         // console.log("the session befaure-->", this.sessions);
         this.sessions.setUserSocket(socket.user.id,socket);
         socket.emit('connected', {status : 'good'});
@@ -72,9 +72,9 @@ export class MessagingGateWay implements OnGatewayConnection{
         const { senderId, recipientId } = payload;
         const senderSocket = this.sessions.getUserSocket(senderId);
         const recipientSocket = this.sessions.getUserSocket(recipientId);
-        console.log("senderSocket", senderSocket);
-        console.log("recipientSocket", recipientSocket)
-        console.log("senderId", payload.senderId);
+        // console.log("senderSocket", senderSocket);
+        // console.log("recipientSocket", recipientSocket)
+        // console.log("senderId", payload.senderId);
         if (senderSocket && recipientSocket) {
             senderSocket.emit('onMessage', payload);
             recipientSocket.emit('onMessage', payload);

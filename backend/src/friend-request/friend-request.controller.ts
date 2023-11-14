@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Body, Controller, Post, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Req,  UseGuards } from '@nestjs/common';
 import { FriendRequestService } from './friend-request.service';
 import { AuthenticatedGuard } from 'src/auth/guards/GlobalGuard';
 import { whichWithAuthenticated } from 'src/user/utils/auth-utils';

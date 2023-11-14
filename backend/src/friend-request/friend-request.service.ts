@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 
@@ -43,7 +44,7 @@ export class FriendRequestService {
         if(!req)
             throw new UnauthorizedException ("the request doesn't exist");
 
-        if(req.friend_id !== userId)
+        if(req.friend_id === userId)
             throw new UnauthorizedException("have you ever seeing someone is accepting friend request the he send hhhhhh");
 
         await this.prisma.friend.update({where: {id: requestId}, data: {status: 'ACCEPTED'}});

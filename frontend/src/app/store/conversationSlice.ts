@@ -45,12 +45,12 @@ export const conversationsSlice = createSlice({
       console.log('Inside updateConversation');
       const conversation = action.payload;
       console.log("ps ", conversation);
-      // const index = state.conversations.findIndex(
-      //   (c) => c.id === conversation.id
-      // );
-      // console.log("index here", index);
-      // state.conversations.splice(index, 1);
-      // state.conversations.unshift(conversation);
+      const index = state.conversations.findIndex(
+        (c) => c.id === conversation.id
+      );
+      console.log("index here", index);
+      state.conversations.splice(index, 1);
+      state.conversations.unshift(conversation);
     },
   },
 

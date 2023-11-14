@@ -17,12 +17,16 @@ import GroupsManagement from "../GroupsManagment/GroupsManagment"
 import ChatComponnent from "../ChatComponent/ChatComponent"
 import Search from "../ConversationSearch/ConversationSearch"
 import ConversationSearch from "../ConversationSearch/ConversationSearch"
+import ListFriends from "../ListFriends/ListFriends"
+import OnlineFriends from "../OnlineFriends/OnlineFriends"
+import SendRequest from "../SendRequest/SendRequest"
+import FriendsBloque from "../FriendsBloque/FriendsBloque"
 
 type Props = {
 	conversations: ConversationTypes[];
 }
 
-const CoversationSideBar: FC <Props>  = ({conversations}) => {
+const CoversationSideBar  = () => {
 	// we use useSelector to select state
 	// const conversation = useSelector((state: RootState) => state.conversation.conversations);
 	const [ user, setUser] = useState<User | undefined>();
@@ -31,7 +35,8 @@ const CoversationSideBar: FC <Props>  = ({conversations}) => {
 	const [newRooms, setnewRooms] = useState<boolean>(false);
 	const [selectRome , setSelectRome]  = useState<string>("chats");
 	const [show, setShow] = useState<any>(false);
-
+	const [selectUsers, setSelectUsers] = useState<string>("Chat");     
+	
 
     useEffect(() => {
             setLoading(true);
@@ -69,21 +74,36 @@ const CoversationSideBar: FC <Props>  = ({conversations}) => {
 			<div>
 				<ConversationSearch/>
 			</div>
-			{!newRooms && (selectRome === 'chats' ? <ChatComponnent conversations={conversations}/> : <GroupsManagement />)}
-			{newRooms && (selectRome === 'chats' ? <div className="text-black">
+			<hr  className="bg-[#DFDFDF] w-1/2 mx-auto mt-5"/>
+
+			{ selectRome === 'chats' && <div className="flex items-center rounded-full justify-between w-3/ mb-4  mx-auto  bg-[#423d3d]">
+				 <button
+					onClick={()=>{setSelectUsers("Chat")}} className={`${(selectUsers ==='Chat') ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-1/2`}>Chat
+				</button>
+				<button 
+					onClick={()=>{setSelectUsers("online")}}
+					className={`${(selectUsers ==='online') ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-1/2`}>Online
+				</button>
+				<button
+					onClick={()=>{setSelectUsers("allFriends")}} className={`${(selectUsers ==='allFriends') ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-1/2`}>Friends
+				</button>
+				<button
+					onClick={()=>{setSelectUsers("EnAttent")}} className={`${(selectUsers ==='EnAttent') ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-1/2`}>OnHold
+				</button>
+				<button
+					onClick={()=>{setSelectUsers("Bloques")}} className={`${(selectUsers ==='Bloques') ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-1/2`}>Bloques
+				</button>
+			</div>}
+			{/* {newRooms && (selectUsers === 'online' ? <div><OnlineFriends/></div> : <div><FriendsBloque/></div> )} */}
+			{!newRooms && (selectRome === 'chats' && selectUsers === 'Chat' ? <ChatComponnent/> : selectRome === 'chats' && selectUsers === 'online' ? <OnlineFriends  /> : selectRome === 'chats' && selectUsers === 'allFriends' ? <ListFriends/> : <GroupsManagement />)}
+			{/* {newRooms  &&   (selectRome === 'chats' && selectUsers === 'Chat'   ? <div className="text-black">
 				<ChatComponnent conversations={conversations}/>
 			
-			</div> :<div className="text-black">AddGroup</div> )}
+			</div> :<div className="text-black">AddGroup</div> )} */}
 			
-			{/* <button onClick={()=>{setnewRooms(true)}} className="absolute right-5 p-4 bottom-5 bg-[#5B8CD3] rounded-full ">add</button>
+			<button onClick={() => {if( selectRome === 'chats' ){setShow(!show)}}} className="absolute right-5 p-4 bottom-5 bg-[#5B8CD3] rounded-full ">add</button>
 			
-			<button onClick={() => setShow(!show)} className="absolute right-5 p-4 bottom-5 bg-[#5B8CD3] rounded-full ">add</button> */}
-			
-			{!newRooms ?
-			<button onClick={() => {setnewRooms(true); if( selectRome === 'chats' ){setShow(!show)}}} className="absolute right-5 p-4 bottom-5 bg-[#5B8CD3] rounded-full ">add</button>
-			:
-			<button onClick={()=>{setnewRooms(false)}} className="absolute right-5 p-4 bottom-5 bg-[#5B8CD3] rounded-full ">ok</button>
-			}
+		
 		</div>
         
 			

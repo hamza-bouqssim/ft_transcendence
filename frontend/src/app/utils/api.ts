@@ -25,3 +25,6 @@ export const getlogout = () => axios.get(`http://localhost:8000/auth/signout`, c
 
 export const postNewMessage = async (data : CreateMessageParams) => axios.post(`http://localhost:8000/messages/create_messages`, data, config);
 
+// get all friends
+
+export const getAllFriends = () => axios.get(`http://localhost:8000/user/my-friends`, config);
