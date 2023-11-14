@@ -118,11 +118,11 @@ model Achivment {
 
 model Pong_match {
   id           String          @id @default(uuid())
-  player1_id   String
-  player2_id   String
-  created_at   DateTime
-  updated_at   DateTime
-  event   String       @default("UNPROCESSED")
+  player1_id   String          
+  player2_id   String          
+  created_at   DateTime        @default(now())
+  updated_at   DateTime        @updatedAt
+  event        EventType       @default(UNPROCESSED)
   playerOne    User            @relation("player1", fields: [player1_id], references: [id])
   playerTwo    User            @relation("player2", fields: [player2_id], references: [id])
   matchHistory Match_History[]
@@ -136,7 +136,7 @@ model Match_History {
   playerTwo_score Int
   matchId         String
   playerone       User       @relation("playerOne", fields: [playerOne], references: [id])
-  playertwo      User       @relation("playerTow", fields: [playerTwo], references: [id])
+  playertwo       User       @relation("playerTow", fields: [playerTwo], references: [id])
   match           Pong_match @relation(fields: [matchId], references: [id])
 }
 

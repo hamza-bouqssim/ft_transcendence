@@ -1,10 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 
+enum EventType {
+    UNPROCESSED,
+    FINAL
+  }
+
 @Injectable()
 export class GameService {
     constructor(private readonly prisma: PrismaService) {}
 
+
+    //part of queue
     async readyToPlay()
     {
         const queueCount = await this.prisma.queue.count()
@@ -19,10 +26,15 @@ export class GameService {
                   user: true
                 }
               });
-            console.log(room);
+            const [userIdOne, userIdTwo] = [room[0].user.id, room[1].user.id];
+            await this.leaveQueue(userIdOne);
+            await this.leaveQueue(userIdTwo);
+            //Pong_match(userIdOne, userIdTwo)
             console.log("ready to play");
-            
+            return await this.prisma.queue.count()
         }
+        console.log("not enough players",);
+        return queueCount;
     }
 
     async findUserById(id: string)
@@ -39,12 +51,7 @@ export class GameService {
     {
         const join = await this.prisma.queue.create({
             data: {
-                
-                user: {
-                    connect: {
-                        id: userId,
-                        },
-                    },
+                user: { connect: { id: userId } },
                 },
         })
         console.log(join)
@@ -71,10 +78,72 @@ export class GameService {
         });
 
         console.log("get rooms : ");
-        if (rooms.length > 0)
-        {
-            console.log(rooms);
-            return rooms;
-        }
+        console.log(rooms);
+        return rooms;
+    }
+
+    // part of pong_match
+
+    async createPongMatch(userIdOne : string, userIdTwo : string)
+    {
+        const match = await this.prisma.pong_match.create({
+            data: {
+                playerOne: { connect: { id: userIdOne } },
+                playerTwo: { connect: { id: userIdTwo } },
+                },
+        })
+        console.log(match)
+        return match;
+    }
+
+    async getPongMatch(id: string)
+    {
+        const match = await this.prisma.pong_match.findUnique({
+            where: {
+                id: id
+            }
+        });
+        return match;
+    }
+    
+    async deletePongMatch(id: string)
+    {
+        const match = await this.prisma.pong_match.delete({
+            where: {
+                id: id
+            }
+        });
+        return match;
+    }
+
+    async endPongMatch(id: string)
+    {
+        const match = await this.prisma.pong_match.update({
+            where: {
+                id: id
+            },
+            data: {
+                updated_at: new Date(),
+                // envent : FINAL,
+            }
+        });
+        return match;
+    }
+
+    // part of match_history
+    async createMatchHistory(userIdOne : string, userIdTwo : string,
+                            playerOne_score : number, playerTwo_score : number, matchId : string)
+    {
+        const match = await this.prisma.match_History.create({
+            data: {
+                playerone: { connect: { id: userIdOne } },
+                playertwo: { connect: { id: userIdTwo } },
+                playerOne_score: playerOne_score,
+                playerTwo_score: playerTwo_score,
+                match : { connect : { id: matchId } },
+            },
+        })
+        console.log(match)
+        return match;
     }
 }

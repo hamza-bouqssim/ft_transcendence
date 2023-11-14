@@ -24,6 +24,12 @@ export class GameController {
         await this.gameService.leaveQueue(id);
     }
 
+    @Get('ready')
+    async readyToPlay()
+    {
+        return await this.gameService.readyToPlay();
+    }
+
     @Get('queue')
     async getQueue()
     {
