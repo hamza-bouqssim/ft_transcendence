@@ -105,5 +105,8 @@
   "directories": {
     "test": "test"
   },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
   "keywords": []
 }

@@ -1,4 +1,4 @@
-q1agenerator client {
+generator client {
   provider = "prisma-client-js"
 }
 
@@ -122,7 +122,7 @@ model Pong_match {
   player2_id   String
   created_at   DateTime
   updated_at   DateTime
-  event_type   EventType     @default(UNPROCESSED)
+  event   String       @default("UNPROCESSED")
   playerOne    User            @relation("player1", fields: [player1_id], references: [id])
   playerTwo    User            @relation("player2", fields: [player2_id], references: [id])
   matchHistory Match_History[]
@@ -131,18 +131,18 @@ model Pong_match {
 model Match_History {
   id              String     @id @default(uuid())
   playerOne       String
-  playerTow       String
+  playerTwo       String
   playerOne_score Int
-  playerTow_score Int
+  playerTwo_score Int
   matchId         String
   playerone       User       @relation("playerOne", fields: [playerOne], references: [id])
-  playertow       User       @relation("playerTow", fields: [playerTow], references: [id])
+  playertwo      User       @relation("playerTow", fields: [playerTwo], references: [id])
   match           Pong_match @relation(fields: [matchId], references: [id])
 }
 
 model queue {
   id        String   @id @default(uuid())
-  userId    String
+  userId    String   @unique
   user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
 }
