@@ -31,7 +31,7 @@
 }
 
 .glassmorphism {
-	@apply bg-[rgba(255,255,255,0.09)] shadow-[0_4px_30px_rgba(0,0,0,.1)] rounded-2xl;
+	@apply rounded-2xl bg-[rgba(255,255,255,0.09)] shadow-[0_4px_30px_rgba(0,0,0,.1)];
 	/* -webkit-backdrop-filter: blur(7.6px);
   -webkit-border-radius: 25px;
   -moz-border-radius: 25px;
@@ -85,8 +85,8 @@
 body {
 	margin: 0;
 	padding: 0;
-	background-color: var(--dark-purple-color);
 	background-image: url("/assets/background.svg");
+	background-color: var(--dark-purple-color);
 	/* background-attachment: fixed; */
 	background-repeat: no-repeat;
 	background-size: cover;

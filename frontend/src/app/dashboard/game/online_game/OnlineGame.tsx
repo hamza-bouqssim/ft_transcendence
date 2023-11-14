@@ -39,11 +39,12 @@ const Pong = (props: any) => {
 				score={score.leftScore}
 				playerBgColor={"#FF5269"}
 				isBotPlayer={false}
-			/>
+				startGame={false}
+				/>
 			<div
 				className="h-full w-[560px] shadow-[0_0_50px_2px_var(--blue-color)] min-[375px]:h-[250px] min-[490px]:h-[300px] min-[600px]:h-[360px] min-[660px]:h-[400px] md:h-[420px] lg:h-[440px] min-[1750px]:h-full"
 				ref={parentCanvasRef}
-			></div>
+				></div>
 
 			<PlayerScore
 				flag="right"
@@ -52,6 +53,7 @@ const Pong = (props: any) => {
 				score={score.rightScore}
 				playerBgColor={"#4FD6FF"}
 				isBotPlayer={false}
+				startGame={false}
 			/>
 		</div>
 	);

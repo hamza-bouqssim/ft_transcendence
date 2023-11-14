@@ -33,7 +33,6 @@ export class GameGateway implements OnModuleInit {
 	private movingLeft: boolean = false;
 	private posPaddleX = this.canvasWidth / 2;
 	private paddleW = 170;
-	// private newGame: any;
 
 	private pong: any;
 

@@ -26,6 +26,7 @@ class PongGame {
 	private divHeight: number;
 	private paddleWidth: number = 170;
 	private moveInterval: any;
+	private lunchGameInterval: any;
 	private handleKeyDown: any;
 	private handleKeyUp: any;
 	private sound = {
@@ -38,6 +39,10 @@ class PongGame {
 		win: new Howl({
 			src: ["/assets/sounds/winSound.mp3"],
 		}),
+	};
+	private currentBallSpeed: any = {
+		x: 4,
+		y: 4,
 	};
 
 	constructor(
@@ -66,8 +71,8 @@ class PongGame {
 			});
 		} else {
 			Body.setVelocity(this.ball, {
-				x: 8,
-				y: 8,
+				x: this.currentBallSpeed.x,
+				y: this.currentBallSpeed.y,
 			});
 		}
 
@@ -163,12 +168,23 @@ class PongGame {
 				wireframes: false,
 			},
 		});
-
 		Render.run(render);
-
-		// run the engine
-		Runner.run(Runner.create(), engine);
+		this.lunchGameInterval = setTimeout(() => {
+			// run the engine
+			Runner.run(Runner.create(), engine);
+		}, 1000);
 	}
+
+	// setBallSpeed = (): void => {
+	// 	Body.setVelocity(this.ball, {
+	// 		x: (this.currentBallSpeed.x += 0.5),
+	// 		y: (this.currentBallSpeed.y += 0.5),
+	// 	});
+
+	// 	Events.on(engine, "collisionStart", () => {
+
+	// 	})
+	// };
 
 	// resetObjsDefaultPosition = (): void => {
 	// 	Matter.Body.setPosition(this.ball, {
@@ -335,18 +351,29 @@ class PongGame {
 	// clearInterval(moveInterval);
 	// };
 
+	setNewBallVelocity = () => {
+		if (this.currentBallSpeed.x < 16 && this.currentBallSpeed.y < 16)
+			Body.setVelocity(this.ball, {
+				x: (this.currentBallSpeed.x += 0.5),
+				y: (this.currentBallSpeed.y += 0.5),
+			});
+	};
+
 	moveBotPaddle = () => {
 		let currentPositionX;
 
 		Events.on(engine, "collisionStart", (e) => {
 			const pairs = e.pairs[0];
-			if (pairs.bodyA === this.topPaddle || pairs.bodyB === this.topPaddle)
+			if (pairs.bodyA === this.topPaddle || pairs.bodyB === this.topPaddle) {
 				this.sound.topPaddleSound.play();
-			else if (
+				this.setNewBallVelocity();
+			} else if (
 				pairs.bodyA === this.bottomPaddle ||
 				pairs.bodyB === this.bottomPaddle
-			)
+			) {
 				this.sound.bottomPaddleSound.play();
+				this.setNewBallVelocity();
+			}
 		});
 
 		// Matter.Events.on(engine, "collisionStart", (e) => {
@@ -396,6 +423,8 @@ class PongGame {
 			// topRect,
 		]);
 
+		// clearTimeout Of Paddle Game Runner:
+		clearTimeout(this.lunchGameInterval);
 		// ClearInterval Of Paddle Movement:
 		clearInterval(this.moveInterval);
 
