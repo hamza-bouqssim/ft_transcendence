@@ -18,8 +18,8 @@ export class ParticipentService {
         const chat = await this.prisma.chatParticipents.findFirst({
           where: {
             OR: [
-              { senderId: params.recipientId, recipientId: user.id},
-              { senderId: user.id, recipientId: params.recipientId },
+              { sender: { display_name: params.display_name }, recipientId: user.id },
+              { senderId: user.id, recipient: { display_name: params.display_name } },
             ],
           },
         });
@@ -35,7 +35,7 @@ export class ParticipentService {
             connect: { id: user.id }
           },
           recipient: {
-            connect: { id: params.recipientId}
+            connect: { display_name: params.display_name}
           }
         }
       });
@@ -44,23 +44,6 @@ export class ParticipentService {
     }
  
 
-// async findParticipentChat(user : User) {
-//   const checkuser = await this.prisma.user.findUnique({
-//     where: { id: user.id},
-//     include: {
-//       senderOfChatParticipents: true, // Include the sender relationships
-//       recipientOfChatParticipents: true, // Include the recipient relationships
-//     },
-//   });
-
-//   // Combine the sender and recipient chat participents`
-//   const chatParticipents = [
-//     ...checkuser.senderOfChatParticipents,
-//     ...checkuser.recipientOfChatParticipents,
-//   ];
-
-//   return chatParticipents;
-// }
 
 async  findParticipentChat(user :User) {
   const chatParticipents = await this.prisma.chatParticipents.findMany({
@@ -73,6 +56,7 @@ async  findParticipentChat(user :User) {
     include: {
       sender: true,
       recipient: true,
+      lastMessage: true,
     },
   });
 

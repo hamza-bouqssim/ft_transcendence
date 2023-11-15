@@ -1,4 +1,4 @@
-import { MessageInputFieldContainer, MessageInput } from "@/app/utils/styles"
+import { MessageInputFieldContainer, MessageInput, BtnStyling } from "@/app/utils/styles"
 import { Dispatch, SetStateAction, FC } from "react";
 import { LuSendHorizonal } from "react-icons/lu";
 import { CiImageOn } from "react-icons/ci";
@@ -9,6 +9,7 @@ type props = {
     content : string;
     setContent : Dispatch<SetStateAction<string>>;
     sendMessage : (e: React.FormEvent<HTMLFormElement>) => void;
+    sendTypingStatus : () => void;
 }
 
 const MessageInputField: FC<props> = ({content, setContent, sendMessage}) => {

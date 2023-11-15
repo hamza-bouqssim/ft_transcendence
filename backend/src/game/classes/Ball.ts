@@ -1,4 +1,7 @@
-import Matter from 'matter-js';
+
+import * as Matter from 'matter-js';
+
+
 import { Howl } from 'howler';
 
 const Bodies = Matter.Bodies;

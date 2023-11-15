@@ -2,5 +2,7 @@
 import { io } from "socket.io-client";
 import { createContext } from "react";
 
-export const socket = io("http://localhost:8000");
+export const socket = io("http://localhost:8000", {
+     withCredentials: true,
+});
 export const socketContext = createContext(socket);

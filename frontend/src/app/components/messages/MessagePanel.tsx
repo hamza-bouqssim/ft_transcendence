@@ -9,15 +9,15 @@ import { postNewMessage } from "@/app/utils/api";
 
 type Props  = {
     messages : messageTypes[];
+    sendTypingStatus: () => void;
 }
 
-const MessagePanel : FC<Props> = ({messages}) => {
+const MessagePanel : FC<Props> = ({messages, sendTypingStatus}) => {
         const [content, setContent] = useState('');
         const { id } = useParams();
         
         const sendMessage = async (e : React.FormEvent<HTMLFormElement>) => {
             e.preventDefault();
-            console.log('sending message', content);
             if(!id || !content)
                 return ;
             const participentsId = id;

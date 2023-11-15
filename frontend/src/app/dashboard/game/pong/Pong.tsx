@@ -4,7 +4,7 @@ import PongGame from "../classes/PongGame";
 import { io } from "socket.io-client";
 
 const Pong = (props: any) => {
-	const socket = io("http://localhost:8000");
+	const socket = io("http://localhost:8000/game");
 
 	const parentCanvasRef = useRef<HTMLDivElement>(null);
 

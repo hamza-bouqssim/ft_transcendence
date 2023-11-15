@@ -2,15 +2,17 @@ import styled from 'styled-components'
 import { InputContainerProps, PageProps } from './styleTypes';
 
 export const InputField = styled.input`
-    background-color: #1e1b34;
+    background-color: #fff;
     border: none;
-    color : #fff;
+    color : #151515;
     font-family: 'Inter';
     font-size: 18px;
     width: 100%;
     margin : 4px 0;
+    border-radius: 20px;
 
 `;
+
 
 
 
@@ -35,8 +37,9 @@ export const InputContainer = styled.div<InputContainerProps>`
 
 export const InputLabel = styled.label`
     display: block;
-    color: 	#808080;
+    color: 	#5e5d5d;
     font-size : 14px;
+    font-weight: 20px;
     margin: 4px 0;
 
 `;
@@ -66,6 +69,15 @@ export const Button = styled.button`
     }
 
 `;
+
+export const BtnStyling = styled.button`
+    width: 80px;
+    background-color: #5B8CD3;
+    border: none;
+    border-radius: 10px;
+    padding: 15px;
+    margin : 11px;
+`;
 export const Page = styled.div<PageProps>`
    
     height: 100%;
@@ -81,18 +93,6 @@ export const Conversation = styled.aside`
    
     overflow-y: scroll;
     
-    /* &::-webkit-scrollbar {
-        width: 8px;
-    }
-    &::-webkit-scrollbar-track {
-        background-color: #fff;
-    }
-    &::-webkit-scrollbar-thumb {
-        background-color: #fc7785;
-        width: 5px;
-        border-radius: 20px;
-    } */
-
     & header{
         background-color:#1e1b34;
         height: 30px;
@@ -104,7 +104,7 @@ export const Conversation = styled.aside`
         align-items : center;
         justify-content: space-between;
         border-bottom: 3px solid #080a0d;
-        padding : 0 57px;
+        padding : 20px;
         
     }
     
@@ -129,29 +129,7 @@ export const ConversationChannelStyle = styled.div`
 `;
 
 export const ConversationPannelStyle = styled.div`
-    /* position: absolute; 
-    top:0;  
-    margin-left: 350px;
-    width: 35rem;
-    height: 100%;
-    align-items: center;
-    background-color: #fff;
    
-    
-    &::-webkit-scrollbar {
-        width: 8px;
-    }
-    &::-webkit-scrollbar-track {
-        background-color: #fff;
-    }
-    &::-webkit-scrollbar-thumb {
-        background-color: #fc7785;
-        width: 5px;
-        border-radius: 20px;
-    }
-
-
-    background-color: #1d1a33; */
     & h1{
         margin-left: 500px;
         text-align: center;
@@ -190,8 +168,9 @@ export const ModalContentBodyStyle = styled.div `
 
 export const OverlayStyle = styled.div `
 
-    height: 100%;
-    width: 100%;
+    height: 400px;
+    width: 400px;
+    margin-left : 300px;
     background-color : #0000008a;
     position: fixed;
     display: flex;
@@ -205,37 +184,38 @@ export const OverlayStyle = styled.div `
 
 export const ModalHeadersStyle = styled.header`
     width: 100%;
-    background-color:#423f5a;
+    background-color:#5B8CD3;
     padding: 10px 18px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     & h2 {
-        font-weight:500;
+        font-weight:300;
         margin: 0;
-        margin-top:23px; 
+        margin-top:3px; 
         
     }
 `;
 
 export const ModalContainerStyle = styled.div `
 
-    background-color: #121212;
-    width: 650px;
+    background-color: #0000008a;
+    width: 300px;
     box-sizing: border-box;
-    border-radius: 10px;
+    border-radius: 40px;
 `;
 
 
 export const TextField = styled.textarea`
     
-    background-color: #1e1b34;
+    background-color: #fff;
     border: none;
-    color : #fff;
+    color : #151515;
     font-family: 'Inter';
     font-size: 18px;
     width: 100%;
     margin : 4px 0;
+    border-radius: 20px;
 `;
 
 export const MessagePanelStyle = styled.div `
@@ -263,22 +243,29 @@ export const MessagePannelBody = styled.div `
    
    
 `
+export const FirstGroup = styled.div `
+    display: flex;
+    gap : 10px;
+    & h2{
+        font-size: 20px;
+        font-weight: bold;
+    }
+`
 
 export const MessagePannelHeaderStyle = styled.header `
     background-color: #F2F3FD;
     border-radius: 50px;
-    height: 70px;
+    height: 80px;
     box-sizing: border-box;
     color: #151515;
     width: 100%;
-    font-weight: bold;
-    flex-shrink: 0;
     border-bottom: 1px solid #49494925;
-    display: flex;
-    text-align: center;
-    align-items: center;
-    gap: 10px;
-    padding: 10px;
+    /* text-align: center;*/
+    /* align-items: center;  */
+    /* gap: 10px; */
+    padding : 17px;
+   
+   
 `
 
 export const MessageContainerStyle = styled.div `
@@ -302,9 +289,9 @@ export const MessageContainerStyle = styled.div `
 
 export const MessageInputFieldContainer = styled.div `
     box-sizing : border-box;
-    margin: 12px;
-    background-color : #cfd3ff;
-    border-radius : 5px;
+    margin: 30px;
+    background-color : #dddffe;
+    border-radius : 30px;
 `;
 
 export const MessageInput = styled.input `
@@ -314,12 +301,12 @@ export const MessageInput = styled.input `
     color: #151515;
     font-family: 'Inter';
     box-sizing: border-box;
-    font-size: 18px;
+    font-size: 15px;
     font-weight: bold;
     width: 30rem;
-    padding: 4px;
     margin: 4px 0;
-
+    resize: none;
+    padding : 10px;
 
   
 `;
@@ -345,6 +332,24 @@ export const AvatarStyle = styled.div `
     background-color: #1e1b34;
     border-radius: 50%;
 
+`
+export const DivStyle = styled.div`
+    display: flex;
+    margin-left: 50px;
+    gap: 8px;
+  
+  
+    & h1{
+        font-size : 9px;
+        font-weight: bold;
+    }
+`
+
+export const OnlineStyle = styled.div`
+    width: 9px;
+    height: 9px;
+    background-color: green;
+    border-radius: 50%;
 `
 
 
@@ -377,5 +382,7 @@ export const  MessageItemContent = styled.div `
       padding : 3px;
 
 `;
+
+
 
 export const Dark = '#131313'

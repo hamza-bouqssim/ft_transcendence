@@ -16,9 +16,9 @@ const engine = Engine.create({
 });
 
 @WebSocketGateway({
-	cors: {
-		origin: '*',
-	},
+	origin:['http://localhost:3000'],
+	credentials : true,
+	namespace: '/game',
 })
 export class GameGateway implements OnModuleInit {
 	@WebSocketServer()

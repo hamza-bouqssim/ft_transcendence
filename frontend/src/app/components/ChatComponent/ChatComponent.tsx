@@ -4,7 +4,7 @@ import { ConversationTypes, User } from "@/app/utils/types";
 import { useRouter } from "next/navigation";
 import { FC, useState, useEffect } from "react";
 import "./style.css"
-import { getAuthUser } from "@/app/utils/api";
+import { getAuthUser, getConversation } from "@/app/utils/api";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/app/store";
 import { fetchConversationThunk } from "@/app/store/conversationSlice";
@@ -19,14 +19,17 @@ const ChatComponnent  = () =>{
     const [ user, setUser] = useState<User | undefined>();
     const [loading, setLoading] = useState<boolean>(false);
 	const controller = new AbortController();
-	const conversations =[];
+	// const conversations = useSelector((state: RootState) => state.conversation.conversations
+	//   );
 
-	
+	  const [conversation , setConversation] = useState<ConversationTypes[]>([]);
+
   
 	  useEffect(() => {
-		  console.log('Fetching Conversations in ConversationPage');
-		  dispatch(fetchConversationThunk());
-		}, []);
+		getConversation().then(({data}) =>{
+			setConversation(data);
+		}).catch((err)=> console.log(err))
+	}, [conversation])
 
     useEffect(() => {
         setLoading(true);
@@ -39,7 +42,7 @@ const ChatComponnent  = () =>{
     const getDisplayUser = (conversation : ConversationTypes) => {
 		let test;
 		// if(user){
-			const userId = "souka";
+			const userId = user?.display_name;
 			
 			if(conversation.sender?.display_name != userId)
 			{
@@ -68,10 +71,10 @@ const ChatComponnent  = () =>{
 
 	
     return (
-        <Conversation>
+        <div className="text-black  my-10 h-[calc(100%-200px)] overflow-auto ">
 
 				<ConversationSideBarContainer>
-					{ conversations && conversations?.map(function(elem){
+					{conversation.map(function(elem){
 						function handleClick()
 						{
 							router.push(`/dashboard/chat/${elem.id}`)
@@ -88,7 +91,7 @@ const ChatComponnent  = () =>{
 						)
 					}) }
 				</ConversationSideBarContainer>
-			</Conversation>
+			</div>
     )
 }
 
