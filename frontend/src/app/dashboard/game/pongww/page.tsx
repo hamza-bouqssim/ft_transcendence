@@ -1,5 +1,7 @@
 "use client";
+import SideBar from "@/app/components/SideBar";
 import { useState } from "react";
+import TopRightBar from "@/app/components/TopRightBar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
 	faToggleOn,
@@ -11,7 +13,7 @@ import {
 	faVolumeLow,
 	faGauge,
 } from "@fortawesome/free-solid-svg-icons";
-import Pong from "./Pong";
+import Pong from "./utils/Pong";
 
 const Game = () => {
 	const [change, setChange] = useState<{
@@ -139,6 +141,121 @@ const Game = () => {
 						/>
 					</div>
 				</Pong>
+
+				{/* Game Settings */}
+				{/* <div className="relative hidden h-[520px] w-[350px] flex-col items-center gap-6 rounded-3xl border-2 border-solid border-[#CFF4FF] py-16 font-['Whitney_Semibold'] text-lg shadow-[0_0_50px_2px_var(--blue-color)] lg:flex">
+					<span className="absolute -top-5 left-[50%] -translate-x-[50%] rounded-3xl border-b-2 border-solid border-[#CFF4FF] bg-[--purple-color] px-7 py-2 font-['Whitney_Bold'] text-2xl font-bold shadow-[0_0_50px_2px_var(--blue-color)]">
+						Settings
+					</span>
+
+					<div className="relative flex w-[70%] items-center justify-between border-b-2 border-solid border-[#CFF4FF] p-1">
+						<span>Sounds</span>
+						<FontAwesomeIcon
+							icon={faToggleOn}
+							className={`cursor-pointer text-3xl text-[--pink-color] ${
+								gameValues.toggle ? "hidden" : "block"
+							}`}
+							onClick={() =>
+								setGameValues({
+									...gameValues,
+									toggle: !gameValues.toggle,
+									silenced: !gameValues.silenced,
+								})
+							}
+						/>
+						<FontAwesomeIcon
+							icon={faToggleOff}
+							className={`cursor-pointer text-3xl ${
+								gameValues.toggle ? "block" : "hidden"
+							}`}
+							onClick={() =>
+								setGameValues({
+									...gameValues,
+									toggle: !gameValues.toggle,
+									silenced: !gameValues.silenced,
+								})
+							}
+						/>
+					</div>
+					<div className="relative flex w-[70%] items-center justify-between border-b-2 border-solid border-[#CFF4FF] p-1">
+						<span>Ball Color</span>
+						<input
+							type="color"
+							name="color"
+							value={gameValues.ballColor}
+							className="h-8 w-8 cursor-pointer bg-transparent"
+							onChange={(e) =>
+								setGameValues({
+									...gameValues,
+									ballColor: e.currentTarget.value,
+								})
+							}
+						/>
+					</div>
+					<div className="relative flex w-[70%] items-center justify-between border-b-2 border-solid border-[#CFF4FF] p-1">
+						<span>Ball Speed</span>
+						<input
+							type="range"
+							name="range"
+							value={gameValues.ballSpeed}
+							max={8}
+							step={2}
+							className="w-[50%] cursor-pointer bg-transparent accent-[--pink-color] focus:accent-[--pink-color]"
+							onChange={(e) => {
+								if (parseInt(e.currentTarget.value) < 2)
+									e.currentTarget.value = "2";
+								else {
+									setGameValues({
+										...gameValues,
+										ballSpeed: parseInt(e.currentTarget.value),
+									});
+								}
+							}}
+						/>
+					</div>
+					<div className="relative flex w-[70%] items-center justify-between border-b-2 border-solid border-[#CFF4FF] p-1">
+						<span>Paddle Color</span>
+						<input
+							type="color"
+							name="color"
+							value={gameValues.paddleColor}
+							className="h-8 w-8 cursor-pointer bg-transparent"
+							onChange={(e) =>
+								setGameValues({
+									...gameValues,
+									paddleColor: e.currentTarget.value,
+								})
+							}
+						/>
+					</div>
+					<div className="relative mt-2 w-[70%] text-center">
+						<span className="inline-block text-center text-[12.5px] text-[#FF5269]">
+							note: This button works only in{" "}
+							<span className="text-[#4FD6FF]">BOT mode</span>.
+						</span>
+						<button
+							className={`w-full rounded-xl border-b-2 border-solid border-[#CFF4FF] ${
+								gameValues.button ? "bg-[#FF5269]" : "bg-[#4FD6FF]"
+							} py-1 shadow-[0_0_50px_2px_var(--blue-color)]`}
+							onClick={() =>
+								setGameValues({
+									...gameValues,
+									button: !gameValues.button,
+									paused: !gameValues.paused,
+								})
+							}
+						>
+							{gameValues.button ? "RESUME" : `PAUSE`}
+						</button>
+					</div>
+					<div className="absolute bottom-16 w-[70%] text-center">
+						<button
+							className={`w-full rounded-xl border-b-2 border-solid border-[#CFF4FF] bg-[--purple-color] py-1 shadow-[0_0_50px_2px_var(--blue-color)] duration-300 ease-in-out hover:bg-[--pink-color]`}
+						>
+							EXIT
+						</button>
+					</div>
+				</div> */}
 			</div>
 		</section>
 	);

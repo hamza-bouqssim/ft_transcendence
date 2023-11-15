@@ -1,10 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import PlayerScore from "@/app/components/PlayerScore";
 import Matter from "matter-js";
+import PongGame from "../classes/PongGame";
 import { io } from "socket.io-client";
-import Ball from "./classes/Ball";
-import Paddle from "./classes/Paddle";
-import PongGame from "./classes/PongGame";
 
 const Pong = (props: any) => {
 	const socket = io("http://localhost:8000");
@@ -33,10 +31,17 @@ const Pong = (props: any) => {
 	});
 
 	useEffect(() => {
-		const pong = new PongGame(parentCanvasRef.current!);
-		pong.moveBotPaddle();
-		pong.movePaddle();
+		socket.on("connect", () => console.log("Client Connected!"));
+		// socket.emit("movePaddle", () => {});
+		// socket.on("reply", (payload: any) => alert(payload.mssj));
+	}, []);
 
+	useEffect(() => {
+		if (socket) {
+			const pong = new PongGame(parentCanvasRef.current!, socket);
+			pong.moveBotPaddle();
+			pong.movePaddle();
+		}
 	}, []);
 
 	return (
@@ -48,25 +53,6 @@ const Pong = (props: any) => {
 				score={score.leftScore}
 				playerBgColor={props.paddleColor}
 			/>
-			{/* <div className="flex h-[22%] w-full items-center justify-between bg-red-400 lg:px-10 lg:py-4 min-[1750px]:h-full">
-				<PlayerScore
-					flag="left"
-					name="hamzaBouQssi"
-					username="@hbouqssi"
-					score={score.leftScore}
-					playerBgColor={props.paddleColor}
-				/>
-				<div className="font-['Whitney_Bold'] text-3xl md:text-4xl min-[1750px]:text-6xl">
-					:
-				</div>
-				<PlayerScore
-					flag="right"
-					name="hamzaBouQssi"
-					username="@hbouqssi"
-					score={score.rightScore}
-					playerBgColor={"#4FD6FF"}
-				/>
-			</div> */}
 			<div
 				className="h-full w-[560px] shadow-[0_0_50px_2px_var(--blue-color)] min-[375px]:h-[250px] min-[490px]:h-[300px] min-[600px]:h-[360px] min-[660px]:h-[400px] md:h-[420px] lg:h-[440px] min-[1750px]:h-full"
 				ref={parentCanvasRef}

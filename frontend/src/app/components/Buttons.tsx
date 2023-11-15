@@ -21,7 +21,7 @@ export const GoogleSignInButton = () => {
 			await loginGoogle();
 		} catch (err) {
 			alert("failed to login");
-			console.log(err);
+			// console.log(err);
 		}
 	};
 

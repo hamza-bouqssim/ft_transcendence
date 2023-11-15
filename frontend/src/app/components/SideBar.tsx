@@ -22,7 +22,6 @@ type Change = {
 const SideBar = (props: Change) => {
 	const ulRef = useRef<HTMLUListElement>(null);
 
-
 	const [isLoggedOut, setIsLoggedOut] = useState<boolean>(false);
 
 	const messageBox = (): boolean => {
@@ -47,47 +46,24 @@ const SideBar = (props: Change) => {
 
 	return (
 		<aside
-			className={` z-20 h-full  bg-gradient-to-b from-[#2E2F54] via-[#3B5282] to-[#2E2F54]  text-white duration-300 ease-in-out flex flex-col items-center justify-between`}
+			className={`z-20 flex h-full flex-col items-center justify-between bg-gradient-to-b from-[#2E2F54] via-[#3B5282] to-[#2E2F54] text-white duration-300 ease-in-out`}
 		>
-			<ul
-				className=" h-full  font-bold"
-				ref={ulRef}
-			>
+			<ul className=" h-full  font-bold" ref={ulRef}>
 				{/* <FontAwesomeIcon
 					icon={faChevronDown}
 					className={`fixed left-2 top-5 cursor-pointer rounded-[50%] bg-[--pink-color] p-3 duration-200 ease-in-out hover:bg-[--purple-color] 
 				${props.sideBar ? "left-[230px] rotate-[-270deg]" : "rotate-[270deg]"}`}
 					onClick={props.onClick}
 				/> */}
-				<ListItem
-					icon={faHouse}
-					additionalStyle=""
-					spanText="Home"
-					
-				/>
+				<ListItem icon={faHouse} additionalStyle="" spanText="Home" />
 				<Link href={"/dashboard/chat"}>
-				<ListItem
-					icon={faComment}
-					additionalStyle=""
-					spanText="Chat"
-					
-				/>
+					<ListItem icon={faComment} additionalStyle="" spanText="Chat" />
 				</Link>
 				<Link href={"/dashboard/game"}>
-					<ListItem
-						icon={faGamepad}
-						additionalStyle=""
-						spanText="Game"
-						
-					/>
+					<ListItem icon={faGamepad} additionalStyle="" spanText="Game" />
 				</Link>
 				<Link href={"/dashboard/settings"}>
-					<ListItem
-						icon={faGear}
-						additionalStyle=""
-						spanText="Settings"
-						
-					/>
+					<ListItem icon={faGear} additionalStyle="" spanText="Settings" />
 				</Link>
 			</ul>
 			<ul>
@@ -101,7 +77,6 @@ const SideBar = (props: Change) => {
 						icon={faRightFromBracket}
 						additionalStyle=" w-full"
 						spanText="LogOut"
-						
 					/>
 				</Link>
 			</ul>

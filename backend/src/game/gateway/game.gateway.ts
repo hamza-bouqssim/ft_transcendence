@@ -5,148 +5,232 @@ import {
 	WebSocketServer,
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
-import Matter from 'matter-js';
-// import Ball from './classes/Ball';
-// import Paddle from './classes/Paddle';
-import { Body, OnModuleInit } from '@nestjs/common';
+import { OnModuleInit } from '@nestjs/common';
+import { Bodies, Composite, Engine, Runner, Body } from 'matter-js';
 
-// const Bodies = Matter.Bodies;
-// const Render = Matter.Render;
-// const Engine = Matter.Engine;
-// const Runner = Matter.Runner;
-// const Composite = Matter.Composite;
-
-// const engine = Engine.create();
-// const runner = Runner.create();
+const engine = Engine.create({
+	gravity: {
+		x: 0,
+		y: 0,
+	},
+});
 
 @WebSocketGateway({
 	cors: {
-		origin: ['http://localhost:3000'],
+		origin: '*',
 	},
 })
 export class GameGateway implements OnModuleInit {
 	@WebSocketServer()
 	server: Server;
 
-	private canvasW = 550;
-	private canvasH = 836;
+	private canvasWidth: number = 560;
+	private canvasHeight: number = 836;
+	private ball: any;
+	private topPaddle: any;
+	private bottomPaddle: any;
+	private movingRight: boolean = false;
+	private movingLeft: boolean = false;
+	private posPaddleX = this.canvasWidth / 2;
+	private paddleW = 170;
 
-	// constructor(
-	// 	private ball: Ball,
-	// 	private rightPaddle: Paddle,
-	// 	private leftPaddle: Paddle,
-	// ) {}
+	private pong: any;
+
+	constructor() {
+		this.handlePaddleMove();
+		// console.log("cons")
+	}
 
 	onModuleInit() {
 		this.server.on('connection', (socket) => {
 			console.log(socket.id);
-			console.log('a client connected!');
+			console.log('A Pong client connected!');
 		});
-		this.server.on('Position', (payload) => {
-			console.log(payload);
-		});
+		this.handleLaunchGame();
 	}
 
-	// @SubscribeMessage('setDefaultPosition')
-	// emitDefaultPosition() {
-	// 	this.server.emit('defaultPosition', {
-	// 		x: 120,
-	// 		y: 120,
-	// 	});
+	handleLaunchGame() {
+		// Create Ball:
+		this.ball = Bodies.circle(this.canvasWidth / 2, this.canvasHeight / 2, 15, {
+			label: 'ball',
+			render: {
+				fillStyle: '#FFF',
+			},
+			frictionAir: 0,
+			friction: 0,
+			inertia: Infinity,
+			restitution: 1,
+		});
+		Body.setVelocity(this.ball, {
+			x: 8,
+			y: 8,
+		});
+
+		// Create Two Paddles:
+		this.topPaddle = Bodies.rectangle(this.canvasWidth / 2, 30, 170, 15, {
+			label: 'topPaddle',
+			render: {
+				fillStyle: '#4FD6FF',
+			},
+			isStatic: true,
+			chamfer: { radius: 10 },
+		});
+		this.bottomPaddle = Bodies.rectangle(
+			this.canvasWidth / 2,
+			this.canvasHeight - 30,
+			170,
+			15,
+			{
+				label: 'bottomPaddle',
+				render: {
+					fillStyle: '#FF5269',
+				},
+				isStatic: true,
+				chamfer: { radius: 10 },
+			},
+		);
+
+		// Create Two Boundies:
+		const topRect = Bodies.rectangle(
+			this.canvasWidth / 2,
+			0,
+			this.canvasWidth,
+			20,
+			{
+				render: {
+					fillStyle: 'red',
+				},
+				isStatic: true,
+			},
+		);
+
+		const bottomRect = Bodies.rectangle(
+			this.canvasWidth / 2,
+			this.canvasHeight,
+			this.canvasWidth,
+			20,
+			{
+				render: {
+					fillStyle: 'yellow',
+				},
+				isStatic: true,
+			},
+		);
+
+		const rightRect = Bodies.rectangle(
+			this.canvasWidth,
+			this.canvasHeight / 2,
+			20,
+			this.canvasHeight,
+			{
+				label: 'rightRect',
+				render: {
+					fillStyle: '#CFF4FF',
+				},
+				isStatic: true,
+			},
+		);
+
+		const leftRect = Bodies.rectangle(
+			0,
+			this.canvasHeight / 2,
+			20,
+			this.canvasHeight,
+			{
+				label: 'leftRect',
+				render: {
+					fillStyle: '#CFF4FF',
+				},
+				isStatic: true,
+			},
+		);
+
+		Composite.add(engine.world, [
+			this.ball,
+			this.topPaddle,
+			this.bottomPaddle,
+			rightRect,
+			leftRect,
+			bottomRect,
+			topRect,
+		]);
+
+		// run the engine:
+		Runner.run(Runner.create(), engine);
+
+		const gameInterval = setInterval(() => {
+			let ballVelocity = engine.world.bodies[0].velocity;
+			this.server.emit('updateBallVelocity', ballVelocity);
+		}, 15);
+	}
+
+	@SubscribeMessage('keyevent')
+	handleKeyDown(@MessageBody() data: any) {
+		if (data.state === 'keydown') {
+			if (data.key === 'd' || data.key === 'ArrowRight')
+				this.movingRight = true;
+			else if (data.key === 'a' || data.key === 'ArrowLeft')
+				this.movingLeft = true;
+		} else {
+			if (data.key === 'd' || data.key === 'ArrowRight')
+				this.movingRight = false;
+			else if (data.key === 'a' || data.key === 'ArrowLeft')
+				this.movingLeft = false;
+		}
+	}
+
+	handlePaddleMove() {
+		const moveInterval = setInterval(() => {
+			let stepX = 0;
+			const paddleWidth = 170;
+
+			if (this.movingLeft) {
+				stepX = this.posPaddleX - 13;
+				if (stepX <= this.paddleW / 2) {
+					stepX = this.paddleW / 2;
+				}
+			} else if (this.movingRight) {
+				stepX = this.posPaddleX + 13;
+				if (stepX >= this.canvasWidth - this.paddleW / 2) {
+					stepX = this.canvasWidth - this.paddleW / 2;
+				}
+			}
+			if (stepX != 0) {
+				this.posPaddleX = stepX;
+				this.server.emit('updatePaddlePosition', {
+					paddleLabel: 'bottomPaddle',
+					xPosition: stepX,
+				});
+			}
+		}, 20);
+	}
+
+	// handlePaddleMove() {
+	// 	const moveInterval = setInterval(() => {
+	// 		let stepX = 0;
+	// 		const paddleWidth = 170;
+
+	// 		if (this.movingLeft) {
+	// 			stepX = this.bottomPaddle.position.x - 11;
+	// 			if (stepX <= paddleWidth / 2) {
+	// 				stepX = paddleWidth / 2;
+	// 			}
+	// 		} else if (this.movingRight) {
+	// 			stepX = this.bottomPaddle.position.x + 11;
+	// 			if (stepX >= this.canvasWidth - paddleWidth / 2) {
+	// 				stepX = this.canvasHeight - paddleWidth / 2;
+	// 			}
+	// 		}
+	// 		if (stepX != 0) {
+	// 			Body.setPosition(this.bottomPaddle, {
+	// 				x: stepX,
+	// 				y: this.bottomPaddle.position.y,
+	// 			});
+	// 			this.server.emit('updatePaddlePosition', {
+	// 				paddleLabel: 'bottomPaddle',
+	// 				xPosition: stepX,
+	// 			});
+	// 		}
+	// 	}, 20);
 	// }
-
-	@SubscribeMessage('setDefaultPosition')
-	emitDefaultPosition(@MessageBody() body: any) {
-		console.log(body);
-		// this.server.emit('defaultPosition', {
-		// 	ballCords: {
-		// 		x: 120,
-		// 		y: 120,
-		// 	},
-		// 	paddlesCords: {
-		// 		rightPaddleCord: {
-		// 			x: 120,
-		// 			y: 120,
-		// 		},
-		// 		leftPaddleCord: {
-		// 			x: 120,
-		// 			y: 120,
-		// 		},
-		// 	},
-		// });
-	}
-
-	// If the ball reaches the canvas boundary, reverse its vertical velocity
-	// move = (render: any): void => {
-	// 	if (
-	// 		this.ball.body.position.y + this.ball.body.circleRadius - 1 >=
-	// 			render.canvas.height ||
-	// 		this.ball.body.position.y - this.ball.body.circleRadius <= 0
-	// 	)
-	// 		this.ball.yVelocity = -this.ball.yVelocity;
-	// 	if (
-	// 		this.ball.body.position.x > render.canvas.width ||
-	// 		this.ball.body.position.x < 0
-	// 	) {
-	// 		this.ball.body.position.x < 0
-	// 			? this.rightPaddle.score++
-	// 			: this.leftPaddle.score++;
-	// 		this.ball.resetPosition();
-	// 		this.leftPaddle.resetPosition();
-	// 		this.rightPaddle.resetPosition();
-	// 	}
-	// 	this.ball.setBallSpeed();
-	// };
-
-	// delete two this methods and make just one is better
-	// isCollidedLeft = (): boolean => {
-	// 	if (
-	// 		this.ball.body.position.x - this.ball.body.circleRadius <=
-	// 			this.leftPaddle.body.position.x + this.leftPaddle.width / 2 &&
-	// 		this.ball.body.position.y >=
-	// 			this.leftPaddle.body.position.y - this.leftPaddle.height / 2 &&
-	// 		this.ball.body.position.y <=
-	// 			this.leftPaddle.body.position.y + this.leftPaddle.height / 2
-	// 	) {
-	// 		this.ball.isSilenced
-	// 			? this.ball.sound.leftPaddleSound.pause()
-	// 			: this.ball.sound.leftPaddleSound.play();
-	// 		return true;
-	// 	} else if (this.ball.body.position.x < this.leftPaddle.body.position.x) {
-	// 		this.ball.isSilenced
-	// 			? this.ball.sound.win.pause()
-	// 			: this.ball.sound.win.play();
-	// 	}
-	// 	return false;
-	// };
-
-	// isCollidedRight = (): boolean => {
-	// 	if (
-	// 		this.ball.body.position.x + this.ball.body.circleRadius >=
-	// 			this.rightPaddle.body.position.x - this.rightPaddle.width / 2 &&
-	// 		this.ball.body.position.y >=
-	// 			this.rightPaddle.body.position.y - this.rightPaddle.height / 2 &&
-	// 		this.ball.body.position.y <=
-	// 			this.rightPaddle.body.position.y + this.rightPaddle.height / 2
-	// 	) {
-	// 		this.ball.isSilenced
-	// 			? this.ball.sound.rightPaddleSound.pause()
-	// 			: this.ball.sound.rightPaddleSound.play();
-	// 		return true;
-	// 	} else if (
-	// 		this.ball.body.position.x + this.ball.body.circleRadius >
-	// 		this.rightPaddle.body.position.x
-	// 	) {
-	// 		this.ball.isSilenced
-	// 			? this.ball.sound.win.pause()
-	// 			: this.ball.sound.win.play();
-	// 	}
-	// 	return false;
-	// };
-
-	// checkBallHit = (): void => {
-	// 	if (this.isCollidedLeft() || this.isCollidedRight()) {
-	// 		this.ball.xVelocity = -this.ball.xVelocity;
-	// 	}
-	// };
 }

@@ -20,16 +20,24 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { RoomsModule } from './Rooms/rooms.module';
 
 @Module({
-  imports: [
-    PrismaClient,
-    AuthModule, 
-    JwtModule.register({
-      secret: 'my-secret'
-    }),
-    RoomsModule,
-    PassportModule.register({session: true}), UserModule, ConversationsModule, ParticipentModule, MessagesModule, FriendRequestModule, GameModule, GatewayModule, EventEmitterModule.forRoot()],
-  controllers: [AppController, UserController],
-  providers: [AppService, UserService, PrismaService],
-  
+	imports: [
+		PrismaClient,
+		AuthModule,
+		JwtModule.register({
+			secret: 'my-secret',
+		}),
+		PassportModule.register({ session: true }),
+		UserModule,
+		ConversationsModule,
+		ParticipentModule,
+		MessagesModule,
+		FriendRequestModule,
+		GameModule,
+		GatewayModule,
+		EventEmitterModule.forRoot(),
+		GameModule,
+	],
+	controllers: [AppController, UserController],
+	providers: [AppService, UserService, PrismaService],
 })
 export class AppModule {}

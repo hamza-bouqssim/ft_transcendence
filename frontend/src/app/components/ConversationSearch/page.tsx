@@ -1,4 +1,4 @@
-import styles from "./index.module.scss"
+import styles from "./index.module.scss";
 import { MdSearch } from "react-icons/md";
 
 const ConversationSearch = () => {
