@@ -17,17 +17,8 @@ const ListFriends = () => {
 
 
     const [Friends, setFriends] = useState<FriendsTypes[]>([]);
-    const [change, setChange] = useState<{
-		sideBar: boolean;
-		chatBox: boolean;
-		menu: boolean;
-	}>({
-		sideBar: false,
-		chatBox: false,
-		menu: false,
-	});
+   
 
-	const changeValues = { change, setChange };
 
     useEffect(() => {
           getAllFriends()
@@ -45,7 +36,7 @@ const ListFriends = () => {
       const handleFunction = (friends : FriendsTypes) =>{
 
         let display_name ;
-        display_name  = friends.friends.display_name;
+        display_name  = friends.display_name;
         return display_name;
 
       }
@@ -56,18 +47,6 @@ const ListFriends = () => {
 
 				<ConversationSideBarContainer>
 					{Friends.map(function(elem){
-						// const clickFunction = async  (data : CreateConversationParams) => {
-                        //     console.log(data);
-                        //     // dispatch(createConversationThunk(data));
-                          
-                        //       dispatch(createConversationThunk(data)).then(()=>{
-                        //         console.log("done");
-                        //       }).catch((err)=>{
-                        //        console.log(err); 
-                        //       })
-                  
-                  
-                        //   }
 						return(
 							<ConversationSideBarItem key={elem.id}>
 								<div className="avatar"></div>

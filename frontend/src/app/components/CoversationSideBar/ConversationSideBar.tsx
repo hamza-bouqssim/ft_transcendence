@@ -88,14 +88,14 @@ const CoversationSideBar  = () => {
 					onClick={()=>{setSelectUsers("allFriends")}} className={`${(selectUsers ==='allFriends') ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-1/2`}>Friends
 				</button>
 				<button
-					onClick={()=>{setSelectUsers("EnAttent")}} className={`${(selectUsers ==='EnAttent') ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-1/2`}>OnHold
+					onClick={()=>{setSelectUsers("EnAttent")}} className={`${(selectUsers ==='EnAttent') ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-1/2`}>Pending
 				</button>
 				<button
 					onClick={()=>{setSelectUsers("Bloques")}} className={`${(selectUsers ==='Bloques') ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-1/2`}>Bloques
 				</button>
 			</div>}
 			{/* {newRooms && (selectUsers === 'online' ? <div><OnlineFriends/></div> : <div><FriendsBloque/></div> )} */}
-			{!newRooms && (selectRome === 'chats' && selectUsers === 'Chat' ? <ChatComponnent/> : selectRome === 'chats' && selectUsers === 'online' ? <OnlineFriends  /> : selectRome === 'chats' && selectUsers === 'allFriends' ? <ListFriends/> : <GroupsManagement />)}
+			{!newRooms && (selectRome === 'chats' && selectUsers === 'Chat' ? <ChatComponnent/> : selectRome === 'chats' && selectUsers === 'online' ? <OnlineFriends  /> : selectRome === 'chats' && selectUsers === 'allFriends' ? <ListFriends/> : selectRome === 'chats' && selectUsers === 'EnAttent' ? <SendRequest/> : selectRome === 'chats' && selectUsers === 'Bloques' ? <FriendsBloque/> : <GroupsManagement />)}
 			{/* {newRooms  &&   (selectRome === 'chats' && selectUsers === 'Chat'   ? <div className="text-black">
 				<ChatComponnent conversations={conversations}/>
 			

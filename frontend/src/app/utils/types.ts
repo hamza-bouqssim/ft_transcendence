@@ -13,6 +13,11 @@ export type UserCredentialsParams = {
     password_hashed: string;
 }
 
+export type RequestTypes = {
+    id : string;
+    user : User;
+}
+
 export type User = {
     id: string;
     email: string;
@@ -39,10 +44,13 @@ export type FriendsTypes = {
     id : string;
     username : string;
     display_name: string;
-    friends : User;
 }
 
-
+export type BloquesTypes = {
+    id : string;
+    display_name : string;
+    userBloque : User;
+}
 
 
 export type MessageType = {

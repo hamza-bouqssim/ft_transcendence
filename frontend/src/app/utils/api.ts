@@ -28,3 +28,7 @@ export const postNewMessage = async (data : CreateMessageParams) => axios.post(`
 // get all friends
 
 export const getAllFriends = () => axios.get(`http://localhost:8000/user/my-friends`, config);
+
+export const getRequest = () => axios.get(`http://localhost:8000/user/pending-requests`, config);
+
+export const getBloques = () => axios.get(`http://localhost:8000/user/blocked-friends`, config);
