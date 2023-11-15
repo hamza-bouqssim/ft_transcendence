@@ -47,10 +47,10 @@ const SideBar = (props: Change) => {
 
 	return (
 		<aside
-			className={` z-20 h-full  bg-gradient-to-b from-[#2E2F54] via-[#3B5282] to-[#2E2F54]  text-white duration-300 ease-in-out flex flex-col items-center justify-between`}
+			className={` absolute bottom-0 left-0 right-0 md:relative z-20 md:h-full  bg-gradient-to-b from-[#2E2F54] via-[#3B5282] to-[#2E2F54]  text-white duration-300 ease-in-out flex md:flex-col md:items-center justify-between`}
 		>
 			<ul
-				className=" h-full  font-bold"
+				className=" h-full w-full md:w-auto flex md:flex-col justify-between md:justify-start font-bold"
 				ref={ulRef}
 			>
 				{/* <FontAwesomeIcon
@@ -59,12 +59,15 @@ const SideBar = (props: Change) => {
 				${props.sideBar ? "left-[230px] rotate-[-270deg]" : "rotate-[270deg]"}`}
 					onClick={props.onClick}
 				/> */}
+				
+				<Link href={"/dashboard"}>
 				<ListItem
 					icon={faHouse}
 					additionalStyle=""
 					spanText="Home"
 					
 				/>
+				</Link>
 				<Link href={"/dashboard/chat"}>
 				<ListItem
 					icon={faComment}
@@ -89,9 +92,24 @@ const SideBar = (props: Change) => {
 						
 					/>
 				</Link>
+				<Link
+					className="block md:hidden"
+					href={"/"}
+					onClick={(e) => {
+						if (!messageBox()) e.preventDefault();
+					}}
+				>
+					<ListItem
+						icon={faRightFromBracket}
+						additionalStyle=" w-full"
+						spanText="LogOut"
+						
+					/>
+				</Link>
 			</ul>
 			<ul>
 				<Link
+				className="md:block hidden"
 					href={"/"}
 					onClick={(e) => {
 						if (!messageBox()) e.preventDefault();

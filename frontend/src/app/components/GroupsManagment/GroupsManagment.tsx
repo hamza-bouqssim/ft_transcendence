@@ -122,7 +122,7 @@ interface ConversationTypes {
             <div>{data.lastDate}</div>
           </div>
         ))}
-        <div className="h-16">
+        <div className="md:h-16 h-28">
 
         </div>
       </div>

@@ -173,10 +173,10 @@ const CoversationSideBar = () => {
 			{!newRooms &&  pathname.includes('groups') && <GroupsManagement/>}
 			{newRooms && (pathname.includes('chat')? <div className="text-black">Addchat</div> : <CreatGroups ></CreatGroups> )}
 			{!newRooms ?
-				<button onClick={()=>{setNewRooms(true)}} className="absolute right-5 p-4 bottom-5 bg-[#5B8CD3] rounded-full "><IoMdAdd />
+				<button onClick={()=>{setNewRooms(true)}} className="absolute right-5 p-4 bottom-20 md:bottom-5 bg-[#5B8CD3] rounded-full "><IoMdAdd />
 				</button>
 				:
-				<div className="absolute right-5  bottom-5 flex items-center">
+				<div className="absolute right-5 bottom-20 md:bottom-5  flex items-center">
 					<button onClick={()=>{setNewRooms(false)}} className="text-[#5B8CD3] mr-4">Cancel</button>
 					<button onClick={()=>{setNewRooms(false)}} className=" bg-[#5B8CD3] p-4 rounded-full "><FaCheck />
 					</button>
