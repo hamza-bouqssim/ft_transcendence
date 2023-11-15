@@ -241,10 +241,9 @@ export const TextField = styled.textarea`
 export const MessagePanelStyle = styled.div `
 
     background : inherit;
-    height : calc(100% - 70px);
-    box-sizing : border-box;
-    position : relative;
-    display: flex;
+    height : 100%;
+    width: 60%;
+
 `;
 export const MessagePannelBody = styled.div `
 
@@ -252,7 +251,6 @@ export const MessagePannelBody = styled.div `
     height: 100%;
     display: flex;
     flex-direction : column;
-
     padding: 32px 32px 0 32px;
     padding-top: 0;
     box-sizing: border-box;
@@ -267,7 +265,7 @@ export const MessagePannelBody = styled.div `
 `
 
 export const MessagePannelHeaderStyle = styled.header `
-    background-color: #E0E3FF;
+    background-color: #F2F3FD;
     border-radius: 50px;
     height: 70px;
     box-sizing: border-box;
@@ -284,7 +282,6 @@ export const MessagePannelHeaderStyle = styled.header `
 `
 
 export const MessageContainerStyle = styled.div `
-    height: 100%;
     box-sizing: border-box;
     padding: 6px 0;
     display: flex;
@@ -311,7 +308,7 @@ export const MessageInputFieldContainer = styled.div `
 `;
 
 export const MessageInput = styled.input `
-    background-color: inherit;
+    background-color: #F2F3FD;
     outline: none;
     border: none;
     color: #151515;
@@ -319,11 +316,10 @@ export const MessageInput = styled.input `
     box-sizing: border-box;
     font-size: 18px;
     font-weight: bold;
-
     width: 30rem;
-    padding: 0;
+    padding: 4px;
     margin: 4px 0;
-    resize: none;
+
 
   
 `;
