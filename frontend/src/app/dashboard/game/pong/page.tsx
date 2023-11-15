@@ -48,28 +48,6 @@ const Game = () => {
 
 	return (
 		<section className="relative h-[100vh] min-h-[850px] py-4 text-white">
-			{/* <SideBar
-				sideBar={change.sideBar}
-				onClick={() =>
-					setChange({
-						...change,
-						sideBar: !change.sideBar,
-						chatBox: false,
-						menu: false,
-					})
-				}
-			/>
-			<TopRightBar
-				menu={change.menu}
-				onClick={() =>
-					setChange({
-						...change,
-						sideBar: false,
-						chatBox: false,
-						menu: !change.menu,
-					})
-				}
-			/> */}
 			<div className="fixed left-[50%] top-[50%] flex h-[700px] w-full max-w-[1600px] -translate-x-[50%] -translate-y-[50%] flex-col items-center justify-center px-4 py-8 lg:flex-row lg:items-end lg:justify-evenly min-[1750px]:h-[900px]">
 				<Pong
 					paused={gameValues.paused}
@@ -165,7 +143,7 @@ const Game = () => {
 				</Pong>
 
 				{/* Game Settings */}
-				<div className="relative hidden h-[520px] w-[350px] flex-col items-center gap-6 rounded-3xl border-2 border-solid border-[#CFF4FF] py-16 font-['Whitney_Semibold'] text-lg shadow-[0_0_50px_2px_var(--blue-color)] lg:flex">
+				{/* <div className="relative hidden h-[520px] w-[350px] flex-col items-center gap-6 rounded-3xl border-2 border-solid border-[#CFF4FF] py-16 font-['Whitney_Semibold'] text-lg shadow-[0_0_50px_2px_var(--blue-color)] lg:flex">
 					<span className="absolute -top-5 left-[50%] -translate-x-[50%] rounded-3xl border-b-2 border-solid border-[#CFF4FF] bg-[--purple-color] px-7 py-2 font-['Whitney_Bold'] text-2xl font-bold shadow-[0_0_50px_2px_var(--blue-color)]">
 						Settings
 					</span>
@@ -277,7 +255,7 @@ const Game = () => {
 							EXIT
 						</button>
 					</div>
-				</div>
+				</div> */}
 			</div>
 		</section>
 	);

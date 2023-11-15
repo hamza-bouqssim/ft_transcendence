@@ -23,7 +23,7 @@ const FriendsBloque = () =>{
 
       const handleFunction = (bloques : BloquesTypes) => {
             let ourBloques;
-            
+            console.log("bloques");
             ourBloques = bloques.display_name;
             return ourBloques;
 
