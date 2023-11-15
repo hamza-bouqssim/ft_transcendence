@@ -44,10 +44,10 @@ model User {
   player2                     Pong_match[]       @relation("player2")
   Member                      Member[]
   StateGame                   StateGame?
-  Achivment                   Achivment[]
+  Achievement                 Achievement[]
   MatchHistory1               Match_History[]    @relation("playerOne")
   MatchHistory2               Match_History[]    @relation("playerTow")
-  queue                       queue[]
+  queue                       Queue[]
 }
 
 model Friend {
@@ -104,9 +104,9 @@ model StateGame {
   user          User   @relation(fields: [user_id], references: [id])
 }
 
-model Achivment {
+model Achievement {
   id      String @id @default(uuid())
-  user_id String @unique
+  user_id String 
   content String
   type    String
   picture String
@@ -140,7 +140,7 @@ model Match_History {
   match           Pong_match @relation(fields: [matchId], references: [id])
 }
 
-model queue {
+model Queue {
   id        String   @id @default(uuid())
   userId    String   @unique
   user      User     @relation(fields: [userId], references: [id])
