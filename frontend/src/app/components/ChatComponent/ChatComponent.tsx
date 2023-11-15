@@ -4,7 +4,7 @@ import { ConversationTypes, User } from "@/app/utils/types";
 import { useRouter } from "next/navigation";
 import { FC, useState, useEffect } from "react";
 import "./style.css"
-import { getAuthUser } from "@/app/utils/api";
+import { getAuthUser, getConversation } from "@/app/utils/api";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/app/store";
 import { fetchConversationThunk } from "@/app/store/conversationSlice";
@@ -71,7 +71,7 @@ const ChatComponnent  = () =>{
 
 	
     return (
-        <Conversation>
+        <div className="text-black  my-10 h-[calc(100%-200px)] overflow-auto ">
 
 				<ConversationSideBarContainer>
 					{conversation.map(function(elem){
@@ -91,7 +91,7 @@ const ChatComponnent  = () =>{
 						)
 					}) }
 				</ConversationSideBarContainer>
-			</Conversation>
+			</div>
     )
 }
 

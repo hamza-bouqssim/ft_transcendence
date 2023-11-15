@@ -1,6 +1,6 @@
 "use client"
 import React from "react"
-import CoversationSideBar from "../../components/CoversationSideBar/page";
+import CoversationSideBar from "@/app/components/CoversationSideBar/ConversationSideBar";
 
 const CoversationPage = () =>
 {
