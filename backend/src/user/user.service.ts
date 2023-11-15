@@ -86,19 +86,60 @@ export class UserService {
             return updatedAvatar;
     }
 
-    async listFriends()
+    async listFriends(userId: string) {
+        const friendsAsUser = await this.prisma.friend.findMany({
+            where: {
+                user_id: userId,
+                status: 'ACCEPTED',
+            },
+            select: {
+                friends: { 
+                    select: {
+                        id: true,
+                        username: true,
+                        display_name: true,
+                        avatar_url: true,
+                    },
+                },
+            },
+        });
+    
+        const friendsAsFriend = await this.prisma.friend.findMany({
+            where: {
+                friend_id: userId,
+                status: 'ACCEPTED',
+            },
+            select: {
+                user: {
+                    select: {
+                        id: true,
+                        username: true,
+                        display_name: true,
+                        avatar_url: true,
+                    },
+                },
+            },
+        });
+
+        const allFriends = [
+            ...friendsAsUser.map(({ friends }) => friends),
+            ...friendsAsFriend.map(({ user }) => user),
+        ];
+        const uniqueFriends = Array.from(new Set(allFriends.map((friend) => friend.id)))
+            .map((id) => allFriends.find((friend) => friend.id === id));
+    
+        return uniqueFriends;
+    }
+    
+    
+    async pendingRequests(userId: string)
     {
-        return await this.prisma.friend.findMany({where: {status: 'ACCEPTED'}, select: {user: {select: {id: true, username: true, display_name: true, avatar_url:true}}}});
+        return await this.prisma.friend.findMany({where: { friend_id: userId, status: 'PENDING'}, select: {user: {select: {id: true, username: true, display_name: true, avatar_url:true}}}});
     }
 
-    async pendingRequests()
+    async blockedFriends(userId: string)
     {
-        return await this.prisma.friend.findMany({where: {status: 'PENDING'}, select: {user: {select: {id: true, username: true, display_name: true, avatar_url:true}}}});
-    }
-
-    async blockedFriends()
-    {
-        return await this.prisma.friend.findMany({where: {status: 'BLOCKED'}, select: {user: {select: {id: true, username: true, display_name: true, avatar_url:true}}}});
+        return await this.prisma.friend.findMany({where: {friend_id: userId, status: 'BLOCKED'}, select: {user: {select: {id: true, username: true, display_name: true, avatar_url:true}}}});
     }
     
     //------------SOUKAINA PART 
