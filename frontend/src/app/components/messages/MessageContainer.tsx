@@ -20,7 +20,7 @@ const MessageContainer  : FC<Props>  = ({messages}) => {
     }, [])
 
     return (
-    <MessageContainerStyle>
+    <div className="h-[calc(100%-121px)] overflow-auto py-3">
          {messages.map((m) =>(
             <MessageItemContainer key={m.id}>
                     <MessageItemAvatar/>
@@ -39,7 +39,7 @@ const MessageContainer  : FC<Props>  = ({messages}) => {
             </MessageItemContainer>
          ) )}
          
-    </MessageContainerStyle>
+    </div>
     )
 }
 

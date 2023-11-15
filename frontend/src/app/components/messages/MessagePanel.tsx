@@ -33,17 +33,19 @@ const MessagePanel : FC<Props> = ({messages, sendTypingStatus}) => {
         };
      
     return (
-        <>
-            <MessagePanelHeader/>
-                <MessagePanelStyle> 
-                    <MessagePannelBody>
+        <div className="p-2 md:p-6  h-full flex items-center w-full justify-between"> 
+                <div className="md:w-[60%] h-full w-full"> 
+                    <MessagePanelHeader/>
                     <MessageContainer messages={messages}/>
-                    <MessageInputField content= {content} setContent={setContent} sendMessage={sendMessage} sendTypingStatus={sendTypingStatus}/>
+                    <MessageInputField content= {content} setContent={setContent} sendMessage={sendMessage}/>
+                </div>
+            <div className="hidden md:block md:w-[40%]  pl-4  h-full ">
+                <div  className="bg-[#F2F3FD] w-full h-full rounded-2xl ">
 
-                    
-                </MessagePannelBody>
-                </MessagePanelStyle>
-        </>
+                </div>
+            </div>
+
+        </div>
     )
 }
 export  default MessagePanel;

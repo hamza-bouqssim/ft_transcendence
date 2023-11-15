@@ -1,5 +1,7 @@
-import { Controller, Get, UseGuards ,Post} from '@nestjs/common';
+import { Controller, Get,Body, Res,UseGuards ,Post} from '@nestjs/common';
 import { RoomsService } from './rooms.service';
+import { CreateChatRoom } from './dto/rooms.dto';
+
 
 
 @Controller("/rooms")
@@ -15,11 +17,16 @@ export class RoomsController {
 
   }
 
-  @Post("/creatRooms")
-  async creatRooms()
-  {
-
+  @Post("/createRooms")
+  async createRooms(@Body() createChatRoom: CreateChatRoom, @Res() res: any) {
+    try {
+      const chatRoom = await this.roomsService.creatRooms(createChatRoom);
+      return res.status(201).json({ message: 'Room created successfully', data: chatRoom });
+    } catch (error) {
+      return res.status(500).json({ error: error});
+    }
   }
+
 
   @Post("/updateRooms")
   async updateRooms()

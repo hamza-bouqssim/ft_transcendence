@@ -1,27 +1,94 @@
 import { IsNotEmpty, IsString } from "class-validator";
 
-export class AuthDto{
-    @IsString()
+
+export class RoomId{
     @IsNotEmpty()
-    username: string;
-
     @IsString()
+    id:string;
+}
+
+export class CreateMessageRoom{
     @IsNotEmpty()
-    email: string;
-
-    
     @IsString()
-    display_name?: string;
+    content :string;
+
+    @IsNotEmpty()
+    @IsString()
+    chatRoomId :string;
+
+    @IsNotEmpty()
+    @IsString()
+    senderId :string;
+
+}
+
+export class CreateChatRoom{
+    @IsNotEmpty()
+    @IsString()
+    userId :string;
+
+
+    @IsNotEmpty()
+    @IsString()
+    name :string;
+
+    @IsNotEmpty()
+    @IsString()
+    Privacy :string;
 
     @IsString()
-    password?: string;
+    password :string;
 
     @IsString()
-    two_factor_auth?: string;
+    picture :string;
+
+}
+export class UpdateChatRoom{
+   
+    @IsNotEmpty()
+    @IsString()
+    userId :string;
+
+    @IsNotEmpty()
+    @IsString()
+    id :string;
+
+    @IsNotEmpty()
+    @IsString()
+    name :string;
+
+    @IsNotEmpty()
+    @IsString()
+    Privacy :string;
 
     @IsString()
-    two_factor_secret_key?: string;
+    password :string;
 
     @IsString()
-    avatar_url?: string
+    picture :string;
+
+}
+
+export class DeleteChatRoom{
+
+    @IsNotEmpty()
+    @IsString()
+    userId :string; 
+
+    @IsNotEmpty()
+    @IsString()
+    id :string;
+
+
+}
+
+
+
+
+export class getAllRooms{
+   
+    @IsNotEmpty()
+    @IsString()
+    id :string;
+
 }

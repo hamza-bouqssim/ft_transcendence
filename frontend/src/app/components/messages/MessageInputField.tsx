@@ -1,8 +1,9 @@
 import { MessageInputFieldContainer, MessageInput, BtnStyling } from "@/app/utils/styles"
 import { Dispatch, SetStateAction, FC } from "react";
-import '@fortawesome/fontawesome-svg-core/styles.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import "./style.css"
+import { LuSendHorizonal } from "react-icons/lu";
+import { CiImageOn } from "react-icons/ci";
+
+
 
 type props = {
     content : string;
@@ -11,22 +12,15 @@ type props = {
     sendTypingStatus : () => void;
 }
 
-const MessageInputField: FC<props> = ({content, setContent, sendMessage, sendTypingStatus}) => {
+const MessageInputField: FC<props> = ({content, setContent, sendMessage}) => {
     return (
-        <>
-
-            <MessageInputFieldContainer>
-                <form onSubmit={sendMessage}>
-                    <MessageInput placeholder="Create a message" value={content}  onChange={(e) => setContent(e.target.value)} onKeyDown={sendTypingStatus}/>
-                    <BtnStyling>
-                        {/* <FontAwesomeIcon icon="paper-plane" className="font"/> */}
-                    </BtnStyling>
-
-                </form>
-            </MessageInputFieldContainer>
-            <div>Is typing...</div>
-        </>
-    
+        <div className="flex items-center justify-between ">
+            <CiImageOn className="text-[#5B8CD3] mr-5 " size={40}/>
+            <form onSubmit={sendMessage} className="w-full  flex items-center bg-[#F2F3FD]  rounded-full justify-between">
+                <input className="w-full p-4 py-3 bg-[#F2F3FD] rounded-full  focus:outline-none text-[#949494]" placeholder="Type a message" value={content}  onChange={(e) => setContent(e.target.value)}/>
+                <button className="bg-[#5B8CD3]  py-1 px-4 mr-2 rounded-full" type="submit"><LuSendHorizonal size={32} /></button>
+            </form>
+        </div>
     )
 }
 

@@ -4,14 +4,14 @@ import { ConversationTypes, User } from "@/app/utils/types";
 import { useRouter } from "next/navigation";
 import { FC, useState, useEffect } from "react";
 import "./style.css"
-import { getAuthUser, getConversation } from "@/app/utils/api";
+import { getAuthUser } from "@/app/utils/api";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/app/store";
 import { fetchConversationThunk } from "@/app/store/conversationSlice";
-// type Props = {
-// 	conversations: ConversationTypes[];
-// 	user : User;
-// }
+type Props = {
+	conversations: ConversationTypes[];
+	user : User;
+}
 
 const ChatComponnent  = () =>{
     const router = useRouter();

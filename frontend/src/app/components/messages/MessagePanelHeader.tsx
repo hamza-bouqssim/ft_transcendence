@@ -1,18 +1,18 @@
-import { AvatarStyle, DivStyle, FirstGroup, MessageItemAvatar, MessagePannelHeaderStyle, OnlineStyle } from "@/app/utils/styles"
+"use client"
+import { AvatarStyle, MessageItemAvatar, MessagePannelHeaderStyle } from "@/app/utils/styles"
+import { IoMdSettings } from "react-icons/io";
+import {usePathname} from 'next/navigation'
 
 const MessagePanelHeader = () => {
-    return (<MessagePannelHeaderStyle>
-            <FirstGroup>
-                <AvatarStyle/>
-                <h2>soukaina ouchen</h2>
-            </FirstGroup>
-                
-                    <DivStyle>
-                        <OnlineStyle/>
-                        <h1>Online</h1>  
-                    </DivStyle>
-                       
-        </MessagePannelHeaderStyle>)
+    const pathname = usePathname()
+    return (<div className="flex items-center justify-between p-5 rounded-full text-black  bg-[#F2F3FD]">
+            <div className="flex items-center">
+                    <AvatarStyle/>
+                    <h1 className="ml-2">soukaina ouchen</h1>
+            </div>
+            {pathname.includes('groups') &&  < IoMdSettings size={30} className="text-[#4D4D4D]"></IoMdSettings>}
+           
+        </div>)
 }
 
 
