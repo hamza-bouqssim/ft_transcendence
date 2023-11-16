@@ -1,3 +1,4 @@
+import { Page } from "@/app/utils/styles";
 import BotGame from "./BotGame";
 
 const Game = () => {
@@ -11,3 +12,6 @@ const Game = () => {
 };
 
 export default Game;
+// Game.getLayout = (page: any) => {
+// 	return { page };
+// };
