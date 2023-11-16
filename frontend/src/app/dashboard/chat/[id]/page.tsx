@@ -1,6 +1,6 @@
 "use client";
 
-import CoversationSideBar from "@/app/components/CoversationSideBar/page";
+import CoversationSideBar from "@/app/components/CoversationSideBar/ConversationSideBar";
 import { ConversationChannelStyle, Page} from "@/app/utils/styles";
 import { useContext, useEffect, useState , PropsWithChildren} from "react";
 import { ConversationTypes, User, messageEventPayload, messageTypes } from "@/app/utils/types";
@@ -116,20 +116,14 @@ const ConversationChannelPage = () => {
           }
       })
     return ( 
-
             <div className=" flex h-screen  xl:container xl:mx-auto">
               <div className ="hidden xl:block h-full w-[35%] p-10 pl-5 pr-2 ">
                 <CoversationSideBar conversations={conversation}/>
               </div>
-                <div className="bg-white xl:m-10  xl:mr-10 xl:ml-2 w-full xl:w-[65%]  xl:rounded-[20px] xl:mt-32">
+                <div className="bg-white xl:m-10   xl:mr-10 xl:ml-2 w-full xl:w-[65%]  xl:rounded-[20px] xl:mt-32">
                     <MessagePanel messages={message}></MessagePanel> 
                 </div>
             </div>
-
-
-            
-      
-        
      );
 }
  
