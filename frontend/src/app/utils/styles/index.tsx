@@ -2,16 +2,29 @@ import styled from 'styled-components'
 import { InputContainerProps, PageProps } from './styleTypes';
 
 export const InputField = styled.input`
-    background-color: #fff;
+    background-color: #F2F3FD;
     border: none;
     color : #151515;
     font-family: 'Inter';
     font-size: 18px;
     width: 100%;
-    margin : 4px 0;
-    border-radius: 20px;
+    padding: 10px;
+    border-radius: 10px;
 
 `;
+export const InputFieldStyling = styled.input`
+    background-color: #F2F3FD;
+    border: none;
+    color : #151515;
+    font-family: 'Inter';
+    font-size: 18px;
+    width: 50rem;
+    padding: 10px;
+    border-radius: 10px;
+
+`;
+
+
 
 
 
@@ -27,6 +40,7 @@ export const Body = styled.body`
 `;
 
 export const InputContainer = styled.div<InputContainerProps>`
+    display: flex;
     background-color: ${(prop) => prop.backgroundColor || '#1e1b34'};
     padding: 12px 16px;
     border-radius: 10px;
@@ -34,6 +48,24 @@ export const InputContainer = styled.div<InputContainerProps>`
     box-sizing: border-box;
 
 `;
+
+export const ContainerStyling = styled.div`
+    display: flex;
+   
+
+`;
+
+export const StylingForm = styled.div`
+
+    padding : 30px;
+     & h1{
+        padding : 10px;
+        font-size: 20px;
+        font-weight: bold;
+        color: #fc7785;
+        text-align: center;
+    }
+`
 
 export const InputLabel = styled.label`
     display: block;
@@ -50,9 +82,34 @@ export const Button = styled.button`
     border: none;
     outline: none;
     font-family: 'Inter';
-    font-size: 12px;
+    font-size: 17px;
     border-radius: 10px;
-    padding: 10px 0;
+    padding: 10px;
+    font-weight: 500;
+    transition: 250ms background-color ease;
+    &:focus{
+        background-color: #972f39;
+        border: 2px solid #fff;
+    }
+    &:hover {
+        cursor: pointer;
+        background-color: #972f39;
+        border: 2px solid #fff;
+    }
+    &:active {
+        background-color: #498cda;
+    }
+
+`;
+export const ButtonStyling = styled.button`
+    width: 100%;
+    background-color: #fc7785;
+    border: none;
+    outline: none;
+    font-family: 'Inter';
+    font-size: 17px;
+    border-radius: 10px;
+    padding: 10px;
     font-weight: 500;
     transition: 250ms background-color ease;
     &:focus{

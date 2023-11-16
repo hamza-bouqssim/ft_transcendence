@@ -1,24 +1,23 @@
 /* eslint-disable prettier/prettier */
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { User } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
+import { ParticipentService } from 'src/Participent/Participent.service';
 
 @Injectable()
 export class FriendRequestService {
-    constructor(private readonly prisma: PrismaService){}
+    constructor(private readonly prisma: PrismaService , private readonly participentService : ParticipentService){}
     
     async sendRequest(friendDisplay_name: string, _Display_name:string){
 
         const user = await this.prisma.user.findFirst({where: {display_name: _Display_name}});
         const _friendDisplay_name = await this.prisma.user.findFirst({where: {display_name: friendDisplay_name}});
-        // const _friendDisplay_name = await this.userService.findUser(friendDisplay_name);
         
         if(!user || !_friendDisplay_name)
         {
             throw new UnauthorizedException('User Not Found !');
         }
 
-        console.log(user.display_name);
-        console.log(_friendDisplay_name.display_name);
 
         const requestAlreadySent = await this.prisma.friend.findFirst({where: {user_id: user.id, friend_id: _friendDisplay_name.id}});
 
@@ -39,15 +38,40 @@ export class FriendRequestService {
         return {message: 'Friend request sent successfully'};
     }
 
-    async acceptFriendRequest(requestId: string, userId: string){
+    async acceptFriendRequest(requestId: string, user : User){
         const req = await this.prisma.friend.findUnique({where: {id: requestId}})
         if(!req)
             throw new UnauthorizedException ("the request doesn't exist");
 
-        if(req.friend_id !== userId)
+        if(req.friend_id !== user.id)
             throw new UnauthorizedException("have you ever seeing someone is accepting friend request the he send hhhhhh");
 
         await this.prisma.friend.update({where: {id: requestId}, data: {status: 'ACCEPTED'}});
+        
+
+        const chat = await this.prisma.chatParticipents.findFirst({
+            where: {
+              OR: [
+                { senderId: req.friend_id, recipientId: user.id },
+                { senderId: user.id,recipientId: req.friend_id},
+              ],
+            },
+          });  
+        if(!chat)
+        {
+            const newParticipent = await this.prisma.chatParticipents.create({
+                data: {
+                  sender: {
+                    connect: { id: user.id }
+                  },
+                  recipient: {
+                    connect: { id :req.friend_id}
+                  }
+                }
+              });
+              console.log(newParticipent);
+        }else
+                console.log("the Conversation alrighdy exist");     
 
         return {message: 'Friend request accepted'};
     }

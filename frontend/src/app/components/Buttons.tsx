@@ -111,3 +111,21 @@ export const LogoutButton = (props: any) => {
 		</button>
 	);
 };
+
+export const GoToProfileBtn = (props : any) =>{
+	const router = useRouter();
+
+	const handleFunction = () =>{
+		router.push("/dashboard", { scroll: false });
+
+	}
+	return (
+		<button onClick={handleFunction}
+			className={`h-[35px] w-[225px] ${props.background} ${
+				props.value === "Logout" ? "text-white" : "text-black"
+			} rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`}
+		>
+			{props.value}
+		</button>
+	)
+}

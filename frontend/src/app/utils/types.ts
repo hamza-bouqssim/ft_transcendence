@@ -40,10 +40,12 @@ export type   ConversationTypes= {
     lastMessage: MessageType;
 }
 
+
+
 export type FriendsTypes = {
     id : string;
-    username : string;
-    display_name: string;
+    display_name : string;
+    friend : User;
 }
 
 export type BloquesTypes = {
@@ -99,6 +101,10 @@ export type CreateMessageParams = {
 
 export type CreateConversationParams ={
     display_name : string;
-    message : string;
+    // message : string;
+}
+
+export type CreateRequestParams = {
+    display_name : string;
 }
 

@@ -54,16 +54,7 @@ const ConversationChannelPage = () => {
     const {id} = useParams();
     const [message , setMessage] = useState<messageTypes[]>([])
 
-    // useEffect(() => {
-    //     if (typeof id === 'string') {
-    //       const conversationId = id;
-    //       getConversationMessage(conversationId)
-    //         .then(({ data }) => {
-    //           setMessage(data);
-    //         })
-    //         .catch((err) => console.log(err));
-    //     }
-    //   }, [id]);
+   
       const conversations = useSelector(
         (state: RootState) => state.conversation.conversations
       );
@@ -114,7 +105,7 @@ const ConversationChannelPage = () => {
 
             <div className=" flex h-screen  xl:container xl:mx-auto">
               <div className ="hidden xl:block h-full w-[35%] p-10 pl-5 pr-2 ">
-                <CoversationSideBar conversations={conversations}/>
+                <CoversationSideBar/>
               </div>
                 <div className="bg-white xl:m-10  xl:mr-10 xl:ml-2 w-full xl:w-[65%]  xl:rounded-[20px]">
                     <MessagePanel messages={message} sendTypingStatus={sendTypingStatus}></MessagePanel> 

@@ -11,13 +11,22 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // import { faBars } from "@fortawesome/free-solid-svg-icons";
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import { faChevronDown} from "@fortawesome/free-solid-svg-icons";
+import RightBarUsers from "../RightBarUsers";
 
 
 const ListFriends = () => {
 
 
     const [Friends, setFriends] = useState<FriendsTypes[]>([]);
-   
+    const [change, setChange] = useState<{
+      sideBar: boolean;
+      chatBox: boolean;
+      menu: boolean;
+    }>({
+      sideBar: false,
+      chatBox: false,
+      menu: false,
+    });
 
 
     useEffect(() => {
@@ -53,7 +62,18 @@ const ListFriends = () => {
 								<div>
 					 				<span  className="ConversationName">{handleFunction(elem)}</span>
 					 			</div>
-                  <FontAwesomeIcon icon={faChevronDown} className="menu-icon text-black" />
+                  {/* <FontAwesomeIcon icon={faChevronDown} className="menu-icon text-black" /> */}
+                  <RightBarUsers
+						        menu={change.menu}
+						        onClick={() =>
+							      setChange({
+								      ...change,
+								      sideBar: false,
+								      chatBox: false,
+								      menu: !change.menu,
+							})
+						}
+					/>
 							</ConversationSideBarItem>
 								
 						)

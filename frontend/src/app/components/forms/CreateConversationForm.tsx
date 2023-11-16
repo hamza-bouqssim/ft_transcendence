@@ -9,13 +9,14 @@ import { AppDispatch } from "@/app/store"
 import { createConversation } from "@/app/utils/api"
 import { Dispatch, FC } from "react"
 
-type Props = {
+// type Props = {
   
-  setShow: Dispatch<React.SetStateAction<boolean>> 
+//     setShow : Dispatch<React.SetStateAction<Boolean>>;
 
-}
 
-export const CreateConversationForm: FC<Props> = ({setShow}) => {
+// }
+
+export const CreateConversationForm = () => {
         const {register, handleSubmit, formState: { errors }} = useForm<CreateConversationParams>();
         const dispatch = useDispatch<AppDispatch>();
 
@@ -24,8 +25,7 @@ export const CreateConversationForm: FC<Props> = ({setShow}) => {
           // dispatch(createConversationThunk(data));
         
             dispatch(createConversationThunk(data)).then(()=>{
-              console.log("done");
-              setShow(false);
+              alert("You are adding new conversation")
             }).catch((err)=>{
              console.log(err); 
             })
@@ -36,10 +36,8 @@ export const CreateConversationForm: FC<Props> = ({setShow}) => {
         <form className={styles.formConversation} onSubmit={handleSubmit(onSubmit)}>
           
                 <InputContainer backgroundColor="#87a2c6">
-                    <InputLabel>Recepient Name</InputLabel>
-                    <InputField {...register('display_name', {required: 'display_name is required'})}/>
-                    <InputLabel>Message</InputLabel>
-                    <TextField {...register('message', {required: 'Message is required'})}/>
+                    <InputField {...register('display_name', {required: 'display_name is required'})} placeholder="Enter a friend's username"/>
+                    
                 
                 </InputContainer>
           <Button >Create Conversation</Button>

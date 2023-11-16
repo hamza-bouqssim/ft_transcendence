@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import conversationReducer from './conversationSlice';
 import messageReducer from './messageSlice';
+import requestReducer from './requestSlice';
 
 export const store = configureStore({
   reducer: {
     conversation: conversationReducer,
     messages: messageReducer,
+    request : requestReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ serializableCheck: false }),
