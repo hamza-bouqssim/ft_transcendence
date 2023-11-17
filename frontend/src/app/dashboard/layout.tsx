@@ -7,6 +7,7 @@ import { Provider } from "react-redux";
 import { socket, socketContext } from "../utils/context/socketContext";
 import { store } from "../store";
 import { Socket } from "socket.io-client";
+import { usePathname } from "next/navigation";
 
 export const SideBarContext: any = createContext<any>(null);
 export const ChangeContext: React.Context<any> = createContext(null);
@@ -38,25 +39,25 @@ export default function RootLayout({
 	});
 
 	const changeValues = { change, setChange };
-
-	// if (Component.getLayout)
-		
+	const pathName = usePathname();
 
 	return (
 		<html lang="en">
 			<body>
 				<div className="flex h-screen w-full text-white">
-					<SideBar
-						sideBar={change.sideBar}
-						onClick={() =>
-							setChange({
-								...change,
-								sideBar: !change.sideBar,
-								chatBox: false,
-								menu: false,
-							})
-						}
-					/>
+					{pathName.endsWith("/bot_game") ? null : (
+						<SideBar
+							sideBar={change.sideBar}
+							onClick={() =>
+								setChange({
+									...change,
+									sideBar: !change.sideBar,
+									chatBox: false,
+									menu: false,
+								})
+							}
+						/>
+					)}
 
 					<TopRightBar
 						menu={change.menu}
