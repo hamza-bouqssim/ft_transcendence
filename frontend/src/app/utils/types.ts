@@ -40,6 +40,12 @@ export type   ConversationTypes= {
     lastMessage: MessageType;
 }
 
+export type UsersTypes = {
+    id : string;
+    email : string;
+    display_name : string;
+    avatar_url : string;
+}
 
 
 export type FriendsTypes = {

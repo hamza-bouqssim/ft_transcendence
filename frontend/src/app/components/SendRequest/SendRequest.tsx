@@ -12,12 +12,8 @@ import RightBarUsers from "../RightBarUsers";
 const SendRequest  = () => {
     const [request, setrequest] = useState<RequestTypes[]>([]);
     const [change, setChange] = useState<{
-      sideBar: boolean;
-      chatBox: boolean;
       menu: boolean;
     }>({
-      sideBar: false,
-      chatBox: false,
       menu: false,
     });
            
@@ -69,8 +65,6 @@ const SendRequest  = () => {
 						          onClick={() =>
 							        setChange({
 								        ...change,
-								        sideBar: false,
-								        chatBox: false,
 								        menu: !change.menu,
 							})
 						}

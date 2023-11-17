@@ -30,9 +30,9 @@ export class AuthService {
         throw new UnauthorizedException('Incorrect Password!');
       }
       const infoDto: AuthDto = {
-        username: dto.username,
         email: dto.email,
         display_name: dto.display_name,
+        username: dto.username,
         avatar_url: dto.avatar_url
 
       }
@@ -85,9 +85,9 @@ export class AuthService {
     {
       return this.jwtService.sign({
           id: userId, 
+          display_name: dto.display_name,
           email: dto.email,
           username: dto.username,
-          display_name: dto.display_name,
           avatar_url: dto.avatar_url,
           claim: type,
         

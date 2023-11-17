@@ -129,6 +129,11 @@ export class UserController {
       const user = await whichWithAuthenticated(req, this.jwtService, this.prisma);
       return await this.userService.blockedFriends(user.id);
     }
+    @Get('All-users')
+    async allUsers()
+    {
+      return await this.userService.allUsers();
+    }
     
 }
 

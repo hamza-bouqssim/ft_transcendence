@@ -60,7 +60,7 @@ const CoversationSideBar = () => {
 			{/* {newRooms &&  pathname.includes('chat')  && selectUsers === 'online'  ? <OnlineFriends  /> :  (pathname.includes('chat') && selectUsers === 'allFriends') ? <ListFriends/> : ( pathname.includes('chat') && selectUsers === 'EnAttent') ? <SendRequest/> :( pathname.includes('chat') && selectUsers === 'Bloques') ? <FriendsBloque/> } */}
 			{!newRooms &&  pathname.includes('chat') && <ChatComponnent/>}
 			{!newRooms &&  pathname.includes('groups') && <GroupsManagement/>}
-			{newRooms &&  (pathname.includes('chat')  && selectUsers === 'online')  ? <OnlineFriends  /> :  (pathname.includes('chat') && selectUsers === 'allFriends') ? <ListFriends/> : ( pathname.includes('chat') && selectUsers === 'EnAttent') ? <SendRequest/> :( pathname.includes('chat') && selectUsers === 'Bloques') ? <FriendsBloque/> : ( pathname.includes('chat') && selectUsers === 'Add') ? <SendRequestForm/> : <CreatGroups ></CreatGroups> }
+			{newRooms &&  (pathname.includes('chat')  && selectUsers === 'online')  ? <OnlineFriends  /> :  (pathname.includes('chat') && selectUsers === 'allFriends') ? <ListFriends/> : ( pathname.includes('chat') && selectUsers === 'EnAttent') ? <SendRequest/> :( pathname.includes('chat') && selectUsers === 'Bloques') ? <FriendsBloque/> : ( pathname.includes('chat') && selectUsers === 'Add') ? <SendRequestForm/> : <></> }
 			{!newRooms ?
 				<button onClick={()=>{setNewRooms(true)}} className="absolute right-5 p-4 bottom-5 bg-[#5B8CD3] rounded-full "><IoMdAdd />
 				</button>

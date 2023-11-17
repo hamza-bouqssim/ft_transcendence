@@ -440,6 +440,29 @@ export const  MessageItemContent = styled.div `
 
 `;
 
+/* export const OnlineSidebarStyle = styled.aside `
+    display : flex;
+    flex-direction: column;
+    height: 500px;
+    width: 400px;
+    background-color: #151515;
+`; */
 
+export const HeaderOnlineUsers = styled.div`
+    height : 90px;
+    box-sizing : border-box;
+    padding-left : 80px;
+    width: 100%;
+    flex-shrink: 0;
+    color : #151515;
+    border-bottom: 1px solid #151515;
+    box-shadow: 5px 0 5px #000;
+    display: flex;
+    align-items: center;
+    font-size : 20px;
+    font-weight: bold;
+
+
+`
 
 export const Dark = '#131313'

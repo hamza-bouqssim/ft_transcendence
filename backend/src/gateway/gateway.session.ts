@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 
 import { Injectable } from "@nestjs/common";
+import { User } from "@prisma/client";
 import { AuthenticatedSocket } from "src/utils/interfaces";
 
 export interface IGateWaySession {
@@ -8,6 +9,10 @@ export interface IGateWaySession {
     setUserSocket(id : string, socket : AuthenticatedSocket) : void;
     removeUserSocket(id : string) :void;
     getSockets(): Map<string, AuthenticatedSocket>;
+    getOnlineUserIds(): string[];
+    getUserBySocketId(socketId: string): User | undefined; // Add this line
+
+
 }
 @Injectable() 
 export class GateWaySessionManager implements IGateWaySession {
@@ -25,5 +30,14 @@ export class GateWaySessionManager implements IGateWaySession {
     }
     getSockets() : Map<string, AuthenticatedSocket>{
         return this.sessions;
+    }
+    getOnlineUserIds(): string[] {
+        // Implement the logic to get online user IDs
+        // For example, you can return an array of all user IDs in the session
+        return Array.from(this.sessions.keys());
+    }
+    getUserBySocketId(socketId: string): User | undefined {
+        const socket = Array.from(this.sessions.values()).find(s => s.id === socketId);
+        return socket ? socket.user : undefined;
     }
 }
