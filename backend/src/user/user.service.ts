@@ -182,8 +182,14 @@ export class UserService {
             }
         }) 
     }
-    async allUsers()
+    async allUsers(idUser : string)
     {
-        return this.prisma.user.findMany();
+        return this.prisma.user.findMany({
+            where: {
+                id: {
+                    not: idUser
+                }
+            }
+        });
     }
 }

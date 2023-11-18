@@ -43,6 +43,7 @@ export type   ConversationTypes= {
 export type UsersTypes = {
     id : string;
     email : string;
+    username : string;
     display_name : string;
     avatar_url : string;
 }

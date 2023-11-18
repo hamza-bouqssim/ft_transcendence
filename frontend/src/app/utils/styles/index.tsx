@@ -203,6 +203,17 @@ export const ConversationSideBarContainer = styled.div `
     padding: 10px;
 `;
 
+
+export const OnlineStyling = styled.div`
+
+    background-color: green;
+    border-radius: 50%;
+    width : 10px;
+    height : 10px;
+    margin-top : 10px;
+    margin-left : 10px;
+`;
+
 export const ConversationSideBarItem = styled.div `
 
 

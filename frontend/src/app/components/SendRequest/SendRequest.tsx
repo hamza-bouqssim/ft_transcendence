@@ -3,7 +3,7 @@ import { fetchGetRequestThunk } from "@/app/store/requestSlice";
 import { getRequest } from "@/app/utils/api";
 import { Conversation, ConversationSideBarContainer, ConversationSideBarItem } from "@/app/utils/styles";
 import { RequestTypes } from "@/app/utils/types";
-import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faChevronDown, faTimesCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -60,15 +60,10 @@ const SendRequest  = () => {
 					 				<span  className="ConversationName">{handleFunction(elem)}</span>
 					 			</div>
                             {/* <FontAwesomeIcon icon={faChevronDown} className="menu-icon text-black" /> */}
-                    <RightBarUsers
-						          menu={change.menu}
-						          onClick={() =>
-							        setChange({
-								        ...change,
-								        menu: !change.menu,
-							})
-						}
-					/>
+                    <FontAwesomeIcon icon={faCheck}  className="text-black"/>
+                    <FontAwesomeIcon icon={faTimesCircle} className="text-black"/>
+
+
 							</ConversationSideBarItem>
 								
 						)
