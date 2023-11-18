@@ -170,10 +170,10 @@ class PongGame {
 			},
 		});
 		Render.run(render);
-		// this.lunchGameInterval = setTimeout(() => {
-		// 	// run the engine
-		// 	Runner.run(Runner.create(), engine);
-		// }, 1000);
+		this.lunchGameInterval = setTimeout(() => {
+			// run the engine
+			Runner.run(Runner.create(), engine);
+		}, 1000);
 	}
 
 	// setBallSpeed = (): void => {

@@ -17,41 +17,41 @@ const botGame = () => {
 	const [startGame, setStartGame] = useState<boolean>(false);
 
 	useEffect(() => {
-		// let timerInterval: any;
-		// let endGame: any;
-		// Swal.fire({
-		// 	title: "Game Will Start In",
-		// 	icon: "info",
-		// 	iconColor: "var(--pink-color)",
-		// 	color: "#ffff",
-		// 	html: "<b style='font-size:80px'></b>&emsp;Seconds",
-		// 	timer: 5 * 1000,
-		// 	background: "#2E2F54",
-		// 	customClass: "rounded-[30px] font-['Whitney_BlackSc'] text-sm",
-		// 	timerProgressBar: true,
-		// 	allowOutsideClick: false,
-		// 	didOpen: () => {
-		// 		Swal.showLoading();
-		// 		const timer = Swal.getPopup()!.querySelector("b");
-		// 		timerInterval = setInterval(() => {
-		// 			timer!.textContent = `${(Swal.getTimerLeft()! / 1000).toFixed(0)}`;
-		// 		}, 100);
-		// 		const timerProgressBar = Swal.getPopup()!.querySelector(
-		// 			".swal2-timer-progress-bar",
-		// 		) as HTMLElement;
-		// 		timerProgressBar!.style.backgroundColor = "var(--pink-color)";
-		// 	},
-		// 	willClose: () => {
-		// 		clearInterval(timerInterval);
-		// 	},
-		// }).then(() => {
-		// 	setStartGame((prev) => !prev);
-		// 	// pong.moveBotPaddle();
-		// 	// pong.movePaddle();
-		// 	endGame = () => pong.clearGame();
-		// });
-		const pong = new PongGame(parentCanvasRef.current!);
-		// return () => endGame();
+		let timerInterval: any;
+		let endGame: any;
+		Swal.fire({
+			title: "Game Will Start In",
+			icon: "info",
+			iconColor: "var(--pink-color)",
+			color: "#ffff",
+			html: "<b style='font-size:80px'></b>&emsp;Seconds",
+			timer: 5 * 1000,
+			background: "#2E2F54",
+			customClass: "rounded-[30px] font-['Whitney_BlackSc'] text-sm",
+			timerProgressBar: true,
+			allowOutsideClick: false,
+			didOpen: () => {
+				Swal.showLoading();
+				const timer = Swal.getPopup()!.querySelector("b");
+				timerInterval = setInterval(() => {
+					timer!.textContent = `${(Swal.getTimerLeft()! / 1000).toFixed(0)}`;
+				}, 100);
+				const timerProgressBar = Swal.getPopup()!.querySelector(
+					".swal2-timer-progress-bar",
+				) as HTMLElement;
+				timerProgressBar!.style.backgroundColor = "var(--pink-color)";
+			},
+			willClose: () => {
+				clearInterval(timerInterval);
+			},
+		}).then(() => {
+			setStartGame((prev : any) => !prev);
+			const pong = new PongGame(parentCanvasRef.current!);
+			pong.moveBotPaddle();
+			pong.movePaddle();
+			endGame = () => pong.clearGame();
+		});
+		return () => endGame();
 	}, []);
 
 	return (
@@ -63,7 +63,7 @@ const botGame = () => {
 				score={score.rightScore}
 				playerBgColor={"#4FD6FF"}
 				isBotPlayer={true}
-				startGame={true}
+				startGame={startGame}
 			/>
 			<div
 				className="h-[500px] w-full max-w-[340px] shadow-[0_0_50px_2px_var(--blue-color)] md:h-[590px] md:max-w-[380px] xl:h-[700px] xl:max-w-[420px] min-[1750px]:h-[836px] min-[1750px]:max-w-[560px]"
@@ -76,7 +76,7 @@ const botGame = () => {
 				score={score.leftScore}
 				playerBgColor={"#FF5269"}
 				isBotPlayer={false}
-				startGame={true}
+				startGame={startGame}
 			/>
 		</div>
 		// <div className="relative flex h-full w-full max-w-[750px] flex-row items-center justify-around gap-10 bg-red-400 lg:w-[90%] min-[1750px]:h-full min-[1750px]:w-full min-[1750px]:max-w-[1500px]">
