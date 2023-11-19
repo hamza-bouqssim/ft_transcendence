@@ -89,6 +89,17 @@ export const MenuButton = (props: any) => {
 		</button>
 	);
 };
+export const MenuButton2 = (props: any) => {
+	
+	return (
+		<button
+			className={`h-[35px] w-[197px] ${props.background}
+				 rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`}
+		>
+			{props.value}
+		</button>
+	);
+};
 export const LogoutButton = (props: any) => {
 	const router = useRouter();
 	const logoutFunction =  async () =>{

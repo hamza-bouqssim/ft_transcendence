@@ -2,6 +2,8 @@
 import { Conversation, ConversationSideBarContainer, ConversationSideBarItem } from "@/app/utils/styles"
 import { ConversationTypes, User } from "@/app/utils/types";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+
 import { FC, useState, useEffect } from "react";
 import "./style.css"
 import { getAuthUser, getConversation } from "@/app/utils/api";
@@ -46,7 +48,6 @@ const ChatComponnent  = () =>{
 
     const getDisplayUser = (conversation : ConversationTypes) => {
 		let test;
-		// if(user){
 			const userId = user?.display_name;
 			
 			if(conversation.sender?.display_name != userId)
@@ -56,7 +57,6 @@ const ChatComponnent  = () =>{
 			{
 				test = conversation.recipient;
 			}
-		// }
 		
 		return test;
 	}
@@ -91,7 +91,7 @@ const ChatComponnent  = () =>{
 						return(
 							<div key={elem.id}  className="cursor-pointer rounded-lg hover:bg-[#F2F3FD] flex items-start justify-between px-2 py-3">
 								<div className="flex items-center justify-start" key={elem.id}>
-									<div className="avatar"></div>
+								<Image src={elem.recipient.avatar_url} className="h-10 w-10 rounded-[50%] bg-black min-[1750px]:h-12 min-[1750px]:w-12" alt="Description of the image" width={60}   height={50} />
 									<div className="ml-4">
 					 					<span onClick={handleClick} className="ConversationName">{getDisplayUser(elem)?.username} {getDisplayUser(elem)?.display_name}</span>
 					 					<span className="lastName">{getDisplayLastMessage(elem)}</span>

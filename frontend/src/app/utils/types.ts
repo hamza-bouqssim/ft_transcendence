@@ -56,12 +56,16 @@ export type UsersTypes = {
 export type FriendsTypes = {
     id : string;
     display_name : string;
+    username : string;
+    avatar_url : string;
     friend : User;
 }
 
 export type BloquesTypes = {
     id : string;
     display_name : string;
+    username : string;
+    avatar_url : string;
     userBloque : User;
 }
 

@@ -207,10 +207,9 @@ export const OnlineStyling = styled.div`
 
     background-color: green;
     border-radius: 50%;
-    width : 10px;
-    height : 10px;
-    margin-top : 10px;
-    margin-left : 10px;
+    width : 12px;
+    height : 12px;
+    margin-left: -1rem;
 `;
 
 export const ConversationSideBarItem = styled.div `
