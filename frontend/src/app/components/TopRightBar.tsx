@@ -46,7 +46,7 @@ const TopRightBar = (props: Change) => {
   				<Image
     				className="h-10 w-10 rounded-[50%] bg-black min-[1750px]:h-12 min-[1750px]:w-12"
     				key={0}
-    				src={"/assets/user2.jpeg"}
+    				src={user.avatar_url}
     				width={72}
     				height={51}
     				alt="user"

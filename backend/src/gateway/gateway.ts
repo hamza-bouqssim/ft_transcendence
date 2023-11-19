@@ -41,10 +41,9 @@ export class MessagingGateWay implements OnGatewayConnection{
         console.log("the session is");
         console.log(this.sessions.getSockets());
         if(socket.user.id)
-            console.log(socket.user.display_name ,"is online");
+            console.log(socket.user.email ,"is online");
     
-        // console.log("rooms");
-        // console.log(socket.rooms)
+       
     }
     
     

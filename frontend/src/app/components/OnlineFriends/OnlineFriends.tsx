@@ -33,7 +33,7 @@ const OnlineFriends = () =>{
             console.log("online friend-->", onlineUsers);
             setOnlineUsers(onlineUsers);
         });
-    
+    console.log("socket here", socket.id);
         return () => {
             socket.off('getOnlineUsers');
         };
