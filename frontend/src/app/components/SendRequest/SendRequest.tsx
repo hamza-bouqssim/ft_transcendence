@@ -1,9 +1,9 @@
 import { AppDispatch } from "@/app/store";
-import { fetchGetRequestThunk } from "@/app/store/requestSlice";
+import { fetchAcceptFriendRequestThunk, fetchGetRequestThunk } from "@/app/store/requestSlice";
 import { getRequest } from "@/app/utils/api";
 import { Conversation, ConversationSideBarContainer, ConversationSideBarItem } from "@/app/utils/styles";
-import { RequestTypes } from "@/app/utils/types";
-import { faCheck, faChevronDown, faTimesCircle } from "@fortawesome/free-solid-svg-icons";
+import { AcceptRequestParams, RequestTypes, UsersTypes } from "@/app/utils/types";
+import { faCheck, faChevronDown, faTimesCircle, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -30,17 +30,8 @@ const SendRequest  = () => {
       );
     },)
 
-    // useEffect(() => {
-    //       getRequest()
-    //         .then(({ data }) => {
-    //           setrequest(data);
-    //         })
-    //         .catch((err) => console.log(err));
-        
-    //   }, []);
 
       const handleFunction = (request : RequestTypes) => {
-        console.log("pending");
             let ourRequest;
 
             ourRequest = request.user.display_name;
@@ -48,7 +39,17 @@ const SendRequest  = () => {
 
       }
 
+      const handleClickAcceptRequest = async (id : string) => {
+        console.log("id request-->", id);
+        try {
+          await dispatch(fetchAcceptFriendRequestThunk(id));
+          alert("You are accepting the request !")
+        } catch (error) {
+          console.error("Error accepting friend request:", error);
+        }
+      };
       return (
+
         <Conversation>
 
 				<ConversationSideBarContainer>
@@ -57,11 +58,10 @@ const SendRequest  = () => {
 							<ConversationSideBarItem key={elem.id}>
 								<div className="avatar"></div>
 								<div>
-					 				<span  className="ConversationName">{handleFunction(elem)}</span>
+					 				<span  className="ConversationName">{elem.user.username} {elem.user.display_name}</span>
 					 			</div>
-                            {/* <FontAwesomeIcon icon={faChevronDown} className="menu-icon text-black" /> */}
-                    <FontAwesomeIcon icon={faCheck}  className="text-black"/>
-                    <FontAwesomeIcon icon={faTimesCircle} className="text-black"/>
+                    <FontAwesomeIcon icon={faCheck}  className="text-black" onClick={() => handleClickAcceptRequest(elem.id)}/>
+                    <FontAwesomeIcon icon={faXmark} className="text-black"/>
 
 
 							</ConversationSideBarItem>

@@ -49,30 +49,7 @@ export class FriendRequestService {
         await this.prisma.friend.update({where: {id: requestId}, data: {status: 'ACCEPTED'}});
         
 
-        const chat = await this.prisma.chatParticipents.findFirst({
-            where: {
-              OR: [
-                { senderId: req.friend_id, recipientId: user.id },
-                { senderId: user.id,recipientId: req.friend_id},
-              ],
-            },
-          });  
-        if(!chat)
-        {
-            const newParticipent = await this.prisma.chatParticipents.create({
-                data: {
-                  sender: {
-                    connect: { id: user.id }
-                  },
-                  recipient: {
-                    connect: { id :req.friend_id}
-                  }
-                }
-              });
-              console.log(newParticipent);
-        }else
-                console.log("the Conversation alrighdy exist");     
-
+        
         return {message: 'Friend request accepted'};
     }
 

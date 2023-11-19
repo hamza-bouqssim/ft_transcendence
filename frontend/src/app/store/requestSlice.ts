@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { SendRequest, getConversationMessage, getRequest} from '../utils/api';
-import { ConversationMessage, CreateRequestParams, FriendsTypes, messageTypes } from '../utils/types';
+import { AcceptRequest, SendRequest, getConversationMessage, getRequest} from '../utils/api';
+import { AcceptRequestParams, ConversationMessage, CreateRequestParams, FriendsTypes, UsersTypes, messageTypes } from '../utils/types';
 
 export interface requestState {
   request: FriendsTypes[];
@@ -14,13 +14,21 @@ const initialState: requestState = {
 
 export const fetchGetRequestThunk = createAsyncThunk('request/fetch', async () => {
   const response = await getRequest();
-  console.log("our request", response);
   return response;
 
-});export const fetchRequestThunk = createAsyncThunk('request/create', async(data : CreateRequestParams)=>{
+});
+export const fetchRequestThunk = createAsyncThunk('request/create', async(data : CreateRequestParams)=>{
     const response = await SendRequest(data);
     return response;
-  })
+  });
+
+export const fetchAcceptFriendRequestThunk = createAsyncThunk('request/accept', async(id : string) =>{
+  const response = await AcceptRequest(id);
+  console.log("response here -->", response);
+  return response;
+})
+
+
 
 export const requestSlice = createSlice({
   name: 'request',
@@ -33,6 +41,8 @@ export const requestSlice = createSlice({
       state.request = action.payload.data;
       state.loading = false;
   }).addCase(fetchGetRequestThunk.pending, (state, action) =>{
+      state.loading = true;
+  }).addCase(fetchAcceptFriendRequestThunk.fulfilled, (state, action)=>{
       state.loading = true;
   })
   }

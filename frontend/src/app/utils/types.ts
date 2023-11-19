@@ -40,6 +40,10 @@ export type   ConversationTypes= {
     lastMessage: MessageType;
 }
 
+export type AcceptRequestParams ={
+    idRequest : string;
+}
+
 export type UsersTypes = {
     id : string;
     email : string;

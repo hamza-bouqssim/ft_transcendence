@@ -148,7 +148,6 @@ export const Conversation = styled.aside`
     background-color: #fff;
     border-right: 5px solid #0000003a;
    
-    overflow-y: scroll;
     
     & header{
         background-color:#1e1b34;

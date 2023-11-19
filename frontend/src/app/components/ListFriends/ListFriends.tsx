@@ -3,6 +3,7 @@ import { createConversationThunk } from "@/app/store/conversationSlice";
 import { getAllFriends } from "@/app/utils/api";
 import { Conversation, ConversationSideBarContainer, ConversationSideBarItem } from "@/app/utils/styles";
 import { CreateConversationParams, FriendsTypes } from "@/app/utils/types";
+
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -10,7 +11,7 @@ import { MenuButton } from "../Buttons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // import { faBars } from "@fortawesome/free-solid-svg-icons";
 import '@fortawesome/fontawesome-svg-core/styles.css';
-import { faChevronDown} from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faEllipsis} from "@fortawesome/free-solid-svg-icons";
 import RightBarUsers from "../RightBarUsers";
 
 
@@ -50,6 +51,10 @@ const ListFriends = () => {
 
       }
       const dispatch = useDispatch<AppDispatch>();
+        const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+      const handleMenuClick = (friendId: string) => {
+          setOpenMenuId(openMenuId === friendId ? null : friendId);
+      };
 
     return (
         <Conversation>
@@ -62,18 +67,21 @@ const ListFriends = () => {
 								<div>
 					 				<span  className="ConversationName">{handleFunction(elem)}</span>
 					 			</div>
-                  {/* <FontAwesomeIcon icon={faChevronDown} className="menu-icon text-black" /> */}
-                  <RightBarUsers
-						        menu={change.menu}
-						        onClick={() =>
-							      setChange({
-								      ...change,
-								      sideBar: false,
-								      chatBox: false,
-								      menu: !change.menu,
-							})
-						}
-					/>
+                   
+  
+<div className=" relative ">
+				<FontAwesomeIcon icon={faEllipsis} className={`text-black transform cursor-pointer text-2xl duration-500 ease-in-out hover:text-[--pink-color] lg:text-3xl }`}
+					 onClick={() => handleMenuClick(elem.id)}
+				/>
+      
+        {openMenuId === elem.id &&
+        <div className={`absolute top-10 left-5 h-[120px] z-10 w-[226px] flex-col items-center justify-center gap-2 rounded-[15px] border-2 border-solid border-[#8E8E8E] bg-white font-['Whitney_Semibold']`}>
+					<MenuButton background={"bg-[#d9d9d9]"} value="View Profile" />
+					<MenuButton background={"bg-[#BBBBBB]"} value="Send Message" />
+          <MenuButton background={"bg-[#BBBBBB]"} value="Bloque" />
+
+				</div>}
+      </div>
 							</ConversationSideBarItem>
 								
 						)

@@ -1,5 +1,5 @@
 import axios, { Axios, AxiosRequestConfig } from 'axios'
-import { ConversationTypes, CreateConversationParams, CreateMessageParams, CreateRequestParams, FetchMessagePayload, User, UserCredentialsParams, createUserParams } from './types';
+import { AcceptRequestParams, ConversationTypes, CreateConversationParams, CreateMessageParams, CreateRequestParams, FetchMessagePayload, User, UserCredentialsParams, createUserParams } from './types';
 
 
 const config : AxiosRequestConfig = { withCredentials: true}
@@ -36,3 +36,5 @@ export const getBloques = () => axios.get(`http://localhost:8000/user/blocked-fr
 export const SendRequest =  async (data : CreateRequestParams) => axios.post(`http://localhost:8000/friend-request/send-request`,data,  config)
 
 export const getAllUsers = async () => axios.get(`http://localhost:8000/user/All-users`, config);
+
+export const AcceptRequest = async (id : string) => axios.post(`http://localhost:8000/friend-request/accept-request`, {requestId : id}, config);
