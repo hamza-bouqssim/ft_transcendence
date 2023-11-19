@@ -19,6 +19,7 @@ const BotGame = () => {
 	useEffect(() => {
 		let timerInterval: any;
 		let endGame: any;
+
 		Swal.fire({
 			title: "Game Will Start In",
 			icon: "info",
@@ -47,8 +48,6 @@ const BotGame = () => {
 		}).then(() => {
 			setStartGame((prev : any) => !prev);
 			const pong = new PongGame(parentCanvasRef.current!);
-			pong.moveBotPaddle();
-			pong.movePaddle();
 			endGame = () => pong.clearGame();
 		});
 		return () => endGame();
