@@ -61,10 +61,12 @@ export class GameGateway implements OnModuleInit {
 			inertia: Infinity,
 			restitution: 1,
 		});
+
 		Body.setVelocity(this.ball, {
 			x: 8,
 			y: 8,
 		});
+		this.server.emit("setBallVelocity", this.ball.velocity)
 
 		// Create Two Paddles:
 		this.topPaddle = Bodies.rectangle(this.canvasWidth / 2, 30, 170, 15, {

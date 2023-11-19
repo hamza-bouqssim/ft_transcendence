@@ -62,13 +62,14 @@ class PongGame {
 			inertia: Infinity,
 			restitution: 1,
 		});
-
-		Body.setVelocity(this.ball, {
-				x: this.currentBallSpeed.x,
-				y: this.currentBallSpeed.y,
-		});
-
+		
 		if (this.socket) {
+			this.socket.on("setBallVelocity", (data: any)=> {	
+				Body.setVelocity(this.ball, {
+					x: data.x,
+					y: data.y,
+				});
+			})
 			socket.on("updateBallPosition", (data: any) => {
 				Body.setPosition(this.ball, {
 					x: data.x,
