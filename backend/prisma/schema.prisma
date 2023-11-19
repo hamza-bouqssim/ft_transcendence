@@ -103,7 +103,7 @@ model StateGame {
   rank          Int    @default(-1)
   user          User   @relation(fields: [user_id], references: [id])
 }
-
+// inprogress
 model Achievement {
   id      String @id @default(uuid())
   user_id String 
