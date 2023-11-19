@@ -32,7 +32,6 @@ import { RoomsModule } from './Rooms/rooms.module';
 		ParticipentModule,
 		MessagesModule,
 		FriendRequestModule,
-		GameModule,
 		GatewayModule,
 		EventEmitterModule.forRoot(),
 		GameModule,

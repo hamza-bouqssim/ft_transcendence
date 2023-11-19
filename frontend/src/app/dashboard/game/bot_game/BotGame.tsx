@@ -4,7 +4,7 @@ import PlayerScore from "@/app/components/PlayerScore";
 import PongGame from "../classes/PongGame";
 import Swal from "sweetalert2";
 
-const botGame = () => {
+const BotGame = () => {
 	const parentCanvasRef = useRef<HTMLDivElement>(null);
 
 	const [score, setScore] = useState<{
@@ -79,31 +79,7 @@ const botGame = () => {
 				startGame={startGame}
 			/>
 		</div>
-		// <div className="relative flex h-full w-full max-w-[750px] flex-row items-center justify-around gap-10 bg-red-400 lg:w-[90%] min-[1750px]:h-full min-[1750px]:w-full min-[1750px]:max-w-[1500px]">
-		// 	{/* <PlayerScore
-		// 		flag="left"
-		// 		name="hamzaBouQssi"
-		// 		username="@hbouqssi"
-		// 		score={score.leftScore}
-		// 		playerBgColor={"#FF5269"}
-		// 		isBotPlayer={false}
-		// 		startGame={startGame}
-		// 	/> */}
-		// 	<div
-		// 		className="bg-blue-700 h-[80%] w-[560px] shadow-[0_0_50px_2px_var(--blue-color)] min-[375px]:h-[250px] min-[490px]:h-[300px] min-[600px]:h-[360px] min-[660px]:h-[400px] md:h-[420px] lg:h-[440px] min-[1750px]:h-full"
-		// 		ref={parentCanvasRef}
-		// 	></div>
-		// 	{/* <PlayerScore
-		// 		flag="right"
-		// 		name="Mr.BOT"
-		// 		username="@bot"
-		// 		score={score.rightScore}
-		// 		playerBgColor={"#4FD6FF"}
-		// 		isBotPlayer={true}
-		// 		startGame={startGame}
-		// 	/> */}
-		// </div>
 	);
 };
 
-export default botGame;
+export default BotGame;

@@ -43,7 +43,7 @@ export class GameGateway implements OnModuleInit {
 
 	onModuleInit() {
 		this.server.on('connection', (socket) => {
-			console.log(socket.id);
+			console.log(socket);
 			console.log('A Pong client connected!');
 		});
 		this.handleLaunchGame();
@@ -159,8 +159,7 @@ export class GameGateway implements OnModuleInit {
 		Runner.run(Runner.create(), engine);
 
 		const gameInterval = setInterval(() => {
-			let ballVelocity = engine.world.bodies[0].velocity;
-			this.server.emit('updateBallVelocity', ballVelocity);
+			this.server.emit('updateBallPosition', this.ball.position);
 		}, 15);
 	}
 
@@ -197,6 +196,10 @@ export class GameGateway implements OnModuleInit {
 			}
 			if (stepX != 0) {
 				this.posPaddleX = stepX;
+				Body.setPosition(this.bottomPaddle, {
+					x: stepX,
+					y: this.bottomPaddle.position.y
+				})
 				this.server.emit('updatePaddlePosition', {
 					paddleLabel: 'bottomPaddle',
 					xPosition: stepX,
