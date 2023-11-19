@@ -20,8 +20,10 @@ constructor(private  conversationService : ConversationsService , private userSe
 
 @Post('conversation')
  async CreateConversations(@Req() req: Request, @Body() dto : CreateConversationParams){
+    console.log("in here");
     const user = await whichWithAuthenticated(req, this.jwtservice, this.prisma);
-    const userDb = await this.userService.findById(user.id)
+    const userDb = await this.userService.findById(user.id);
+   
     return this.conversationService.createConversations(userDb, dto);
 }
 
@@ -35,7 +37,7 @@ async  findConversation(@Req() req: Request){
 async getconversationById(@Param('id') id: string){
     // return this.conversationService.find();
     const conversation = await this.conversationService.findConversationById(id);
-    // console.log(conversation)
+    console.log(conversation)
     return conversation;
 }
 }

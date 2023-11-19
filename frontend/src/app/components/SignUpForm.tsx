@@ -36,13 +36,13 @@ const SignUpForm = forwardRef((_props: any, ref: any) => {
 	const router = useRouter();
 
 	const onSubmit = async (data: createUserParams) => {
-		console.log(data);
+		// console.log(data);
 		try {
 			await postRegisterUser(data);
 			alert(`Welcome ${data.username}`);
 			router.push("/signIn", { scroll: false });
 		} catch (err) {
-			console.log(err);
+			// console.log(err);
 		}
 	};
 
@@ -114,6 +114,6 @@ const SignUpForm = forwardRef((_props: any, ref: any) => {
 		</div>
 	);
 });
-SignUpForm.displayName = 'SignUpForm';
+SignUpForm.displayName = "SignUpForm";
 
 export default SignUpForm;

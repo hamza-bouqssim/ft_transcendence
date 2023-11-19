@@ -1,5 +1,5 @@
 "use client";
-import { useState, createContext, PropsWithChildren } from "react";
+import { useState, createContext, PropsWithChildren, Component } from "react";
 import SideBar from "../components/SideBar";
 import TopRightBar from "../components/TopRightBar";
 
@@ -8,22 +8,19 @@ import { socket, socketContext } from "../utils/context/socketContext";
 import { store } from "../store";
 import { Socket } from "socket.io-client";
 
+export const SideBarContext: any = createContext<any>(null);
 export const ChangeContext: React.Context<any> = createContext(null);
 type Props = {
 	// user?: User;
 	// setUser : React.Dispatch<React.SetStateAction<User | undefined>>;
-	socket : Socket;
-}
-function AppWithProviders({children} : PropsWithChildren & Props){
-
+	socket: Socket;
+};
+function AppWithProviders({ children }: PropsWithChildren & Props) {
 	return (
 		<Provider store={store}>
-			<socketContext.Provider value={socket}>
-				{children}
-			</socketContext.Provider>
+			<socketContext.Provider value={socket}>{children}</socketContext.Provider>
 		</Provider>
-	)
-
+	);
 }
 export default function RootLayout({
 	children,
@@ -42,10 +39,13 @@ export default function RootLayout({
 
 	const changeValues = { change, setChange };
 
+	// if (Component.getLayout)
+		
+
 	return (
 		<html lang="en">
 			<body>
-				<div className=" flex  w-full  h-screen text-white">
+				<div className="flex h-screen w-full text-white">
 					<SideBar
 						sideBar={change.sideBar}
 						onClick={() =>
@@ -57,8 +57,8 @@ export default function RootLayout({
 							})
 						}
 					/>
-					
-					{/* <TopRightBar
+
+					<TopRightBar
 						menu={change.menu}
 						onClick={() =>
 							setChange({
@@ -68,21 +68,17 @@ export default function RootLayout({
 								menu: !change.menu,
 							})
 						}
-					/> */}
+					/>
 
 					{/* <div className="mt-[70px] h-[85%] w-full lg:flex lg:items-center lg:justify-evenly min-[1750px]:ml-72 min-[1750px]:mt-[90px] min-[1750px]:w-[86%]">
 						{children}
 					</div> */}
 
-				<AppWithProviders  socket={socket}>
-					<ChangeContext.Provider value={changeValues}>
-						<div className="w-full h-full">
-
-							{children}
-						</div>
-					</ChangeContext.Provider>
-				</AppWithProviders>
-
+					<AppWithProviders socket={socket}>
+						<ChangeContext.Provider value={changeValues}>
+							<div className="h-full w-full">{children}</div>
+						</ChangeContext.Provider>
+					</AppWithProviders>
 				</div>
 			</body>
 		</html>

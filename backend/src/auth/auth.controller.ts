@@ -6,7 +6,7 @@ import { AuthenticatedGuard} from './guards/GlobalGuard';
 import { Request,  Response } from 'express';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
-import { LocalAuthGuards } from './utils/Guards';
+// import { LocalAuthGuards } from './utils/Guards';
 
 
 @Controller('auth')

@@ -9,15 +9,15 @@ import { postNewMessage } from "@/app/utils/api";
 
 type Props  = {
     messages : messageTypes[];
+    sendTypingStatus: () => void;
 }
 
-const MessagePanel : FC<Props> = ({messages}) => {
+const MessagePanel : FC<Props> = ({messages, sendTypingStatus}) => {
         const [content, setContent] = useState('');
         const { id } = useParams();
         
         const sendMessage = async (e : React.FormEvent<HTMLFormElement>) => {
             e.preventDefault();
-            console.log('sending message', content);
             if(!id || !content)
                 return ;
             const participentsId = id;
@@ -33,15 +33,19 @@ const MessagePanel : FC<Props> = ({messages}) => {
         };
      
     return (
-        <>
-            <MessagePanelHeader/>
-                <MessagePanelStyle> 
-                    <MessagePannelBody>
+        <div className="p-2 md:p-6  h-full flex items-center w-full justify-between"> 
+                <div className="md:w-[60%] h-full w-full"> 
+                    <MessagePanelHeader/>
                     <MessageContainer messages={messages}/>
                     <MessageInputField content= {content} setContent={setContent} sendMessage={sendMessage}/>
-                </MessagePannelBody>
-                </MessagePanelStyle>
-        </>
+                </div>
+            <div className="hidden md:block md:w-[40%]  pl-4  h-full ">
+                <div  className="bg-[#F2F3FD] w-full h-full rounded-2xl ">
+
+                </div>
+            </div>
+
+        </div>
     )
 }
 export  default MessagePanel;

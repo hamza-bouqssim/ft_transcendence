@@ -17,6 +17,7 @@ import { FriendRequestModule } from './friend-request/friend-request.module';
 import { GameModule } from './game/game.module';
 import { GatewayModule } from './gateway/gateway.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { RoomsModule } from './Rooms/rooms.module';
 
 @Module({
 	imports: [

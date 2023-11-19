@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import CoversationSideBar from "@/app/components/CoversationSideBar/page";
 import { ConversationChannelStyle, Page} from "@/app/utils/styles";
@@ -18,19 +18,20 @@ import { fetchConversationThunk, fetchMessagesThunk } from "@/app/store/conversa
 
 type Props = {
 	user?: User;
-	setUser : React.Dispatch<React.SetStateAction<User | undefined>>;
-	socket : Socket;
-}
+	setUser: React.Dispatch<React.SetStateAction<User | undefined>>;
+	socket: Socket;
+};
 
-function AppWithProviders({children, user, setUser,} : PropsWithChildren & Props){
+function AppWithProviders({
+	children,
+	user,
+	setUser,
+}: PropsWithChildren & Props) {
 	return (
 		<ReduxProvider store={store}>
-			<socketContext.Provider value={socket}>
-				{children}
-			</socketContext.Provider>
+			<socketContext.Provider value={socket}>{children}</socketContext.Provider>
 		</ReduxProvider>
-	)
-
+	);
 }
 
 const ConversationChannelPage = () => {

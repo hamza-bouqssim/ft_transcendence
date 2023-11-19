@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Body, Controller, Post, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Req,  UseGuards } from '@nestjs/common';
 import { FriendRequestService } from './friend-request.service';
 import { AuthenticatedGuard } from 'src/auth/guards/GlobalGuard';
 import { whichWithAuthenticated } from 'src/user/utils/auth-utils';
@@ -14,11 +14,11 @@ export class FriendRequestController {
 
     @Post('send-request')
     @UseGuards(AuthenticatedGuard)
-    async sendRequest(@Body() request: {friendUserName: string}, @Req() req){
+    async sendRequest(@Body() request: {friendDisplay_name: string}, @Req() req){
 
-            console.log("thissss===== : " + request.friendUserName);
+            console.log("thissss===== : " + request.friendDisplay_name);
             const user = await whichWithAuthenticated(req, this.jwtService, this.prisma)
-            return this.friendshipService.sendRequest(request.friendUserName, user.username);
+            return this.friendshipService.sendRequest(request.friendDisplay_name, user.display_name);
     }
 
     @Post('accept-request')

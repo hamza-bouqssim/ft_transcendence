@@ -1,4 +1,5 @@
-import { Injectable, NotFoundException, Req, UnauthorizedException } from '@nestjs/common';
+/* eslint-disable prettier/prettier */
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { findUserParams } from 'src/utils/types';
 
@@ -161,6 +162,15 @@ export class UserService {
             }
         })
 
+    }
+
+    async findByDisplayName(display_name : string)
+    {
+        return await this.prisma.user.findUnique({
+            where: {
+               display_name: display_name,
+            }
+        })
     }
     
     async findUserById(finduserParams : findUserParams)

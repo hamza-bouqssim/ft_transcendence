@@ -1,5 +1,5 @@
 import axios, { Axios, AxiosRequestConfig } from 'axios'
-import { CreateMessageParams, User, UserCredentialsParams, createUserParams } from './types';
+import { ConversationTypes, CreateConversationParams, CreateMessageParams, FetchMessagePayload, User, UserCredentialsParams, createUserParams } from './types';
 
 
 const config : AxiosRequestConfig = { withCredentials: true}
@@ -16,7 +16,7 @@ export const getAuthUser = () => axios.get<User>(`http://localhost:8000/user/inf
 
 export const getConversation = () => axios.get(`http://localhost:8000/chat/findconversation`, config)
 
-
+export const createConversation = async (data : CreateConversationParams) => axios.post(`http://localhost:8000/chat/conversation`,data, config)
 export const getConversationMessage = (id : string) => axios.get(`http://localhost:8000/messages/${id}`, config)
 
 export const loginGoogle = () => axios.get(`http://localhost:8000/auth/google/login`, config)
@@ -24,3 +24,11 @@ export const loginGoogle = () => axios.get(`http://localhost:8000/auth/google/lo
 export const getlogout = () => axios.get(`http://localhost:8000/auth/signout`, config);
 
 export const postNewMessage = async (data : CreateMessageParams) => axios.post(`http://localhost:8000/messages/create_messages`, data, config);
+
+// get all friends
+
+export const getAllFriends = () => axios.get(`http://localhost:8000/user/my-friends`, config);
+
+export const getRequest = () => axios.get(`http://localhost:8000/user/pending-requests`, config);
+
+export const getBloques = () => axios.get(`http://localhost:8000/user/blocked-friends`, config);

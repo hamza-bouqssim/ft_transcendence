@@ -1,26 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import PlayerScore from "@/app/components/PlayerScore";
-import Matter from "matter-js";
-import PongGame from "./classes/PongGame";
+import PongGame from "../classes/PongGame";
 import { io } from "socket.io-client";
 
 const Pong = (props: any) => {
 	const socket = io("http://localhost:8000");
 
 	const parentCanvasRef = useRef<HTMLDivElement>(null);
-	const Render = Matter.Render;
-	const Engine = Matter.Engine;
-	const Runner = Matter.Runner;
-	const Composite = Matter.Composite;
-
-	const renderRef = useRef<any>(null);
-	const engineRef = useRef<any>(Engine.create());
-	const runnerRef = useRef<any>(Runner.create());
-
-	let paddles: any;
-	let ball: any;
-	let paddlesRef = useRef<any>(null);
-	let ballRef = useRef<any>(null);
 
 	const [score, setScore] = useState<{
 		leftScore: number;
@@ -31,9 +17,9 @@ const Pong = (props: any) => {
 	});
 
 	useEffect(() => {
-		socket.on("connect", () => console.log("Client Connected!"));
-		// socket.emit("movePaddle", () => {});
-		// socket.on("reply", (payload: any) => alert(payload.mssj));
+		socket.on("connect", () => {
+			console.log("Client Connected!");
+		});
 	}, []);
 
 	useEffect(() => {
@@ -51,12 +37,14 @@ const Pong = (props: any) => {
 				name="hamzaBouQssi"
 				username="@hbouqssi"
 				score={score.leftScore}
-				playerBgColor={props.paddleColor}
-			/>
+				playerBgColor={"#FF5269"}
+				isBotPlayer={false}
+				startGame={false}
+				/>
 			<div
 				className="h-full w-[560px] shadow-[0_0_50px_2px_var(--blue-color)] min-[375px]:h-[250px] min-[490px]:h-[300px] min-[600px]:h-[360px] min-[660px]:h-[400px] md:h-[420px] lg:h-[440px] min-[1750px]:h-full"
 				ref={parentCanvasRef}
-			></div>
+				></div>
 
 			<PlayerScore
 				flag="right"
@@ -64,6 +52,8 @@ const Pong = (props: any) => {
 				username="@hbouqssi"
 				score={score.rightScore}
 				playerBgColor={"#4FD6FF"}
+				isBotPlayer={false}
+				startGame={false}
 			/>
 		</div>
 	);
