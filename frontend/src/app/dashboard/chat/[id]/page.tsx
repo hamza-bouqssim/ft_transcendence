@@ -13,26 +13,11 @@ import { socket, socketContext } from "@/app/utils/context/socketContext";
 import { Socket } from "socket.io-client";
 import { AppDispatch, store } from "@/app/store";
 import {Provider as ReduxProvider, useDispatch} from 'react-redux'
-import { fetchConversationThunk, fetchMessagesThunk } from "@/app/store/conversationSlice";
+import { fetchConversationThunk } from "@/app/store/conversationSlice";
+import { fetchMessagesThunk } from "@/app/store/messageSlice";
 
 
-type Props = {
-	user?: User;
-	setUser: React.Dispatch<React.SetStateAction<User | undefined>>;
-	socket: Socket;
-};
 
-function AppWithProviders({
-	children,
-	user,
-	setUser,
-}: PropsWithChildren & Props) {
-	return (
-		<ReduxProvider store={store}>
-			<socketContext.Provider value={socket}>{children}</socketContext.Provider>
-		</ReduxProvider>
-	);
-}
 
 const ConversationChannelPage = () => {
   const socket = useContext(socketContext)

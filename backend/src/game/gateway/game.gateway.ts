@@ -7,6 +7,7 @@ import {
 import { Server } from 'socket.io';
 import { OnModuleInit } from '@nestjs/common';
 import { Bodies, Composite, Engine, Runner, Body } from 'matter-js';
+import { GameService } from '../game.service';
 
 const engine = Engine.create({
 	gravity: {
@@ -36,7 +37,7 @@ export class GameGateway implements OnModuleInit {
 
 	private pong: any;
 
-	constructor() {
+	constructor(private readonly gameservice : GameService) {
 		this.handlePaddleMove();
 		// console.log("cons")
 	}
@@ -165,6 +166,15 @@ export class GameGateway implements OnModuleInit {
 		}, 15);
 	}
 
+	@SubscribeMessage("join-game")
+	handleJoinGame()
+	{
+		this.server.emit("join-queue", {
+			content: "join-queue Event!"
+		})
+		// this.gameservice.joinQueue();
+	}
+
 	@SubscribeMessage('keyevent')
 	handleKeyDown(@MessageBody() data: any) {
 		if (data.state === 'keydown') {
@@ -210,32 +220,4 @@ export class GameGateway implements OnModuleInit {
 		}, 20);
 	}
 
-	// handlePaddleMove() {
-	// 	const moveInterval = setInterval(() => {
-	// 		let stepX = 0;
-	// 		const paddleWidth = 170;
-
-	// 		if (this.movingLeft) {
-	// 			stepX = this.bottomPaddle.position.x - 11;
-	// 			if (stepX <= paddleWidth / 2) {
-	// 				stepX = paddleWidth / 2;
-	// 			}
-	// 		} else if (this.movingRight) {
-	// 			stepX = this.bottomPaddle.position.x + 11;
-	// 			if (stepX >= this.canvasWidth - paddleWidth / 2) {
-	// 				stepX = this.canvasHeight - paddleWidth / 2;
-	// 			}
-	// 		}
-	// 		if (stepX != 0) {
-	// 			Body.setPosition(this.bottomPaddle, {
-	// 				x: stepX,
-	// 				y: this.bottomPaddle.position.y,
-	// 			});
-	// 			this.server.emit('updatePaddlePosition', {
-	// 				paddleLabel: 'bottomPaddle',
-	// 				xPosition: stepX,
-	// 			});
-	// 		}
-	// 	}, 20);
-	// }
 }
