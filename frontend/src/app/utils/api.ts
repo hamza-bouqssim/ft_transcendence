@@ -38,3 +38,7 @@ export const SendRequest =  async (data : CreateRequestParams) => axios.post(`ht
 export const getAllUsers = async () => axios.get(`http://localhost:8000/user/All-users`, config);
 
 export const AcceptRequest = async (id : string) => axios.post(`http://localhost:8000/friend-request/accept-request`, {requestId : id}, config);
+
+export const changeDisplayedName = async (newDisplayName : string) => axios.post(`http://localhost:8000/user/changedisplayname`, {newDisplayName : newDisplayName }, config);
+
+export const changeUserName = async (newUserName : string) => axios.post(``)
