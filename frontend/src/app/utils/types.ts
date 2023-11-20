@@ -40,15 +40,32 @@ export type   ConversationTypes= {
     lastMessage: MessageType;
 }
 
+export type AcceptRequestParams ={
+    idRequest : string;
+}
+
+export type UsersTypes = {
+    id : string;
+    email : string;
+    username : string;
+    display_name : string;
+    avatar_url : string;
+}
+
+
 export type FriendsTypes = {
     id : string;
+    display_name : string;
     username : string;
-    display_name: string;
+    avatar_url : string;
+    friend : User;
 }
 
 export type BloquesTypes = {
     id : string;
     display_name : string;
+    username : string;
+    avatar_url : string;
     userBloque : User;
 }
 
@@ -99,6 +116,10 @@ export type CreateMessageParams = {
 
 export type CreateConversationParams ={
     display_name : string;
-    message : string;
+    // message : string;
+}
+
+export type CreateRequestParams = {
+    display_name : string;
 }
 

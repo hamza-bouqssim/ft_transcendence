@@ -36,7 +36,7 @@ const Form = ({ img }: FormProps) => {
 				{show ? <PopUp setShow={setShow} /> : null}
 				<div className="my-2">
 					<label htmlFor="fullName" className="block py-2 pl-4">
-						Full name
+						Username
 					</label>
 					<input
 						type="text"
@@ -49,7 +49,7 @@ const Form = ({ img }: FormProps) => {
 				</div>
 				<div className="my-2">
 					<label htmlFor="Login" className="block pb-1 pl-4 pt-3">
-						Login
+						Display_name
 					</label>
 					<input
 						type="text"
@@ -74,19 +74,7 @@ const Form = ({ img }: FormProps) => {
 							className="w-full rounded-[20px] border border-[#838383] px-4  py-3 md:w-auto"
 						/>
 					</div>
-					<div>
-						<label htmlFor="confirm" className="block pb-1 pl-4 pt-3">
-							Confirm
-						</label>
-						<input
-							type="password"
-							id="confirm"
-							value={confirm}
-							onChange={(e) => setConfirm(e.target.value)}
-							placeholder="Confirm your password"
-							className="w-full rounded-[20px] border border-[#838383] px-4 py-3 md:w-auto"
-						/>
-					</div>
+					
 				</div>
 				<div className="flex flex-col items-center  justify-center border-t border-[#9f9f9f4a] md:flex-row md:justify-evenly">
 					<h1 className="p-4 text-black ">Two-factor authentication</h1>

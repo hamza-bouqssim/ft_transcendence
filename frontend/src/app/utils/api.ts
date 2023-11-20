@@ -1,5 +1,5 @@
 import axios, { Axios, AxiosRequestConfig } from 'axios'
-import { ConversationTypes, CreateConversationParams, CreateMessageParams, FetchMessagePayload, User, UserCredentialsParams, createUserParams } from './types';
+import { AcceptRequestParams, ConversationTypes, CreateConversationParams, CreateMessageParams, CreateRequestParams, FetchMessagePayload, User, UserCredentialsParams, createUserParams } from './types';
 
 
 const config : AxiosRequestConfig = { withCredentials: true}
@@ -32,3 +32,13 @@ export const getAllFriends = () => axios.get(`http://localhost:8000/user/my-frie
 export const getRequest = () => axios.get(`http://localhost:8000/user/pending-requests`, config);
 
 export const getBloques = () => axios.get(`http://localhost:8000/user/blocked-friends`, config);
+
+export const SendRequest =  async (data : CreateRequestParams) => axios.post(`http://localhost:8000/friend-request/send-request`,data,  config)
+
+export const getAllUsers = async () => axios.get(`http://localhost:8000/user/All-users`, config);
+
+export const AcceptRequest = async (id : string) => axios.post(`http://localhost:8000/friend-request/accept-request`, {requestId : id}, config);
+
+export const changeDisplayedName = async (newDisplayName : string) => axios.post(`http://localhost:8000/user/changedisplayname`, {newDisplayName : newDisplayName }, config);
+
+export const changeUserName = async (newUserName : string) => axios.post(``)

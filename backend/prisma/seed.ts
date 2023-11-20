@@ -1,7 +1,7 @@
-import { PrismaClient } from '@prisma/client';
+ import { PrismaClient } from '@prisma/client';
 import * as faker from 'faker';
 
-const prisma = new PrismaClient();
+// const prisma = new PrismaClient();
 
 const generateFakeUser = () => ({
 	username: faker.internet.userName(),
@@ -51,36 +51,36 @@ const generateFakeBlockUser = (users: { id: string }[]) => {
 	});
 };
 
-async function seed() {
-	const userCount = await prisma.user.count();
+// async function seed() {
+//   const userCount = await prisma.user.count();
 
-	if (userCount === 0) {
-		const createdUsers = [];
-		for (let i = 0; i < 10; i++) {
-			const user = await prisma.user.create({
-				data: generateFakeUser(),
-			});
-			createdUsers.push(user);
-		}
+//   if (userCount === 0) {
+//     const createdUsers = [];
+//     for (let i = 0; i < 10; i++) {
+//         const user = await prisma.user.create({
+//             data: generateFakeUser(),
+//         });
+//         createdUsers.push(user);
+//     }
 
-		const friend = await prisma.friend.createMany({
-			data: generateFakeFriends(createdUsers),
-		});
+//     const friend = await prisma.friend.createMany({
+//         data: generateFakeFriends(createdUsers),
+//     });
 
-		// const blockUser = await prisma.blockUser.createMany({
-		//     data: generateFakeBlockUser(createdUsers),
-		// });
+//     const blockUser = await prisma.blockUser.createMany({
+//         data: generateFakeBlockUser(createdUsers),
+//     });
+   
+//     console.log('User and Friend data inserted successfully');
+//   } else {
+//     console.log('User model is not empty. Skipping seed data.');
+//   }
+// }
 
-		console.log('User and Friend data inserted successfully');
-	} else {
-		console.log('User model is not empty. Skipping seed data.');
-	}
-}
-
-seed()
-	.catch((error) => {
-		throw error;
-	})
-	.finally(async () => {
-		await prisma.$disconnect();
-	});
+// seed()
+//   .catch((error) => {
+//     throw error;
+//   })
+//   .finally(async () => {
+//     await prisma.$disconnect();
+//   });
