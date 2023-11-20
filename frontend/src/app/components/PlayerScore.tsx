@@ -6,6 +6,8 @@ type PlayerScoreProps = {
 	name: string;
 	username: string;
 	playerBgColor: string;
+	isBotPlayer: boolean;
+	startGame: boolean;
 };
 
 const PlayerScore = (props: PlayerScoreProps) => {
@@ -16,7 +18,9 @@ const PlayerScore = (props: PlayerScoreProps) => {
 			}`}
 		>
 			<div
-				className={`flex w-full items-center justify-evenly ${
+				className={`${
+					props.startGame ? "visible" : "invisible"
+				} flex w-full items-center justify-evenly ${
 					props.flag === "right" ? "flex-row-reverse items-end" : ""
 				}`}
 			>
@@ -24,7 +28,7 @@ const PlayerScore = (props: PlayerScoreProps) => {
 					className={`h-12 w-12 rounded-[50%] border-2 border-[#CFF4FF] shadow-[0_0_50px_2px_var(--blue-color)] md:h-16 md:w-16 min-[1750px]:h-24 min-[1750px]:w-24`}
 					style={{ background: props.playerBgColor }}
 					id="0"
-					src={"/assets/hamza.png"}
+					src={props.isBotPlayer ? "/assets/bot.png" : "/assets/hamza.png"}
 					width={40}
 					height={40}
 					alt="player"
@@ -47,7 +51,9 @@ const PlayerScore = (props: PlayerScoreProps) => {
 			</div>
 
 			<div
-				className={`w-24 text-center font-['Whitney_Bold'] text-4xl md:text-5xl min-[1750px]:text-7xl`}
+				className={`${
+					props.startGame ? "visible" : "invisible"
+				} w-24 text-center font-['Whitney_Bold'] text-4xl md:text-5xl min-[1750px]:text-7xl`}
 			>
 				{props.score}
 			</div>

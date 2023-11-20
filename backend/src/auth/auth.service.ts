@@ -144,7 +144,7 @@ export class AuthService {
        if(user && (await bcrypt.compare(dto.password, user.password)))
        {
             const { password , ...result} = user;
-            console.log(password)
+            // console.log(password)
             return result;
        }
        /*if this condition here is not correct which means that the email and the password are not correct 

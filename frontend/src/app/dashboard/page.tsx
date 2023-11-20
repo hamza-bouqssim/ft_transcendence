@@ -39,8 +39,6 @@ const Dashboard = () => {
 
 					</div>
 					
-					
-					
 					<div className="col-2">
 
 						<div className="rank-container">

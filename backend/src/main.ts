@@ -9,8 +9,11 @@ import { WebSocketAdapter } from './gateway/gateway.adapter';
 // import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+	const app = await NestFactory.create(AppModule);
 
+	app.use(passport.initialize());
+	// app.use(passport.session());
+	app.use(cookieParser());
 
   app.use(passport.initialize());
   // app.use(passport.session());

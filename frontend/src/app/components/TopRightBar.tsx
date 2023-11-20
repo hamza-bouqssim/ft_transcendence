@@ -32,7 +32,7 @@ const TopRightBar = (props: Change) => {
 			router.push("/", { scroll: false });
 		} catch (err) {
 			alert("failed to logout");
-			console.log(err);
+			// console.log(err);
 		}
 	}
 	return (

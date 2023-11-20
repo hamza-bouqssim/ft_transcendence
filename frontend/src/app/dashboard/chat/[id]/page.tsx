@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import CoversationSideBar from "@/app/components/CoversationSideBar/ConversationSideBar";
+import CoversationSideBar from "@/app/components/CoversationSideBar/page";
 import { ConversationChannelStyle, Page} from "@/app/utils/styles";
 import { useContext, useEffect, useState , PropsWithChildren} from "react";
 import { ConversationTypes, User, messageEventPayload, messageTypes } from "@/app/utils/types";
@@ -11,32 +11,40 @@ import TopRightBar from "@/app/components/TopRightBar";
 import SideBar from "@/app/components/SideBar";
 import { socket, socketContext } from "@/app/utils/context/socketContext";
 import { Socket } from "socket.io-client";
-import { AppDispatch, RootState, store } from "@/app/store";
-import {Provider as ReduxProvider, useDispatch, useSelector} from 'react-redux'
-import { fetchMessagesThunk } from "@/app/store/messageSlice";
-import { fetchConversationThunk } from "@/app/store/conversationSlice";
+import { AppDispatch, store } from "@/app/store";
+import {Provider as ReduxProvider, useDispatch} from 'react-redux'
+import { fetchConversationThunk, fetchMessagesThunk } from "@/app/store/conversationSlice";
 
 
 type Props = {
 	user?: User;
-	setUser : React.Dispatch<React.SetStateAction<User | undefined>>;
-	socket : Socket;
-}
+	setUser: React.Dispatch<React.SetStateAction<User | undefined>>;
+	socket: Socket;
+};
 
-function AppWithProviders({children, user, setUser,} : PropsWithChildren & Props){
+function AppWithProviders({
+	children,
+	user,
+	setUser,
+}: PropsWithChildren & Props) {
 	return (
 		<ReduxProvider store={store}>
-			<socketContext.Provider value={socket}>
-				{children}
-			</socketContext.Provider>
+			<socketContext.Provider value={socket}>{children}</socketContext.Provider>
 		</ReduxProvider>
-	)
-
+	);
 }
 
 const ConversationChannelPage = () => {
   const socket = useContext(socketContext)
-
+  const [change, setChange] = useState<{
+		sideBar: boolean;
+		chatBox: boolean;
+		menu: boolean;
+	}>({
+		sideBar: false,
+		chatBox: false,
+		menu: false,
+	});
     const [ user, setUser] = useState<User | undefined>();
     const [loading, setLoading] = useState<boolean>(false);
     useEffect(() => {
@@ -48,22 +56,39 @@ const ConversationChannelPage = () => {
     },[])
 	const [conversation , setConversation] = useState<ConversationTypes[]>([]);
   const dispatch = useDispatch<AppDispatch>();
- 
+  // useEffect(() => {
+	// 	dispatch(fetchConversationThunk())
+	// 	.unwrap()
+	// 	.then(({data}) => {
+	// 		setConversation(data);
+	// 	}).catch((err)=>{
+	// 		console.log(err);
+	// 	}
+	// 	);
+	// })
+
+	useEffect(() => {
+		getConversation().then(({data}) =>{
+			setConversation(data)
+		}).catch((err)=> console.log(err))
+	}, [conversation])
+
 
 
     const {id} = useParams();
     const [message , setMessage] = useState<messageTypes[]>([])
 
-   
-      const conversations = useSelector(
-        (state: RootState) => state.conversation.conversations
-      );
-    
-      useEffect(() => {
-        console.log('Fetching Conversations in ConversationPage');
-        dispatch(fetchConversationThunk());
-      }, []);
-    
+    useEffect(() => {
+        if (typeof id === 'string') {
+          const conversationId = id;
+          getConversationMessage(conversationId)
+            .then(({ data }) => {
+              setMessage(data);
+            })
+            .catch((err) => console.log(err));
+        }
+      }, [id]);
+
       useEffect (() => {
         const conversationId = id;
         dispatch(fetchMessagesThunk(conversationId))
@@ -77,18 +102,11 @@ const ConversationChannelPage = () => {
       },)
 
       // for sockets
-
-      //whenever we enter to channel page we subscribe to connected and onMessage
       useEffect(()=>{
-        socket.emit('onClientConnect', {conversationId : id});
-        socket.on('connected', ()=> {
-          console.log("connected");
-        })
-          // socket.on('connected', () => console.log("socket here connected"));
-          //iam listenning to socket-io on onMessage and whenever an message receive we bussically update the state with setMessage
+          socket.on('connected', () => console.log("socket here connected"));
           socket.on('onMessage', (payload : messageEventPayload) => {
-            console.log("message received"); 
-            const {conversation} = payload;
+            console.log("message received");
+            
             console.log(payload);
             setMessage((prev) => [payload, ...prev]);
           });
@@ -96,19 +114,15 @@ const ConversationChannelPage = () => {
             socket.off('connected');
             socket.off('onMessage');
           }
-      }, [id])
-      const sendTypingStatus = () =>{
-        console.log("You are typing a message");
-        socket.emit('onUserTyping', {conversationId : id})
-      }
+      })
     return ( 
 
             <div className=" flex h-screen  xl:container xl:mx-auto">
               <div className ="hidden xl:block h-full w-[35%] p-10 pl-5 pr-2 ">
                 <CoversationSideBar/>
               </div>
-                <div className="bg-white xl:m-10  xl:mr-10 xl:ml-2 w-full xl:w-[65%]  xl:rounded-[20px]">
-                    <MessagePanel messages={message} sendTypingStatus={sendTypingStatus}></MessagePanel> 
+                <div className="bg-white xl:m-10  xl:mr-10 xl:ml-2 w-full xl:w-[65%]  xl:rounded-[20px] xl:mt-32">
+                    <MessagePanel messages={message}></MessagePanel> 
                 </div>
             </div>
 
