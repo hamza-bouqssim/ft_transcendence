@@ -1,6 +1,6 @@
 "use client";
 
-import CoversationSideBar from "@/app/components/CoversationSideBar/page";
+import CoversationSideBar from "@/app/components/CoversationSideBar/ConversationSideBar";
 import { ConversationChannelStyle, Page} from "@/app/utils/styles";
 import { useContext, useEffect, useState , PropsWithChildren} from "react";
 import { ConversationTypes, User, messageEventPayload, messageTypes } from "@/app/utils/types";
@@ -13,7 +13,8 @@ import { socket, socketContext } from "@/app/utils/context/socketContext";
 import { Socket } from "socket.io-client";
 import { AppDispatch, store } from "@/app/store";
 import {Provider as ReduxProvider, useDispatch} from 'react-redux'
-import { fetchConversationThunk, fetchMessagesThunk } from "@/app/store/conversationSlice";
+import { fetchConversationThunk} from "@/app/store/conversationSlice";
+import { fetchMessagesThunk } from "@/app/store/messageSlice";
 
 
 type Props = {

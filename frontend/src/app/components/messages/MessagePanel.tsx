@@ -9,10 +9,9 @@ import { postNewMessage } from "@/app/utils/api";
 
 type Props  = {
     messages : messageTypes[];
-    sendTypingStatus: () => void;
 }
 
-const MessagePanel : FC<Props> = ({messages, sendTypingStatus}) => {
+const MessagePanel : FC<Props> = ({messages}) => {
         const [content, setContent] = useState('');
         const { id } = useParams();
         

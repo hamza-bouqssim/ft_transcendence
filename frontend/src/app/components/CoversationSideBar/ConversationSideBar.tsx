@@ -14,7 +14,7 @@ import OnlineFriends from "../OnlineFriends/OnlineFriends"
 import ListFriends from "../ListFriends/ListFriends"
 import SendRequest from "../SendRequest/SendRequest"
 import FriendsBloque from "../FriendsBloque/FriendsBloque"
-import { CreateConversationModal } from "../modals/CreateConversationModal"
+import  CreateConversationModal from "../modals/CreateConversationModal"
 import { SendRequestForm } from "../forms/SendRequestForm"
 
 const CoversationSideBar = () => {

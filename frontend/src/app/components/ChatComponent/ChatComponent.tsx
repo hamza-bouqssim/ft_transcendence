@@ -12,7 +12,7 @@ import { AppDispatch, RootState } from "@/app/store";
 import { fetchConversationThunk } from "@/app/store/conversationSlice";
 import { formatRelative } from "date-fns";
 import {IoMdAdd} from 'react-icons/io'
-import { CreateConversationModal } from "../modals/CreateConversationModal";
+import CreateConversationModal  from "../modals/CreateConversationModal";
 type Props = {
 	conversations: ConversationTypes[];
 	user : User;
