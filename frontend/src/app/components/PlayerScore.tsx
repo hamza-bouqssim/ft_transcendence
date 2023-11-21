@@ -12,13 +12,6 @@ type PlayerScoreProps = {
 
 const PlayerScore = (props: PlayerScoreProps) => {
 	return (
-		// <div
-		// 	className={`relative flex h-[64px] w-[96%] items-center bg-red-500 xl:h-[225px] xl:w-[390px] xl:flex-col xl:gap-6 xl:px-1 xl:py-3 ${
-		// 		props.flag === "right"
-		// 			? "ml-auto mr-0 xl:mb-auto xl:mt-10"
-		// 			: "ml-0 mr-auto xl:mb-10 xl:mt-auto"
-		// 	}`}
-		// >
 		<div
 			className={`glassmorphism relative flex h-[64px] w-[96%] max-w-[300px] items-center md:h-[110px] md:max-w-[450px] xl:h-[190px] xl:max-w-[300px] xl:flex-col xl:gap-6 xl:px-1 xl:py-3 min-[1750px]:h-[230px] min-[1750px]:max-w-[400px] ${
 				props.flag === "top"
