@@ -1,86 +1,88 @@
-import { PrismaClient } from '@prisma/client';
-import * as faker from 'faker';
 
-const prisma = new PrismaClient();
+// import { PrismaClient } from '@prisma/client';
+// import * as faker from 'faker';
 
-const generateFakeUser = () => ({
-  username: faker.internet.userName(),
-  email: faker.internet.email(),
-  password: faker.internet.password(),
-  display_name: faker.name.findName(),
-  avatar_url: faker.image.avatar(),
-  two_factor_auth: faker.random.boolean().toString(),
-  two_factor_secret_key: faker.random.alphaNumeric(20),
-});
+// const prisma = new PrismaClient();
 
-const generateFakeFriends = (users:{id:string}[]) => {
-    console.log(">>>>>",users)
-    return Array.from({ length: 10 }, () => {
-      let user, friend;
+// const generateFakeUser = () => ({
+//   username: faker.internet.userName(),
+//   email: faker.internet.email(),
+//   password: faker.internet.password(),
+//   display_name: faker.name.findName(),
+//   avatar_url: faker.image.avatar(),
+//   two_factor_auth: faker.random.boolean().toString(),
+//   two_factor_secret_key: faker.random.alphaNumeric(20),
+//   rank: faker.random.word(),
+// });
+
+// const generateFakeFriends = (users:{id:string}[]) => {
+//     console.log(">>>>>",users)
+//     return Array.from({ length: 10 }, () => {
+//       let user, friend;
   
-      do {
-        user = faker.random.arrayElement(users);
-        friend = faker.random.arrayElement(users);
-      } while (user.id === friend.id);
+//       do {
+//         user = faker.random.arrayElement(users);
+//         friend = faker.random.arrayElement(users);
+//       } while (user.id === friend.id);
   
-      return {
-        user_id: user.id,
-        friend_id: friend.id,
-        status: faker.random.arrayElement(['PENDING', 'ACCEPTED']),
-        created_at: faker.date.past(),
-      };
-    });
-};
+//       return {
+//         user_id: user.id,
+//         friend_id: friend.id,
+//         status: faker.random.arrayElement(['PENDING', 'ACCEPTED']),
+//         created_at: faker.date.past(),
+//       };
+//     });
+// };
 
-const generateFakeBlockUser = (users:{id:string}[]) => {
-    console.log("")
-    return Array.from({ length: 5 }, () => {
-      let user, blocked;
+// const generateFakeBlockUser = (users:{id:string}[]) => {
+//     console.log("")
+//     return Array.from({ length: 5 }, () => {
+//       let user, blocked;
   
-      do {
-        user = faker.random.arrayElement(users);
-        blocked = faker.random.arrayElement(users);
-      } while (user.id === blocked.id);
+//       do {
+//         user = faker.random.arrayElement(users);
+//         blocked = faker.random.arrayElement(users);
+//       } while (user.id === blocked.id);
   
-      return {
-        userId: user.id,
-        blockedUserId: blocked.id,
-        createdAt: faker.date.past()
-      };
-    });
-};
+//       return {
+//         userId: user.id,
+//         blockedUserId: blocked.id,
+//         createdAt: faker.date.past()
+//       };
+//     });
+// };
 
 
-async function seed() {
-  const userCount = await prisma.user.count();
+// async function seed() {
+//   const userCount = await prisma.user.count();
 
-  if (userCount === 0) {
-    const createdUsers = [];
-    for (let i = 0; i < 10; i++) {
-        const user = await prisma.user.create({
-            data: generateFakeUser(),
-        });
-        createdUsers.push(user);
-    }
+//   if (userCount === 0) {
+//     const createdUsers = [];
+//     for (let i = 0; i < 10; i++) {
+//         const user = await prisma.user.create({
+//             data: generateFakeUser(),
+//         });
+//         createdUsers.push(user);
+//     }
 
-    const friend = await prisma.friend.createMany({
-        data: generateFakeFriends(createdUsers),
-    });
+//     const friend = await prisma.friend.createMany({
+//         data: generateFakeFriends(createdUsers),
+//     });
 
-    // const blockUser = await prisma.blockUser.createMany({
-    //     data: generateFakeBlockUser(createdUsers),
-    // });
+//     const blockUser = await prisma.blockUser.createMany({
+//         data: generateFakeBlockUser(createdUsers),
+//     });
    
-    console.log('User and Friend data inserted successfully');
-  } else {
-    console.log('User model is not empty. Skipping seed data.');
-  }
-}
+//     console.log('User and Friend data inserted successfully');
+//   } else {
+//     console.log('User model is not empty. Skipping seed data.');
+//   }
+// }
 
-seed()
-  .catch((error) => {
-    throw error;
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+// seed()
+//   .catch((error) => {
+//     throw error;
+//   })
+//   .finally(async () => {
+//     await prisma.$disconnect();
+//   });

@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Controller, Get, Param,  Post, Put, Req,  UnauthorizedException, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Param,  Post, Put, Req,  UnauthorizedException, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthenticatedGuard } from 'src/auth/guards/GlobalGuard';
 import { UserService } from './user.service';
 import { JwtService } from '@nestjs/jwt';
@@ -39,30 +39,30 @@ export class UserController {
         return this.userService.findUser(username);
     }
 
-    @Put('changedisplayname/:display_name')
+    @Post('changedisplayname')
     @UseGuards(AuthenticatedGuard)
-    async displayedName(@Req() req, @Param('display_name') newDisplayName: string){
+    async displayedName(@Body() request:{newDisplayName: string}, @Req() req ){
 
       try {
 
         const user = await whichWithAuthenticated(req, this.jwtService, this.prisma);
         // console.log(user.email)
-        const updated = this.userService.changeDisplayedName(user.email, newDisplayName);
+        const updated = this.userService.changeDisplayedName(user.email, request.newDisplayName);
         return updated;
       }catch(error){
         throw new Error('Failed to update the displayed name');
       }
     }
 
-    @Put('changeusername/:username')
+    @Put('changeusername')
     @UseGuards(AuthenticatedGuard)
-    async changeUserName(@Req() req, @Param('username') newUserName: string){
+    async changeUserName(@Body() request: {newUserName : string}, @Req() req){
 
       try {
 
         const user = await whichWithAuthenticated(req, this.jwtService, this.prisma);
 
-        const updated = this.userService.changeUserName(user.email, newUserName);
+        const updated = this.userService.changeUserName(user.email, req.newUserName);
         return updated;
       }catch(error){
         throw new Error('Failed to update the username');
@@ -128,6 +128,13 @@ export class UserController {
     {     
       const user = await whichWithAuthenticated(req, this.jwtService, this.prisma);
       return await this.userService.blockedFriends(user.id);
+    }
+    @Get('All-users')
+    @UseGuards(AuthenticatedGuard)
+    async allUsers(@Req() req)
+    {
+      const user = await whichWithAuthenticated(req, this.jwtService, this.prisma);
+      return await this.userService.allUsers(user.id);
     }
     
 }

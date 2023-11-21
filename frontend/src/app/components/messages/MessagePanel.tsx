@@ -9,10 +9,9 @@ import { postNewMessage } from "@/app/utils/api";
 
 type Props  = {
     messages : messageTypes[];
-    sendTypingStatus: () => void;
 }
 
-const MessagePanel : FC<Props> = ({messages, sendTypingStatus}) => {
+const MessagePanel : FC<Props> = ({messages}) => {
         const [content, setContent] = useState('');
         const { id } = useParams();
         
@@ -35,7 +34,7 @@ const MessagePanel : FC<Props> = ({messages, sendTypingStatus}) => {
     return (
         <div className="p-2 md:p-6  h-full flex items-center w-full justify-between"> 
                 <div className="md:w-[60%] h-full w-full"> 
-                    <MessagePanelHeader/>
+                    {/* <MessagePanelHeader/> */}
                     <MessageContainer messages={messages}/>
                     <MessageInputField content= {content} setContent={setContent} sendMessage={sendMessage}/>
                 </div>

@@ -9,7 +9,7 @@ type props = {
 	setShow: Dispatch<React.SetStateAction<Boolean>>;
 };
 
-export const CreateConversationModal: FC<props> = ({ setShow }) => {
+const CreateConversationModal: FC<props> = ({ setShow }) => {
 	const ref = createRef<HTMLDivElement>();
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) =>
@@ -19,14 +19,14 @@ export const CreateConversationModal: FC<props> = ({ setShow }) => {
 		console.log(ref);
 	}, []);
 
-export const CreateConversationModal:FC<props> = ({setShow}) => {
-    const ref = createRef<HTMLDivElement>();
-    useEffect(() => {
-        const handleKeyDown = (e : KeyboardEvent) => e.key === 'Escape' && setShow(false);
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-        console.log(ref);
-    })
+// export const CreateConversationModal:FC<props> = ({setShow}) => {
+//     const ref = createRef<HTMLDivElement>();
+//     useEffect(() => {
+//         const handleKeyDown = (e : KeyboardEvent) => e.key === 'Escape' && setShow(false);
+//         window.addEventListener('keydown', handleKeyDown);
+//         return () => window.removeEventListener('keydown', handleKeyDown);
+//         console.log(ref);
+//     })
 
 
     const handleOverlayClick = (e : React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -36,18 +36,7 @@ export const CreateConversationModal:FC<props> = ({setShow}) => {
             console.log('close Modal');
         }
     };
-    // const CreateConversation = async (e : React.FormEvent<HTMLFormElement>) => {
-    //     e.preventDefault();
-  
-    //     try{
-    //         await createConversation({recipientId, message});
-    //         setContent('');
-    //     }catch(err){
-    //         alert("error");
-    //         console.log(err);
-
-    //     }
-    // };
+   
     return (
         <OverlayStyle ref={ref} onClick={handleOverlayClick}>
             <ModalContainer>
@@ -56,7 +45,7 @@ export const CreateConversationModal:FC<props> = ({setShow}) => {
                 <MdClose size={20} color="red"  onClick={() => setShow(false)}/>
                 </ModalHeader>
                 <ModalContentBody>
-                    <CreateConversationForm  setShow={setShow}/>
+                    <CreateConversationForm />
                 </ModalContentBody>
                
             </ModalContainer>
@@ -65,3 +54,5 @@ export const CreateConversationModal:FC<props> = ({setShow}) => {
     )
     
 }
+
+export default CreateConversationModal;

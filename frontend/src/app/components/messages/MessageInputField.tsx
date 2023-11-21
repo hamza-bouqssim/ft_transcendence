@@ -9,7 +9,6 @@ type props = {
     content : string;
     setContent : Dispatch<SetStateAction<string>>;
     sendMessage : (e: React.FormEvent<HTMLFormElement>) => void;
-    sendTypingStatus : () => void;
 }
 
 const MessageInputField: FC<props> = ({content, setContent, sendMessage}) => {

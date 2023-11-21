@@ -46,14 +46,14 @@ export class WebSocketAdapter extends IoAdapter {
             // Verify the JWT and decode the payload
             const decodedToken = jwt.verify(token, COOKIE_SECRET) as Record<string, any>;
             console.log("Decoded Token:", decodedToken);
-
+         
             // You can access user information directly from the decoded token
             const userDb = plainToInstance(User, decodedToken);
             socket.user = userDb;
             // console.log("socket here");
             // console.log(socket);
-            // console.log("user here");
-            // console.log(socket.user);
+            console.log("user here***********************");
+            console.log(socket.user);
             next();
         } catch (error) {
             console.error("Error verifying JWT:", error);

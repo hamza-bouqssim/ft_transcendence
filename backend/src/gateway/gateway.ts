@@ -7,8 +7,9 @@ import { AuthenticatedSocket } from "src/utils/interfaces";
 import { IGateWaySession } from "./gateway.session";
 import { Services } from "src/utils/constants";
 import { Inject } from "@nestjs/common";
-import { Message } from "@prisma/client";
+import { Message, User } from "@prisma/client";
 import { Client } from "socket.io/dist/client";
+import { PrismaService } from "prisma/prisma.service";
 @WebSocketGateway({
     cors:{
         origin:['http://localhost:3000'],
@@ -29,22 +30,22 @@ import { Client } from "socket.io/dist/client";
 
 /****We can use an adapter to apply middleWare on the socket */
 export class MessagingGateWay implements OnGatewayConnection{
-    constructor(@Inject(Services.GATEWAY_SESSION_MANAGER)private readonly sessions : IGateWaySession){}
+    constructor(@Inject(Services.GATEWAY_SESSION_MANAGER)private readonly sessions : IGateWaySession, private readonly prisma : PrismaService){}
     @WebSocketServer()
     server: Server;
     handleConnection(socket : AuthenticatedSocket, ...args: any[]) {
         console.log("new Incoming connection");
-        // console.log("user logged here");
         console.log(socket.user);
-        // console.log("the session befaure-->", this.sessions);
         this.sessions.setUserSocket(socket.user.id,socket);
-        socket.emit('connected', {status : 'good'});
-
+        // socket.emit('connected', {status : 'good'});
         console.log("the session is");
-        console.log(this.sessions);
-        // console.log("rooms");
-        // console.log(socket.rooms)
+        console.log(this.sessions.getSockets());
+        if(socket.user.id)
+            console.log(socket.user.email ,"is online");
+    
+       
     }
+    
     
     @SubscribeMessage('createMessage')
     handleCreateMessage(@MessageBody() data: any){
@@ -57,12 +58,36 @@ export class MessagingGateWay implements OnGatewayConnection{
     //     console.log("User is typing");
 
     // }
+
+    @SubscribeMessage('getOnlineUsers')
+    handleGetOnlineUsers(socket: AuthenticatedSocket) {
+        console.log("get online users*****************");
+        console.log(this.server.sockets.adapter.rooms);
+        const onlineUsers: User[] = [];
+        for (const [roomId, roomSet] of this.server.sockets.adapter.rooms) {
+            const roomSockets = Array.from(roomSet);
+            console.log("here******");
+    
+            for (const socketId of roomSockets) {
+                const user = this.sessions.getUserBySocketId(socketId);
+                console.log("this user is -->", user);
+    
+                if (user) {
+                    onlineUsers.push(user);
+                }
+            }
+        }
+        socket.emit('getOnlineUsers', onlineUsers);
+
+    return onlineUsers;
+}
     @SubscribeMessage('onClientConnect')
     onClientConnect(@MessageBody() data : any, @ConnectedSocket() Client : AuthenticatedSocket){
-        // console.log("onClient connect");
+        console.log("onClient connect*****************");
         console.log(data);
-        // console.log(Client.user);
+        console.log(Client.user);
     }
+   
     @OnEvent("message.create")
     handleMessageCreateEvent(payload : Message){
         console.log("create message*************");

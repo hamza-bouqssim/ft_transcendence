@@ -79,6 +79,8 @@ model ChatParticipents {
   messages    Message[] @relation("participentsMessages")
   lastMessage Message?   @relation("lastMessageSent", fields: [lastMessageId], references: [id])
   lastMessageId String?
+  createdAt DateTime @default(now())
+
 }
 
 model Message {

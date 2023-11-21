@@ -14,11 +14,11 @@ export class FriendRequestController {
 
     @Post('send-request')
     @UseGuards(AuthenticatedGuard)
-    async sendRequest(@Body() request: {friendDisplay_name: string}, @Req() req){
+    async sendRequest(@Body() request: {display_name: string}, @Req() req){
 
-            console.log("thissss===== : " + request.friendDisplay_name);
+            console.log("thissss===== : " + request.display_name);
             const user = await whichWithAuthenticated(req, this.jwtService, this.prisma)
-            return this.friendshipService.sendRequest(request.friendDisplay_name, user.display_name);
+            return this.friendshipService.sendRequest(request.display_name, user.display_name);
     }
 
     @Post('accept-request')
@@ -26,7 +26,7 @@ export class FriendRequestController {
     async acceptRequest(@Body() request: {requestId: string}, @Req() req)
     {
         const user = await whichWithAuthenticated(req, this.jwtService, this.prisma);
-        return this.friendshipService.acceptFriendRequest(request.requestId, user.id);
+        return this.friendshipService.acceptFriendRequest(request.requestId, user);
     }
     
     @Post('block-friend')
