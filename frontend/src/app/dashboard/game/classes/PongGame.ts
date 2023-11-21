@@ -62,20 +62,6 @@ class PongGame {
 			inertia: Infinity,
 			restitution: 1,
 		});
-		if (this.socket) {
-			socket.on("updateBallVelocity", (data: any) => {
-				console.log(data)
-				Body.setVelocity(this.ball, {
-					x: data.x,
-					y: data.y,
-				});
-			});
-		} else {
-			Body.setVelocity(this.ball, {
-				x: this.currentBallSpeed.x,
-				y: this.currentBallSpeed.y,
-			});
-		}
 
 		// Create Two Paddles:
 		const topRect = Bodies.rectangle(this.divWidth / 2, 0, this.divWidth, 20, {
@@ -170,10 +156,48 @@ class PongGame {
 			},
 		});
 		Render.run(render);
+
+		if (this.socket)
+			this.moveOnlineModeBall();
+		else
+		{
+			this.setBotModeBall();
+			this.moveBotPaddle();
+		}
+
+		this.movePaddle();
+
+		//Run Game
+		this.startGame();
+	}
+
+	startGame = () : void => {
 		this.lunchGameInterval = setTimeout(() => {
 			// run the engine
 			Runner.run(Runner.create(), engine);
 		}, 1000);
+	}
+
+	moveOnlineModeBall = (): void => {
+		this.socket.on("setBallVelocity", (data: any)=> {	
+			Body.setVelocity(this.ball, {
+				x: data.x,
+				y: data.y,
+			});
+		})
+		this.socket.on("updateBallPosition", (data: any) => {
+			Body.setPosition(this.ball, {
+				x: data.x,
+				y: data.y,
+			});
+		});
+	}
+
+	setBotModeBall = () : void => {
+		Body.setVelocity(this.ball, {
+			x: this.currentBallSpeed.x,
+			y: this.currentBallSpeed.y,
+		});
 	}
 
 	// setBallSpeed = (): void => {
@@ -273,84 +297,6 @@ class PongGame {
 		//when a player score a point
 		// clearInterval(moveInterval);
 	};
-
-	// movePaddle = (): void => {
-	// 	document.addEventListener("keydown", (e) => {
-	// 		if (e.key === "d" || e.key === "ArrowRight")
-	// 			this.socket.emit("keyevent", {
-	// 				key: e.key,
-	// 				state: "keydown",
-	// 			});
-	// 		else if (e.key === "a" || e.key === "ArrowLeft")
-	// 			this.socket.emit("keyevent", {
-	// 				key: e.key,
-	// 				state: "keydown",
-	// 			});
-	// 	});
-
-	// 	document.addEventListener("keyup", (e) => {
-	// 		if (e.key === "d" || e.key === "ArrowRight")
-	// 			this.socket.emit("keyevent", {
-	// 				key: e.key,
-	// 				state: "keyup",
-	// 			});
-	// 		else if (e.key === "a" || e.key === "ArrowLeft")
-	// 			this.socket.emit("keyevent", {
-	// 				key: e.key,
-	// 				state: "keyup",
-	// 			});
-	// 	});
-	// 	if (this.socket) {
-	// 		this.socket.on("updatePaddlePosition", (data: any) => {
-	// 			Body.setPosition(this.bottomPaddle, {
-	// 				x: data.xPosition,
-	// 				y: this.bottomPaddle.position.y,
-	// 			});
-	// 		});
-	// 	}
-
-	// document.addEventListener("keydown", (e) => {
-	// 	if (e.key === "d" || e.key === "ArrowRight") {
-	// 		this.socket.emit("movePaddle", () => {
-	// 			movingRight: true;
-	// 		});
-	// 	} else if (e.key === "a" || e.key === "ArrowLeft") {
-	// 		movingLeft: true;
-	// 	}
-	// });
-
-	// document.addEventListener("keyup", (e) => {
-	// 	if (e.key === "d" || e.key === "ArrowRight") movingRight = false;
-	// 	else if (e.key === "a" || e.key === "ArrowLeft") movingLeft = false;
-	// });
-
-	// this.moveInterval = setInterval(() => {
-	// 	let stepX;
-
-	// 	if (movingLeft) {
-	// 		stepX = this.bottomPaddle.body.position.x - 11;
-	// 		if (stepX <= this.bottomPaddle.width / 2) {
-	// 			stepX = this.bottomPaddle.width / 2;
-	// 		}
-	// 		Matter.Body.setPosition(this.bottomPaddle.body, {
-	// 			x: stepX,
-	// 			y: this.bottomPaddle.body.position.y,
-	// 		});
-	// 	} else if (movingRight) {
-	// 		stepX = this.bottomPaddle.body.position.x + 11;
-	// 		if (stepX >= this.divWidth - this.bottomPaddle.width / 2) {
-	// 			stepX = this.divWidth - this.bottomPaddle.width / 2;
-	// 		}
-	// 		Matter.Body.setPosition(this.bottomPaddle.body, {
-	// 			x: stepX,
-	// 			y: this.bottomPaddle.body.position.y,
-	// 		});
-	// 	}
-	// }, 10);
-
-	// when a player score a point
-	// clearInterval(moveInterval);
-	// };
 
 	setNewBallVelocity = () => {
 		if (this.currentBallSpeed.x < 16 && this.currentBallSpeed.y < 16)

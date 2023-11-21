@@ -43,10 +43,17 @@ model User {
   notifications Notification[]
   player1 Pong_match[] @relation("player1")
   player2 Pong_match[] @relation("player2")
+  matchEvent match_events[] @relation("match_event")
   Member  Member[]
   blockingUsers       BlockUser[] @relation("blockingUsers")
   blockedByUsers      BlockUser[] @relation("blockedByUsers")
   messageRome  MessageRome[]
+
+  StateGame                   StateGame?
+  Achievement                 Achievement[]
+  MatchHistory1               Match_History[]    @relation("playerOne")
+  MatchHistory2               Match_History[]    @relation("playerTow")
+  queue                       Queue[]
 
 }
 
@@ -104,17 +111,80 @@ model Notification {
   user    User   @relation(fields: [user_id], references: [id])
 }
 
+model match_events {
+  id String @id @default(uuid())
+  match_id String
+  player_id String
+  event_type EventType @default(UNPROCESSED)
+  timestamp DateTime
+  match Pong_match @relation("pong_match", fields: [match_id], references: [id])
+  user User @relation("match_event", fields: [player_id], references: [id])
+}
+
+model Pong_match {
+  id String @id @default(uuid())
+  player1_id String
+  player2_id String
+  created_at DateTime
+  updated_at DateTime
+  playerOne User @relation("player1", fields: [player1_id], references: [id])
+  playerTwo User @relation("player2", fields: [player2_id], references: [id])
+  matchEvents match_events[] @relation("pong_match")
+}
+
+
+
+model ChatRoom {
+  id        String @id @default(uuid())
+  name      String    @unique
+  Privacy   String   
+  password  String?
+  picture   String?  @default("https://images.squarespace-cdn.com/content/v1/5f60d7057b9b7d7609ef628f/1603219780222-V253F1WLHBH8HNHXIFUX/group.png")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  members   Member[]
+  messageRome  MessageRome[]
+}
+
+model Member {
+  id          String @id @default(uuid())
+  user_id     String
+  chatRoomId  String
+  isAdmin     Boolean
+  user        User        @relation(fields: [user_id], references: [id])
+  chatRoom    ChatRoom    @relation(fields: [chatRoomId], references: [id])
+}
+
+model MessageRome{
+  id          String @id @default(uuid())
+  content     String
+  chatRoomId  String
+  senderId    String
+  createdAt   DateTime @default(now())
+  user        User        @relation(fields: [senderId], references: [id])
+  chatRoom    ChatRoom    @relation(fields: [chatRoomId], references: [id])
+
+}
+
+
+model Session {
+  id        String   @id @default(uuid())
+  sid       String   @unique
+  data      String
+  expiresAt DateTime
+}
+
 model StateGame {
   id            String @id @default(uuid())
   user_id       String @unique
   win           Int    @default(0)
   lose          Int    @default(0)
-  level         Float  @default(1.0)
+  level         Float  @default(0.0)
   numberOfMatch Int    @default(0)
   rank          Int    @default(-1)
   user          User   @relation(fields: [user_id], references: [id])
 }
-// inprogress
+
 model Achievement {
   id      String @id @default(uuid())
   user_id String 
@@ -156,44 +226,4 @@ model Queue {
   userId    String   @unique
   user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
-}
-
-model ChatRoom {
-  id        String @id @default(uuid())
-  name      String    @unique
-  Privacy   String   
-  password  String?
-  picture   String?  @default("https://images.squarespace-cdn.com/content/v1/5f60d7057b9b7d7609ef628f/1603219780222-V253F1WLHBH8HNHXIFUX/group.png")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  members   Member[]
-  messageRome  MessageRome[]
-}
-
-model Member {
-  id          String @id @default(uuid())
-  user_id     String
-  chatRoomId  String
-  isAdmin     Boolean
-  user        User        @relation(fields: [user_id], references: [id])
-  chatRoom    ChatRoom    @relation(fields: [chatRoomId], references: [id])
-}
-
-model MessageRome{
-  id          String @id @default(uuid())
-  content     String
-  chatRoomId  String
-  senderId    String
-  createdAt   DateTime @default(now())
-  user        User        @relation(fields: [senderId], references: [id])
-  chatRoom    ChatRoom    @relation(fields: [chatRoomId], references: [id])
-
-}
-
-
-model Session {
-  id        String   @id @default(uuid())
-  sid       String   @unique
-  data      String
-  expiresAt DateTime
 }

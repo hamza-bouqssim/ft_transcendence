@@ -13,13 +13,13 @@ help:
 
 
 build:
-	docker-compose build
+	docker compose build
 
 up:
-	docker-compose up 
+	docker compose up 
 
 down:
-	docker-compose down
+	docker compose down
 
 bash-api:
 	docker exec -it  nestJs bash
@@ -33,7 +33,7 @@ bash-postgres:
 remove-images:
 	docker-compose down --rmi all
 remove-volumes:
-	docker-compose down -v
+	docker compose down -v
 
 prune: down 
 	docker system prune -a  

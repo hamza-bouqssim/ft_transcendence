@@ -80,7 +80,8 @@ export class MessagingGateWay implements OnGatewayConnection{
         socket.emit('getOnlineUsers', onlineUsers);
 
     return onlineUsers;
-}
+    }
+    
     @SubscribeMessage('onClientConnect')
     onClientConnect(@MessageBody() data : any, @ConnectedSocket() Client : AuthenticatedSocket){
         console.log("onClient connect*****************");

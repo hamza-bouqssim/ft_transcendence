@@ -1,5 +1,13 @@
 /* eslint-disable prettier/prettier */
-import { BadRequestException, ConflictException, ForbiddenException, HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+	BadRequestException,
+	ConflictException,
+	ForbiddenException,
+	HttpException,
+	HttpStatus,
+	Injectable,
+	UnauthorizedException,
+} from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { AuthDto } from './dto/auth.dto';
 import { Request, Response } from 'express';
@@ -132,25 +140,20 @@ export class AuthService {
 
         so first we need to go to the user service and create a function for retrieving the user based on the email from our user table,
         so lets go to the user service and create a function called fundByEmail
-        */ 
-       const user = await this.userservice.findByEmail(dto.email)
-       if(!user)
-        throw new HttpException('Invalid Credentials', HttpStatus.UNAUTHORIZED);
-       /* iam going to use the dto.password and pass the hashed version of the user password 
+        */
+		const user = await this.userservice.findByEmail(dto.email);
+		if (!user)
+			throw new HttpException('Invalid Credentials', HttpStatus.UNAUTHORIZED);
+		/* iam going to use the dto.password and pass the hashed version of the user password 
        which we can get from the user object */
-       // so the compare function first hash the dto.password and then compare the hashed version of the dto.password with user.password which is already hashed inside the database
-       if(user && (await bcrypt.compare(dto.password, user.password)))
-       {
-            const { password , ...result} = user;
-            // console.log(password)
-            return result;
-       }
-       /*if this condition here is not correct which means that the email and the password are not correct 
+		// so the compare function first hash the dto.password and then compare the hashed version of the dto.password with user.password which is already hashed inside the database
+		if (user && (await bcrypt.compare(dto.password, user.password))) {
+			const { password, ...result } = user;
+			// console.log(password)
+			return result;
+		}
+		/*if this condition here is not correct which means that the email and the password are not correct 
        so we should throw an exeption */
-       return null;
-
-
-    }
-
-    
+		return null;
+	}
 }

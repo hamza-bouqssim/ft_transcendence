@@ -17,23 +17,7 @@ import { fetchConversationThunk} from "@/app/store/conversationSlice";
 import { fetchMessagesThunk } from "@/app/store/messageSlice";
 
 
-type Props = {
-	user?: User;
-	setUser: React.Dispatch<React.SetStateAction<User | undefined>>;
-	socket: Socket;
-};
 
-function AppWithProviders({
-	children,
-	user,
-	setUser,
-}: PropsWithChildren & Props) {
-	return (
-		<ReduxProvider store={store}>
-			<socketContext.Provider value={socket}>{children}</socketContext.Provider>
-		</ReduxProvider>
-	);
-}
 
 const ConversationChannelPage = () => {
   const socket = useContext(socketContext)
