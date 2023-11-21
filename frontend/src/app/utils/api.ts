@@ -47,4 +47,6 @@ export const changeDisplayedName = async (DisplayName : string) => axios.post(`h
 
 export const changeUserName = async (UserName : string) => axios.post(`http://localhost:8000/user/changeusername`, {newUserName: UserName}, config);
 
-export const changeAvatar = async (AvatarUrl : string) => axios.post(`http://localhost:8000/user/changeAvatar`, {file : AvatarUrl}, config)
+export const changeAvatar = async (AvatarUrl : string) => axios.post(`http://localhost:8000/user/changeAvatar`, {file : AvatarUrl}, config);
+
+export const searchingBar = async (display_name : string) => axios.post(`http://localhost:8000/user/search`, {displayName : display_name}, config);

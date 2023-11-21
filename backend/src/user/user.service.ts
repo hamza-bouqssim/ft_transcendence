@@ -180,6 +180,17 @@ export class UserService {
             }
         })
     }
+
+
+    async findByDisplayNameSearching(displayName: string) {
+        return await this.prisma.user.findMany({
+            where: {
+                display_name: {
+                    contains: displayName,
+                },
+            },
+        });
+    }
     
     async findUserById(finduserParams : findUserParams)
     {

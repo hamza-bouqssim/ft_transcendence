@@ -138,6 +138,11 @@ export class UserController {
       const user = await whichWithAuthenticated(req, this.jwtService, this.prisma);
       return await this.userService.allUsers(user.id);
     }
+    @Post('search')
+    async searchUsers(@Body() request: {displayName : string}) {
+      const test = this.userService.findByDisplayNameSearching(request.displayName);
+      return test;
+  }
     
 }
 

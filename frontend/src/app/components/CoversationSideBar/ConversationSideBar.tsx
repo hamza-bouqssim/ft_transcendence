@@ -4,7 +4,7 @@
 import {  useEffect, useState } from "react"
 import {useRouter} from "next/navigation"
 import { usePathname } from 'next/navigation'
-import ConversationSearch from "../ConversationSearch/page"
+import ConversationSearch from "../ConversationSearch/ConversationSearch"
 import ChatComponnent from "../ChatComponent/ChatComponent"
 import GroupsManagement from "../GroupsManagment/GroupsManagment"
 import CreatGroups from "../CreateGroups/CreateGroups"
