@@ -19,6 +19,7 @@ export const fetchGetRequestThunk = createAsyncThunk('request/fetch', async () =
 });
 export const fetchRequestThunk = createAsyncThunk('request/create', async(data : CreateRequestParams)=>{
     const response = await SendRequest(data);
+    console.log("rx",response)
     return response;
   });
 

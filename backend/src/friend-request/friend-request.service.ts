@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException,HttpStatus,HttpException } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
 import { ParticipentService } from 'src/Participent/Participent.service';
@@ -15,7 +15,8 @@ export class FriendRequestService {
         
         if(!user || !_friendDisplay_name)
         {
-            throw new UnauthorizedException('User Not Found !');
+            throw new HttpException('User Not Found !', HttpStatus.BAD_REQUEST)
+
         }
 
 
@@ -23,7 +24,7 @@ export class FriendRequestService {
 
         if(requestAlreadySent)
         {
-            throw new UnauthorizedException("Request Already Sent !");
+            throw new HttpException('Request Already Sent !', HttpStatus.BAD_REQUEST)
         }
 
          await this.prisma.friend.create({

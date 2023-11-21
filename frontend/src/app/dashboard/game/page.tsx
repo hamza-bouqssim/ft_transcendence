@@ -3,7 +3,7 @@ import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRobot, faUserGroup } from "@fortawesome/free-solid-svg-icons";
 import InviteField from "../../components/InviteField";
-import { PlayerCard } from "../../components/PlayerCard";
+import  PlayerCard from "../../components/PlayerCard";
 import { ChangeContext } from "../layout";
 import React, { useContext, useEffect, useState } from "react";
 import { getAuthUser } from "@/app/utils/api";

@@ -18,8 +18,9 @@ export const SendRequestForm= () => {
         const onSubmit = async  (data : CreateRequestParams) => {
           // dispatch(createConversationThunk(data));
         
-            dispatch(fetchRequestThunk(data)).then(()=>{
-              alert("You are sending request")
+            dispatch(fetchRequestThunk(data)).then((res)=>{
+              console.log("res",res)
+              // alert("You are sending request")
             }).catch((err)=>{
              console.log(err); 
             })

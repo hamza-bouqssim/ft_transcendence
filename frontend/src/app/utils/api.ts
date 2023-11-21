@@ -33,12 +33,18 @@ export const getRequest = () => axios.get(`http://localhost:8000/user/pending-re
 
 export const getBloques = () => axios.get(`http://localhost:8000/user/blocked-friends`, config);
 
-export const SendRequest =  async (data : CreateRequestParams) => axios.post(`http://localhost:8000/friend-request/send-request`,data,  config)
+export const SendRequest =  async (data : CreateRequestParams) => { 
+    const res = await axios.post(`http://localhost:8000/friend-request/send-request`,data,  config)
+    console.log("featch", res)
+    return res;
+}
 
 export const getAllUsers = async () => axios.get(`http://localhost:8000/user/All-users`, config);
 
 export const AcceptRequest = async (id : string) => axios.post(`http://localhost:8000/friend-request/accept-request`, {requestId : id}, config);
 
-export const changeDisplayedName = async (newDisplayName : string) => axios.post(`http://localhost:8000/user/changedisplayname`, {newDisplayName : newDisplayName }, config);
+export const changeDisplayedName = async (DisplayName : string) => axios.post(`http://localhost:8000/user/changedisplayname`, {newDisplayName : DisplayName }, config);
 
-export const changeUserName = async (newUserName : string) => axios.post(``)
+export const changeUserName = async (UserName : string) => axios.post(`http://localhost:8000/user/changeusername`, {newUserName: UserName}, config);
+
+export const changeAvatar = async (AvatarUrl : string) => axios.post(`http://localhost:8000/user/changeAvatar`, {file : AvatarUrl}, config)

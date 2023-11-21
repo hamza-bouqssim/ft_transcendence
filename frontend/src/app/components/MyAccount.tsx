@@ -6,7 +6,7 @@ const MyAccount = () => {
 	const [src, setSrc] = useState<string>("/assets/user2.jpeg");
 	return (
 		<div className="font-['Whitney Semibold'] text-xs md:text-sm lg:text-[1.3rem] ">
-			<div className="flex flex-col items-center justify-around gap-5 border-b border-[#9f9f9f4a] pb-3 md:flex-row">
+			{/* <div className="flex flex-col items-center justify-around gap-5 border-b border-[#9f9f9f4a] pb-3 md:flex-row">
 				<div className=" ">
 					<Image
 						className="h-24 w-24 rounded-[50%] bg-sky-200 min-[1750px]:h-24 min-[1750px]:w-24"
@@ -42,8 +42,8 @@ const MyAccount = () => {
 					}}
 					value="Delete"
 				/>
-			</div>
-			<Form img={src} />
+			</div> */}
+			<Form/>
 		</div>
 	);
 };
