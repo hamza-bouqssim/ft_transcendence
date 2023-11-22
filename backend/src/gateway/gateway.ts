@@ -34,22 +34,19 @@ export class MessagingGateWay implements OnGatewayConnection{
     @WebSocketServer()
     server: Server;
     handleConnection(socket : AuthenticatedSocket, ...args: any[]) {
-        console.log("new Incoming connection");
-        console.log(socket.user);
+        // console.log("new Incoming connection");
+        // console.log(socket.user);
         this.sessions.setUserSocket(socket.user.id,socket);
         // socket.emit('connected', {status : 'good'});
-        console.log("the session is");
-        console.log(this.sessions.getSockets());
-        if(socket.user.id)
-            console.log(socket.user.email ,"is online");
-    
-       
+        // console.log("the session is");
+        // console.log(this.sessions.getSockets());
+        // if(socket.user.id)
+        //     console.log(socket.user.email ,"is online");
     }
-    
     
     @SubscribeMessage('createMessage')
     handleCreateMessage(@MessageBody() data: any){
-        console.log("create message")
+        // console.log("create message")
     }
 
     // @SubscribeMessage('onUserTyping')
@@ -61,16 +58,16 @@ export class MessagingGateWay implements OnGatewayConnection{
 
     @SubscribeMessage('getOnlineUsers')
     handleGetOnlineUsers(socket: AuthenticatedSocket) {
-        console.log("get online users*****************");
-        console.log(this.server.sockets.adapter.rooms);
+        // console.log("get online users*****************");
+        // console.log(this.server.sockets.adapter.rooms);
         const onlineUsers: User[] = [];
         for (const [roomId, roomSet] of this.server.sockets.adapter.rooms) {
             const roomSockets = Array.from(roomSet);
-            console.log("here******");
+            // console.log("here******");
     
             for (const socketId of roomSockets) {
                 const user = this.sessions.getUserBySocketId(socketId);
-                console.log("this user is -->", user);
+                // console.log("this user is -->", user);
     
                 if (user) {
                     onlineUsers.push(user);
@@ -84,15 +81,15 @@ export class MessagingGateWay implements OnGatewayConnection{
     
     @SubscribeMessage('onClientConnect')
     onClientConnect(@MessageBody() data : any, @ConnectedSocket() Client : AuthenticatedSocket){
-        console.log("onClient connect*****************");
-        console.log(data);
-        console.log(Client.user);
+        // console.log("onClient connect*****************");
+        // console.log(data);
+        // console.log(Client.user);
     }
    
     @OnEvent("message.create")
     handleMessageCreateEvent(payload : Message){
-        console.log("create message*************");
-        console.log(payload);
+        // console.log("create message*************");
+        // console.log(payload);
         // we are going to emit this onMessage event
         // this.server.emit('onMessage', payload);
         const { senderId, recipientId } = payload;
@@ -104,9 +101,9 @@ export class MessagingGateWay implements OnGatewayConnection{
         if (senderSocket && recipientSocket) {
             senderSocket.emit('onMessage', payload);
             recipientSocket.emit('onMessage', payload);
-        }else{
-            console.log("The recipient is not authenticated:");
-        }
+        }// }else{
+        //     console.log("The recipient is not authenticated:");
+        // }
     }
 
 }

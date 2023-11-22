@@ -16,7 +16,10 @@ build:
 	docker compose build
 
 up:
-	docker compose up 
+	docker compose up
+
+stop:
+	docker compose stop
 
 down:
 	docker compose down
@@ -32,6 +35,7 @@ bash-postgres:
 
 remove-images:
 	docker-compose down --rmi all
+
 remove-volumes:
 	docker compose down -v
 

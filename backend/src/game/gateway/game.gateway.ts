@@ -3,11 +3,13 @@ import {
 	SubscribeMessage,
 	WebSocketGateway,
 	WebSocketServer,
+	OnGatewayConnection,
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 import { OnModuleInit } from '@nestjs/common';
 import { Bodies, Composite, Engine, Runner, Body } from 'matter-js';
 import { GameService } from '../game.service';
+import { AuthenticatedSocket } from "src/utils/interfaces";
 
 const engine = Engine.create({
 	gravity: {
@@ -21,7 +23,7 @@ const engine = Engine.create({
 	credentials : true,
 	namespace: '/game',
 })
-export class GameGateway implements OnModuleInit {
+export class GameGateway implements OnModuleInit{
 	@WebSocketServer()
 	server: Server;
 
@@ -34,6 +36,8 @@ export class GameGateway implements OnModuleInit {
 	private movingLeft: boolean = false;
 	private posPaddleX = this.canvasWidth / 2;
 	private paddleW = 170;
+	private playerOneScore: number = 0;
+	private playerTwoScore: number = 0;
 
 	private pong: any;
 
@@ -43,14 +47,25 @@ export class GameGateway implements OnModuleInit {
 	}
 
 	onModuleInit() {
-		this.server.on('connection', (socket) => {
+		this.server.on('connection', (socket : any) => {
 			console.log(socket);
 			console.log('A Pong client connected!');
 		});
-		this.handleLaunchGame();
+		// this.handleLaunchGame();
 	}
-
-	handleLaunchGame() {
+	// handleConnection(socket : AuthenticatedSocket, ...args: any[]) {
+    //     console.log("new Incoming connection");
+    //     console.log(socket.user);
+    //     // this.sessions.setUserSocket(socket.user.id,socket);
+    //     // // socket.emit('connected', {status : 'good'});
+    //     // console.log("the session is");
+    //     // console.log(this.sessions.getSockets());
+    //     // if(socket.user.id)
+    //     //     console.log(socket.user.email ,"is online");
+    
+	// }
+	@SubscribeMessage("launchGameRequest")
+	handleLaunchGameRequest() {
 		// Create Ball:
 		this.ball = Bodies.circle(this.canvasWidth / 2, this.canvasHeight / 2, 15, {
 			label: 'ball',
@@ -154,25 +169,55 @@ export class GameGateway implements OnModuleInit {
 			this.bottomPaddle,
 			rightRect,
 			leftRect,
-			bottomRect,
+			// bottomRect,
 			topRect,
 		]);
 
 		// run the engine:
+		this.server.emit("launchGame", {});
 		Runner.run(Runner.create(), engine);
 
 		const gameInterval = setInterval(() => {
 			this.server.emit('updateBallPosition', this.ball.position);
+			this.calScore();
 		}, 15);
 	}
 
+	resetToDefaultPosition() {
+		// Reset Ball Position
+		Body.setPosition(this.ball, {
+			x: this.canvasWidth / 2,
+			y: this.canvasHeight / 2
+		})
+
+		//Reset Paddles Position
+		Body.setPosition(this.bottomPaddle, {
+			x: this.canvasWidth / 2,
+			y: this.canvasHeight - 30,
+		})
+	}
+
+	calScore() {
+		if (this.ball.position.y + this.ball.circleRadius >= this.canvasHeight - 8)
+		{
+			this.playerOneScore++;
+			this.server.emit("updateScore",
+				{
+					playerOneScore: this.playerOneScore,
+					playerTwoScore: this.playerTwoScore
+				}
+			)
+			this.resetToDefaultPosition();
+		}
+	}
+
 	@SubscribeMessage("join-game")
-	handleJoinGame()
+	handleJoinGame(@MessageBody() data : any)
 	{
 		this.server.emit("join-queue", {
-			content: "join-queue Event!"
+			content: data.socketId
 		})
-		// this.gameservice.joinQueue();
+		this.gameservice.joinQueue(data.socketId);
 	}
 
 	@SubscribeMessage('keyevent')
