@@ -315,7 +315,7 @@ class PongGame {
 		// 	}
 		// });
 
-		Events.on(engine, "collisionStart", (e) => {
+		Events.on(engine, "collisionStart", (e: any) => {
 			const pairs = e.pairs[0];
 			if (pairs.bodyA === this.topPaddle || pairs.bodyB === this.topPaddle) {
 				this.sound.topPaddleSound.play();
@@ -365,7 +365,7 @@ class PongGame {
 		});
 	};
 
-	clearGame = () => {
+	clear = () => {
 		Composite.remove(engine.world, [
 			this.ball,
 			this.topPaddle,
@@ -379,11 +379,15 @@ class PongGame {
 		// clearTimeout Of Paddle Game Runner:
 		clearTimeout(this.lunchGameInterval);
 		// ClearInterval Of Paddle Movement:
-		clearInterval(this.moveInterval);
+		if (this.socket)
+			clearInterval(this.moveInterval);
 
 		// Remove Listners:
 		document.removeEventListener("keydown", this.handleKeyDown);
 		document.removeEventListener("keyup", this.handleKeyUp);
+
+		// Close Socket!
+		this.socket.disconnect();
 	};
 }
 

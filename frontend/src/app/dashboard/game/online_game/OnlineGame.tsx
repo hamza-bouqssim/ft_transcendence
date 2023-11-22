@@ -1,10 +1,13 @@
 import { useContext, useEffect, useRef, useState } from "react";
+import { useRouter } from 'next/navigation';
 import PlayerScore from "@/app/components/PlayerScore";
 import PongGame from "../classes/PongGame";
 import Swal from "sweetalert2";
 import { SocketContext } from "../SocketContext";
+import GameFinishedPopUp from "@/app/components/GameFinishedPopUp";
 
 const OnlineGame = () => {
+	const router = useRouter();
 	const socket = useContext<any>(SocketContext);
 
 	console.log("socket:", socket);
@@ -36,6 +39,8 @@ const OnlineGame = () => {
 	useEffect(() => {
 		let timerInterval: any;
 		let endGame: any;
+		let pong: PongGame;
+
 		Swal.fire({
 			title: "Game Will Start In",
 			icon: "info",
@@ -67,9 +72,13 @@ const OnlineGame = () => {
 			});
 			socket.on("launchGame", () => {
 				setStartGame((prev: any) => !prev);
-				const pong = new PongGame(parentCanvasRef.current!, socket);
-				endGame = () => pong.clearGame();
+				pong = new PongGame(parentCanvasRef.current!, socket);
 			});
+			socket.on("gameIsFinished", () => {
+				endGame = () => pong.clear();
+				endGame();
+				GameFinishedPopUp(router);
+			})
 		});
 		return () => endGame();
 	}, []);

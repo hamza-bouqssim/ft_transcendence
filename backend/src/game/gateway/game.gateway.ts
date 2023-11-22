@@ -38,6 +38,8 @@ export class GameGateway implements OnModuleInit{
 	private paddleW = 170;
 	private playerOneScore: number = 0;
 	private playerTwoScore: number = 0;
+	private gameInterval: any;
+	private moveInterval: any;
 
 	private pong: any;
 
@@ -177,7 +179,7 @@ export class GameGateway implements OnModuleInit{
 		this.server.emit("launchGame", {});
 		Runner.run(Runner.create(), engine);
 
-		const gameInterval = setInterval(() => {
+		this.gameInterval = setInterval(() => {
 			this.server.emit('updateBallPosition', this.ball.position);
 			this.calScore();
 		}, 15);
@@ -209,6 +211,18 @@ export class GameGateway implements OnModuleInit{
 			)
 			this.resetToDefaultPosition();
 		}
+		if (this.playerOneScore === 2 || this.playerTwoScore === 2)
+		{
+			// TODO: latter We Will Close The Socket With The Specific SocketID:
+			this.playerOneScore = 0;
+			this.playerTwoScore = 0;
+			///////////////////////
+			this.server.emit("gameIsFinished", {});
+
+			// Clear Intervals:
+			clearInterval(this.moveInterval);
+			clearInterval(this.gameInterval);
+		}
 	}
 
 	@SubscribeMessage("join-game")
@@ -236,7 +250,7 @@ export class GameGateway implements OnModuleInit{
 	}
 
 	handlePaddleMove() {
-		const moveInterval = setInterval(() => {
+		this.moveInterval = setInterval(() => {
 			let stepX = 0;
 			const paddleWidth = 170;
 
@@ -264,5 +278,4 @@ export class GameGateway implements OnModuleInit{
 			}
 		}, 20);
 	}
-
 }
