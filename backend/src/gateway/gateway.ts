@@ -33,10 +33,12 @@ export class MessagingGateWay implements OnGatewayConnection{
     constructor(@Inject(Services.GATEWAY_SESSION_MANAGER)private readonly sessions : IGateWaySession, private readonly prisma : PrismaService){}
     @WebSocketServer()
     server: Server;
-    handleConnection(socket : AuthenticatedSocket, ...args: any[]) {
+    handleConnection(client : Socket) {
         // console.log("new Incoming connection");
+			// console.log(client);
+
         // console.log(socket.user);
-        this.sessions.setUserSocket(socket.user.id,socket);
+        // this.sessions.setUserSocket(socket.user.id,socket);
         // socket.emit('connected', {status : 'good'});
         // console.log("the session is");
         // console.log(this.sessions.getSockets());

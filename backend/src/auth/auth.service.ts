@@ -17,11 +17,19 @@ import { LocalAuthDto } from './dto/local.auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from 'src/user/dto/auth.dto';
 import { UserService } from 'src/user/user.service';
+import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class AuthService {
     constructor(private readonly prisma: PrismaService, private readonly jwtService: JwtService, private userservice : UserService){}
 
+    verifyToken(token: string) {
+        try {
+          return  jwt.verify(token, "my-secret");
+        } catch (error) {
+          return null;
+        }
+      }
     async signIn(dto: LocalAuthDto, req: Request, res: Response) {
 
       if(!dto.email || !dto.password_hashed)

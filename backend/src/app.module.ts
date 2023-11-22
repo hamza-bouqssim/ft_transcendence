@@ -27,7 +27,7 @@ import { GameModule } from './game/game.module';
       secret: 'my-secret'
     }),
     RoomsModule,
-    PassportModule.register({session: true}), UserModule, ConversationsModule, ParticipentModule, MessagesModule, FriendRequestModule, GatewayModule, GameModule ,EventEmitterModule.forRoot()],
+    PassportModule.register({session: true}), UserModule, ConversationsModule, ParticipentModule, MessagesModule, FriendRequestModule, GatewayModule ,EventEmitterModule.forRoot()],
   controllers: [AppController, UserController],
   providers: [AppService, UserService, PrismaService],
   
