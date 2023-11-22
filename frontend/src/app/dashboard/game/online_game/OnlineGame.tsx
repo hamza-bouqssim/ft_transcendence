@@ -4,7 +4,7 @@ import PlayerScore from "@/app/components/PlayerScore";
 import PongGame from "../classes/PongGame";
 import Swal from "sweetalert2";
 import { SocketContext } from "../SocketContext";
-import GameFinishedPopUp from "@/app/components/GameFinishedPopUp";
+import { GameFinishedPopUp, LoserPlayerPopUp, WinnerPlayerPopUp } from "@/app/components/GamePopUp";
 
 const OnlineGame = () => {
 	const router = useRouter();
@@ -75,12 +75,17 @@ const OnlineGame = () => {
 				pong = new PongGame(parentCanvasRef.current!, socket);
 			});
 			socket.on("gameIsFinished", () => {
-				endGame = () => pong.clear();
-				endGame();
-				GameFinishedPopUp(router);
+				pong.clear();
+				// endGame = () => pong.clear();
+				// endGame();
+				LoserPlayerPopUp(router);
 			})
 		});
-		return () => endGame();
+		// return () =>
+		// {
+		// 	alert("Unmounted!")
+		// 	// endGame();
+		// }
 	}, []);
 
 	return (
