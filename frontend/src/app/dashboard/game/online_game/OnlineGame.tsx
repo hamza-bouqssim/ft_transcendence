@@ -4,7 +4,7 @@ import PlayerScore from "@/app/components/PlayerScore";
 import PongGame from "../classes/PongGame";
 import Swal from "sweetalert2";
 import { SocketContext } from "../SocketContext";
-import { GameFinishedPopUp, LoserPlayerPopUp, WinnerPlayerPopUp } from "@/app/components/GamePopUp";
+import { LoserPlayerPopUp } from "@/app/components/GamePopUp";
 
 const OnlineGame = () => {
 	const router = useRouter();
@@ -76,9 +76,9 @@ const OnlineGame = () => {
 			});
 			socket.on("gameIsFinished", () => {
 				pong.clear();
+				LoserPlayerPopUp(router);
 				// endGame = () => pong.clear();
 				// endGame();
-				LoserPlayerPopUp(router);
 			})
 		});
 		// return () =>

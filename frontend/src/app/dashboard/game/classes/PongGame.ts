@@ -30,6 +30,8 @@ class PongGame {
 	private handleKeyDown: any;
 	private handleKeyUp: any;
 	private maxBallSpeed: number = 10;
+	playerScore : number = 0;
+	botScore : number = 0;
 	private sound = {
 		topPaddleSound: new Howl({
 			src: ["/assets/sounds/leftPaddle.wav"],
@@ -63,7 +65,7 @@ class PongGame {
 			inertia: Infinity,
 			restitution: 1,
 		});
-
+		
 		// Create Two Paddles:
 		const topRect = Bodies.rectangle(this.divWidth / 2, 0, this.divWidth, 20, {
 			render: {
@@ -158,7 +160,8 @@ class PongGame {
 		});
 		Render.run(render);
 
-		if (this.socket) this.moveOnlineModeBall();
+		if (this.socket)
+			this.moveOnlineModeBall();
 		else {
 			this.setBotModeBall();
 			this.moveBotPaddle();
@@ -218,6 +221,11 @@ class PongGame {
 	// 	});
 	// clearInterval(this.moveInterval);
 	// };
+	// getScores = (): {playerScore:number, botScore:number} =>
+	// {
+	// 	return {playerScore:this.playerScore, botScore:this.botScore}
+
+	// }
 
 	movePaddle = (): void => {
 		if (this.socket) {
@@ -298,6 +306,20 @@ class PongGame {
 		// clearInterval(moveInterval);
 	};
 
+	resetToDefaultPosition() {
+		// Reset Ball Position
+		Body.setPosition(this.ball, {
+			x: this.divWidth / 2,
+			y: this.divHeight / 2
+		})
+
+		//Reset Paddles Position
+		Body.setPosition(this.bottomPaddle, {
+			x: this.divWidth / 2,
+			y: this.divHeight - 30,
+		})
+	}
+
 	moveBotPaddle = () => {
 		let currentPositionX;
 
@@ -339,7 +361,9 @@ class PongGame {
 
 		Events.on(engine, "beforeUpdate", () => {
 			if (this.ball.position.y + this.ball.circleRadius >= this.divHeight - 8) {
+				this.botScore++;
 				this.sound.win.play();
+				this.resetToDefaultPosition();
 			}
 			currentPositionX = this.ball.position.x;
 			// if (
@@ -378,16 +402,17 @@ class PongGame {
 
 		// clearTimeout Of Paddle Game Runner:
 		clearTimeout(this.lunchGameInterval);
-		// ClearInterval Of Paddle Movement:
-		if (this.socket)
-			clearInterval(this.moveInterval);
 
 		// Remove Listners:
 		document.removeEventListener("keydown", this.handleKeyDown);
 		document.removeEventListener("keyup", this.handleKeyUp);
 
 		// Close Socket!
-		this.socket.disconnect();
+		if (this.socket)
+		{
+			clearInterval(this.moveInterval);
+			this.socket.disconnect();
+		}
 	};
 }
 
