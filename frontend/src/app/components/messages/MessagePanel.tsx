@@ -12,10 +12,9 @@ import { InfoRoom } from "../InfoRoom/InfoRoom";
 
 type Props  = {
     messages : messageTypes[];
-    sendTypingStatus: () => void;
 }
 
-const MessagePanel : FC<Props> = ({messages, sendTypingStatus}) => {
+const MessagePanel : FC<Props> = ({messages}) => {
         const [content, setContent] = useState('');
         const [updateRome,setUpdateRome] = useState<boolean>(false)
         const { id } = useParams();

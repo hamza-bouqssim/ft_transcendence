@@ -29,9 +29,9 @@ export class AuthService {
         throw new UnauthorizedException('Incorrect Password!');
       }
       const infoDto: AuthDto = {
-        username: dto.username,
         email: dto.email,
         display_name: dto.display_name,
+        username: dto.username,
         avatar_url: dto.avatar_url
 
       }
@@ -70,7 +70,7 @@ export class AuthService {
             email: dto.email,
             password: hashedPass,
             display_name: dto.display_name, 
-            avatar_url: "../../../../frontend/nextjs/public/assets/user.jpeg",
+            avatar_url: "https://cdn.landesa.org/wp-content/uploads/default-user-image.png",
             two_factor_auth: "",
             two_factor_secret_key: "",
             rank: "",
@@ -84,9 +84,9 @@ export class AuthService {
     {
       return this.jwtService.sign({
           id: userId, 
+          display_name: dto.display_name,
           email: dto.email,
           username: dto.username,
-          display_name: dto.display_name,
           avatar_url: dto.avatar_url,
           claim: type,
         
