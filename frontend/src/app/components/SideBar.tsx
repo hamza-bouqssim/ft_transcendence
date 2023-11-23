@@ -86,18 +86,14 @@ const SideBar = (props: Change) => {
 					<ListItem
 						icon={faRightFromBracket}
 						additionalStyle=" w-full"
-						spanText="LogOut"
-						
+						spanText="LogOut"	
 					/>
 				</Link>
 			</ul>
 			<ul>
 				<Link
 				className="md:block hidden"
-					href={"/"}
-					onClick={(e) => {
-						if (!messageBox()) e.preventDefault();
-					}}
+					href={"http://localhost:8000/auth/logout"}
 				>
 					<ListItem
 						icon={faRightFromBracket}

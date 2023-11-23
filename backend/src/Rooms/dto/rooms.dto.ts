@@ -16,17 +16,10 @@ export class CreateMessageRoom{
     @IsString()
     chatRoomId :string;
 
-    @IsNotEmpty()
-    @IsString()
-    senderId :string;
 
 }
 
 export class CreateChatRoom{
-    @IsNotEmpty()
-    @IsString()
-    userId :string;
-
 
     @IsNotEmpty()
     @IsString()
@@ -45,10 +38,6 @@ export class CreateChatRoom{
 }
 export class UpdateChatRoom{
    
-    @IsNotEmpty()
-    @IsString()
-    userId :string;
-
     @IsNotEmpty()
     @IsString()
     id :string;
@@ -71,9 +60,6 @@ export class UpdateChatRoom{
 
 export class DeleteChatRoom{
 
-    @IsNotEmpty()
-    @IsString()
-    userId :string; 
 
     @IsNotEmpty()
     @IsString()

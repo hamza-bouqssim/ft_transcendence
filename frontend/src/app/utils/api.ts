@@ -1,5 +1,10 @@
-import axios, { Axios, AxiosRequestConfig } from 'axios'
+import axios, { Axios,AxiosResponse, AxiosRequestConfig } from 'axios'
 import { ConversationTypes, CreateConversationParams, CreateMessageParams, FetchMessagePayload, User, UserCredentialsParams, createUserParams } from './types';
+
+const API = axios.create({
+    baseURL: "http://localhost:8000/",
+    withCredentials: true,
+  });
 
 
 const config : AxiosRequestConfig = { withCredentials: true}
@@ -32,3 +37,31 @@ export const getAllFriends = () => axios.get(`http://localhost:8000/user/my-frie
 export const getRequest = () => axios.get(`http://localhost:8000/user/pending-requests`, config);
 
 export const getBloques = () => axios.get(`http://localhost:8000/user/blocked-friends`, config);
+
+
+// rooms
+export const createRoomsApi = (data:any) =>{
+  const response = API.post("/rooms/createRooms",{data})
+  return response;  
+}
+
+export const updateRoomsApi = (data:any) =>{
+  const response = API.post("/rooms/updateRooms",{data})
+  return response;  
+}
+
+export const deleteRoomsApi = (data:any) =>{
+  const response = API.post("/rooms/deleteRooms",{data})
+  return response;  
+}
+
+export const getAllRoomsApi = () =>{
+  const response = API.get("/rooms/getAllRooms")
+  console.log("Api",response)
+  return response;  
+}
+
+
+
+
+

@@ -11,6 +11,7 @@ export class AuthenticatedGuard implements CanActivate {
     cookieParser()(req, null, () => {});
 
     const token = req.cookies.token;
+    console.log(token)
     if (token) {
       return true;
     }

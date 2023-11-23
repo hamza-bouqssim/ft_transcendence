@@ -11,13 +11,13 @@ export class RoomsService {
 
   }
 
-  async getAllRooms(data: getAllRooms) {
+  async getAllRooms(id:string) {
     const memberInfo = await this.prisma.member.findMany({
       where: {
-        user_id: data.id,
+        user_id: id,
       },
     });
-  
+    console.log(memberInfo)
     if (!memberInfo || memberInfo.length === 0) {
       throw new HttpException("No members found for the given user in any chat room.", HttpStatus.BAD_REQUEST);
     }
@@ -41,10 +41,10 @@ export class RoomsService {
   
   
   
-  async creatRooms(data:CreateChatRoom)
+  async creatRooms(data:CreateChatRoom,id:string)
   {
     const userExists = await this.prisma.user.findUnique({
-      where: { id: data.userId },
+      where: { id:id },
     });
 
     if (!userExists) {
@@ -73,7 +73,7 @@ export class RoomsService {
           create: [
             {
               user: {
-                connect: { id: data.userId },
+                connect: { id: id},
               },
               isAdmin: true,
             },
@@ -87,14 +87,14 @@ export class RoomsService {
   }
 
 
-  async updateRooms(updateChatRoom:UpdateChatRoom)
+  async updateRooms(data:UpdateChatRoom,id:string)
   {
     const existingChatRoom = await this.prisma.chatRoom.findUnique({
-      where: { id: updateChatRoom.id },
+      where: { id: data.id },
       include: {
         members: {
           where: {
-            user_id: updateChatRoom.userId,
+            user_id: id,
             isAdmin: true,
           },
         },
@@ -102,20 +102,25 @@ export class RoomsService {
     });
 
     if (!existingChatRoom) {
-      throw new Error(`Chat room with ID ${updateChatRoom.id} not found.`);
+      throw new Error(`Chat room with ID ${data.id} not found.`);
     }
 
     if (!existingChatRoom.members.length) {
-      throw new Error(`User with ID ${updateChatRoom.userId} is not an admin for the chat room.`);
+      throw new Error(`User  is not an admin for the chat room.`);
+    }
+    let hashedPassword;
+    if(data.Privacy ==='protected')
+    {
+      hashedPassword = await bcrypt.hash(data.password, 10);
     }
 
     const updatedChatRoom = await this.prisma.chatRoom.update({
-      where: { id: updateChatRoom.id },
+      where: { id: data.id },
       data: {
-        name: updateChatRoom.name || existingChatRoom.name,
-        Privacy: updateChatRoom.Privacy || existingChatRoom.Privacy,
-        password: updateChatRoom.password || existingChatRoom.password,
-        picture: updateChatRoom.picture || existingChatRoom.picture,
+        name: data.name || existingChatRoom.name,
+        Privacy: data.Privacy || existingChatRoom.Privacy,
+        password: hashedPassword || existingChatRoom.password,
+        picture: data.picture || existingChatRoom.picture,
       },
     });
     return updatedChatRoom;
@@ -123,14 +128,14 @@ export class RoomsService {
   }
 
 
-  async deleteRooms(deleteChatRoom:DeleteChatRoom)
+  async deleteRooms(deleteChatRoom:DeleteChatRoom,id:string)
   {
     const chatRoom = await this.prisma.chatRoom.findUnique({
       where: { id: deleteChatRoom.id },
       include: {
         members: {
           where: {
-            user_id: deleteChatRoom.userId,
+            user_id: id,
             isAdmin: true,
           },
         },
@@ -143,7 +148,7 @@ export class RoomsService {
     }
 
     if (!chatRoom.members.length) {
-      throw new Error(`User with ID ${deleteChatRoom.userId} is not an admin for the chat room.`);
+      throw new Error(`User  is not an admin for the chat room.`);
     }
 
     await this.prisma.member.deleteMany({
@@ -216,13 +221,13 @@ export class RoomsService {
 
   }
 
-  async createMessage(createMessageRoom: CreateMessageRoom)
+  async createMessage(createMessageRoom: CreateMessageRoom,id:string)
   {
     const message = await this.prisma.messageRome.create({
       data: {
         content : createMessageRoom.content,
         chatRoomId : createMessageRoom.chatRoomId,
-        senderId: createMessageRoom.senderId,
+        senderId: id,
       },
     });
     if (!message) {

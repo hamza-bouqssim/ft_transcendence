@@ -36,6 +36,7 @@ import { RoomsModule } from './Rooms/rooms.module';
 		GatewayModule,
 		EventEmitterModule.forRoot(),
 		GameModule,
+		RoomsModule
 	],
 	controllers: [AppController, UserController],
 	providers: [AppService, UserService, PrismaService],

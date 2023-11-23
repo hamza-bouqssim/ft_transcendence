@@ -5,13 +5,13 @@ import { UserService } from 'src/user/user.service';
 import { CreateConversationParams } from 'src/utils/types';
 import { Request } from 'src/user/interfaces/request.interface';
 import { whichWithAuthenticated } from 'src/user/utils/auth-utils';
-import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'prisma/prisma.service';
-import { AuthenticatedGuard } from 'src/auth/guards/GlobalGuard';
+import { AuthGuard } from '@nestjs/passport';
+import { JwtService } from '@nestjs/jwt';
 
 
 @Controller('chat')
-@UseGuards(AuthenticatedGuard)
+@UseGuards(AuthGuard('jwt'))
 export class ConversationsController {
 constructor(private  conversationService : ConversationsService , private userService : UserService, private jwtservice : JwtService, private prisma : PrismaService )
 {}

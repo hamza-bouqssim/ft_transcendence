@@ -1,6 +1,8 @@
 import {BiImageAdd} from 'react-icons/bi'
 
 const CreatGroups = () =>{
+
+    //create roome
     return (
         <div className="p-2 mt-10  h-[calc(100%-200px)]  overflow-auto ">
 

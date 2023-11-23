@@ -9,6 +9,9 @@ import { Services } from "src/utils/constants";
 import { Inject } from "@nestjs/common";
 import { Message } from "@prisma/client";
 import { Client } from "socket.io/dist/client";
+import { RoomId  ,getAllRooms,CreateMessageRoom,CreateChatRoom} from "src/Rooms/dto/rooms.dto";
+import { RoomsService } from "src/Rooms/rooms.service";
+
 @WebSocketGateway({
     cors:{
         origin:['http://localhost:3000'],
@@ -29,7 +32,7 @@ import { Client } from "socket.io/dist/client";
 
 /****We can use an adapter to apply middleWare on the socket */
 export class MessagingGateWay implements OnGatewayConnection{
-    constructor(@Inject(Services.GATEWAY_SESSION_MANAGER)private readonly sessions : IGateWaySession){}
+    constructor(@Inject(Services.GATEWAY_SESSION_MANAGER)private readonly sessions : IGateWaySession,private roomsService :RoomsService){}
     @WebSocketServer()
     server: Server;
     handleConnection(socket : AuthenticatedSocket, ...args: any[]) {
@@ -83,5 +86,29 @@ export class MessagingGateWay implements OnGatewayConnection{
         }
     }
 
+    @SubscribeMessage('joinToRoom')
+    handleJoinRome(client: Socket, roomId: RoomId){
+         client.join(roomId.id.toString());
+    }
+
+    @SubscribeMessage('leaveToRoom')
+    handleLeaveRome (client: Socket, roomId: RoomId) {
+        client.leave (roomId.id);
+    }
+
+    @SubscribeMessage('messageRome')
+    async handleMessage(client: Socket, createMessageRoom: CreateMessageRoom){
+        const messageRome = await this.roomsService.createMessage(createMessageRoom,"123123");
+        this.server.to(createMessageRoom.chatRoomId.toString()).emit ('messageRome', messageRome);
+    }
+    @SubscribeMessage('Typing')
+    handleTyping(client: Socket, roomId: RoomId){
+        this.server.to(roomId.id.toString()).emit ('Typing', true);
+    }
+
+    @SubscribeMessage('leaveTyping')
+    handleLeaveTyoing (client: Socket, roomId: RoomId) {
+        this.server.to(roomId.id.toString()).emit ('Typing', false);
+    }
 }
 /****Whenever we created a message an event was emitted */
