@@ -33,11 +33,9 @@ export const getRequest = () => axios.get(`http://localhost:8000/user/pending-re
 
 export const getBloques = () => axios.get(`http://localhost:8000/user/blocked-friends`, config);
 
-export const SendRequest =  async (data : CreateRequestParams) => { 
-    const res = await axios.post(`http://localhost:8000/friend-request/send-request`,data,  config)
-    console.log("featch", res)
-    return res;
-}
+export const SendRequest =  async (data : CreateRequestParams) => await axios.post(`http://localhost:8000/friend-request/send-request`,data,  config);
+   
+
 
 export const getAllUsers = async () => axios.get(`http://localhost:8000/user/All-users`, config);
 

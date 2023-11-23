@@ -20,7 +20,14 @@ export class FriendRequestService {
         }
 
 
-        const requestAlreadySent = await this.prisma.friend.findFirst({where: {user_id: user.id, friend_id: _friendDisplay_name.id}});
+        const requestAlreadySent = await this.prisma.friend.findFirst(
+            {
+                where: {
+                    OR: [
+                        { user_id: user.id, friend_id: _friendDisplay_name.id},
+                        {user_id: _friendDisplay_name.id, friend_id: user.id  },
+                      ],
+            }});
 
         if(requestAlreadySent)
         {
@@ -52,6 +59,15 @@ export class FriendRequestService {
 
         
         return {message: 'Friend request accepted'};
+    }
+
+    async refuseFriendRequest(requestId: string, user: User)
+    {
+        const req = await this.prisma.friend.findUnique({where : {id : requestId}})
+        if(!req)
+            throw new UnauthorizedException ("the request doesn't exist");
+
+
     }
 
     async block(friendId: string, userId: string){

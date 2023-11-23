@@ -14,18 +14,18 @@ export class FriendRequestController {
 
     @Post('send-request')
     @UseGuards(AuthenticatedGuard)
-    async sendRequest(@Body() request: {display_name: string}, @Req() req, @Res() res){
-            try{
-                console.log("thissss===== : " + request.display_name);
-                const user = await whichWithAuthenticated(req, this.jwtService, this.prisma)
-                const returnvalue = await this.friendshipService.sendRequest(request.display_name, user.display_name);
-                return  res.status(200).json({Response:returnvalue});
-            }catch(err)
-            {
-                console.log(err)
-                return  res.status(401).json({error:err});
-            }
-    }
+
+    async sendRequest(@Body() request: { display_name: string }, @Req() req, @Res() res) {
+        try {
+          const user = await whichWithAuthenticated(req, this.jwtService, this.prisma);
+          const returnvalue = await this.friendshipService.sendRequest(request.display_name, user.display_name);
+          return res.status(200).json({ success: true, response: returnvalue });
+        } catch (err) {
+          console.log(err);
+          return res.status(401).json({ success: false, message: err.message || 'An unexpected error occurred' });
+        }
+      }
+  
 
     @Post('accept-request')
     @UseGuards(AuthenticatedGuard)
@@ -33,6 +33,14 @@ export class FriendRequestController {
     {
         const user = await whichWithAuthenticated(req, this.jwtService, this.prisma);
         return this.friendshipService.acceptFriendRequest(request.requestId, user);
+    }
+
+    @Post('refuse-request')
+    @UseGuards(AuthenticatedGuard)
+    async refuseRequest(@Body() request: {requestId : string}, @Req() req)
+    {
+        const user = await whichWithAuthenticated(req, this.jwtService, this.prisma);
+        return this.friendshipService.refuseFriendRequest(request.requestId, user); 
     }
     
     @Post('block-friend')

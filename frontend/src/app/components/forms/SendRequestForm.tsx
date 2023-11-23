@@ -15,18 +15,28 @@ export const SendRequestForm= () => {
         const {register, handleSubmit, formState: { errors }} = useForm<CreateRequestParams>();
         const dispatch = useDispatch<AppDispatch>();
 
-        const onSubmit = async  (data : CreateRequestParams) => {
-          // dispatch(createConversationThunk(data));
-        
-            dispatch(fetchRequestThunk(data)).then((res)=>{
-              console.log("res",res)
-              // alert("You are sending request")
-            }).catch((err)=>{
-             console.log(err); 
-            })
-
-        }
-       
+        const onSubmit = async (data: CreateRequestParams) => {
+          try {
+              const res = await dispatch(fetchRequestThunk(data));
+              console.log("respose here", res);
+              if (res.payload && typeof res.payload === 'object') {
+                const responseData = res.payload as { data?: { response?: { message?: string } } };
+                const message = responseData.data?.response?.message;
+    
+                if (message) {
+                    alert(message);
+                }else {
+                  const responseData = res.payload as {message?: string};
+                  const message = responseData.message;
+                  if(message)
+                    alert(message);
+                }
+            }
+          } catch (err : any) {
+            console.error("the error here--->", err);
+            alert(err.message || "An unexpected error occurred");
+          }
+      };
         
     return (
 

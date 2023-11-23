@@ -17,11 +17,41 @@ export const fetchGetRequestThunk = createAsyncThunk('request/fetch', async () =
   return response;
 
 });
-export const fetchRequestThunk = createAsyncThunk('request/create', async(data : CreateRequestParams)=>{
-    const response = await SendRequest(data);
-    console.log("rx",response)
-    return response;
-  });
+// export const fetchRequestThunk = createAsyncThunk('request/create', async(data : CreateRequestParams)=>{
+//     const response = await SendRequest(data);
+//     console.log("rx",response)
+//     return response;
+//   });
+
+export const fetchRequestThunk = createAsyncThunk('request/create', async(data : CreateRequestParams, { rejectWithValue }) => {
+  try {
+      const response = await SendRequest(data);
+      console.log("suceeessss", response);
+
+      if (!response.data.success) {
+          throw new Error(response.data.error);
+      }
+
+      return response;
+    } catch (err: any) {
+      console.error("Error", err);
+  
+      if (err.response && err.response.data) {
+        return rejectWithValue(err.response.data); // Return the entire error object
+      } else {
+        throw new Error("Request failed with an unknown error");
+      }
+    }
+    // } catch (err: any) {
+    //   console.error("Errorrrrrrrrrr:", err.response.data.error.response);
+  
+    //   if (err.response && err.response.data && err.response.data.error && err.response.data.error.response) {
+    //     throw new Error(err.response.data.error);
+    //   } else {
+    //     throw new Error("Request failed with an unknown error");
+    //   }
+    // }
+});
 
 export const fetchAcceptFriendRequestThunk = createAsyncThunk('request/accept', async(id : string) =>{
   const response = await AcceptRequest(id);
@@ -36,11 +66,12 @@ export const requestSlice = createSlice({
   initialState,
   reducers: {
     addRequest: (state) => {},
+    
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchRequestThunk.fulfilled, (state, action) => {
-      state.request = action.payload.data;
-      state.loading = false;
+    builder.addCase(fetchRequestThunk.rejected, (state, action) => {
+      console.error("Rejected with error:", action.payload);
+      // Handle the error state in your Redux store if needed
   }).addCase(fetchGetRequestThunk.pending, (state, action) =>{
       state.loading = true;
   }).addCase(fetchAcceptFriendRequestThunk.fulfilled, (state, action)=>{
