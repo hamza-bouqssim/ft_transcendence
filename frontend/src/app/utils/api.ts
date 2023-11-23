@@ -41,6 +41,10 @@ export const getAllUsers = async () => axios.get(`http://localhost:8000/user/All
 
 export const AcceptRequest = async (id : string) => axios.post(`http://localhost:8000/friend-request/accept-request`, {requestId : id}, config);
 
+export const refuseRequest = async ( id: string) => axios.post(`http://localhost:8000/friend-request/refuse-request`, {requestId : id }, config);
+
+export const bloqueFriend = async (id : string) => axios.post(`http://localhost:8000/friend-request/block-friend`, {friendIdToBlock : id}, config);
+
 export const changeDisplayedName = async (DisplayName : string) => axios.post(`http://localhost:8000/user/changedisplayname`, {newDisplayName : DisplayName }, config);
 
 export const changeUserName = async (UserName : string) => axios.post(`http://localhost:8000/user/changeusername`, {newUserName: UserName}, config);

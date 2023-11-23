@@ -8,6 +8,6 @@ import { ParticipentService } from 'src/Participent/Participent.service';
 @Module({
   providers: [FriendRequestService, JwtService, ParticipentService],
   controllers: [FriendRequestController],
-  imports: [PrismaModule]
+  imports: [PrismaModule],
 })
 export class FriendRequestModule {}

@@ -151,7 +151,6 @@ export class UserService {
         return await this.prisma.friend.findMany({where: {friend_id: userId, status: 'BLOCKED'}, select: {user: {select: {id: true, username: true, display_name: true, avatar_url:true}}}});
     }
     
-    //------------SOUKAINA PART 
     async findByEmail(email : string)
     {
         return await this.prisma.user.findUnique({

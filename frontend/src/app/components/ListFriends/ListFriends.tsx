@@ -14,6 +14,7 @@ import '@fortawesome/fontawesome-svg-core/styles.css';
 import { faChevronDown, faEllipsis} from "@fortawesome/free-solid-svg-icons";
 import RightBarUsers from "../RightBarUsers";
 import Image from "next/image";
+import { fetchBlockFriendThunk } from "@/app/store/requestSlice";
 
 
 const ListFriends = () => {
@@ -57,6 +58,19 @@ const ListFriends = () => {
           setOpenMenuId(openMenuId === friendId ? null : friendId);
       };
 
+      const handlleBloque = async (id: string) => {
+        console.log("id friend is -->", id);
+      
+        try {
+          await dispatch(fetchBlockFriendThunk(id));
+            alert("You have blocked this friend successfully");
+        } catch (error) {
+          console.error("Error blocking friend:", error);
+            alert("Failed to block the friend. Please try again."); // Show an alert for error handling
+        }
+      };
+      
+     
     return (
         <Conversation>
 
@@ -78,9 +92,9 @@ const ListFriends = () => {
       
                 {openMenuId === elem.id &&
                 <div className={`absolute  top-10 left-2 h-[120px]  w-[200px] flex-col items-center justify-center gap-1 rounded-[15px] border-2 border-solid border-[#000000] bg-white font-['Whitney_Semibold'] `}>
-					        <MenuButton2 background={"bg-[#d9d9d9]"} value="View Profile" />
-					        <MenuButton2 background={"bg-[#BBBBBB]"} value="Send Message" />
-                  <MenuButton2 background={"bg-[#EA7F87]"} value="Bloque" />
+					        <button className={` text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`}>see profile</button>
+					        <button className={`text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`}>send message</button>
+                  <button className={`text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} value="Bloque" onClick={()=> handlleBloque(elem.id)}>Bloque</button>
 
 				        </div>}
             </div> 

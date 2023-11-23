@@ -18,6 +18,10 @@ export class FriendRequestService {
             throw new HttpException('User Not Found !', HttpStatus.BAD_REQUEST)
 
         }
+        if(friendDisplay_name === _Display_name)
+        {
+            throw new HttpException('You cant send request to your self!', HttpStatus.BAD_REQUEST)
+        }
 
 
         const requestAlreadySent = await this.prisma.friend.findFirst(
@@ -53,6 +57,7 @@ export class FriendRequestService {
 
         if(req.friend_id !== user.id)
             throw new UnauthorizedException("have you ever seeing someone is accepting friend request the he send hhhhhh");
+       
 
         await this.prisma.friend.update({where: {id: requestId}, data: {status: 'ACCEPTED'}});
         
@@ -61,13 +66,20 @@ export class FriendRequestService {
         return {message: 'Friend request accepted'};
     }
 
-    async refuseFriendRequest(requestId: string, user: User)
-    {
-        const req = await this.prisma.friend.findUnique({where : {id : requestId}})
-        if(!req)
-            throw new UnauthorizedException ("the request doesn't exist");
-
-
+    async refuseFriendRequest(requestId: string, user: User) {
+        const req = await this.prisma.friend.findUnique({ where: { id: requestId } });
+    
+        if (!req) {
+            throw new UnauthorizedException("The request doesn't exist");
+        }
+    
+        if (req.friend_id !== user.id) {
+            throw new UnauthorizedException("You are not authorized to refuse this friend request");
+        }
+    
+        await this.prisma.friend.delete({ where: { id: requestId } });
+    
+        return { message: 'Friend request refused and deleted from the database' };
     }
 
     async block(friendId: string, userId: string){

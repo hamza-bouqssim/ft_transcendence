@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { AcceptRequest, SendRequest, getConversationMessage, getRequest} from '../utils/api';
+import { AcceptRequest, SendRequest, bloqueFriend, getBloques, getConversationMessage, getRequest, refuseRequest} from '../utils/api';
 import { AcceptRequestParams, ConversationMessage, CreateRequestParams, FriendsTypes, UsersTypes, messageTypes } from '../utils/types';
 
 export interface requestState {
@@ -42,15 +42,7 @@ export const fetchRequestThunk = createAsyncThunk('request/create', async(data :
         throw new Error("Request failed with an unknown error");
       }
     }
-    // } catch (err: any) {
-    //   console.error("Errorrrrrrrrrr:", err.response.data.error.response);
-  
-    //   if (err.response && err.response.data && err.response.data.error && err.response.data.error.response) {
-    //     throw new Error(err.response.data.error);
-    //   } else {
-    //     throw new Error("Request failed with an unknown error");
-    //   }
-    // }
+   
 });
 
 export const fetchAcceptFriendRequestThunk = createAsyncThunk('request/accept', async(id : string) =>{
@@ -60,6 +52,21 @@ export const fetchAcceptFriendRequestThunk = createAsyncThunk('request/accept', 
 })
 
 
+export const fetchREfuseFriendRquestThunk = createAsyncThunk('request/refuse', async(id : string) =>{
+  const response = await refuseRequest(id);
+  return response;
+})
+
+export const fetchBlockFriendThunk = createAsyncThunk('request/block', async(id : string) => {
+  const response = await bloqueFriend(id);
+  return response;
+})
+
+export const fetchBlocksThunk = createAsyncThunk('block/fetch', async () => {
+  const response = await getBloques();
+  return response; // Assuming your API response has a 'data' property
+
+});
 
 export const requestSlice = createSlice({
   name: 'request',
@@ -76,6 +83,10 @@ export const requestSlice = createSlice({
       state.loading = true;
   }).addCase(fetchAcceptFriendRequestThunk.fulfilled, (state, action)=>{
       state.loading = true;
+  }).addCase(fetchREfuseFriendRquestThunk.fulfilled, (state, action)=>{
+
+  }).addCase(fetchBlockFriendThunk.fulfilled, (state, action)=>{
+
   })
   }
 });

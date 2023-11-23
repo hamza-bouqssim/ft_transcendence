@@ -69,11 +69,8 @@ export type FriendsTypes = {
 }
 
 export type BloquesTypes = {
-    id : string;
-    display_name : string;
-    username : string;
-    avatar_url : string;
-    userBloque : User;
+   
+    user : User;
 }
 
 

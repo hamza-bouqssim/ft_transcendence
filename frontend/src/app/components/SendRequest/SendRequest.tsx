@@ -1,5 +1,5 @@
 import { AppDispatch } from "@/app/store";
-import { fetchAcceptFriendRequestThunk, fetchGetRequestThunk } from "@/app/store/requestSlice";
+import { fetchAcceptFriendRequestThunk, fetchGetRequestThunk, fetchREfuseFriendRquestThunk } from "@/app/store/requestSlice";
 import { getRequest } from "@/app/utils/api";
 import { Conversation, ConversationSideBarContainer, ConversationSideBarItem } from "@/app/utils/styles";
 import { AcceptRequestParams, RequestTypes, UsersTypes } from "@/app/utils/types";
@@ -49,6 +49,17 @@ const SendRequest  = () => {
           console.error("Error accepting friend request:", error);
         }
       };
+
+      const handleClickRefuseRequest = async (id : string) =>{
+        try{
+          await dispatch(fetchREfuseFriendRquestThunk(id));
+          alert("You are refusing the request");
+
+        }catch(error){
+          console.log("Error refusing friend request", error);
+
+        }
+      }
       return (
 
         <Conversation>
@@ -62,7 +73,7 @@ const SendRequest  = () => {
 					 				<span  className="ConversationName">{elem.user.username} {elem.user.display_name}</span>
 					 			</div>
                     <FontAwesomeIcon icon={faCheck}  className="text-black" onClick={() => handleClickAcceptRequest(elem.id)}/>
-                    <FontAwesomeIcon icon={faXmark} className="text-black"/>
+                    <FontAwesomeIcon icon={faXmark} className="text-black" onClick={()=> handleClickRefuseRequest(elem.id)}/>
 
 
 							</ConversationSideBarItem>
