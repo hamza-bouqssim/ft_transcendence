@@ -30,8 +30,8 @@ class PongGame {
 	private handleKeyDown: any;
 	private handleKeyUp: any;
 	private maxBallSpeed: number = 10;
-	playerScore : number = 0;
-	botScore : number = 0;
+	playerScore: number = 0;
+	botScore: number = 0;
 	private sound = {
 		topPaddleSound: new Howl({
 			src: ["/assets/sounds/leftPaddle.wav"],
@@ -50,6 +50,7 @@ class PongGame {
 
 	constructor(
 		private parentDiv: HTMLDivElement,
+		private chosenMapIndex: number,
 		private socket?: any,
 	) {
 		this.divWidth = this.parentDiv.getBoundingClientRect().width;
@@ -65,7 +66,7 @@ class PongGame {
 			inertia: Infinity,
 			restitution: 1,
 		});
-		
+
 		// Create Two Paddles:
 		const topRect = Bodies.rectangle(this.divWidth / 2, 0, this.divWidth, 20, {
 			render: {
@@ -138,15 +139,46 @@ class PongGame {
 			},
 		);
 
+		const separator = Bodies.rectangle(
+			this.divWidth / 2,
+			this.divHeight / 2,
+			this.divWidth,
+			8,
+			{
+				isSensor: true,
+				render: {
+					fillStyle: "#CFF4FF",
+				},
+			},
+		);
+
+		const centerCirle = Bodies.circle(
+			this.divWidth / 2,
+			this.divHeight / 2,
+			8,
+			{
+				isSensor: true,
+				render: {
+					fillStyle: "#CFF4FF",
+				},
+			},
+		);
+
 		Composite.add(engine.world, [
-			this.ball,
 			this.topPaddle,
 			this.bottomPaddle,
+			separator,
+			centerCirle,
+			this.ball,
 			this.rightRect,
 			this.leftRect,
 			// bottomRect,
-			topRect,
+			// topRect,
 		]);
+
+		// this.gameWithStaticObstacles();
+
+		// this.gameWithVerticalObstacles();
 
 		const render = Render.create({
 			element: this.parentDiv,
@@ -158,10 +190,10 @@ class PongGame {
 				wireframes: false,
 			},
 		});
+
 		Render.run(render);
 
-		if (this.socket)
-			this.moveOnlineModeBall();
+		if (this.socket) this.moveOnlineModeBall();
 		else {
 			this.setBotModeBall();
 			this.moveBotPaddle();
@@ -174,10 +206,134 @@ class PongGame {
 	}
 
 	startGame = (): void => {
+		console.log("chosen Map Index: ", this.chosenMapIndex);
 		this.lunchGameInterval = setTimeout(() => {
 			// run the engine
 			Runner.run(Runner.create(), engine);
 		}, 1000);
+	};
+
+	gameWithStaticObstacles = (): void => {
+		const topLeftObstacle = Bodies.circle(
+			this.divWidth / 4,
+			this.divHeight / 4,
+			50,
+			{
+				isStatic: true,
+				render: {
+					fillStyle: "white",
+				},
+			},
+		);
+
+		const topRightObstacle = Bodies.circle(
+			(3 * this.divWidth) / 4,
+			this.divHeight / 4,
+			40,
+			{
+				isStatic: true,
+				render: {
+					fillStyle: "white",
+				},
+			},
+		);
+
+		const bottomRightObstacle = Bodies.circle(
+			(3 * this.divWidth) / 4,
+			(3 * this.divHeight) / 4,
+			50,
+			{
+				isStatic: true,
+				render: {
+					fillStyle: "white",
+				},
+			},
+		);
+
+		const bottomLeftObstacle = Bodies.circle(
+			this.divWidth / 4,
+			(3 * this.divHeight) / 4,
+			40,
+			{
+				isStatic: true,
+				render: {
+					fillStyle: "white",
+				},
+			},
+		);
+
+		Composite.add(engine.world, [
+			topLeftObstacle,
+			topRightObstacle,
+			bottomLeftObstacle,
+			bottomRightObstacle,
+		]);
+	};
+
+	gameWithVerticalObstacles = (): void => {
+		const dynamicObstacle1 = Bodies.rectangle(
+			this.divWidth - 65,
+			this.divHeight / 5,
+			15,
+			170,
+			{
+				render: {
+					fillStyle: "white",
+				},
+				isStatic: true,
+			},
+		);
+
+		const dynamicObstacle2 = Bodies.rectangle(
+			this.divWidth / 2,
+			this.divHeight / 3,
+			15,
+			100,
+			{
+				render: {
+					fillStyle: "white",
+				},
+				isStatic: true,
+			},
+		);
+
+		Body.setVelocity(dynamicObstacle2, {
+			x: 3,
+			y: 0,
+		});
+
+		const dynamicObstacle3 = Bodies.rectangle(
+			65,
+			(2 * this.divHeight) / 3,
+			15,
+			170,
+			{
+				render: {
+					fillStyle: "white",
+				},
+				isStatic: true,
+			},
+		);
+
+		const dynamicObstacle4 = Bodies.rectangle(
+			this.divWidth - 65,
+			(4 * this.divHeight) / 5,
+			15,
+			170,
+			{
+				render: {
+					fillStyle: "white",
+				},
+				isStatic: true,
+			},
+		);
+
+		Composite.add(engine.world, [
+			dynamicObstacle1,
+			dynamicObstacle2,
+			dynamicObstacle3,
+			dynamicObstacle4,
+		]);
 	};
 
 	moveOnlineModeBall = (): void => {
@@ -310,14 +466,14 @@ class PongGame {
 		// Reset Ball Position
 		Body.setPosition(this.ball, {
 			x: this.divWidth / 2,
-			y: this.divHeight / 2
-		})
+			y: this.divHeight / 2,
+		});
 
 		//Reset Paddles Position
 		Body.setPosition(this.bottomPaddle, {
 			x: this.divWidth / 2,
 			y: this.divHeight - 30,
-		})
+		});
 	}
 
 	moveBotPaddle = () => {
@@ -341,13 +497,13 @@ class PongGame {
 			const pairs = e.pairs[0];
 			if (pairs.bodyA === this.topPaddle || pairs.bodyB === this.topPaddle) {
 				this.sound.topPaddleSound.play();
-				this.setBallSpeed();
+				// this.setBallSpeed();
 			} else if (
 				pairs.bodyA === this.bottomPaddle ||
 				pairs.bodyB === this.bottomPaddle
 			) {
 				this.sound.bottomPaddleSound.play();
-				this.setBallSpeed();
+				// this.setBallSpeed();
 			}
 		});
 
@@ -408,8 +564,7 @@ class PongGame {
 		document.removeEventListener("keyup", this.handleKeyUp);
 
 		// Close Socket!
-		if (this.socket)
-		{
+		if (this.socket) {
 			clearInterval(this.moveInterval);
 			this.socket.disconnect();
 		}

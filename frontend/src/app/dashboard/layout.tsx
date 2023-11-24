@@ -45,7 +45,8 @@ export default function RootLayout({
 		<html lang="en">
 			<body>
 				<div className="flex h-screen w-full text-white">
-					{(pathName.endsWith("/online_game") || pathName.endsWith("/bot_game")) ? null : (
+					{pathName.endsWith("/online_game") ||
+					pathName.endsWith("/bot_game") ? null : (
 						<SideBar
 							sideBar={change.sideBar}
 							onClick={() =>

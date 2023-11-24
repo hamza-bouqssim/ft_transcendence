@@ -48,6 +48,6 @@ export const LoserPlayerPopUp = (router: any) => {
 		confirmButtonText: 'OK',
 		allowOutsideClick: false,
 		}).then(() => {
-			router.back();
+			// router.back();
 		});
 }
