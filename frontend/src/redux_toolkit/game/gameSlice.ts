@@ -1,13 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 interface gameState {
-	leftScore: number;
-	rightScore: number;
+	chosenMapIndex: number;
 }
 
 const initialState: gameState = {
-	leftScore: 0,
-	rightScore: 0,
+	chosenMapIndex: 0,
 };
 
 export const gameSlice = createSlice({
@@ -15,14 +13,11 @@ export const gameSlice = createSlice({
 	initialState,
 	reducers: {
 		incrementLeftScore: (state) => {
-			state.leftScore += 1;
-		},
-		incrementRightScore: (state) => {
-			state.rightScore += 1;
+			state.chosenMapIndex += 1;
 		},
 	},
 });
 
-export const { incrementLeftScore, incrementRightScore } = gameSlice.actions;
+export const { chosenMapIndex } = gameSlice.actions;
 
 export default gameSlice.reducer;

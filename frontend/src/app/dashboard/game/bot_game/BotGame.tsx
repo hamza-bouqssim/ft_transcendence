@@ -8,11 +8,11 @@ import { LoserPlayerPopUp } from "@/app/components/GamePopUp";
 import { chosenMapContext } from "../choose_map/page";
 
 const BotGame = () => {
-	const { chosenMapIndex } = useContext(chosenMapContext);
+	// const { chosenMapIndex } = useContext(chosenMapContext);
 	const router = useRouter();
 	const parentCanvasRef = useRef<HTMLDivElement>(null);
 	const pongRef = useRef<any>();
-	console.log("chosenMapIndex:", chosenMapIndex);
+	// console.log("chosenMapIndex:", chosenMapIndex);
 	const [score, setScore] = useState<{
 		playerScore: number;
 		botScore: number;
@@ -64,6 +64,7 @@ const BotGame = () => {
 					clearInterval(timerInterval);
 				},
 			}).then(() => {
+				const chosenMapIndex = 0;
 				setStartGame((prev: any) => !prev);
 				pongRef.current = new PongGame(
 					parentCanvasRef.current!,

@@ -46,7 +46,7 @@ const ChooseMap = () => {
 							// 		return `<span class="${className}" style='background-color: #6a67f3 !important'></span>`;
 							// 	},
 							// }}
-							modules={[EffectCoverflow, Pagination]}
+							modules={[EffectCoverflow]}
 						>
 							<SwiperSlide style={{ height: "400px", width: "270px" }}>
 								<img
@@ -56,13 +56,13 @@ const ChooseMap = () => {
 							</SwiperSlide>
 							<SwiperSlide style={{ height: "400px", width: "270px" }}>
 								<img
-									src="https://swiperjs.com/demos/images/nature-2.jpg"
+									src="/assets/game-maps/map2-with-obstacles.gif"
 									style={{ height: "100%", objectFit: "cover" }}
 								/>
 							</SwiperSlide>
 							<SwiperSlide style={{ height: "400px", width: "270px" }}>
 								<img
-									src="https://swiperjs.com/demos/images/nature-3.jpg"
+									src="/assets/game-maps/map3-with-obstacles.gif"
 									style={{ height: "100%", objectFit: "cover" }}
 								/>
 							</SwiperSlide>

@@ -178,7 +178,7 @@ class PongGame {
 
 		// this.gameWithStaticObstacles();
 
-		// this.gameWithVerticalObstacles();
+		this.gameWithVerticalObstacles();
 
 		const render = Render.create({
 			element: this.parentDiv,
