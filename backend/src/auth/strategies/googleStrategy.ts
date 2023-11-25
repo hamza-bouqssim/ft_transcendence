@@ -14,7 +14,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy){
         super({
             clientID: '561394335528-056uem81bs6ql473v5q80cpun2cfb37t.apps.googleusercontent.com', //this SHIT is hard coded, go put you SHIT in ENV file !!!!!!!!!!!!!!!!!!!!!!
             clientSecret: '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', //this SHIT is hard coded, go put your SHIT in ENV file !!!!!!!!!!!!!!!!!!!!!!
-            callbackURL: 'http://localhost:3000/auth/google/redirect',
+            callbackURL: 'http://localhost:8000/auth/google/redirect',
             scope: ['profile', 'email'],
         });
     }

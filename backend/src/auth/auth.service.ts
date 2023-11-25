@@ -95,7 +95,7 @@ export class AuthService {
 
       res.clearCookie('token');
       
-      return res.send({msg: 'Logged out Succesfully !'});
+      return res.redirect('http://localhost:3000');
     }
 
     async validateUser(dto: AuthDto) {
@@ -111,7 +111,7 @@ export class AuthService {
           avatar_url: dto.avatar_url,
           two_factor_auth: "",
           two_factor_secret_key: "",
-          rank: "",
+          rank: ""
         },
       });
     
