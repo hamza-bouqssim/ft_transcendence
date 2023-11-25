@@ -3,13 +3,11 @@ import {
 	SubscribeMessage,
 	WebSocketGateway,
 	WebSocketServer,
-	OnGatewayConnection,
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 import { OnModuleInit } from '@nestjs/common';
 import { Bodies, Composite, Engine, Runner, Body } from 'matter-js';
 import { GameService } from '../game.service';
-import { AuthenticatedSocket } from "src/utils/interfaces";
 
 const engine = Engine.create({
 	gravity: {
@@ -175,6 +173,10 @@ export class GameGateway implements OnModuleInit{
 			topRect,
 		]);
 
+		// this.gameWithCircleObstacles();
+
+		// this.gameWithVerticalObstacles();
+
 		// run the engine:
 		this.server.emit("launchGame", {});
 		Runner.run(Runner.create(), engine);
@@ -184,6 +186,126 @@ export class GameGateway implements OnModuleInit{
 			this.calScore();
 		}, 15);
 	}
+
+	@SubscribeMessage("gameWithCircleObstacles")
+	handleGameCircleObstacles = (): void => {
+		const topLeftObstacle = Bodies.circle(
+			this.canvasWidth / 4,
+			this.canvasHeight / 4,
+			50,
+			{
+				isStatic: true,
+				render: {
+					fillStyle: "white",
+				},
+			},
+		);
+
+		const topRightObstacle = Bodies.circle(
+			(3 * this.canvasWidth) / 4,
+			this.canvasHeight / 4,
+			40,
+			{
+				isStatic: true,
+				render: {
+					fillStyle: "white",
+				},
+			},
+		);
+
+		const bottomRightObstacle = Bodies.circle(
+			(3 * this.canvasWidth) / 4,
+			(3 * this.canvasHeight) / 4,
+			50,
+			{
+				isStatic: true,
+				render: {
+					fillStyle: "white",
+				},
+			},
+		);
+
+		const bottomLeftObstacle = Bodies.circle(
+			this.canvasWidth / 4,
+			(3 * this.canvasHeight) / 4,
+			40,
+			{
+				isStatic: true,
+				render: {
+					fillStyle: "white",
+				},
+			},
+		);
+
+		Composite.add(engine.world, [
+			topLeftObstacle,
+			topRightObstacle,
+			bottomLeftObstacle,
+			bottomRightObstacle,
+		]);
+	};
+
+	@SubscribeMessage("gameWithVerticalObstacles")
+	handleGameVerticalObstacles = (): void => {
+		const verticalObstacle1 = Bodies.rectangle(
+			this.canvasWidth - 65,
+			this.canvasHeight / 5,
+			15,
+			170,
+			{
+				render: {
+					fillStyle: "white",
+				},
+				isStatic: true,
+			},
+		);
+
+		const verticalObstacle2 = Bodies.rectangle(
+			this.canvasWidth / 2,
+			this.canvasHeight / 3,
+			15,
+			100,
+			{
+				render: {
+					fillStyle: "white",
+				},
+				isStatic: true,
+			},
+		);
+
+		const verticalObstacle3 = Bodies.rectangle(
+			65,
+			(2 * this.canvasHeight) / 3,
+			15,
+			170,
+			{
+				render: {
+					fillStyle: "white",
+				},
+				isStatic: true,
+			},
+		);
+
+		const verticalObstacle4 = Bodies.rectangle(
+			this.canvasWidth - 65,
+			(4 * this.canvasHeight) / 5,
+			15,
+			170,
+			{
+				render: {
+					fillStyle: "white",
+				},
+				isStatic: true,
+			},
+		);
+
+		Composite.add(engine.world, [
+			verticalObstacle1,
+			verticalObstacle2,
+			verticalObstacle3,
+			verticalObstacle4,
+		]);
+	};
 
 	resetToDefaultPosition() {
 		// Reset Ball Position

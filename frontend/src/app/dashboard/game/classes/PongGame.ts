@@ -176,9 +176,9 @@ class PongGame {
 			// topRect,
 		]);
 
-		// this.gameWithStaticObstacles();
+		// this.gameWithCircleObstacles();
 
-		this.gameWithVerticalObstacles();
+		// this.gameWithVerticalObstacles();
 
 		const render = Render.create({
 			element: this.parentDiv,
@@ -213,7 +213,7 @@ class PongGame {
 		}, 1000);
 	};
 
-	gameWithStaticObstacles = (): void => {
+	gameWithCircleObstacles = (): void => {
 		const topLeftObstacle = Bodies.circle(
 			this.divWidth / 4,
 			this.divHeight / 4,
@@ -271,7 +271,7 @@ class PongGame {
 	};
 
 	gameWithVerticalObstacles = (): void => {
-		const dynamicObstacle1 = Bodies.rectangle(
+		const verticalObstacle1 = Bodies.rectangle(
 			this.divWidth - 65,
 			this.divHeight / 5,
 			15,
@@ -284,7 +284,7 @@ class PongGame {
 			},
 		);
 
-		const dynamicObstacle2 = Bodies.rectangle(
+		const verticalObstacle2 = Bodies.rectangle(
 			this.divWidth / 2,
 			this.divHeight / 3,
 			15,
@@ -297,12 +297,7 @@ class PongGame {
 			},
 		);
 
-		Body.setVelocity(dynamicObstacle2, {
-			x: 3,
-			y: 0,
-		});
-
-		const dynamicObstacle3 = Bodies.rectangle(
+		const verticalObstacle3 = Bodies.rectangle(
 			65,
 			(2 * this.divHeight) / 3,
 			15,
@@ -315,7 +310,7 @@ class PongGame {
 			},
 		);
 
-		const dynamicObstacle4 = Bodies.rectangle(
+		const verticalObstacle4 = Bodies.rectangle(
 			this.divWidth - 65,
 			(4 * this.divHeight) / 5,
 			15,
@@ -329,10 +324,10 @@ class PongGame {
 		);
 
 		Composite.add(engine.world, [
-			dynamicObstacle1,
-			dynamicObstacle2,
-			dynamicObstacle3,
-			dynamicObstacle4,
+			verticalObstacle1,
+			verticalObstacle2,
+			verticalObstacle3,
+			verticalObstacle4,
 		]);
 	};
 

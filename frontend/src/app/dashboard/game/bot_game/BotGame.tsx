@@ -5,7 +5,7 @@ import PongGame from "../classes/PongGame";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 import { LoserPlayerPopUp } from "@/app/components/GamePopUp";
-import { chosenMapContext } from "../choose_map/page";
+import { chosenMapContext } from "../choose-map/page";
 
 const BotGame = () => {
 	// const { chosenMapIndex } = useContext(chosenMapContext);
