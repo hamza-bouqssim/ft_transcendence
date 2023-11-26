@@ -3,7 +3,6 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import {  User } from '@prisma/client';
 import { ParticipentService } from 'src/Participent/Participent.service';
-import { CreateConversationParams } from 'src/utils/types';
 import { UserService } from 'src/user/user.service';
 // import { IConversationService } from './conversation';
 
@@ -16,24 +15,26 @@ export class ConversationsService  {
     }
 
 
-    async createConversations(user : User  ,params : CreateConversationParams) {
+    async createConversations(user : User  ,display_name : string) {
      
-      const recipient = await this.userService.findByDisplayName(params.display_name)
+      const recipient = await this.userService.findByDisplayName(display_name)
       if(!recipient)
             throw new HttpException('User not found so cannot create Conversation' , HttpStatus.BAD_REQUEST)
       
       // const userDb = await this.userService.checkIfParticipent(user.id);
-      const Participent = await this.participentService.findParticipent(params, user);
+      const Participent = await this.participentService.findParticipent(display_name, user);
       if(!Participent)
       {
 
-          const newParticipant = this.participentService.CreateParticipent(params, user);
+         this.participentService.CreateParticipent(display_name, user);
 
-          return newParticipant;
+          // return newParticipant;
       }else{
         throw new HttpException('This conversation alrighdy exist' , HttpStatus.BAD_REQUEST)
 
       }
+
+      return {message : 'Conversation create succefully'}
         
       
      

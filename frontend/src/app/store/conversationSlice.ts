@@ -15,11 +15,25 @@ const initialState: ConversationsState = {
 
 // for create the conversation
 
-export const createConversationThunk = createAsyncThunk('conversations/create', async(data : CreateConversationParams)=>{
-  const response = await createConversation(data);
-  console.log("response here");
-  console.log(response);
-  return response;
+export const createConversationThunk = createAsyncThunk('conversations/create', async(display_name : string , { rejectWithValue })=>{
+  try {
+    const response = await createConversation(display_name);
+
+
+    if (!response.data.success) {
+      throw new Error(response.data.error);
+    }
+    return response;
+  } catch (err: any) {
+      console.error("Error", err);
+
+    if (err.response && err.response.data) {
+      return rejectWithValue(err.response.data); // Return the entire error object
+    } else {
+      throw new Error("create conversation failed with an unknown error");
+    }
+}
+
 })
 
 export const fetchConversationThunk = createAsyncThunk('conversations/fetch', async () => {

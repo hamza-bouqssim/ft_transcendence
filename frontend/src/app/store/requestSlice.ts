@@ -26,7 +26,6 @@ export const fetchGetRequestThunk = createAsyncThunk('request/fetch', async () =
 export const fetchRequestThunk = createAsyncThunk('request/create', async(data : CreateRequestParams, { rejectWithValue }) => {
   try {
       const response = await SendRequest(data);
-      console.log("suceeessss", response);
 
       if (!response.data.success) {
           throw new Error(response.data.error);

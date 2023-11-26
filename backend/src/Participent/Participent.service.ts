@@ -2,7 +2,6 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
-import { CreateConversationParams} from 'src/utils/types';
 
 @Injectable()
 export class ParticipentService {
@@ -12,14 +11,14 @@ export class ParticipentService {
 
     }
 
-    async findParticipent(params : CreateConversationParams, user : User)
+    async findParticipent(_display_name : string, user : User)
     {
         // const chatroom = this.prisma.chatRoom.findUnique()
         const chat = await this.prisma.chatParticipents.findFirst({
           where: {
             OR: [
-              { sender: { display_name: params.display_name }, recipientId: user.id },
-              { senderId: user.id, recipient: { display_name: params.display_name } },
+              { sender: { display_name: _display_name }, recipientId: user.id },
+              { senderId: user.id, recipient: { display_name: _display_name } },
             ],
           },
         });
@@ -27,7 +26,7 @@ export class ParticipentService {
     }
  
 
-    async CreateParticipent(params : CreateConversationParams, user : User)
+    async CreateParticipent(_display_name : string, user : User)
     {
       const newParticipent = await this.prisma.chatParticipents.create({
         data: {
@@ -35,7 +34,7 @@ export class ParticipentService {
             connect: { id: user.id }
           },
           recipient: {
-            connect: { display_name: params.display_name}
+            connect: { display_name: _display_name}
           }
         }
       });
