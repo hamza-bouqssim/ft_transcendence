@@ -104,15 +104,24 @@ const ConversationChannelPage = () => {
 	    const [onlineUsers, setOnlineUsers] = useState<UsersTypes[]>([]);
 
 
-	    useEffect(() => {
-        socket.emit('getOnlineUsers');
-        socket.on('getOnlineUsers', (onlineUsers) => {
-            console.log("online friend-->", onlineUsers);
-            setOnlineUsers(onlineUsers);
+	    // useEffect(() => {
+      //   socket.emit('getOnlineUsers');
+      //   socket.on('getOnlineUsers', (onlineUsers) => {
+      //       console.log("online friend-->", onlineUsers);
+      //       setOnlineUsers(onlineUsers);
+      //   });
+      //   console.log("socket here", socket.id);
+      //   return () => {
+      //       socket.off('getOnlineUsers');
+      //   };
+      // }, [socket]);
+      useEffect(() => {
+        socket.on('updateOnlineUsers', (onlineUsers) => {
+          setOnlineUsers(onlineUsers);
         });
-        console.log("socket here", socket.id);
+      
         return () => {
-            socket.off('getOnlineUsers');
+          socket.off('updateOnlineUsers');
         };
       }, [socket]);
     return ( 
