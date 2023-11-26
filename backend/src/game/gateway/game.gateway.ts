@@ -66,21 +66,21 @@ export class GameGateway implements OnModuleInit {
 
 	// }
 	@SubscribeMessage('launchGameRequest')
-	handleLaunchGameRequest(@MessageBody() data: any) {
-		this.mapIndex = data.chosenMapIndex;
+	handleLaunchGameRequest(@MessageBody() chosenMapIndex: number) {
+		this.mapIndex = chosenMapIndex;
 
 		console.log('map Index:', this.mapIndex);
 		switch (this.mapIndex) {
 			case 0:
-				this.defaultGameMap();
+				this.handleDefaultGameMap();
 				break;
 			case 1: {
-				this.defaultGameMap();
+				this.handleDefaultGameMap();
 				this.handleGameCircleObstacles();
 				break;
 			}
 			case 2: {
-				this.defaultGameMap();
+				this.handleDefaultGameMap();
 				this.handleVerticalObstacles();
 				break;
 			}
@@ -90,7 +90,7 @@ export class GameGateway implements OnModuleInit {
 		this.startGame();
 	}
 
-	defaultGameMap() {
+	handleDefaultGameMap() {
 		// Create Ball:
 		this.ball = Bodies.circle(this.canvasWidth / 2, this.canvasHeight / 2, 15, {
 			label: 'ball',
@@ -104,8 +104,8 @@ export class GameGateway implements OnModuleInit {
 		});
 
 		Body.setVelocity(this.ball, {
-			x: 8,
-			y: 8,
+			x: 4,
+			y: 4,
 		});
 		this.server.emit('setBallVelocity', this.ball.velocity);
 
@@ -199,7 +199,7 @@ export class GameGateway implements OnModuleInit {
 		]);
 	}
 
-	handleGameCircleObstacles = (): void => {
+	handleGameCircleObstacles() {
 		const topLeftObstacle = Bodies.circle(
 			this.canvasWidth / 4,
 			this.canvasHeight / 4,
@@ -256,7 +256,7 @@ export class GameGateway implements OnModuleInit {
 		]);
 	};
 
-	handleVerticalObstacles = (): void => {
+	handleVerticalObstacles() {
 		const verticalObstacle1 = Bodies.rectangle(
 			this.canvasWidth - 65,
 			this.canvasHeight / 5,
