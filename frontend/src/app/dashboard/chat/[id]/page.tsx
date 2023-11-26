@@ -131,7 +131,7 @@ const ConversationChannelPage = () => {
                 <CoversationSideBar onlineUsers={onlineUsers}/>
               </div>
                 <div className="bg-white xl:m-10  xl:mr-10 xl:ml-2 w-full xl:w-[65%]  xl:rounded-[20px]">
-                    <MessagePanel messages={message} sendTypingStatus={sendTypingStatus}></MessagePanel> 
+                    <MessagePanel messages={message} ></MessagePanel> 
                 </div>
             </div>
 

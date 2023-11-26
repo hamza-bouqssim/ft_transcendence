@@ -9,10 +9,10 @@ import { postNewMessage } from "@/app/utils/api";
 
 type Props  = {
     messages : messageTypes[];
-    sendTypingStatus: () => void;
+
 }
 
-const MessagePanel : FC<Props> = ({messages, sendTypingStatus}) => {
+const MessagePanel : FC<Props> = ({messages}) => {
         const [content, setContent] = useState('');
         const { id } = useParams();
         
@@ -21,13 +21,11 @@ const MessagePanel : FC<Props> = ({messages, sendTypingStatus}) => {
             if(!id || !content)
                 return ;
             const participentsId = id;
-            console.log(participentsId);
             try{
                 await postNewMessage({participentsId, content});
                 setContent('');
             }catch(err){
                 alert("error");
-                console.log(err);
 
             }
         };
