@@ -233,6 +233,15 @@ export const OnlineStyling = styled.div`
     margin-left: -1rem;
 `;
 
+export const OflineStyling = styled.div`
+
+    background-color: red;
+    border-radius: 50%;
+    width : 12px;
+    height : 12px;
+    margin-left: -1rem;
+`;
+
 export const ConversationSideBarItem = styled.div `
 
 

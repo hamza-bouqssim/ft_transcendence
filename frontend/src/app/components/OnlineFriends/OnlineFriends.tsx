@@ -1,7 +1,7 @@
 import { AppDispatch } from "@/app/store";
-import { Conversation, ConversationSideBarContainer, ConversationSideBarItem, HeaderOnlineUsers, OnlineStyling } from "@/app/utils/styles";
+import { Conversation, ConversationSideBarContainer, ConversationSideBarItem, HeaderOnlineUsers, OflineStyling, OnlineStyling } from "@/app/utils/styles";
 import { useDispatch } from "react-redux";
-import {useContext, useEffect, useState} from "react"
+import {FC, useContext, useEffect, useState} from "react"
 import { UsersTypes } from "@/app/utils/types";
 import { fetchUsersThunk } from "@/app/store/usersSlice";
 import {  socketContext } from "@/app/utils/context/socketContext";
@@ -9,16 +9,21 @@ import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import { MenuButton, MenuButton2 } from "../Buttons";
+import { fetchGetAllFriends } from "@/app/store/requestSlice";
 
-const OnlineFriends = () =>{
+type props = {
+  onlineUsers : UsersTypes[]
+}
+
+const OnlineFriends:  FC<props> = ({onlineUsers})=>{
     const [users, setUsers] = useState<UsersTypes[]>([]);
-    const [Onlineusers, setOnlineUsers] = useState<UsersTypes[]>([]);
+    // const [Onlineusers, setOnlineUsers] = useState<UsersTypes[]>([]);
 
 
     const dispatch = useDispatch<AppDispatch>();
 
     useEffect (() => {
-      dispatch(fetchUsersThunk())
+      dispatch(fetchGetAllFriends())
       .unwrap()
       .then(({data}) => {
         setUsers(data);
@@ -29,21 +34,23 @@ const OnlineFriends = () =>{
     },)
 
    
-    const socket = useContext(socketContext)
 
-    useEffect(() => {
-        socket.emit('getOnlineUsers');
-        socket.on('getOnlineUsers', (onlineUsers) => {
-            console.log("online friend-->", onlineUsers);
-            setOnlineUsers(onlineUsers);
-        });
-    console.log("socket here", socket.id);
-        return () => {
-            socket.off('getOnlineUsers');
-        };
-    }, [socket]);
+   
+    // const socket = useContext(socketContext)
+
+    // useEffect(() => {
+    //     // socket.emit('getOnlineUsers');
+    //     socket.on('getOnlineUsers', (onlineUsers) => {
+    //         console.log("online friend-->", onlineUsers);
+    //         setOnlineUsers(onlineUsers);
+    //     });
+    // console.log("socket here", socket.id);
+    //     return () => {
+    //         socket.off('getOnlineUsers');
+    //     };
+    // }, [socket]);
     const isUserOnline = (userId: string) => {
-        return Onlineusers.some((user : any) => user.id === userId);
+        return onlineUsers.some((user : any) => user.id === userId);
       };
       const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
@@ -60,7 +67,7 @@ const OnlineFriends = () =>{
 							<ConversationSideBarItem key={elem.id}>
               <div className="flex">
 								<Image src={elem.avatar_url} className="h-14 w-14 rounded-[50%] bg-black " alt="Description of the image" width={60}   height={60} />
-                {isUserOnline(elem.id) && (<OnlineStyling/>)}
+                {isUserOnline(elem.id) ? (<OnlineStyling/>) : <OflineStyling/>}
               </div>
 					 			<span  className="ConversationName">{elem.username} {elem.display_name}</span>
                  <div className=" relative ">

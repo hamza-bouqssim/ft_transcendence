@@ -3,7 +3,7 @@
 import CoversationSideBar from "@/app/components/CoversationSideBar/ConversationSideBar";
 import { ConversationChannelStyle, Page} from "@/app/utils/styles";
 import { useContext, useEffect, useState , PropsWithChildren} from "react";
-import { ConversationTypes, User, messageEventPayload, messageTypes } from "@/app/utils/types";
+import { ConversationTypes, User, UsersTypes, messageEventPayload, messageTypes } from "@/app/utils/types";
 import { getAuthUser, getConversation, getConversationMessage } from "@/app/utils/api";
 import { useParams } from "next/navigation";
 import MessagePanel from "@/app/components/messages/MessagePanel";
@@ -101,11 +101,25 @@ const ConversationChannelPage = () => {
         console.log("You are typing a message");
         socket.emit('onUserTyping', {conversationId : id})
       }
+	    const [onlineUsers, setOnlineUsers] = useState<UsersTypes[]>([]);
+
+
+	    useEffect(() => {
+        socket.emit('getOnlineUsers');
+        socket.on('getOnlineUsers', (onlineUsers) => {
+            console.log("online friend-->", onlineUsers);
+            setOnlineUsers(onlineUsers);
+        });
+        console.log("socket here", socket.id);
+        return () => {
+            socket.off('getOnlineUsers');
+        };
+      }, [socket]);
     return ( 
 
             <div className=" flex h-screen  xl:container xl:mx-auto">
               <div className ="hidden xl:block h-full w-[35%] p-10 pl-5 pr-2 ">
-                <CoversationSideBar/>
+                <CoversationSideBar onlineUsers={onlineUsers}/>
               </div>
                 <div className="bg-white xl:m-10  xl:mr-10 xl:ml-2 w-full xl:w-[65%]  xl:rounded-[20px]">
                     <MessagePanel messages={message} sendTypingStatus={sendTypingStatus}></MessagePanel> 

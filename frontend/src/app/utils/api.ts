@@ -33,6 +33,11 @@ export const getRequest = () => axios.get(`http://localhost:8000/user/pending-re
 
 export const getBloques = () => axios.get(`http://localhost:8000/user/blocked-friends`, config);
 
+export const DebloqueUser = async (id : string) => axios.post(`http://localhost:8000/friend-request/unblock-friend`, {friendIdToUnblock : id}, config);
+
+export const bloqueFriend = async (id : string) => axios.post(`http://localhost:8000/friend-request/block-friend`, {friendIdToBlock : id}, config);
+
+
 export const SendRequest =  async (data : CreateRequestParams) => await axios.post(`http://localhost:8000/friend-request/send-request`,data,  config);
    
 
@@ -43,7 +48,6 @@ export const AcceptRequest = async (id : string) => axios.post(`http://localhost
 
 export const refuseRequest = async ( id: string) => axios.post(`http://localhost:8000/friend-request/refuse-request`, {requestId : id }, config);
 
-export const bloqueFriend = async (id : string) => axios.post(`http://localhost:8000/friend-request/block-friend`, {friendIdToBlock : id}, config);
 
 export const changeDisplayedName = async (DisplayName : string) => axios.post(`http://localhost:8000/user/changedisplayname`, {newDisplayName : DisplayName }, config);
 

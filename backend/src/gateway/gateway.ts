@@ -38,12 +38,37 @@ export class MessagingGateWay implements OnGatewayConnection{
         console.log(socket.user);
         this.sessions.setUserSocket(socket.user.id,socket);
         // socket.emit('connected', {status : 'good'});
-        console.log("the session is");
-        console.log(this.sessions.getSockets());
-        if(socket.user.id)
-            console.log(socket.user.email ,"is online");
+        const onlineUsers = this.getOnlineUsers();
+            this.server.emit('updateOnlineUsers', onlineUsers);
+       
+      
     
        
+    }
+    handleDisconnect(socket: AuthenticatedSocket) {
+        // ... other code
+        this.sessions.removeUserSocket(socket.user.id);
+    
+        // Update online status
+        const onlineUsers = this.getOnlineUsers();
+        this.server.emit('updateOnlineUsers', onlineUsers);
+    }
+    
+    private getOnlineUsers(): User[] {
+        // Implement your logic to get online users
+        const onlineUsers: User[] = [];
+        for (const [roomId, roomSet] of this.server.sockets.adapter.rooms) {
+            const roomSockets = Array.from(roomSet);    
+            for (const socketId of roomSockets) {
+                const user = this.sessions.getUserBySocketId(socketId);
+    
+                if (user) {
+                    onlineUsers.push(user);
+                }
+            }
+        }
+
+    return onlineUsers;
     }
     
     
@@ -52,35 +77,39 @@ export class MessagingGateWay implements OnGatewayConnection{
         console.log("create message")
     }
 
-    // @SubscribeMessage('onUserTyping')
-    // handleUserTyping(@MessageBody() data : any){
-    //     console.log(data);
-    //     console.log("User is typing");
+   
 
-    // }
+//     @SubscribeMessage('getOnlineUsers')
+//     handleGetOnlineUsers(socket: AuthenticatedSocket) {
+//         console.log("get online users*****************");
+//         console.log(this.server.sockets.adapter.rooms);
+//         const onlineUsers: User[] = [];
+//         for (const [roomId, roomSet] of this.server.sockets.adapter.rooms) {
+//             const roomSockets = Array.from(roomSet);    
+//             for (const socketId of roomSockets) {
+//                 const user = this.sessions.getUserBySocketId(socketId);
+    
+//                 if (user) {
+//                     onlineUsers.push(user);
+//                 }
+//             }
+//         }
+
+//         socket.emit('getOnlineUsers', onlineUsers);
+
+//     return onlineUsers;
+// }
 
     @SubscribeMessage('getOnlineUsers')
-    handleGetOnlineUsers(socket: AuthenticatedSocket) {
-        console.log("get online users*****************");
-        console.log(this.server.sockets.adapter.rooms);
-        const onlineUsers: User[] = [];
-        for (const [roomId, roomSet] of this.server.sockets.adapter.rooms) {
-            const roomSockets = Array.from(roomSet);
-            console.log("here******");
-    
-            for (const socketId of roomSockets) {
-                const user = this.sessions.getUserBySocketId(socketId);
-                console.log("this user is -->", user);
-    
-                if (user) {
-                    onlineUsers.push(user);
-                }
-            }
-        }
-        socket.emit('getOnlineUsers', onlineUsers);
+         handleGetOnlineUsers(socket: AuthenticatedSocket) {
+            console.log("get online users*****************");
+            const onlineUsers = this.getOnlineUsers();
+            socket.emit('getOnlineUsers', onlineUsers);
 
-    return onlineUsers;
-}
+            return onlineUsers;
+        }   
+
+   
     @SubscribeMessage('onClientConnect')
     onClientConnect(@MessageBody() data : any, @ConnectedSocket() Client : AuthenticatedSocket){
         console.log("onClient connect*****************");

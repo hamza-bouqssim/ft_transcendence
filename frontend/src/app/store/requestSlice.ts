@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { AcceptRequest, SendRequest, bloqueFriend, getBloques, getConversationMessage, getRequest, refuseRequest} from '../utils/api';
+import { AcceptRequest, DebloqueUser, SendRequest, bloqueFriend, getAllFriends, getBloques, getConversationMessage, getRequest, refuseRequest} from '../utils/api';
 import { AcceptRequestParams, ConversationMessage, CreateRequestParams, FriendsTypes, UsersTypes, messageTypes } from '../utils/types';
 
 export interface requestState {
@@ -57,6 +57,7 @@ export const fetchREfuseFriendRquestThunk = createAsyncThunk('request/refuse', a
   return response;
 })
 
+
 export const fetchBlockFriendThunk = createAsyncThunk('request/block', async(id : string) => {
   const response = await bloqueFriend(id);
   return response;
@@ -67,6 +68,18 @@ export const fetchBlocksThunk = createAsyncThunk('block/fetch', async () => {
   return response; // Assuming your API response has a 'data' property
 
 });
+
+export const fetchDebloqueUserThunk = createAsyncThunk('Debloque/fetch', async(id : string)=>{
+  const response = await DebloqueUser(id);
+  return response;
+})
+
+//get all friends
+
+export const fetchGetAllFriends = createAsyncThunk('Get/friends', async () =>{
+  const response = await getAllFriends();
+  return response;
+})
 
 export const requestSlice = createSlice({
   name: 'request',
@@ -87,6 +100,10 @@ export const requestSlice = createSlice({
 
   }).addCase(fetchBlockFriendThunk.fulfilled, (state, action)=>{
 
+  }).addCase(fetchDebloqueUserThunk.fulfilled, (state, action) =>{
+
+  }).addCase(fetchGetAllFriends.pending, (state, action)=>{
+    
   })
   }
 });

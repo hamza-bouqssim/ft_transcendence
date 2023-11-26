@@ -1,12 +1,12 @@
 import { getBloques } from "@/app/utils/api";
 import { Conversation, ConversationSideBarContainer, ConversationSideBarItem } from "@/app/utils/styles";
 import { BloquesTypes, User } from "@/app/utils/types";
-import { faChevronDown, faEllipsis } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faEllipsis, faUserMinus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { MenuButton2 } from "../Buttons";
-import { fetchBlocksThunk } from "@/app/store/requestSlice";
+import { fetchBlocksThunk, fetchDebloqueUserThunk } from "@/app/store/requestSlice";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/app/store";
 
@@ -40,6 +40,18 @@ const FriendsBloque = () =>{
         );
       },)
 
+      const handleDebloque = async (id: string) => {
+        console.log("id friend is -->", id);
+      
+        try {
+          await dispatch(fetchDebloqueUserThunk(id));
+            alert("You have Deblocked this friend successfully");
+        } catch (error) {
+          console.error("Error blocking friend:", error);
+            alert("Failed to Deblock the friend. Please try again."); // Show an alert for error handling
+        }
+      };
+
       const handleFunction = (Bloques :  BloquesTypes) => {
             let ourBloques;
             ourBloques = Bloques.user.display_name;
@@ -63,13 +75,11 @@ const FriendsBloque = () =>{
 							
 					 				<span  className="ConversationName">{handleFunction(elem)}</span>
 					 			
-                 <div className=" relative ">
-				          <FontAwesomeIcon icon={faEllipsis} className={`text-black transform cursor-pointer text-2xl duration-500 ease-in-out hover:text-[--pink-color] lg:text-3xl }`}
-					          onClick={() => handleMenuClick(elem.user.id)}
-				          />
-      
+                 
+
+                  <FontAwesomeIcon icon={faUserMinus} onClick={()=>{handleDebloque(elem.user.id)}} className={`text-black  cursor-pointer text-xl duration-500 ease-in-out hover:text-[--pink-color] absolute right-5 p-4  rounded-full  `}/>      
                 
-            </div> 
+         
 							</ConversationSideBarItem>
 								
 						)

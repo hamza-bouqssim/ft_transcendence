@@ -14,7 +14,7 @@ import '@fortawesome/fontawesome-svg-core/styles.css';
 import { faChevronDown, faEllipsis} from "@fortawesome/free-solid-svg-icons";
 import RightBarUsers from "../RightBarUsers";
 import Image from "next/image";
-import { fetchBlockFriendThunk } from "@/app/store/requestSlice";
+import { fetchBlockFriendThunk, fetchGetAllFriends } from "@/app/store/requestSlice";
 
 
 const ListFriends = () => {
@@ -32,16 +32,17 @@ const ListFriends = () => {
     });
 
 
-    useEffect(() => {
-          getAllFriends()
-            .then(({ data }) => {
-                // console.log("all friends"); 
-                // console.log(data);
-              setFriends(data);
-            })
-            .catch((err) => console.log(err));
-        
-      }, []);
+  
+      useEffect (() => {
+        dispatch(fetchGetAllFriends())
+        .unwrap()
+        .then(({data}) => {
+          setFriends(data);
+        }).catch((err)=>{
+          console.log(err);
+        }
+        );
+      },)
 
       const router = useRouter();
     // console.log("friends here", Friends);
