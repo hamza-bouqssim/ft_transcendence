@@ -17,11 +17,11 @@ const engine = Engine.create({
 });
 
 @WebSocketGateway({
-	origin:['http://localhost:3000'],
-	credentials : true,
+	origin: ['http://localhost:3000'],
+	credentials: true,
 	namespace: '/game',
 })
-export class GameGateway implements OnModuleInit{
+export class GameGateway implements OnModuleInit {
 	@WebSocketServer()
 	server: Server;
 
@@ -38,34 +38,59 @@ export class GameGateway implements OnModuleInit{
 	private playerTwoScore: number = 0;
 	private gameInterval: any;
 	private moveInterval: any;
+	private mapIndex: number;
 
-	private pong: any;
+	// private pong: any;
 
-	constructor(private readonly gameservice : GameService) {
+	constructor(private readonly gameservice: GameService) {
 		this.handlePaddleMove();
-		// console.log("cons")
+		// console.log("test")
 	}
 
 	onModuleInit() {
-		this.server.on('connection', (socket : any) => {
-			console.log(socket);
+		this.server.on('connection', (socket: any) => {
+			// console.log(socket);
 			console.log('A Pong client connected!');
 		});
 		// this.handleLaunchGame();
 	}
 	// handleConnection(socket : AuthenticatedSocket, ...args: any[]) {
-    //     console.log("new Incoming connection");
-    //     console.log(socket.user);
-    //     // this.sessions.setUserSocket(socket.user.id,socket);
-    //     // // socket.emit('connected', {status : 'good'});
-    //     // console.log("the session is");
-    //     // console.log(this.sessions.getSockets());
-    //     // if(socket.user.id)
-    //     //     console.log(socket.user.email ,"is online");
-    
+	//     console.log("new Incoming connection");
+	//     console.log(socket.user);
+	//     // this.sessions.setUserSocket(socket.user.id,socket);
+	//     // // socket.emit('connected', {status : 'good'});
+	//     // console.log("the session is");
+	//     // console.log(this.sessions.getSockets());
+	//     // if(socket.user.id)
+	//     //     console.log(socket.user.email ,"is online");
+
 	// }
-	@SubscribeMessage("launchGameRequest")
-	handleLaunchGameRequest() {
+	@SubscribeMessage('launchGameRequest')
+	handleLaunchGameRequest(@MessageBody() data: any) {
+		this.mapIndex = data.chosenMapIndex;
+
+		console.log('map Index:', this.mapIndex);
+		switch (this.mapIndex) {
+			case 0:
+				this.defaultGameMap();
+				break;
+			case 1: {
+				this.defaultGameMap();
+				this.handleGameCircleObstacles();
+				break;
+			}
+			case 2: {
+				this.defaultGameMap();
+				this.handleVerticalObstacles();
+				break;
+			}
+		}
+
+		this.server.emit('launchGame', {});
+		this.startGame();
+	}
+
+	defaultGameMap() {
 		// Create Ball:
 		this.ball = Bodies.circle(this.canvasWidth / 2, this.canvasHeight / 2, 15, {
 			label: 'ball',
@@ -82,7 +107,7 @@ export class GameGateway implements OnModuleInit{
 			x: 8,
 			y: 8,
 		});
-		this.server.emit("setBallVelocity", this.ball.velocity)
+		this.server.emit('setBallVelocity', this.ball.velocity);
 
 		// Create Two Paddles:
 		this.topPaddle = Bodies.rectangle(this.canvasWidth / 2, 30, 170, 15, {
@@ -172,22 +197,8 @@ export class GameGateway implements OnModuleInit{
 			// bottomRect,
 			topRect,
 		]);
-
-		// this.gameWithCircleObstacles();
-
-		// this.gameWithVerticalObstacles();
-
-		// run the engine:
-		this.server.emit("launchGame", {});
-		Runner.run(Runner.create(), engine);
-
-		this.gameInterval = setInterval(() => {
-			this.server.emit('updateBallPosition', this.ball.position);
-			this.calScore();
-		}, 15);
 	}
 
-	@SubscribeMessage("gameWithCircleObstacles")
 	handleGameCircleObstacles = (): void => {
 		const topLeftObstacle = Bodies.circle(
 			this.canvasWidth / 4,
@@ -196,7 +207,7 @@ export class GameGateway implements OnModuleInit{
 			{
 				isStatic: true,
 				render: {
-					fillStyle: "white",
+					fillStyle: 'white',
 				},
 			},
 		);
@@ -208,7 +219,7 @@ export class GameGateway implements OnModuleInit{
 			{
 				isStatic: true,
 				render: {
-					fillStyle: "white",
+					fillStyle: 'white',
 				},
 			},
 		);
@@ -220,7 +231,7 @@ export class GameGateway implements OnModuleInit{
 			{
 				isStatic: true,
 				render: {
-					fillStyle: "white",
+					fillStyle: 'white',
 				},
 			},
 		);
@@ -232,7 +243,7 @@ export class GameGateway implements OnModuleInit{
 			{
 				isStatic: true,
 				render: {
-					fillStyle: "white",
+					fillStyle: 'white',
 				},
 			},
 		);
@@ -245,8 +256,7 @@ export class GameGateway implements OnModuleInit{
 		]);
 	};
 
-	@SubscribeMessage("gameWithVerticalObstacles")
-	handleGameVerticalObstacles = (): void => {
+	handleVerticalObstacles = (): void => {
 		const verticalObstacle1 = Bodies.rectangle(
 			this.canvasWidth - 65,
 			this.canvasHeight / 5,
@@ -254,7 +264,7 @@ export class GameGateway implements OnModuleInit{
 			170,
 			{
 				render: {
-					fillStyle: "white",
+					fillStyle: 'white',
 				},
 				isStatic: true,
 			},
@@ -267,7 +277,7 @@ export class GameGateway implements OnModuleInit{
 			100,
 			{
 				render: {
-					fillStyle: "white",
+					fillStyle: 'white',
 				},
 				isStatic: true,
 			},
@@ -280,7 +290,7 @@ export class GameGateway implements OnModuleInit{
 			170,
 			{
 				render: {
-					fillStyle: "white",
+					fillStyle: 'white',
 				},
 				isStatic: true,
 			},
@@ -293,7 +303,7 @@ export class GameGateway implements OnModuleInit{
 			170,
 			{
 				render: {
-					fillStyle: "white",
+					fillStyle: 'white',
 				},
 				isStatic: true,
 			},
@@ -307,39 +317,47 @@ export class GameGateway implements OnModuleInit{
 		]);
 	};
 
+	startGame() {
+		Runner.run(Runner.create(), engine);
+
+		this.gameInterval = setInterval(() => {
+			this.server.emit('updateBallPosition', this.ball.position);
+			this.calScore();
+		}, 15);
+	}
+
 	resetToDefaultPosition() {
 		// Reset Ball Position
 		Body.setPosition(this.ball, {
 			x: this.canvasWidth / 2,
-			y: this.canvasHeight / 2
-		})
+			y: this.canvasHeight / 2,
+		});
 
 		//Reset Paddles Position
 		Body.setPosition(this.bottomPaddle, {
 			x: this.canvasWidth / 2,
 			y: this.canvasHeight - 30,
-		})
+		});
 	}
 
 	calScore() {
-		if (this.ball.position.y + this.ball.circleRadius >= this.canvasHeight - 8)
-		{
+		if (
+			this.ball.position.y + this.ball.circleRadius >=
+			this.canvasHeight - 8
+		) {
 			this.playerOneScore++;
-			this.server.emit("updateScore",
-				{
-					playerOneScore: this.playerOneScore,
-					playerTwoScore: this.playerTwoScore
-				}
-			)
+			this.server.emit('updateScore', {
+				playerOneScore: this.playerOneScore,
+				playerTwoScore: this.playerTwoScore,
+			});
 			this.resetToDefaultPosition();
 		}
-		if (this.playerOneScore === 2 || this.playerTwoScore === 2)
-		{
+		if (this.playerOneScore === 2 || this.playerTwoScore === 2) {
 			// TODO: latter We Will Close The Socket With The Specific SocketID:
 			this.playerOneScore = 0;
 			this.playerTwoScore = 0;
 			///////////////////////
-			this.server.emit("gameIsFinished", {});
+			this.server.emit('gameIsFinished', {});
 
 			// Clear Intervals:
 			clearInterval(this.moveInterval);
@@ -347,12 +365,11 @@ export class GameGateway implements OnModuleInit{
 		}
 	}
 
-	@SubscribeMessage("join-game")
-	handleJoinGame(@MessageBody() data : any)
-	{
-		this.server.emit("join-queue", {
-			content: data.socketId
-		})
+	@SubscribeMessage('join-game')
+	handleJoinGame(@MessageBody() data: any) {
+		this.server.emit('join-queue', {
+			content: data.socketId,
+		});
 		this.gameservice.joinQueue(data.socketId);
 	}
 
@@ -391,8 +408,8 @@ export class GameGateway implements OnModuleInit{
 				this.posPaddleX = stepX;
 				Body.setPosition(this.bottomPaddle, {
 					x: stepX,
-					y: this.bottomPaddle.position.y
-				})
+					y: this.bottomPaddle.position.y,
+				});
 				this.server.emit('updatePaddlePosition', {
 					paddleLabel: 'bottomPaddle',
 					xPosition: stepX,

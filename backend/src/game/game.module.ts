@@ -8,12 +8,17 @@ import { UserService } from 'src/user/user.service';
 import { Services } from 'src/utils/constants';
 import { GateWaySessionManager } from 'src/gateway/gateway.session';
 
-
 @Module({
-	providers: [ GameGateway, GameService, PrismaService, UserService,{
-        provide : Services.GATEWAY_SESSION_MANAGER,
-        useClass: GateWaySessionManager,
-    }],
-	controllers: [GameController, ],
+	providers: [
+		GameGateway,
+		GameService,
+		PrismaService,
+		UserService,
+		{
+			provide: Services.GATEWAY_SESSION_MANAGER,
+			useClass: GateWaySessionManager,
+		},
+	],
+	controllers: [GameController],
 })
 export class GameModule {}

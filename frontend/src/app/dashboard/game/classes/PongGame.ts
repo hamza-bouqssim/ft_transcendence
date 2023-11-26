@@ -56,6 +56,172 @@ class PongGame {
 		this.divWidth = this.parentDiv.getBoundingClientRect().width;
 		this.divHeight = this.parentDiv.getBoundingClientRect().height;
 
+		// this.ball = Bodies.circle(this.divWidth / 2, this.divHeight / 2, 15, {
+		// 	label: "ball",
+		// 	render: {
+		// 		fillStyle: "#FFF",
+		// 	},
+		// 	frictionAir: 0,
+		// 	friction: 0,
+		// 	inertia: Infinity,
+		// 	restitution: 1,
+		// });
+
+		// // Create Two Paddles:
+		// const topRect = Bodies.rectangle(this.divWidth / 2, 0, this.divWidth, 20, {
+		// 	render: {
+		// 		fillStyle: "red",
+		// 	},
+		// 	isStatic: true,
+		// });
+		// const bottomRect = Bodies.rectangle(
+		// 	this.divWidth / 2,
+		// 	this.divHeight,
+		// 	this.divWidth,
+		// 	20,
+		// 	{
+		// 		render: {
+		// 			fillStyle: "yellow",
+		// 		},
+		// 		isStatic: true,
+		// 	},
+		// );
+
+		// this.topPaddle = Bodies.rectangle(this.divWidth / 2, 30, 170, 15, {
+		// 	label: "topPaddle",
+		// 	render: {
+		// 		fillStyle: "#4FD6FF",
+		// 	},
+		// 	isStatic: true,
+		// 	chamfer: { radius: 10 },
+		// });
+		// this.bottomPaddle = Bodies.rectangle(
+		// 	this.divWidth / 2,
+		// 	this.divHeight - 30,
+		// 	170,
+		// 	15,
+		// 	{
+		// 		label: "bottomPaddle",
+		// 		render: {
+		// 			fillStyle: "#FF5269",
+		// 		},
+		// 		isStatic: true,
+		// 		chamfer: { radius: 10 },
+		// 	},
+		// );
+
+		// // Create Two Boundies:
+		// this.rightRect = Bodies.rectangle(
+		// 	this.divWidth,
+		// 	this.divHeight / 2,
+		// 	20,
+		// 	this.divHeight,
+		// 	{
+		// 		label: "rightRect",
+		// 		render: {
+		// 			fillStyle: "#CFF4FF",
+		// 		},
+		// 		isStatic: true,
+		// 	},
+		// );
+
+		// this.leftRect = Bodies.rectangle(
+		// 	0,
+		// 	this.divHeight / 2,
+		// 	20,
+		// 	this.divHeight,
+		// 	{
+		// 		label: "leftRect",
+		// 		render: {
+		// 			fillStyle: "#CFF4FF",
+		// 		},
+		// 		isStatic: true,
+		// 	},
+		// );
+
+		// const separator = Bodies.rectangle(
+		// 	this.divWidth / 2,
+		// 	this.divHeight / 2,
+		// 	this.divWidth,
+		// 	8,
+		// 	{
+		// 		isSensor: true,
+		// 		render: {
+		// 			fillStyle: "#CFF4FF",
+		// 		},
+		// 	},
+		// );
+
+		// const centerCirle = Bodies.circle(
+		// 	this.divWidth / 2,
+		// 	this.divHeight / 2,
+		// 	8,
+		// 	{
+		// 		isSensor: true,
+		// 		render: {
+		// 			fillStyle: "#CFF4FF",
+		// 		},
+		// 	},
+		// );
+
+		// Composite.add(engine.world, [
+		// 	this.topPaddle,
+		// 	this.bottomPaddle,
+		// 	separator,
+		// 	centerCirle,
+		// 	this.ball,
+		// 	this.rightRect,
+		// 	this.leftRect,
+		// 	// bottomRect,
+		// 	// topRect,
+		// ]);
+
+		// this.gameWithCircleObstacles();
+
+		// this.gameWithVerticalObstacles();
+
+		switch (this.chosenMapIndex) {
+			case 0:
+				this.defaultGameMap();
+				break;
+			case 1: {
+				this.defaultGameMap();
+				this.gameWithCircleObstacles();
+				break;
+			}
+			case 2: {
+				this.defaultGameMap();
+				this.gameWithVerticalObstacles();
+				break;
+			}
+		}
+
+		const render = Render.create({
+			element: this.parentDiv,
+			engine: engine,
+			options: {
+				background: "#3A3561",
+				width: this.divWidth,
+				height: this.divHeight,
+				wireframes: false,
+			},
+		});
+
+		Render.run(render);
+
+		if (this.socket) this.moveOnlineModeBall();
+		else {
+			this.setBotModeBall();
+			this.moveBotPaddle();
+		}
+		this.movePaddle();
+
+		//Run Game
+		this.startGame();
+	}
+
+	defaultGameMap = (): void => {
+		// Create Ball:
 		this.ball = Bodies.circle(this.divWidth / 2, this.divHeight / 2, 15, {
 			label: "ball",
 			render: {
@@ -175,42 +341,6 @@ class PongGame {
 			// bottomRect,
 			// topRect,
 		]);
-
-		// this.gameWithCircleObstacles();
-
-		// this.gameWithVerticalObstacles();
-
-		const render = Render.create({
-			element: this.parentDiv,
-			engine: engine,
-			options: {
-				background: "#3A3561",
-				width: this.divWidth,
-				height: this.divHeight,
-				wireframes: false,
-			},
-		});
-
-		Render.run(render);
-
-		if (this.socket) this.moveOnlineModeBall();
-		else {
-			this.setBotModeBall();
-			this.moveBotPaddle();
-		}
-
-		this.movePaddle();
-
-		//Run Game
-		this.startGame();
-	}
-
-	startGame = (): void => {
-		console.log("chosen Map Index: ", this.chosenMapIndex);
-		this.lunchGameInterval = setTimeout(() => {
-			// run the engine
-			Runner.run(Runner.create(), engine);
-		}, 1000);
 	};
 
 	gameWithCircleObstacles = (): void => {
@@ -329,6 +459,13 @@ class PongGame {
 			verticalObstacle3,
 			verticalObstacle4,
 		]);
+	};
+
+	startGame = (): void => {
+		this.lunchGameInterval = setTimeout(() => {
+			// run the engine
+			Runner.run(Runner.create(), engine);
+		}, 1000);
 	};
 
 	moveOnlineModeBall = (): void => {
@@ -472,22 +609,6 @@ class PongGame {
 	}
 
 	moveBotPaddle = () => {
-		let currentPositionX;
-
-		// Events.on(engine, "collisionStart", (e) => {
-		// 	const pairs = e.pairs[0];
-		// 	if (pairs.bodyA === this.topPaddle || pairs.bodyB === this.topPaddle) {
-		// 		this.sound.topPaddleSound.play();
-		// 		this.setBallSpeed();
-		// 	} else if (
-		// 		pairs.bodyA === this.bottomPaddle ||
-		// 		pairs.bodyB === this.bottomPaddle
-		// 	) {
-		// 		this.sound.bottomPaddleSound.play();
-		// 		this.setBallSpeed();
-		// 	}
-		// });
-
 		Events.on(engine, "collisionStart", (e: any) => {
 			const pairs = e.pairs[0];
 			if (pairs.bodyA === this.topPaddle || pairs.bodyB === this.topPaddle) {
@@ -501,6 +622,7 @@ class PongGame {
 				// this.setBallSpeed();
 			}
 		});
+		this.calcScore();
 
 		// Matter.Events.on(engine, "collisionStart", (e) => {
 		// 	this.ball.body.velocity.x = -this.ball.body.velocity.x;
@@ -509,6 +631,10 @@ class PongGame {
 		// 	if (Math.random() < 0.5) this.ball.body.velocity.x *= -1;
 		// 	if (Math.random() < 0.5) this.ball.body.velocity.y *= -1;
 		// });
+	};
+
+	calcScore = (): void => {
+		let currentPositionX;
 
 		Events.on(engine, "beforeUpdate", () => {
 			if (this.ball.position.y + this.ball.circleRadius >= this.divHeight - 8) {

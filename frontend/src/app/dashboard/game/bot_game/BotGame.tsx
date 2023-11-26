@@ -1,18 +1,18 @@
 "use client";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import PlayerScore from "@/app/components/PlayerScore";
 import PongGame from "../classes/PongGame";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 import { LoserPlayerPopUp } from "@/app/components/GamePopUp";
-import { chosenMapContext } from "../choose-map/page";
+import { useAtomValue } from "jotai";
+import { gameData } from "../page";
 
 const BotGame = () => {
-	// const { chosenMapIndex } = useContext(chosenMapContext);
+	const gameDataValues = useAtomValue(gameData);
 	const router = useRouter();
 	const parentCanvasRef = useRef<HTMLDivElement>(null);
 	const pongRef = useRef<any>();
-	// console.log("chosenMapIndex:", chosenMapIndex);
 	const [score, setScore] = useState<{
 		playerScore: number;
 		botScore: number;
@@ -23,7 +23,8 @@ const BotGame = () => {
 	const [startGame, setStartGame] = useState<boolean>(false);
 
 	useEffect(() => {
-		// console.log("first",pongRef.current)
+		let endGame: any;
+
 		if (score.botScore === 2 || score.playerScore === 2) {
 			setStartGame((prev: any) => !prev);
 			pongRef.current.clear();
@@ -36,7 +37,6 @@ const BotGame = () => {
 			});
 		else {
 			let timerInterval: any;
-			let endGame: any;
 
 			Swal.fire({
 				title: "Game Will Start In",
@@ -44,7 +44,7 @@ const BotGame = () => {
 				iconColor: "var(--pink-color)",
 				color: "#ffff",
 				html: "<b style='font-size:80px'></b>&emsp;Seconds",
-				timer: 5 * 1000,
+				timer: 3 * 1000,
 				background: "#2E2F54",
 				customClass: "rounded-[30px] font-['Whitney_BlackSc'] text-sm",
 				timerProgressBar: true,
@@ -64,19 +64,17 @@ const BotGame = () => {
 					clearInterval(timerInterval);
 				},
 			}).then(() => {
-				const chosenMapIndex = 0;
 				setStartGame((prev: any) => !prev);
 				pongRef.current = new PongGame(
 					parentCanvasRef.current!,
-					chosenMapIndex,
+					gameDataValues.chosenMapIndex,
 				);
-				console.log("pongRef", pongRef);
 				setScore({
 					...score,
 					playerScore: pongRef.current.playerScore,
 					botScore: pongRef.current.botScore,
 				});
-				// endGame = () => pong.clearGame();
+				endGame = () => pongRef.current.clearGame();
 			});
 		}
 		// return () => endGame();

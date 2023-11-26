@@ -6,16 +6,43 @@ import "swiper/css";
 import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
 import { useRouter } from "next/navigation";
-import { Provider, useSelector } from "react-redux";
-import { store } from "@/redux_toolkit/store";
+import { useAtomValue, useSetAtom } from "jotai";
+import { gameData } from "../page";
 
 const ChooseMap = () => {
-	const { gameMode } = useSelector((state: any) => state.game);
+	const gameDataValues = useAtomValue(gameData);
+	const setChosenMapIndex = useSetAtom(gameData);
 	const router = useRouter();
 	const swiperRef = useRef<any>(null);
-	{
-		/* <h1 className="bg-gradient-to-r p-2 from-[#2E2F54] via-[#3B5282] to-[#2E2F54] text-center font-['Whitney_Bold'] text-2xl"> */
-	}
+	// const socket = useContext<any>(SocketContext);
+
+	// const handleClick = (
+	// 	e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+	// ): void => {
+	// 	if (flag === "online") {
+	// 		console.log(socket);
+	// 		// e.preventDefault();
+	// 		alert("prevented!");
+	// 		socket.emit("join-game", {
+	// 			socketId: socket.id,
+	// 		});
+	// 		socket.on("join-queue", (data: any) => {
+	// 			alert(data.content);
+	// 		});
+	// 	}
+	// };
+
+	const handleClick = (): void => {
+		setChosenMapIndex((prevGameData) => ({
+			...prevGameData,
+			chosenMapIndex: swiperRef.current.swiper.realIndex,
+		}));
+
+		gameDataValues.chosenGameMode === "Online Game"
+			? router.push("./online_game")
+			: router.push("./bot_game");
+	};
+
 	return (
 		<div className="relative h-[100vh] min-h-[600px] w-full select-none">
 			{/* <div className="glassmorphism absolute left-[50%] top-[50%]  m-auto flex w-full max-w-[800px] -translate-x-[50%] -translate-y-[50%] flex-col gap-6 p-28"> */}
@@ -69,13 +96,7 @@ const ChooseMap = () => {
 				</div>
 				<button
 					className="glassmorphism m-auto w-fit px-7 py-2 font-['Whitney_Semibold'] duration-150 ease-in-out hover:bg-[--purple-color]"
-					onClick={() => {
-						console.log("mode chosen is:", gameMode);
-						// console.log(swiperRef.current.swiper.realIndex),
-						// setChosenMapIndex(swiperRef.current.swiper.realIndex);
-						// router.push("./bot_game");
-						// router.push("./online_game");
-					}}
+					onClick={handleClick}
 				>
 					Choose
 				</button>

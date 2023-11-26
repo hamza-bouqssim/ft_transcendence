@@ -1,16 +1,23 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 import PlayerScore from "@/app/components/PlayerScore";
 import PongGame from "../classes/PongGame";
 import Swal from "sweetalert2";
 import { SocketContext } from "../SocketContext";
 import { LoserPlayerPopUp } from "@/app/components/GamePopUp";
+import { gameData } from "../page";
+import { useAtomValue } from "jotai";
+import { io } from "socket.io-client";
 
 const OnlineGame = () => {
+	const gameDataValues = useAtomValue(gameData);
 	const router = useRouter();
-	const socket = useContext<any>(SocketContext);
+	// const socket = useContext<any>(SocketContext);
 
-	console.log("socket:", socket);
+	const socket = io("http://localhost:8000/game", {
+		withCredentials: true,
+	});
+	console.log("onlinegame", socket);
 
 	const parentCanvasRef = useRef<HTMLDivElement>(null);
 
@@ -47,7 +54,7 @@ const OnlineGame = () => {
 			iconColor: "var(--pink-color)",
 			color: "#ffff",
 			html: "<b style='font-size:80px'></b>&emsp;Seconds",
-			timer: 5 * 1000,
+			timer: 3 * 1000,
 			background: "#2E2F54",
 			customClass: "rounded-[30px] font-['Whitney_BlackSc'] text-sm",
 			timerProgressBar: true,
@@ -67,19 +74,22 @@ const OnlineGame = () => {
 				clearInterval(timerInterval);
 			},
 		}).then(() => {
-			socket.emit("launchGameRequest", () => {
-				console.log("req to start Game!");
-			});
+			socket.emit("launchGameRequest", gameDataValues.chosenMapIndex);
+			// console.log("req to start Game!");
 			socket.on("launchGame", () => {
 				setStartGame((prev: any) => !prev);
-				pong = new PongGame(parentCanvasRef.current!, socket);
+				pong = new PongGame(
+					parentCanvasRef.current!,
+					gameDataValues.chosenMapIndex,
+					socket,
+				);
 			});
 			socket.on("gameIsFinished", () => {
 				pong.clear();
 				LoserPlayerPopUp(router);
 				// endGame = () => pong.clear();
 				// endGame();
-			})
+			});
 		});
 		// return () =>
 		// {
