@@ -32,11 +32,23 @@ const ChatComponnent  = () =>{
 	  const [conversation , setConversation] = useState<ConversationTypes[]>([]);
 
   
-	  useEffect(() => {
-		getConversation().then(({data}) =>{
-			setConversation(data);
-		}).catch((err)=> console.log(err))
-	}, [conversation])
+	//   useEffect(() => {
+	// 	getConversation().then(({data}) =>{
+	// 		setConversation(data);
+	// 	}).catch((err)=> console.log(err))
+	// }, [conversation])
+
+	useEffect (() => {
+        dispatch(fetchConversationThunk())
+        .unwrap()
+        .then(({data}) => {
+          setConversation(data);
+        }).catch((err)=>{
+          console.log(err);
+        }
+        );
+      },[conversation])
+
 
     useEffect(() => {
         setLoading(true);

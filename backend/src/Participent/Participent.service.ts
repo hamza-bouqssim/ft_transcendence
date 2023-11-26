@@ -58,6 +58,12 @@ async  findParticipentChat(user :User) {
       recipient: true,
       lastMessage: true,
     },
+    orderBy: {
+      lastMessage: {
+        createdAt: 'desc', // Order by createdAt of the lastMessage in descending order
+      },
+    },
+  
   });
 
   return chatParticipents;
