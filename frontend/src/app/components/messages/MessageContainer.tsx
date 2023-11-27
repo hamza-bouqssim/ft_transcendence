@@ -48,14 +48,14 @@ const MessageContainer  : FC<Props>  = ({messages}) => {
 
     }  
 
-    const functionHandleDisplay_name = () =>{
-        let test;
-            messages.map((elem)=>{
-                test = elem.recipient.display_name;
+    // const functionHandleDisplay_name = () =>{
+    //     let test;
+    //         messages.map((elem)=>{
+    //             test = elem.recipient.display_name;
 
-            })
-            return test;
-    }
+    //         })
+    //         return test;
+    // }
 
     const functionHandleAvatarUrl = () =>{
         let test;

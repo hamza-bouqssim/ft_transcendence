@@ -67,8 +67,7 @@ export class MessagingGateWay implements OnGatewayConnection{
                 }
             }
         }
-
-    return onlineUsers;
+        return onlineUsers;
     }
     
     

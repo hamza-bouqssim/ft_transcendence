@@ -2,11 +2,10 @@
 import { Injectable, UnauthorizedException,HttpStatus,HttpException } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
-import { ParticipentService } from 'src/Participent/Participent.service';
 
 @Injectable()
 export class FriendRequestService {
-    constructor(private readonly prisma: PrismaService , private readonly participentService : ParticipentService){}
+    constructor(private readonly prisma: PrismaService ){}
     async allMyFriends(id : string)
     {
         const user = await this.prisma.user.findFirst({where: {id: id}});
