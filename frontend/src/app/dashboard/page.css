@@ -1,0 +1,148 @@
+
+.container{
+    margin: 0 auto;
+    padding: 0 3%;
+}
+.container .row {
+    margin-top: 70px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.container .row .col-1{
+    flex-basis: 65%;
+}
+
+.container .row .col-2{
+    flex-basis: 33%;
+}
+
+.container .row .col-1 .play{
+    position: relative;
+    width: 100%;
+    height: 180px;
+    background-color: #79a9f25c;
+    border-radius: 80px;
+    box-shadow: 0px 7px 17px -3px rgba(15,15,15,0.72);
+
+}
+.container .row .col-1 .play .play-button{
+    position: absolute;
+    padding: 2% 15%;
+    background-color: #6A67F3;
+    border-radius: 90px;
+    font-weight: bolder;
+    font-family: "Whitney BlackSC";
+    font-size: 30px;
+    bottom: 0;
+    margin-bottom: 20px;
+    margin-left: 60px;
+    box-shadow: 0px 7px 10px -3px rgba(15,15,15,0.72);
+}
+.container .row .col-1 .boxes{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    
+}
+.container .row .col-1 .box-1{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 30%;
+    height: 150px;
+    box-shadow: 0px 7px 17px -3px rgba(15,15,15,0.72);
+    border-radius: 70px;
+    flex-direction: column;
+    font-weight: bolder;
+    font-family: "Whitney BlackSC";
+    font-size: 35px;
+}
+.container .row .col-2 .rank-container{
+    position: relative;
+    width: 100%;
+    height: 350px;
+    background-color: rgba(255, 255, 255, 0.271);
+    border-radius: 80px;
+    box-shadow: 0px 7px 17px -3px rgba(15,15,15,0.72);
+}
+.container .row .col-2 .rank-container .rank-friend{
+    position: absolute;
+    width: 95%;
+    height: 95%;
+    background-color: white;
+    border-radius: 80px;
+    margin: 7.5px 10px;
+}
+.container .row .col-2 .rank-container .rank-friend .rank-friend-buttons{
+    position: relative;
+    display: flex;
+    width: 70%;
+    height: 74px;
+    background-color: rgba(128, 128, 128, 0.258);
+    border-radius: 90px;
+    margin: auto;
+    margin-top: 10px;
+    padding: 0 10px;
+}
+.container .row .col-2 .rank-container .rank-friend .rank-friend-buttons .rank-friend-button{
+    margin: auto;
+    padding: 6% 12%;
+    flex-direction: column;
+    border-radius: 20px;
+    align-items: center;
+    justify-content: space-around;
+    font-family: "Whitney BlackSC";
+}
+
+
+.container .row .col-2 .achievements-container{
+    position: relative;
+    width: 100%;
+    height: 210px;
+    background-color: rgba(255, 255, 255, 0.271);
+    border-radius: 80px;
+    margin-top: 20px;
+    box-shadow: 0px 7px 17px -3px rgba(15,15,15,0.72);
+}
+
+.container .row .col-2 .achievements-container .achievements{
+    position: absolute;
+    width: 95%;
+    height: 95%;
+    background-color: white;
+    border-radius: 80px;
+    margin: 4px 10px;
+}
+
+.container .row .col-2 .achievements-container .achievements h1{
+    margin: 10px 0 0;
+    color: black;
+    font-family: "Whitney BlackSC";
+    text-align: center; 
+}
+
+.container .row .col-2 .achievements-container .achievements .my-achv
+{
+    margin: 0 auto;
+    margin-top: 8px;   
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 5px; 
+    height: 150px;
+    width: 80%;
+    padding: 0 10px;
+}
+
+.container .row .col-2 .achievements-container .achievements .my-achv .my{
+    width: 70px;
+    height: 70px;
+    background-color: rgba(128, 128, 128, 0.748);
+    flex-direction: column;
+    justify-content: space-between;
+    border-radius: 20px;
+    margin: 0 auto;
+}
+
+

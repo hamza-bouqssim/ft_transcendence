@@ -1,0 +1,32 @@
+.h1 {
+    background-color: #181431;
+    font-size: 15px;
+    font-weight: 10px;
+    color: #fff;
+    width: 100%;
+    border: none;
+    padding: 5px;
+    border: 2px solid #fff;
+}
+
+.div {
+    display: flex;
+    gap: -2px;
+}
+
+
+.btn{
+    background-color: #2f2b4a;
+    border-radius: 80px;
+    width: 100px;
+}
+
+.input {
+    background-color: #fff;
+    border : 2px solid #151515;
+    border-radius: 90px;
+    color: #878484;
+    font-size: 13px;
+    width: 350px;
+    padding : 10px;
+}

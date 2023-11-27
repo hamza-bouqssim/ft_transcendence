@@ -1,0 +1,18 @@
+.btn{
+    width: 100%;
+    background-color: #f98c97;
+    border: none;
+    outline: none;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 20px;
+    border-radius: 10px;
+    padding: 10px 0;
+    font-weight: 500;
+    transition: 250ms background-color ease;
+    
+ 
+
+
+
+
+}
