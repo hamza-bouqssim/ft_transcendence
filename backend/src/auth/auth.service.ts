@@ -38,6 +38,7 @@ export class AuthService {
         throw new UnauthorizedException('Incorrect Password!');
       }
       const infoDto: AuthDto = {
+        id: dto.id,
         email: dto.email,
         display_name: dto.display_name,
         username: dto.username,
@@ -85,7 +86,7 @@ export class AuthService {
             rank: "",
           },
         });
-       
+
        return createNewUser;
     }
     

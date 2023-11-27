@@ -35,6 +35,10 @@ import { IsNotEmpty, IsString } from "class-validator";
 export class LocalAuthDto {
     @IsString()
     @IsNotEmpty()
+    id?: string;
+
+    @IsString()
+    @IsNotEmpty()
     username: string;
 
     @IsString()

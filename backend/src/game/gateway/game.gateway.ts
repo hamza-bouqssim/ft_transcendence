@@ -67,23 +67,22 @@ export class GameGateway implements OnModuleInit {
 	// }
 	@SubscribeMessage('launchGameRequest')
 	handleLaunchGameRequest(@MessageBody() chosenMapIndex: number) {
+
 		this.mapIndex = chosenMapIndex;
 
 		console.log('map Index:', this.mapIndex);
+
+		// This Function Will Run In All Maps:
+		this.handleDefaultGameMap();
+
 		switch (this.mapIndex) {
-			case 0:
-				this.handleDefaultGameMap();
-				break;
-			case 1: {
-				this.handleDefaultGameMap();
+			case 1:
 				this.handleGameCircleObstacles();
 				break;
-			}
-			case 2: {
-				this.handleDefaultGameMap();
+		
+			case 2: 
 				this.handleVerticalObstacles();
 				break;
-			}
 		}
 
 		this.server.emit('launchGame', {});
@@ -365,7 +364,7 @@ export class GameGateway implements OnModuleInit {
 		}
 	}
 
-	@SubscribeMessage('join-game')
+	@SubscribeMessage('joinGame')
 	handleJoinGame(@MessageBody() data: any) {
 		this.server.emit('join-queue', {
 			content: data.socketId,

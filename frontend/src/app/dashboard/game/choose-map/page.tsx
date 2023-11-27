@@ -1,5 +1,5 @@
 "use client";
-import { useRef } from "react";
+import { useRef, useEffect, useContext } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCoverflow, Pagination } from "swiper/modules";
 import "swiper/css";
@@ -8,12 +8,22 @@ import "swiper/css/pagination";
 import { useRouter } from "next/navigation";
 import { useAtomValue, useSetAtom } from "jotai";
 import { gameData } from "../page";
+import { getAuthUser } from "@/app/utils/api";
+import { SocketContext } from "../SocketContext";
 
 const ChooseMap = () => {
+	const socket = useContext(SocketContext);
 	const gameDataValues = useAtomValue(gameData);
-	const setChosenMapIndex = useSetAtom(gameData);
+	const setGameData = useSetAtom(gameData);
 	const router = useRouter();
 	const swiperRef = useRef<any>(null);
+
+	useEffect(() => {
+		getAuthUser().then((userData: any) =>
+			setGameData((prevState: any) => ({ ...prevState, user: userData.data })),
+		);
+	});
+
 	// const socket = useContext<any>(SocketContext);
 
 	// const handleClick = (
@@ -33,14 +43,21 @@ const ChooseMap = () => {
 	// };
 
 	const handleClick = (): void => {
-		setChosenMapIndex((prevGameData) => ({
+		setGameData((prevGameData) => ({
 			...prevGameData,
 			chosenMapIndex: swiperRef.current.swiper.realIndex,
 		}));
 
-		gameDataValues.chosenGameMode === "Online Game"
-			? router.push("./online_game")
-			: router.push("./bot_game");
+		if (gameDataValues.chosenGameMode === "Online Game") {
+			// console.log("socket from choose map:", socket);
+			// router.push("./online-game");
+			// console.log(gameDataValues.user);
+			socket.emit("joinGame", {
+				mapIndex: gameDataValues.chosenMapIndex,
+				userData: gameDataValues.user,
+			});
+			router.push("./match-making");
+		} else router.push("./bot-game");
 	};
 
 	return (

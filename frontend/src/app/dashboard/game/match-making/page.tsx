@@ -4,16 +4,13 @@ import { faUserGroup } from "@fortawesome/free-solid-svg-icons";
 import InviteField from "../../../components/InviteField";
 import PlayerCard from "../../../components/PlayerCard";
 import { ChangeContext } from "../../layout";
-import React, { useContext, useEffect, useState } from "react";
-import { getAuthUser } from "@/app/utils/api";
-import { useRouter } from "next/navigation";
-import { User } from "@/app/utils/types";
+import { useContext } from "react";
 
-const Game = () => {
+const MatchMaking = () => {
 	const { change, setChange } = useContext(ChangeContext);
 
 	return (
-		<section className="relative mx-auto h-[100vh]   py-4 text-white xl:container">
+		<section className="relative mx-auto h-[100vh] py-4 text-white xl:container">
 			{/* Match Box */}
 			<div className="mt-[70px] h-[85%] w-full gap-10 lg:flex lg:items-center  lg:justify-evenly   ">
 				<div className="relative m-auto h-full w-full lg:mx-0 lg:w-[70%]">
@@ -84,4 +81,4 @@ const Game = () => {
 	);
 };
 
-export default Game;
+export default MatchMaking;

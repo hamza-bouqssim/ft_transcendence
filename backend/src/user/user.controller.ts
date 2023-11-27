@@ -25,6 +25,7 @@ export class UserController {
       const user = await whichWithAuthenticated(req, this.jwtService, this.prisma);
 
       return {
+        id: user.id,
         username: user.username,
         email : user.email,
         display_name: user.display_name,

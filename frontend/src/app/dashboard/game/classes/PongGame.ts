@@ -56,20 +56,17 @@ class PongGame {
 		this.divWidth = this.parentDiv.getBoundingClientRect().width;
 		this.divHeight = this.parentDiv.getBoundingClientRect().height;
 
+		// This Function Will Run In All Maps:
+		this.defaultGameMap();
+
 		switch (this.chosenMapIndex) {
-			case 0:
-				this.defaultGameMap();
-				break;
-			case 1: {
-				this.defaultGameMap();
+			case 1:
 				this.gameWithCircleObstacles();
 				break;
-			}
-			case 2: {
-				this.defaultGameMap();
+
+			case 2:
 				this.gameWithVerticalObstacles();
 				break;
-			}
 		}
 
 		const render = Render.create({

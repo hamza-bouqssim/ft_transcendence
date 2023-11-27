@@ -6,6 +6,10 @@ export class AuthDto{
 
     @IsString()
     @IsNotEmpty()
+    id?: string;
+
+    @IsString()
+    @IsNotEmpty()
     display_name: string;
 
     @IsString()

@@ -10,9 +10,9 @@ export function middleware(req : NextRequest)
         return NextResponse.redirect(new URL('/signIn', req.url))
 
 }
-// export const config = {
-//     matcher : ["/dashboard", "/dashboard/chat", "/dashboard/game"],
-// }
 export const config = {
-    matcher : ["/dashboard", "/dashboard/chat"],
+    matcher : ["/dashboard", "/dashboard/chat", "/dashboard/game"],
 }
+// export const config = {
+//     matcher : ["/dashboard", "/dashboard/chat"],
+// }

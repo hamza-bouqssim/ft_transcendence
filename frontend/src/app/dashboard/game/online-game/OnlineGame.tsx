@@ -12,11 +12,11 @@ import { io } from "socket.io-client";
 const OnlineGame = () => {
 	const gameDataValues = useAtomValue(gameData);
 	const router = useRouter();
-	// const socket = useContext<any>(SocketContext);
+	const socket = useContext<any>(SocketContext);
 
-	const socket = io("http://localhost:8000/game", {
-		withCredentials: true,
-	});
+	// const socket = io("http://localhost:8000/game", {
+	// 	withCredentials: true,
+	// });
 	console.log("onlinegame", socket);
 
 	const parentCanvasRef = useRef<HTMLDivElement>(null);
