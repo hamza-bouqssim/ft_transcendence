@@ -187,6 +187,18 @@ async createMessags(user : User, params: CreateMessageParams) {
     return messageCreate;
   }
 
+async findConversationUsers(user : User, _display_name : string)
+{
+  const chat = await this.prisma.chatParticipents.findFirst({
+    where: {
+      OR: [
+        { sender: { display_name: _display_name }, recipientId: user.id },
+        { senderId: user.id, recipient: { display_name: _display_name } },
+      ],
+    },
+  });
+  return chat;
+}
 
 async getMessageByConversationId(conversationId : string){
   const chatParticipents = await this.prisma.chatParticipents.findUnique({
@@ -206,6 +218,8 @@ async getMessageByConversationId(conversationId : string){
 
   return chatParticipents.messages;
 }
+
+
   
 
 
