@@ -25,4 +25,4 @@ export const gameData = atom({
 	user: {},
 });
 
-export default PlayMode;
+export default PlayMode; 
