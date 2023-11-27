@@ -11,7 +11,7 @@ import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import { MenuButton, MenuButton2 } from "../Buttons";
 import { fetchGetAllFriends } from "@/app/store/requestSlice";
 
-type props = {
+type props = {   
   onlineUsers : UsersTypes[]
 }
 
@@ -70,8 +70,8 @@ const OnlineFriends:  FC<props> = ({onlineUsers})=>{
                 {isUserOnline(elem.id) ? (<OnlineStyling/>) : <OflineStyling/>}
               </div>
 					 			<span  className="ConversationName">{elem.username} {elem.display_name}</span>
-                 <div className=" relative ">
-				          <FontAwesomeIcon icon={faEllipsis} className={`text-black transform cursor-pointer text-2xl duration-500 ease-in-out hover:text-[--pink-color] lg:text-3xl }`}
+                 <div className=" absolute right-5 p-4 ">
+				          <FontAwesomeIcon icon={faEllipsis} className={`  text-black transform cursor-pointer text-2xl duration-500 ease-in-out hover:text-[--pink-color] lg:text-3xl `}
 					          onClick={() => handleMenuClick(elem.id)}
 				          />
       

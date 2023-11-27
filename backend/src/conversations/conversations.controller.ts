@@ -37,6 +37,13 @@ async  findConversation(@Req() req: Request){
     const find = await this.conversationService.find(user);
     return find;
 }
+
+// @Get('findConversationUser')
+// async findConversationUser(@Req() req: Request){
+//     const user =  await whichWithAuthenticated(req, this.jwtservice, this.prisma);
+//     const find 
+
+// }
 @Get(':id')
 async getconversationById(@Param('id') id: string){
     // return this.conversationService.find();
@@ -44,4 +51,5 @@ async getconversationById(@Param('id') id: string){
     console.log(conversation)
     return conversation;
 }
+
 }
