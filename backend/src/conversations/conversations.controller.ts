@@ -66,7 +66,7 @@ async createConversation(@Req() req: Request , @Body() dto : createMessageDto)
 @Get('messages/:conversationId')
 async getMessagesFromConversatin(@Param('conversationId') conversationId : string){
     const getMessages = await this.conversationService.getMessageByConversationId(conversationId);
-    return getMessages;
+   return getMessages;
 }
 
 }

@@ -47,7 +47,7 @@ const ChatComponnent  = () =>{
           console.log(err);
         }
         );
-      },[conversation])
+      },[])
 
 
     useEffect(() => {
@@ -56,7 +56,7 @@ const ChatComponnent  = () =>{
             setUser(data);
             setLoading(false)})
         .catch((err)=> {console.log(err); setLoading(false);});
-    }, [user])
+    }, [])
 
     const getDisplayUser = (conversation : ConversationTypes) => {
 		let test;

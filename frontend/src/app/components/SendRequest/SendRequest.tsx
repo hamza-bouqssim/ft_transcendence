@@ -72,8 +72,12 @@ const SendRequest  = () => {
 								<div>
 					 				<span  className="ConversationName">{elem.user.username} {elem.user.display_name}</span>
 					 			</div>
-                    <FontAwesomeIcon icon={faCheck}  className="text-black" onClick={() => handleClickAcceptRequest(elem.id)}/>
-                    <FontAwesomeIcon icon={faXmark} className="text-black" onClick={()=> handleClickRefuseRequest(elem.id)}/>
+                <div className=" absolute right-5 p-4 ">
+                    <FontAwesomeIcon icon={faCheck}  className="text-black  transform cursor-pointer text-2xl duration-500 ease-in-out hover:text-[--pink-color] lg:text-3xl" onClick={() => handleClickAcceptRequest(elem.id)}/>
+                    <FontAwesomeIcon icon={faXmark} className="text-black ml-4 transform cursor-pointer text-2xl duration-500 ease-in-out hover:text-[--pink-color] lg:text-3xl" onClick={()=> handleClickRefuseRequest(elem.id)}/>
+
+                </div>
+                    
 
 
 							</ConversationSideBarItem>

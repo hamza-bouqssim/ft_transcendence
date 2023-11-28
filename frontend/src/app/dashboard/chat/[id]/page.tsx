@@ -17,22 +17,6 @@ import { fetchMessagesThunk } from "@/app/store/messageSlice";
 import { fetchConversationThunk } from "@/app/store/conversationSlice";
 
 
-type Props = {
-	user?: User;
-	setUser : React.Dispatch<React.SetStateAction<User | undefined>>;
-	socket : Socket;
-}
-
-function AppWithProviders({children, user, setUser,} : PropsWithChildren & Props){
-	return (
-		<ReduxProvider store={store}>
-			<socketContext.Provider value={socket}>
-				{children}
-			</socketContext.Provider>
-		</ReduxProvider>
-	)
-
-}
 
 const ConversationChannelPage = () => {
   const socket = useContext(socketContext)
@@ -74,7 +58,7 @@ const ConversationChannelPage = () => {
           console.log(err);
         }
         );
-      },)
+      },[])
 
       // for sockets
 
@@ -104,17 +88,6 @@ const ConversationChannelPage = () => {
 	    const [onlineUsers, setOnlineUsers] = useState<UsersTypes[]>([]);
 
 
-	    // useEffect(() => {
-      //   socket.emit('getOnlineUsers');
-      //   socket.on('getOnlineUsers', (onlineUsers) => {
-      //       console.log("online friend-->", onlineUsers);
-      //       setOnlineUsers(onlineUsers);
-      //   });
-      //   console.log("socket here", socket.id);
-      //   return () => {
-      //       socket.off('getOnlineUsers');
-      //   };
-      // }, [socket]);
       useEffect(() => {
         socket.on('updateOnlineUsers', (onlineUsers) => {
           setOnlineUsers(onlineUsers);
