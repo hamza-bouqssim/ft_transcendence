@@ -1,8 +1,8 @@
 "use client"
-import {  useEffect, useState } from "react"
+import {  FC, useEffect, useState } from "react"
 import {useRouter} from "next/navigation"
 import { usePathname } from 'next/navigation'
-import ConversationSearch from "../ConversationSearch/page"
+import ConversationSearch from "../ConversationSearch/ConversationSearch"
 import ChatComponnent from "../ChatComponent/ChatComponent"
 import GroupsManagement from "../GroupsManagment/GroupsManagment"
 import CreatGroups from "../CreateGroups/CreateGroups"
@@ -11,8 +11,15 @@ import OnlineFriends from "../OnlineFriends/OnlineFriends"
 import ListFriends from "../ListFriends/ListFriends"
 import SendRequest from "../SendRequest/SendRequest"
 import FriendsBloque from "../FriendsBloque/FriendsBloque"
+import { CreateConversationModal } from "../modals/CreateConversationModal"
+import { SendRequestForm } from "../forms/SendRequestForm"
+import { UsersTypes } from "@/app/utils/types"
 
-const CoversationSideBar = () => {
+type props = {
+    onlineUsers : UsersTypes[]
+}
+
+const CoversationSideBar:  FC<props> = ({onlineUsers})=>{
 	const [newRooms , setNewRooms]  = useState<boolean>(false)
 	const router = useRouter();
 	const pathname = usePathname()
@@ -54,9 +61,9 @@ const CoversationSideBar = () => {
 			{newRooms &&  pathname.includes('chat')  && selectUsers === 'online'  ? <OnlineFriends  /> :  (pathname.includes('chat') && selectUsers === 'allFriends') ? <ListFriends/> : ( pathname.includes('chat') && selectUsers === 'EnAttent') ? <SendRequest/> :( pathname.includes('chat') && selectUsers === 'Bloques') && <FriendsBloque/> }
 			{!newRooms &&  pathname.includes('chat') && <ChatComponnent/>}
 			{!newRooms &&  pathname.includes('groups') && <GroupsManagement/>}
-			{newRooms && (pathname.includes('chat')? <div className="text-black">Addchat</div> : <CreatGroups setNewRooms={setNewRooms} ></CreatGroups> )}
-			{!newRooms  &&
-				<button onClick={()=>{setNewRooms(true)}} className="absolute right-5 p-4 bottom-20 md:bottom-4 bg-[#5B8CD3] rounded-full "><IoMdAdd />
+			{newRooms &&  (pathname.includes('chat')  && selectUsers === 'online')  ? <OnlineFriends  onlineUsers={onlineUsers}/> :  (pathname.includes('chat') && selectUsers === 'allFriends') ? <ListFriends/> : ( pathname.includes('chat') && selectUsers === 'EnAttent') ? <SendRequest/> :( pathname.includes('chat') && selectUsers === 'Bloques') ? <FriendsBloque/> : ( pathname.includes('chat') && selectUsers === 'Add') ? <SendRequestForm/> : <></> }
+			{!newRooms &&
+				<button onClick={()=>{setNewRooms(true)}} className="absolute right-5 p-4 bottom-5 bg-[#5B8CD3] rounded-full "><IoMdAdd />
 				</button>
 			}
 		</div>

@@ -31,6 +31,13 @@ export type chat = {
     recipient : User;
 }
 
+export type CreateChangeParams = {
+    display_name : string;
+    username : string;
+    avatarUrl : string;
+    password: string;
+}
+
 
 export type   ConversationTypes= {
     id : string;
@@ -62,11 +69,8 @@ export type FriendsTypes = {
 }
 
 export type BloquesTypes = {
-    id : string;
-    display_name : string;
-    username : string;
-    avatar_url : string;
-    userBloque : User;
+   
+    user : User;
 }
 
 

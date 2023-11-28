@@ -21,15 +21,29 @@ export const CreateConversationForm = () => {
         const dispatch = useDispatch<AppDispatch>();
 
         const onSubmit = async  (data : CreateConversationParams) => {
+          try{
+            const res = await dispatch(createConversationThunk(data.display_name));
+            console.log("respose hereeee", res);
+              if (res.payload && typeof res.payload === 'object') {
+                const responseData = res.payload as { data?: { response?: { message?: string } } };
+                const message = responseData.data?.response?.message;
+    
+                if (message) {
+                    alert(message);
+                }else {
+                  const responseData = res.payload as {message?: string};
+                  const message = responseData.message;
+                  if(message)
+                    alert(message);
+                }
+            }
 
-          // dispatch(createConversationThunk(data));
+          }catch(err : any){
+            console.error("the error here--->", err);
+            alert(err.message || "An unexpected error occurred");
+
+          }
         
-            dispatch(createConversationThunk(data)).then(()=>{
-              alert("You are adding new conversation")
-            }).catch((err)=>{
-
-            })
-
 
         }
     return (

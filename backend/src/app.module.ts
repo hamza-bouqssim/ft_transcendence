@@ -11,12 +11,11 @@ import { UserService } from './user/user.service';
 import { PrismaService } from 'prisma/prisma.service';
 import { JwtModule } from '@nestjs/jwt';
 import { ConversationsModule } from './conversations/conversations.module';
-import { ParticipentModule } from './Participent/Participent.module';
-import { MessagesModule } from './messages/messages.module';
 import { FriendRequestModule } from './friend-request/friend-request.module';
 import { GatewayModule } from './gateway/gateway.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { RoomsModule } from './Rooms/rooms.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -26,7 +25,7 @@ import { RoomsModule } from './Rooms/rooms.module';
       secret: 'my-secret'
     }),
     RoomsModule,
-    PassportModule.register({session: true}), UserModule, ConversationsModule, ParticipentModule, MessagesModule, FriendRequestModule,  GatewayModule, EventEmitterModule.forRoot()],
+    PassportModule.register({session: true}), UserModule, ConversationsModule,   FriendRequestModule,  GatewayModule, EventEmitterModule.forRoot(), ConfigModule.forRoot({ isGlobal : true})],
   controllers: [AppController, UserController],
   providers: [AppService, UserService, PrismaService],
   

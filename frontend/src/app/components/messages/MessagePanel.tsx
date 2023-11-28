@@ -24,13 +24,11 @@ const MessagePanel : FC<Props> = ({messages}) => {
             if(!id || !content)
                 return ;
             const participentsId = id;
-           
             try{
                 await postNewMessage({participentsId, content});
                 setContent('');
             }catch(err){
                 alert("error");
-                
             }
         };
      

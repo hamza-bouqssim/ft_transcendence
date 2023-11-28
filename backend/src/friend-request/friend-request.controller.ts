@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Body, Controller, Post, Req,  UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { FriendRequestService } from './friend-request.service';
 import { whichWithAuthenticated } from 'src/user/utils/auth-utils';
 import { JwtService } from '@nestjs/jwt';
@@ -11,28 +11,42 @@ export class FriendRequestController {
                 private readonly jwtService: JwtService,
                 private readonly prisma: PrismaService,){}
 
-    // @Post('send-request')
-    // @UseGuards(AuthGuard('jwt'))
-    // async sendRequest(@Body() request: {friendDisplay_name: string}, @Req() req){
+    @Post('send-request')
+    @UseGuards(AuthGuard('jwt'))
 
-    //         console.log("thissss===== : " + request.display_name);
-    //         const user = await whichWithAuthenticated(req, this.jwtService, this.prisma)
-    //         return this.friendshipService.sendRequest(request.display_name, user.display_name);
-    // }
+    async sendRequest(@Body() request: { display_name: string }, @Req() req, @Res() res) {
+        try {
+          const user = req.user
+          const returnvalue = await this.friendshipService.sendRequest(request.display_name, user.display_name);
+          return res.status(200).json({ success: true, response: returnvalue });
+        } catch (err) {
+          console.log(err);
+          return res.status(401).json({ success: false, message: err.message || 'An unexpected error occurred' });
+        }
+      }
+  
 
     @Post('accept-request')
     @UseGuards(AuthGuard('jwt'))
     async acceptRequest(@Body() request: {requestId: string}, @Req() req)
     {
-        const user = await whichWithAuthenticated(req, this.jwtService, this.prisma);
+        const user = req.user
         return this.friendshipService.acceptFriendRequest(request.requestId, user);
+    }
+
+    @Post('refuse-request')
+    @UseGuards(AuthGuard('jwt'))
+    async refuseRequest(@Body() request: {requestId : string}, @Req() req)
+    {
+        const user = req.user
+        return this.friendshipService.refuseFriendRequest(request.requestId, user); 
     }
     
     @Post('block-friend')
     @UseGuards(AuthGuard('jwt'))
     async blockFriend(@Body() request: {friendIdToBlock: string}, @Req() req)
     {
-        const user = await whichWithAuthenticated(req, this.jwtService, this.prisma);
+        const user = req.user
         return this.friendshipService.block(request.friendIdToBlock, user.id);
     }
 
@@ -40,7 +54,17 @@ export class FriendRequestController {
     @UseGuards(AuthGuard('jwt'))
     async unblockFriend(@Body() request: {friendIdToUnblock: string}, @Req() req)
     {
-        const user = await whichWithAuthenticated(req, this.jwtService, this.prisma);
+        const user = req.user
         return this.friendshipService.unblock(request.friendIdToUnblock, user.id);
+    }
+
+
+    @Get('all-Friends')
+    @UseGuards(AuthGuard('jwt'))
+    async allFriends(@Req() req)
+    {
+      const user = req.user
+      return this.friendshipService.allMyFriends(user.ud);
+
     }
 }
