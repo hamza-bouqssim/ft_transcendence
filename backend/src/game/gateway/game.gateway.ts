@@ -11,6 +11,7 @@ import { OnModuleInit } from '@nestjs/common';
 import { Bodies, Composite, Engine, Runner, Body } from 'matter-js';
 import { GameService } from '../game.service';
 
+
 const engine = Engine.create({
 	gravity: {
 		x: 0,
@@ -24,6 +25,7 @@ const engine = Engine.create({
 	namespace: '/game',
 })
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
+// export class GameGateway implements OnGatewayConnection {
 	@WebSocketServer()
 	server: Server;
 
@@ -67,13 +69,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	// 		console.log('A Pong client connected!');
 	// 	});
 	// }
-
 	handleConnection(client: any) {
-		// console.log("connect",client);
+		console.log("connect",client.id);
 		// console.log("connect1", this.queueInGame);
 	}
 
-	handleDisconnect(client: Socket) {
+	handleDisconnect(client: any) { 
+
+			console.log('disonnected!', client.id);
+	}
 		// console.log("", client);
 		// const userId = socket.user.id;
 		// const queue = this.getStratQueue(userId);
@@ -100,7 +104,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		//     }
 		//     console.log("queueInGame d",this.queueInGame);
 		// }
-	}
+	// }
 
 	@SubscribeMessage('joinGame')
 	handleJoinGame(client: Socket, data: any) {
@@ -120,7 +124,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		);
 		const socketIds = [...queue.socket1, ...queue.socket2];
 		socketIds.forEach((socketId) => {
-			console.log(socketId);
+			console.log(socketId,"++++++++++++++++++---------------------->>>>");
 			this.server.to(socketId).emit(event, payload);
 		});
 	}
@@ -178,16 +182,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			);
 			const currentGame = this.getInGameQueue(userIdOne);
 			console.log(`${userIdTwo}++++++++++++++++++++++++++++++++++++++++++`);
-
-			this.emitToUser1InGame(userIdTwo, { opponentId: userIdTwo }, 'startGame');
+			this.emitToGame(userIdTwo, { opponentId: userIdTwo }, 'startGame');
+			// this.emitToUser1InGame(userIdTwo, { opponentId: userIdTwo }, 'startGame');
 			// this.emitToUser2InGame(userIdOne, { opponentId: userIdOne }, "startGame");
 			currentGame.status = 'playing';
-
-			// this.emitToUser1InGame(userIdTwo, { opponentId: userIdTwo }, "endGame");
-			// this.emitToUser2InGame(userIdOne, { opponentId: userIdOne }, "endGame");
-			// currentGame.status = 'finished';
-			// currentGame.duration = Date.now() - currentGame.duration;
-			// console.log("duration",currentGame.duration.toString());
 		}
 		return;
 	}

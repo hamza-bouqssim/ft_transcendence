@@ -20,7 +20,7 @@ const PlayerCard = (props: PlayerCardProps) => {
 					src={props.img}
 					width={200}
 					height={200}
-					alt="user-img"
+					alt="user-img"	
 				/>
 			</div>
 			<div className="h-full p-2 text-center font-['Whitney_Bold'] text-white sm:text-black">

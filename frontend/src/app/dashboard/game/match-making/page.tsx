@@ -20,7 +20,7 @@ const MatchMaking = () => {
 			router.push("./online-game");
 			console.log("test1",data.opponentId);
 		})
-	})
+	}, [socket])
 	
 	return (
 		<section className="relative mx-auto h-[100vh] py-4 text-white xl:container">
