@@ -53,7 +53,8 @@ const ChooseMap = () => {
 			// router.push("./online-game");
 			// console.log(gameDataValues.user);
 			socket.emit("joinGame", {
-				mapIndex: gameDataValues.chosenMapIndex,
+				// mapIndex: gameDataValues.chosenMapIndex,
+				mapIndex: swiperRef.current.swiper.realIndex,
 				userData: gameDataValues.user,
 			});
 			router.push("./match-making");

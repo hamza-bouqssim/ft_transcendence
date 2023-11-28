@@ -3,8 +3,10 @@ import {
 	SubscribeMessage,
 	WebSocketGateway,
 	WebSocketServer,
+	OnGatewayDisconnect,
+	OnGatewayConnection,
 } from '@nestjs/websockets';
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { OnModuleInit } from '@nestjs/common';
 import { Bodies, Composite, Engine, Runner, Body } from 'matter-js';
 import { GameService } from '../game.service';
@@ -21,7 +23,7 @@ const engine = Engine.create({
 	credentials: true,
 	namespace: '/game',
 })
-export class GameGateway implements OnModuleInit {
+export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@WebSocketServer()
 	server: Server;
 
@@ -38,36 +40,198 @@ export class GameGateway implements OnModuleInit {
 	private playerTwoScore: number = 0;
 	private gameInterval: any;
 	private moveInterval: any;
+	private userId: string;
 	private mapIndex: number;
-
-	// private pong: any;
+	private queueStartGame: {
+		userId: string;
+		sockets: string[];
+		indexMap: number;
+	}[] = [];
+	private queueInGame: {
+		indexMap: number;
+		user1: string;
+		user2: string;
+		status: string;
+		socket1: string[];
+		socket2: string[];
+		duration: number;
+	}[] = [];
 
 	constructor(private readonly gameservice: GameService) {
 		this.handlePaddleMove();
-		// console.log("test")
 	}
 
-	onModuleInit() {
-		this.server.on('connection', (socket: any) => {
-			// console.log(socket);
-			console.log('A Pong client connected!');
-		});
-		// this.handleLaunchGame();
-	}
-	// handleConnection(socket : AuthenticatedSocket, ...args: any[]) {
-	//     console.log("new Incoming connection");
-	//     console.log(socket.user);
-	//     // this.sessions.setUserSocket(socket.user.id,socket);
-	//     // // socket.emit('connected', {status : 'good'});
-	//     // console.log("the session is");
-	//     // console.log(this.sessions.getSockets());
-	//     // if(socket.user.id)
-	//     //     console.log(socket.user.email ,"is online");
-
+	// onModuleInit() {
+	// 	this.server.on('connection', (socket: any) => {
+	// 		// console.log(socket);
+	// 		console.log('A Pong client connected!');
+	// 	});
 	// }
+
+	handleConnection(client: any) {
+		// console.log("connect",client);
+		// console.log("connect1", this.queueInGame);
+	}
+
+	handleDisconnect(client: Socket) {
+		// console.log("", client);
+		// const userId = socket.user.id;
+		// const queue = this.getStratQueue(userId);
+		// if (queue) {
+		//     if(queue.sockets.length === 1)
+		//         this.queueStartGame = this.queueStartGame.filter((queue) => queue.userId !== userId);
+		//     else
+		//     queue.sockets = queue.sockets.filter((id) => id !== socket.id);
+		//     console.log("queueStartGamet d",this.queueStartGame);
+		// }
+		// else {
+		//     const findGame = this.getInGameQueue(userId);
+		//     if(findGame) {
+		//         if(findGame.user1 === userId) {
+		//             findGame.socket1 = findGame.socket1.filter((id) => id !== socket.id);
+		//             if (findGame.socket1.length === 0)
+		//                 console.log("user1 leave game");
+		//         }
+		//         else {
+		//             findGame.socket2 = findGame.socket2.filter((id) => id !== socket.id);
+		//             if (findGame.socket2.length === 0)
+		//                 console.log("user2 leave game");
+		//         }
+		//     }
+		//     console.log("queueInGame d",this.queueInGame);
+		// }
+	}
+
+	@SubscribeMessage('joinGame')
+	handleJoinGame(client: Socket, data: any) {
+		this.userId = data.userData.id;
+		this.mapIndex = data.mapIndex;
+		// console.log("index:", this.mapIndex)
+		this.pushSocketToQueue(this.userId, client.id, 0);
+		client['userId'] = this.userId;
+		if (this.queueStartGame.length >= 2) this.checkQueue();
+		console.log('waitting', this.queueStartGame);
+		console.log('waitting1', this.queueInGame);
+	}
+	//emit to user a message in an event---------------------------------------
+	emitToGame(userId: string, payload: any, event: string) {
+		const queue = this.queueInGame.find(
+			(game) => game.user2 === userId || game.user1 === userId,
+		);
+		const socketIds = [...queue.socket1, ...queue.socket2];
+		socketIds.forEach((socketId) => {
+			console.log(socketId);
+			this.server.to(socketId).emit(event, payload);
+		});
+	}
+	emitToUser1InGame(userId: string, payload: any, event: string) {
+		const socketIds = this.queueInGame.find(
+			(game) => game.user2 === userId || game.user1 === userId,
+		).socket1;
+
+		socketIds.forEach((socketId) => {
+			this.server.to(socketId).emit(event, payload);
+		});
+	}
+	emitToUser2InGame(userId: string, payload: any, event: string) {
+		const socketIds = this.queueInGame.find(
+			(game) => game.user2 === userId || game.user1 === userId,
+		).socket2;
+
+		socketIds.forEach((socketId) => {
+			this.server.to(socketId).emit(event, payload);
+		});
+	}
+
+	//get map that readu to play in it-------------------------
+	mapReadyToPlay() {
+		const map = this.queueStartGame.filter((queue) => queue.indexMap === 0);
+		const map1 = this.queueStartGame.filter((queue) => queue.indexMap === 1);
+		const map2 = this.queueStartGame.filter((queue) => queue.indexMap === 2);
+		if (map.length >= 2) return map;
+		if (map1.length >= 2) return map1;
+		if (map2.length >= 2) return map2;
+	}
+
+	//try to lunch game------------------------------
+	checkQueue() {
+		let map = this.mapReadyToPlay();
+		console.log('checkQueue', this.queueStartGame);
+		if (!map) return;
+		while (map.length >= 2) {
+			const userIdOne = map[0].userId;
+			const userIdTwo = map[1].userId;
+			this.queueStartGame = this.queueStartGame.filter(
+				(queue) => queue.userId !== userIdOne && queue.userId !== userIdTwo,
+			);
+			this.queueInGame.push({
+				user1: userIdOne,
+				user2: userIdTwo,
+				status: 'pending',
+				socket1: map[0].sockets,
+				socket2: map[1].sockets,
+				duration: Date.now(),
+				indexMap: map[0].indexMap,
+			});
+			map = map.filter(
+				(queue) => queue.userId !== userIdOne && queue.userId !== userIdTwo,
+			);
+			const currentGame = this.getInGameQueue(userIdOne);
+			console.log(`${userIdTwo}++++++++++++++++++++++++++++++++++++++++++`);
+
+			this.emitToUser1InGame(userIdTwo, { opponentId: userIdTwo }, 'startGame');
+			// this.emitToUser2InGame(userIdOne, { opponentId: userIdOne }, "startGame");
+			currentGame.status = 'playing';
+
+			// this.emitToUser1InGame(userIdTwo, { opponentId: userIdTwo }, "endGame");
+			// this.emitToUser2InGame(userIdOne, { opponentId: userIdOne }, "endGame");
+			// currentGame.status = 'finished';
+			// currentGame.duration = Date.now() - currentGame.duration;
+			// console.log("duration",currentGame.duration.toString());
+		}
+		return;
+	}
+	// Queue---------------------------------------
+
+	getStratQueue(userId: string) {
+		return this.queueStartGame.find((queue) => queue.userId === userId);
+	}
+
+	getInGameQueue(userId: string) {
+		return this.queueInGame.find(
+			(queue) => queue.user1 === userId || queue.user2 === userId,
+		);
+	}
+
+	pushSocketToQueue(userId: string, socketId: string, indexMap?: number) {
+		if (this.queueInGame.length > 0) {
+			const findGame = this.getInGameQueue(userId);
+			if (findGame) {
+				if (findGame.user1 === userId) {
+					console.log('pushSocketToQueue1', this.queueInGame);
+					findGame.socket1.push(socketId);
+				} else {
+					console.log('pushSocketToQueue2', this.queueInGame);
+					findGame.socket2.push(socketId);
+				}
+			}
+		} else {
+			const findQueue = this.getStratQueue(userId);
+			if (findQueue) this.getStratQueue(userId).sockets.push(socketId);
+			else
+				this.queueStartGame.push({
+					userId,
+					sockets: [socketId],
+					indexMap,
+				});
+		}
+		console.log('pushSocketToQueue', userId);
+	}
+
+	// End Queue---------------------------------------
+
 	@SubscribeMessage('launchGameRequest')
 	handleLaunchGameRequest(@MessageBody() chosenMapIndex: number) {
-
 		this.mapIndex = chosenMapIndex;
 
 		console.log('map Index:', this.mapIndex);
@@ -79,8 +243,8 @@ export class GameGateway implements OnModuleInit {
 			case 1:
 				this.handleGameCircleObstacles();
 				break;
-		
-			case 2: 
+
+			case 2:
 				this.handleVerticalObstacles();
 				break;
 		}
@@ -253,7 +417,7 @@ export class GameGateway implements OnModuleInit {
 			bottomLeftObstacle,
 			bottomRightObstacle,
 		]);
-	};
+	}
 
 	handleVerticalObstacles() {
 		const verticalObstacle1 = Bodies.rectangle(
@@ -314,7 +478,7 @@ export class GameGateway implements OnModuleInit {
 			verticalObstacle3,
 			verticalObstacle4,
 		]);
-	};
+	}
 
 	startGame() {
 		Runner.run(Runner.create(), engine);
@@ -362,14 +526,6 @@ export class GameGateway implements OnModuleInit {
 			clearInterval(this.moveInterval);
 			clearInterval(this.gameInterval);
 		}
-	}
-
-	@SubscribeMessage('joinGame')
-	handleJoinGame(@MessageBody() data: any) {
-		this.server.emit('join-queue', {
-			content: data.socketId,
-		});
-		this.gameservice.joinQueue(data.socketId);
 	}
 
 	@SubscribeMessage('keyevent')

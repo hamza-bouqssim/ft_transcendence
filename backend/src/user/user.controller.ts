@@ -20,7 +20,7 @@ export class UserController {
 
     @Get('info')
     @UseGuards(AuthenticatedGuard)
-    async grabMyInfos(@Req() req) {
+    async grabMyInfos(@Req()req) {
       
       const user = await whichWithAuthenticated(req, this.jwtService, this.prisma);
 
