@@ -15,26 +15,25 @@ export class AuthService {
 
     async signIn(dto: LocalAuthDto, req: Request, res: Response) {
 
-      if(!dto.email || !dto.password_hashed)
-      {
-        throw new UnauthorizedException('You Missed Entering some required fields !');
-      }
-      const user = await this.prisma.user.findUnique({ where: { email: dto.email } });
-      if (!user) {
-        throw new UnauthorizedException('Incorrect user!');
-      }
-      
-      const checkPass = await bcrypt.compare(dto.password_hashed, user.password);
-      if (!checkPass) {
-        throw new UnauthorizedException('Incorrect Password!');
-      }
-      const infoDto: AuthDto = {
-        email: dto.email,
-        display_name: dto.display_name,
-        username: dto.username,
-        avatar_url: dto.avatar_url
-
-      }
+    if(!dto.email || !dto.password_hashed)
+    {
+      throw new UnauthorizedException('You Missed Entering some required fields !');
+    }
+    const user = await this.prisma.user.findUnique({ where: { email: dto.email } });
+    if (!user) {
+      throw new UnauthorizedException('Incorrect user!');
+    }
+    
+    const checkPass = await bcrypt.compare(dto.password_hashed, user.password);
+    if (!checkPass) {
+      throw new UnauthorizedException('Incorrect Password!');
+    }
+    const infoDto: AuthDto = {
+      email: dto.email,
+      display_name: dto.display_name,
+      username: dto.username,
+      avatar_url: dto.avatar_url
+    }
     const token = this.signUser(user.id, infoDto, 'user');
     if (!token) {
       throw new ForbiddenException();
@@ -122,7 +121,7 @@ export class AuthService {
 
     async findUser(id: string)
     {
-      const user = await this.prisma.user.findFirst({where: {id: id}});
+      const user = await this.prisma.user.findUnique({where: {id: id}});
       return user;
     }
 
@@ -140,6 +139,13 @@ export class AuthService {
 
 
     }
+    async generateNickname(email: string) :Promise<string>{
+      const username = email.split('@')[0];
+      const cleanedUsername = username.replace(/[^a-zA-Z0-9]/g, '');
+      const nickname = cleanedUsername.length > 0 ? cleanedUsername : 'defaultNickname';
+      return nickname;
+    }
+
 
     
 }

@@ -9,7 +9,7 @@ import { useParams } from "next/navigation";
 import { postNewMessage } from "@/app/utils/api";
 import UpdateComponent from "../updateComponent/UpdateComponent";
 import { InfoRoom } from "../InfoRoom/InfoRoom";
-
+import {usePathname} from "next/navigation"
 type Props  = {
     messages : messageTypes[];
 }
@@ -18,26 +18,27 @@ const MessagePanel : FC<Props> = ({messages}) => {
         const [content, setContent] = useState('');
         const [updateRome,setUpdateRome] = useState<boolean>(false)
         const { id } = useParams();
-        
+        const pathname = usePathname()
         const sendMessage = async (e : React.FormEvent<HTMLFormElement>) => {
             e.preventDefault();
             if(!id || !content)
                 return ;
             const participentsId = id;
-            console.log(participentsId);
+           
             try{
                 await postNewMessage({participentsId, content});
                 setContent('');
             }catch(err){
                 alert("error");
-                console.log(err);
+                
             }
         };
      
     return (
         <div className="p-2 md:p-6   h-full flex items-center w-full justify-between"> 
                 <div className="md:w-[60%] h-full w-full"> 
-                    <MessagePanelHeader setUpdateRome={setUpdateRome} updateRome={updateRome} />
+
+                    {pathname.includes("/group") ? <MessagePanelHeader setUpdateRome={setUpdateRome} updateRome={updateRome} /> :""}
                     { !updateRome ? 
                         <>
                             <MessageContainer messages={messages}/>

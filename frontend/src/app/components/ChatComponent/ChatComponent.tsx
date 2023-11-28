@@ -22,7 +22,6 @@ const ChatComponnent  = () =>{
     const router = useRouter();
 	const dispatch = useDispatch<AppDispatch>();
     const [ user, setUser] = useState<User | undefined>();
-    const [loading, setLoading] = useState<boolean>(false);
 	const controller = new AbortController();
 	const [show, setShow] = useState<any>(false);
 
@@ -31,20 +30,25 @@ const ChatComponnent  = () =>{
 
 	  const [conversation , setConversation] = useState<ConversationTypes[]>([]);
 
-  
-	  useEffect(() => {
-		getConversation().then(({data}) =>{
-			setConversation(data);
-		}).catch((err)=> console.log(err))
-	}, [conversation])
-
+		console.log("chat componentw",user)
+	  useEffect (() => {
+        dispatch(fetchConversationThunk())
+        .unwrap()
+        .then(({data}) => {
+          setConversation(data);
+        }).catch((err)=>{
+          ;
+        }
+        );
+		
+      },[])
     useEffect(() => {
-        setLoading(true);
         getAuthUser().then(({data}) => {
-            setUser(data);
-            setLoading(false)})
-        .catch((err)=> {console.log(err); setLoading(false);});
-    }, [user])
+            setUser(data);})
+        .catch((err)=> {});
+		console.log("user")
+
+    }, [])
 
     const getDisplayUser = (conversation : ConversationTypes) => {
 		let test;

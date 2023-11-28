@@ -15,10 +15,31 @@ type Props = {
 	// setUser : React.Dispatch<React.SetStateAction<User | undefined>>;
 	socket: Socket;
 };
+
+interface Room {
+	id: string;
+	name: string;
+	Privacy: string;
+	password:string;
+	picture: string;
+	createdAt: string;
+	updatedAt: string;
+	members: {
+	  isAdmin: boolean;
+	};
+}
+
+
 function AppWithProviders({ children }: PropsWithChildren & Props) {
+	const [channel, setChannel] = useState<Room | null>(null); // Initial value
+
+	const updateChannel = (newAddress:string) => {
+	  setChannel(newAddress);
+	};
+
 	return (
 		<Provider store={store}>
-			<socketContext.Provider value={socket}>{children}</socketContext.Provider>
+			<socketContext.Provider value={{socket,updateChannel,channel}}>{children}</socketContext.Provider>
 		</Provider>
 	);
 }

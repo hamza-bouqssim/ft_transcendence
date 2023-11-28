@@ -21,7 +21,7 @@ const TopRightBar = (props: Change) => {
         setLoading(true);
         getAuthUser().then(({data}) => {
             setUser(data);
-        }).catch((err)=> {console.log(err);});
+        }).catch((err)=> {});
     }, [])
 	const router = useRouter();
 
@@ -32,7 +32,7 @@ const TopRightBar = (props: Change) => {
 			router.push("/", { scroll: false });
 		} catch (err) {
 			alert("failed to logout");
-			// console.log(err);
+			
 		}
 	}
 	return (

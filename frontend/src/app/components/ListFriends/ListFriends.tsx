@@ -38,7 +38,7 @@ const ListFriends = () => {
                 // console.log(data);
               setFriends(data);
             })
-            .catch((err) => console.log(err));
+            .catch((err) => {});
         
       }, []);
 

@@ -16,7 +16,6 @@ const CreateConversationModal: FC<props> = ({ setShow }) => {
 			e.key === "Escape" && setShow(false);
 		window.addEventListener("keydown", handleKeyDown);
 		return () => window.removeEventListener("keydown", handleKeyDown);
-		console.log(ref);
 	}, []);
 
 // export const CreateConversationModal:FC<props> = ({setShow}) => {
@@ -25,7 +24,6 @@ const CreateConversationModal: FC<props> = ({ setShow }) => {
 //         const handleKeyDown = (e : KeyboardEvent) => e.key === 'Escape' && setShow(false);
 //         window.addEventListener('keydown', handleKeyDown);
 //         return () => window.removeEventListener('keydown', handleKeyDown);
-//         console.log(ref);
 //     })
 
 
@@ -33,7 +31,7 @@ const CreateConversationModal: FC<props> = ({ setShow }) => {
 
         const { current } = ref;
         if(current === e.target){
-            console.log('close Modal');
+            
         }
     };
    

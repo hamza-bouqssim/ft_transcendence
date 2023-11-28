@@ -26,7 +26,7 @@ const SendRequest  = () => {
       .then(({data}) => {
         setrequest(data);
       }).catch((err)=>{
-        console.log(err);
+  
       }
       );
     },)
@@ -41,7 +41,6 @@ const SendRequest  = () => {
       }
 
       const handleClickAcceptRequest = async (id : string) => {
-        console.log("id request-->", id);
         try {
           await dispatch(fetchAcceptFriendRequestThunk(id));
           alert("You are accepting the request !")

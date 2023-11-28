@@ -11,14 +11,14 @@ export class FriendRequestController {
                 private readonly jwtService: JwtService,
                 private readonly prisma: PrismaService,){}
 
-    @Post('send-request')
-    @UseGuards(AuthGuard('jwt'))
-    async sendRequest(@Body() request: {friendDisplay_name: string}, @Req() req){
+    // @Post('send-request')
+    // @UseGuards(AuthGuard('jwt'))
+    // async sendRequest(@Body() request: {friendDisplay_name: string}, @Req() req){
 
-            console.log("thissss===== : " + request.display_name);
-            const user = await whichWithAuthenticated(req, this.jwtService, this.prisma)
-            return this.friendshipService.sendRequest(request.display_name, user.display_name);
-    }
+    //         console.log("thissss===== : " + request.display_name);
+    //         const user = await whichWithAuthenticated(req, this.jwtService, this.prisma)
+    //         return this.friendshipService.sendRequest(request.display_name, user.display_name);
+    // }
 
     @Post('accept-request')
     @UseGuards(AuthGuard('jwt'))

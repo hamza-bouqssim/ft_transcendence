@@ -17,8 +17,7 @@ const initialState: ConversationsState = {
 
 export const createConversationThunk = createAsyncThunk('conversations/create', async(data : CreateConversationParams)=>{
   const response = await createConversation(data);
-  console.log("response here");
-  console.log(response);
+
   return response;
 })
 
@@ -38,17 +37,15 @@ export const conversationsSlice = createSlice({
   initialState,
   reducers: {
     addConversation: (state, action: PayloadAction<ConversationTypes>) => {
-      console.log('addConversation');
+
       // state.conversations.push(action.payload);
     },
     updateConversation: (state, action: PayloadAction<ConversationTypes>) => {
-      console.log('Inside updateConversation');
+
       const conversation = action.payload;
-      console.log("ps ", conversation);
       const index = state.conversations.findIndex(
         (c) => c.id === conversation.id
       );
-      console.log("index here", index);
       state.conversations.splice(index, 1);
       state.conversations.unshift(conversation);
     },
@@ -66,7 +63,6 @@ export const conversationsSlice = createSlice({
         state.loading = true;
     })
     .addCase(createConversationThunk.fulfilled, (state, action) =>{
-        console.log("fulffiled");
         state.conversations.unshift(action.payload.data);
     });
   }

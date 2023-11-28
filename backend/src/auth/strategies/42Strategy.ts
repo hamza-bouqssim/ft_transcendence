@@ -17,8 +17,8 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy)
     async validate(accessToken: string, refreshToken: string, profile: any){
         const dto: AuthDto = {
             email: profile.emails[0]?.value,
-            username: profile._json.login,
-            display_name: profile._json.usual_full_name,
+            username: profile._json.usual_full_name,
+            display_name: await this.authService.generateNickname(profile.emails[0]?.value),
             avatar_url: profile._json.image.link || "api_backend/src/uploads/default-profile-photo.jpg",
         };
         const user = await this.authService.validateUser(dto);
@@ -28,5 +28,6 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy)
         }
         return user;
     }
+   
       
 }

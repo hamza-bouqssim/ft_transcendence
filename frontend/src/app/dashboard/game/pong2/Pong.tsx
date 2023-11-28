@@ -31,7 +31,7 @@ const Pong = (props: any) => {
 	});
 
 	useEffect(() => {
-		socket.on("connect", () => console.log("Client Connected!"));
+		socket.on("connect", () => {});
 		// socket.emit("movePaddle", () => {});
 		// socket.on("reply", (payload: any) => alert(payload.mssj));
 	}, []);

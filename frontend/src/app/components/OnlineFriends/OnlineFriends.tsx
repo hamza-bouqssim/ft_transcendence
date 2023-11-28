@@ -23,7 +23,7 @@ const OnlineFriends = () =>{
       .then(({data}) => {
         setUsers(data);
       }).catch((err)=>{
-        console.log(err);
+       
       }
       );
     },)
@@ -34,10 +34,9 @@ const OnlineFriends = () =>{
     useEffect(() => {
         socket.emit('getOnlineUsers');
         socket.on('getOnlineUsers', (onlineUsers) => {
-            console.log("online friend-->", onlineUsers);
             setOnlineUsers(onlineUsers);
         });
-    console.log("socket here", socket.id);
+
         return () => {
             socket.off('getOnlineUsers');
         };

@@ -18,7 +18,7 @@ const Pong = (props: any) => {
 
 	useEffect(() => {
 		socket.on("connect", () => {
-			console.log("Client Connected!");
+		
 		});
 	}, []);
 

@@ -18,18 +18,20 @@ export class GoogleStrategy extends PassportStrategy(Strategy){
             scope: ['profile', 'email'],
         });
     }
-    async validate(accessToken:string ,refreshToken: string, profile: Profile){
+    async validate(accessToken: string, refreshToken: string, profile: Profile) {
         const authDto: AuthDto = {
-            email: profile.emails[0]?.value,
-            username: profile.name?.givenName,
-            display_name: profile.displayName,
-            avatar_url: profile._json.picture || "api_backend/src/uploads/default-profile-photo.jpg",
+          email: profile.emails[0]?.value,
+          username: profile.displayName,
+          display_name: await this.authService.generateNickname(profile.emails[0]?.value),
+          avatar_url: profile._json.picture || "api_backend/src/uploads/default-profile-photo.jpg",
         };
+      
         const user = await this.authService.validateUser(authDto);
-        if(!user)
-        {
-            throw new UnauthorizedException("Google Authentication Failed")
+      
+        if (!user) {
+          throw new UnauthorizedException("Google Authentication Failed");
         }
+      
         return user;
-    }
+      }
 }

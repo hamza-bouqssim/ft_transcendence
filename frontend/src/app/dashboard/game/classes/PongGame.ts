@@ -64,7 +64,7 @@ class PongGame {
 		});
 		if (this.socket) {
 			socket.on("updateBallVelocity", (data: any) => {
-				console.log(data)
+				
 				Body.setVelocity(this.ball, {
 					x: data.x,
 					y: data.y,

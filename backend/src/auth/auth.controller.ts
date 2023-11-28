@@ -46,6 +46,7 @@ export class AuthController {
     @UseGuards(AuthGuard('google'))
     googleRedirect(@Res() res: Response, @Req() req){
         const user = req.user;
+        console.log(user)
         const payload = {sub: user.id, email: user.email};
         const token = this.jwtService.sign(payload)
         res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });

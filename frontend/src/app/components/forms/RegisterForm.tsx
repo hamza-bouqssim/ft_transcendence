@@ -24,7 +24,7 @@ const RegisterForm = () => {
 			alert(`Welcome ${data.firstName}`);
 			router.push("/dashboard/AuthenticationPage/LoginPage", { scroll: false });
 		} catch (err) {
-			console.log(err);
+			
 		}
 	};
 	return (

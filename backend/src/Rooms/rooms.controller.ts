@@ -1,6 +1,6 @@
 import { Controller, Get,Body, Res,UseGuards ,Post,Req} from '@nestjs/common';
 import { RoomsService } from './rooms.service';
-import { CreateChatRoom,UpdateChatRoom ,DeleteChatRoom} from './dto/rooms.dto';
+import { CreateChatRoom,UpdateChatRoom ,DeleteChatRoom,RoomId} from './dto/rooms.dto';
 import { AuthGuard } from '@nestjs/passport';
 
 
@@ -16,9 +16,8 @@ export class RoomsController {
   {
     try {
       const {id}=req.user
-      console.log("user",req.use)
       const chatRoom = await this.roomsService.getAllRooms(id);
-      return res.status(201).json({data: chatRoom });
+      return res.status(200).json({data: chatRoom });
     } catch (error) {
       return res.status(500).json({ error: error});
     }
@@ -27,12 +26,11 @@ export class RoomsController {
 
   @Post("/createRooms")
   @UseGuards(AuthGuard("jwt"))
-  async createRooms(@Body() createChatRoom: CreateChatRoom, @Res() res: any , @Req() req) {
+  async createRooms(@Body() data, @Res() res: any , @Req() req) {
     try {
       const {id}=req.user
-
-      const chatRoom = await this.roomsService.creatRooms(createChatRoom,id);
-      return res.status(201).json({ message: 'Room created successfully', data: chatRoom });
+      const chatRoom = await this.roomsService.creatRooms(data.data,id);
+      return res.status(201).json({data: chatRoom });
     } catch (error) {
       return res.status(500).json({ error: error});
     }
@@ -41,12 +39,12 @@ export class RoomsController {
 
   @Post("/updateRooms")
   @UseGuards(AuthGuard("jwt"))
-  async updateRooms(@Body() updateChatRoom: UpdateChatRoom, @Res() res: any, @Req() req)
+  async updateRooms(@Body() data, @Res() res: any, @Req() req)
   {
     try {
-      const {userId}=req.user
-      const update = await this.roomsService.updateRooms(updateChatRoom,userId);
-      return res.status(200).json({ message: 'Room update successfully', data: update });
+      const {id}=req.user
+      const update = await this.roomsService.updateRooms(data.data,id);
+      return res.status(200).json({data: update });
     } catch (error) {
       return res.status(500).json({ error: error});
     }
@@ -58,9 +56,9 @@ export class RoomsController {
   async deleteRooms(@Body() deleteChatRoom: DeleteChatRoom, @Res() res: any, @Req() req)
   {
     try {
-      const {userId}=req.user
-      const deleteRome = await this.roomsService.deleteRooms(deleteChatRoom,userId);
-      return res.status(200).json({ message: 'Room delete successfully', data: deleteRome });
+      const {id}=req.user
+      const deleteRome = await this.roomsService.deleteRooms(deleteChatRoom,id);
+      return res.status(200).json({data: deleteRome });
     } catch (error) {
       return res.status(500).json({ error: error});
     }
@@ -79,6 +77,19 @@ export class RoomsController {
 
   }
 
+  // @Post("/isOwner")
+  // @UseGuards(AuthGuard("jwt"))
+  // async isOwner(@Body() roomId:RoomId,@Res() res, @Req() req)
+  // {
+  //   try {
+  //     const {id}=req.user
+  //     const resisOwner = await this.roomsService.isOwner(id,roomId);
+  //     return res.status(200).json({ isOwner: resisOwner });
+  //   } catch (error) {
+  //     return res.status(500).json({ error: error});
+  //   }
+  // }
+
   @Post("/makeOwner")
   async makeOwner()
   {
@@ -88,6 +99,21 @@ export class RoomsController {
   @Post("/deleteOwner")
   async deleteOwner()
   {
+
+  }
+
+  @Get("/getAllFreind")
+  @UseGuards(AuthGuard("jwt"))
+  async getAllFreind(@Res() res: any,@Req() req)
+  {
+    try {
+      const {id}=req.user
+      const friend = await this.roomsService.getAllFreind(id);
+      return res.status(200).json({data: friend });
+    } catch (error) {
+      return res.status(500).json({ error: error});
+    }
+
 
   }
 
@@ -129,5 +155,3 @@ export class RoomsController {
   }
 
 }
-
-

@@ -47,7 +47,6 @@ export class MessagesService {
               where: { id: chat.id},
               data: { senderId: user.id, recipientId: chat.sender.id },
             });
-            console.log(newChat);
         }
         if(chat.sender.id === user.id)
         {

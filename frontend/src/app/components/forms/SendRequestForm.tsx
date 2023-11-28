@@ -21,7 +21,7 @@ export const SendRequestForm= () => {
             dispatch(fetchRequestThunk(data)).then(()=>{
               alert("You are sending request")
             }).catch((err)=>{
-             console.log(err); 
+           
             })
 
         }

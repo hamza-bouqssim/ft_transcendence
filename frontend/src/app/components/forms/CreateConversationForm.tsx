@@ -21,13 +21,13 @@ export const CreateConversationForm = () => {
         const dispatch = useDispatch<AppDispatch>();
 
         const onSubmit = async  (data : CreateConversationParams) => {
-          console.log(data);
+
           // dispatch(createConversationThunk(data));
         
             dispatch(createConversationThunk(data)).then(()=>{
               alert("You are adding new conversation")
             }).catch((err)=>{
-             console.log(err); 
+
             })
 
 

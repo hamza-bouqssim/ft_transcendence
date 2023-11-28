@@ -16,16 +16,16 @@ const FriendsBloque = () =>{
     useEffect(() => {
           getBloques()
             .then(({ data }) => {
-                console.log(data);
+                
               setBloques(data);
             })
-            .catch((err) => console.log(err));
+            .catch((err) => {});
         
       }, []);
 
       const handleFunction = (bloques : BloquesTypes) => {
             let ourBloques;
-            console.log("bloques");
+            
             ourBloques = bloques.display_name;
             return ourBloques;
 

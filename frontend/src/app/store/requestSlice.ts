@@ -24,7 +24,6 @@ export const fetchRequestThunk = createAsyncThunk('request/create', async(data :
 
 export const fetchAcceptFriendRequestThunk = createAsyncThunk('request/accept', async(id : string) =>{
   const response = await AcceptRequest(id);
-  console.log("response here -->", response);
   return response;
 })
 

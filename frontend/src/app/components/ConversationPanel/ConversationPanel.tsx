@@ -12,10 +12,9 @@ const ConversationPanel = () => {
             getAuthUser().then(({data}) => {
                 setUser(data);
                 setLoading(false)})
-            .catch((err)=> {console.log(err); setLoading(false);});
+            .catch((err)=> { setLoading(false);});
           
     }, [])
-    // console.log(user);
     return (
         <Page>
                 <ConversationPannelStyle>

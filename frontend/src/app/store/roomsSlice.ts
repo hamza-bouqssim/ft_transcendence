@@ -5,8 +5,13 @@ interface Room {
   id: string;
   name: string;
   Privacy: string;
-  password: string;
   picture: string;
+  password?:string,
+  createdAt: string;
+  updatedAt: string;
+  members: {
+    isAdmin: boolean;
+  };
 }
 
 interface RoomState {
@@ -57,23 +62,29 @@ const roomSlice = createSlice({
       })
       .addCase(getAllRooms.fulfilled, (state:any, action: PayloadAction<Room[]>) => {
         state.status = 'succeeded';
-        state.rooms = action.payload;
+        state.rooms = action.payload.data;
       })
       .addCase(getAllRooms.rejected, (state:any, action: PayloadAction<string>) => {
         state.status = 'failed';
         state.error = action.payload;
       })
       .addCase(createRooms.fulfilled, (state:any, action:any) => {
-        state.rooms.push(action.payload);
+        const newRoom = action.payload;
+        state.rooms.push(newRoom);
       })
-      .addCase(updateRooms.fulfilled, (state:any, action:any) => {
-        const index = state.rooms.findIndex((room: Room) => room.id === action.payload.id);
+      .addCase(updateRooms.fulfilled, (state:any, action: PayloadAction<Room>) => {
+        const updateData = action.payload.data
+        const index = state.rooms.findIndex((room: Room) => room.id === updateData.id);
         if (index !== -1) {
-          state.rooms[index] = action.payload;
+          state.rooms[index] = action.payload.data;
         }
       })
-      .addCase(deleteRooms.fulfilled, (state:any, action:any) => {
-        state.rooms = state.rooms.filter((room: Room) => room.id !== action.payload);
+      .addCase(deleteRooms.fulfilled, (state:any, action: PayloadAction<Room>) => {
+        const deletedRoom = action.payload.data;
+        const index = state.rooms.findIndex((room:Room) => room.id === deletedRoom.id);
+        if (index !== -1) {
+          state.rooms.splice(index, 1);
+        }
       });
   },
 });

@@ -20,8 +20,8 @@ constructor(private  conversationService : ConversationsService , private userSe
 
 @Post('conversation')
  async CreateConversations(@Req() req: Request, @Body() dto : CreateConversationParams){
-    console.log("in here");
-    const user = await whichWithAuthenticated(req, this.jwtservice, this.prisma);
+    console.log("conversation")
+    const user = req.user
     const userDb = await this.userService.findById(user.id);
    
     return this.conversationService.createConversations(userDb, dto);
@@ -29,15 +29,16 @@ constructor(private  conversationService : ConversationsService , private userSe
 
 @Get('findconversation')
 async  findConversation(@Req() req: Request){
-    const user =  await whichWithAuthenticated(req, this.jwtservice, this.prisma);
+    const user =  req.user
+    console.log("findconversation")
     const find = await this.conversationService.find(user);
     return find;
 }
 @Get(':id')
 async getconversationById(@Param('id') id: string){
     // return this.conversationService.find();
+    console.log(":id")
     const conversation = await this.conversationService.findConversationById(id);
-    console.log(conversation)
     return conversation;
 }
 }

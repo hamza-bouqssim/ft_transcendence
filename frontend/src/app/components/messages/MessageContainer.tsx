@@ -17,11 +17,11 @@ const MessageContainer  : FC<Props>  = ({messages}) => {
             getAuthUser().then(({data}) => {  
                 setUser(data);
                 setLoading(false)})
-            .catch((err)=> {console.log(err); setLoading(false);});
+            .catch((err)=> { setLoading(false);});
     }, [])
     const functionHandleDisplay_name = () =>{
         let test;
-            messages.map((elem)=>{
+            messages?.map((elem)=>{
                 test = elem.recipient.display_name;
 
             })
@@ -30,7 +30,7 @@ const MessageContainer  : FC<Props>  = ({messages}) => {
 
     const functionHandleAvatarUrl = () =>{
         let test;
-            messages.map((elem)=>{
+            messages?.map((elem)=>{
                 test = elem.recipient.avatar_url;
 
             })
@@ -40,7 +40,7 @@ const MessageContainer  : FC<Props>  = ({messages}) => {
     }
     const functionHandleUserName = () =>{
         let test;
-            messages.map((elem)=>{
+            messages?.map((elem)=>{
                 test = elem.recipient.username;
 
             })
@@ -59,7 +59,7 @@ const MessageContainer  : FC<Props>  = ({messages}) => {
         </div>
         <MessageContainerStyle>
         
-         {messages.map((m) =>(
+         {messages && messages.map((m) =>(
             <MessageItemContainer key={m.id}>
                 <Image src={m.sender.avatar_url} className="h-10 w-10 rounded-[50%] bg-black " alt="Description of the image" width={60}   height={60} />
                         <MessageItemDetails>
