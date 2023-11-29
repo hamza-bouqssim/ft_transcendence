@@ -13,6 +13,7 @@ import { GameService } from '../game.service';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'prisma/prisma.service';
 import { whichWithAuthenticated } from 'src/user/utils/auth-utils';
+import { AuthenticatedSocket } from 'src/utils/interfaces';
 
 const engine = Engine.create({
 	gravity: {
@@ -71,95 +72,105 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	sleep = async (ms: number) =>
 		new Promise((resolve) => setTimeout(resolve, ms));
 
-	async getUserId(token: string) {
-		const decodedToken = this.jwtService.decode(token) as {
-			[key: string]: any;
-		};
-		let user: any;
+	// async getUserId(token: string) {
+	// 	const decodedToken = this.jwtService.decode(token) as {
+	// 		[key: string]: any;
+	// 	};
+	// 	let user: any;
 
-		if (decodedToken && decodedToken.email) {
-			user = await this.prisma.user.findUnique({
-				where: { email: decodedToken.email },
-			});
-			console.log(user);
-			// console.log("connect1", this.queueInGame);
-			return user.id;
-		}
-	}
+	// 	if (decodedToken && decodedToken.email) {
+	// 		user = await this.prisma.user.findUnique({
+	// 			where: { email: decodedToken.email },
+	// 		});
+	// 		console.log(user);
+	// 		// console.log("connect1", this.queueInGame);
+	// 		return user.id;
+	// 	}
+	// }
 
-	extractTokenFromConnection(client: Socket): any | null {
-		// Implement your logic to extract the token from the connection.
-		// For example, if tokens are passed in query parameters:
-		let token;
-		const tokenQueryParam = client.handshake.query.token;
-		const tokenTmp = client.handshake.headers.cookie;
+	// extractTokenFromConnection(client: Socket): any | null {
+	// 	// Implement your logic to extract the token from the connection.
+	// 	// For example, if tokens are passed in query parameters:
+	// 	let token;
+	// 	const tokenQueryParam = client.handshake.query.token;
+	// 	const tokenTmp = client.handshake.headers.cookie;
 
-		if (tokenTmp && typeof tokenTmp === 'string') {
-			const cookies = tokenTmp.split(';');
-			const tokenCookie = cookies.find((cookie) =>
-				cookie.trim().startsWith('token='),
-			);
-			if (tokenCookie) {
-				token = tokenCookie.split('=')[1];
-			} else {
-				token = null;
-			}
-		} else {
-			token = null;
-		}
+	// 	if (tokenTmp && typeof tokenTmp === 'string') {
+	// 		const cookies = tokenTmp.split(';');
+	// 		const tokenCookie = cookies.find((cookie) =>
+	// 			cookie.trim().startsWith('token='),
+	// 		);
+	// 		if (tokenCookie) {
+	// 			token = tokenCookie.split('=')[1];
+	// 		} else {
+	// 			token = null;
+	// 		}
+	// 	} else {
+	// 		token = null;
+	// 	}
 
-		// If tokens are passed in headers:
-		const tokenHeader = client.handshake.headers['authorization'];
+	// 	// If tokens are passed in headers:
+	// 	const tokenHeader = client.handshake.headers['authorization'];
 
-		return tokenQueryParam || tokenHeader || token;
-	}
+	// 	return tokenQueryParam || tokenHeader || token;
+	// }
 
-	async handleConnection(client: any) {
-		// const user = whichWithAuthenticated(req)
-		// const token;
-		console.log('+++++');
-		const token = this.extractTokenFromConnection(client);
-		if (token === null) return;
-		const userId = await this.getUserId(token);
+	async handleConnection(socket : AuthenticatedSocket, ...args: any[]) {
+        console.log("new Incoming connection");
+        console.log(socket.user);
+        if(socket.user)
+        {
+            const newStatus = await this.prisma.user.update({
+                where: { id: socket.user.id},
+                data: { status: "ingame"},
+            });
+        }
+		const userId = socket.user.id;
 		if (this.queueInGame.length > 0) {
 			const findGame = this.getInGameQueue(userId);
 			if (findGame) {
 				if (findGame.user1 === userId) {
 					console.log('pushSocketToQueue1', this.queueInGame);
-					findGame.socket1.push(client.id);
+					findGame.socket1.push(socket.id);
 				} else {
 					console.log('pushSocketToQueue2', this.queueInGame);
-					findGame.socket2.push(client.id);
+					findGame.socket2.push(socket.id);
 				}
 			}
 		}
 		console.log('waitting', this.queueStartGame);
 		console.log('ingame', this.queueInGame);
-		// console.log("connect1", this.queueInGame);
-	}
+    }
+	
+	async handleDisconnect(socket: AuthenticatedSocket) {
+        console.log("Connection closed");
+        console.log(socket.user);
+        if (socket.user) {
+            const newStatus = await this.prisma.user.update({
+                where: { id: socket.user.id},
+                data: { status: "online"},
 
-	async handleDisconnect(client: any) {
-		console.log(client.handshake);
-		const token = this.extractTokenFromConnection(client);
-		const userId = await this.getUserId(token);
+            });
+        }
+		const userId = socket.user.id;
 		const queue = this.getStratQueue(userId);
 		if (queue) {
 			if (queue.sockets.length === 1)
 				this.queueStartGame = this.queueStartGame.filter(
 					(queue) => queue.userId !== userId,
 				);
-			else queue.sockets = queue.sockets.filter((id) => id !== client.id);
+			else queue.sockets = queue.sockets.filter((id) => id !== socket.id);
 			console.log('queueStartGamet d', this.queueStartGame);
 		} else {
 			const findGame = this.getInGameQueue(userId);
 			if (findGame) {
 				if (findGame.user1 === userId) {
-					findGame.socket1 = findGame.socket1.filter((id) => id !== client.id);
+					findGame.socket1 = findGame.socket1.filter((id) => id !== socket.id);
 					if (findGame.socket1.length === 0) {
 						console.log('user1 leave game');
 					}
 				} else {
-					findGame.socket2 = findGame.socket2.filter((id) => id !== client.id);
+					findGame.socket2 = findGame.socket2.filter((id) => id !== socket.id);
 					if (findGame.socket2.length === 0) console.log('user2 leave game');
 				}
 				if (findGame.socket1.length === 0 || findGame.socket2.length === 0)
@@ -168,8 +179,66 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 					);
 			}
 			console.log('queueInGame d', this.queueInGame);
+			console.log('queueStartGame d', this.queueStartGame);
 		}
-	}
+    }
+
+	// async handleConnection(client: any) {
+	// 	// const user = whichWithAuthenticated(req)
+	// 	// const token;
+	// 	console.log('+++++');
+	// 	const token = this.extractTokenFromConnection(client);
+	// 	if (token === null) return;
+	// 	const userId = await this.getUserId(token);
+	// 	if (this.queueInGame.length > 0) {
+	// 		const findGame = this.getInGameQueue(userId);
+	// 		if (findGame) {
+	// 			if (findGame.user1 === userId) {
+	// 				console.log('pushSocketToQueue1', this.queueInGame);
+	// 				findGame.socket1.push(client.id);
+	// 			} else {
+	// 				console.log('pushSocketToQueue2', this.queueInGame);
+	// 				findGame.socket2.push(client.id);
+	// 			}
+	// 		}
+	// 	}
+	// 	console.log('waitting', this.queueStartGame);
+	// 	console.log('ingame', this.queueInGame);
+	// 	// console.log("connect1", this.queueInGame);
+	// }
+
+	// async handleDisconnect(client: any) {
+	// 	console.log(client.handshake);
+	// 	const token = this.extractTokenFromConnection(client);
+	// 	const userId = await this.getUserId(token);
+	// 	const queue = this.getStratQueue(userId);
+	// 	if (queue) {
+	// 		if (queue.sockets.length === 1)
+	// 			this.queueStartGame = this.queueStartGame.filter(
+	// 				(queue) => queue.userId !== userId,
+	// 			);
+	// 		else queue.sockets = queue.sockets.filter((id) => id !== client.id);
+	// 		console.log('queueStartGamet d', this.queueStartGame);
+	// 	} else {
+	// 		const findGame = this.getInGameQueue(userId);
+	// 		if (findGame) {
+	// 			if (findGame.user1 === userId) {
+	// 				findGame.socket1 = findGame.socket1.filter((id) => id !== client.id);
+	// 				if (findGame.socket1.length === 0) {
+	// 					console.log('user1 leave game');
+	// 				}
+	// 			} else {
+	// 				findGame.socket2 = findGame.socket2.filter((id) => id !== client.id);
+	// 				if (findGame.socket2.length === 0) console.log('user2 leave game');
+	// 			}
+	// 			if (findGame.socket1.length === 0 || findGame.socket2.length === 0)
+	// 				this.queueInGame = this.queueInGame.filter(
+	// 					(queue) => userId !== queue.user1 && userId !== queue.user2,
+	// 				);
+	// 		}
+	// 		console.log('queueInGame d', this.queueInGame);
+	// 	}
+	// }
 
 	@SubscribeMessage('joinGame')
 	handleJoinGame(client: Socket, data: any) {

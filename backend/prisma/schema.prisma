@@ -29,12 +29,12 @@ model User {
   id String @id @default(uuid())
   username String 
   email String @unique
+  status String @default("offline")
   password String
   display_name String @unique
   avatar_url String
   two_factor_auth String
   two_factor_secret_key String
-  rank String
   friend Friend[] @relation("UserToFriend")
   friends Friend[] @relation("Friend")
   senderOfChatParticipents ChatParticipents[] @relation("sender")
@@ -165,6 +165,7 @@ model StateGame {
 model Achievement {
   id      String @id @default(uuid())
   user_id String 
+
   content String
   type    String
   picture String

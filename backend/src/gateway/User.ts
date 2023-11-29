@@ -8,5 +8,5 @@ export class User {
 	avatar_url: string;
 	two_factor_auth: string;
 	two_factor_secret_key: string;
-	rank: string;
+	status:string
 }

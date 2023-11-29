@@ -45,7 +45,7 @@ export class MessagingGateWay implements OnGatewayConnection {
 	handleConnection(socket: AuthenticatedSocket, ...args: any[]) {
 		// console.log("new Incoming connection");
 		// console.log(socket.user);
-		this.sessions.setUserSocket(socket.user.id, socket);
+		// this.sessions.setUserSocket(socket.user.sub, socket);
 		// socket.emit('connected', {status : 'good'});
 		// console.log("the session is");
 		// console.log(this.sessions.getSockets());

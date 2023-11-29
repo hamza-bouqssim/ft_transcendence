@@ -83,7 +83,6 @@ export class AuthService {
             avatar_url: "https://cdn.landesa.org/wp-content/uploads/default-user-image.png",
             two_factor_auth: "",
             two_factor_secret_key: "",
-            rank: "",
           },
         });
 
@@ -123,7 +122,6 @@ export class AuthService {
           avatar_url: dto.avatar_url,
           two_factor_auth: "",
           two_factor_secret_key: "",
-          rank: "",
         },
       });
     
