@@ -7,9 +7,14 @@ import { AuthUser } from 'src/utils/decorator';
 import { UserService } from 'src/user/user.service';
 import { Services } from 'src/utils/constants';
 import { GateWaySessionManager } from 'src/gateway/gateway.session';
+import { UserModule } from 'src/user/user.module';
+import { PrismaModule } from 'prisma/prisma.module';
+import { PassportModule } from '@nestjs/passport';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 
 @Module({
 	providers: [
+		JwtService,
 		GameGateway,
 		GameService,
 		PrismaService,
@@ -20,5 +25,10 @@ import { GateWaySessionManager } from 'src/gateway/gateway.session';
 		},
 	],
 	controllers: [GameController],
+	imports: [
+		PrismaModule,
+		PassportModule,
+		JwtModule.register({ secret: 'my-secret' }),
+	],
 })
 export class GameModule {}

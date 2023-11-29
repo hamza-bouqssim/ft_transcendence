@@ -8,20 +8,24 @@ import { useEffect, useContext } from "react";
 import { useRouter } from "next/navigation";
 import { SocketContext } from "../SocketContext";
 
+const sleep = async (ms: number) =>
+	new Promise((resolve) => setTimeout(resolve, ms));
+
 const MatchMaking = () => {
 	const { change, setChange } = useContext(ChangeContext);
 	const router = useRouter();
-
 	const socket = useContext(SocketContext);
 
-	console.log("playying", socket);
 	useEffect(() => {
-		socket.on("startGame", (data) => {
-			router.push("./online-game");
-			console.log("test1",data.opponentId);
-		})
-	}, [socket])
-	
+		const listner = (data: any) => {
+			router.push(`./online-game/${data.idGame}`);
+		};
+		socket.on("startGame", listner);
+		return () => {
+			socket.off("startGame", listner);
+		};
+	}, [socket]);
+
 	return (
 		<section className="relative mx-auto h-[100vh] py-4 text-white xl:container">
 			{/* Match Box */}
@@ -32,7 +36,7 @@ const MatchMaking = () => {
 							name="Hamza BouQssim"
 							username="@hbouqssi"
 							img="/assets/hamza.png"
-							direction="left-7 top-2"
+							additionalStyle="left-7 top-2"
 						/>
 						<h3 className="absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] font-['Whitney_BlackSc'] text-5xl font-bold sm:text-7xl lg:text-8xl min-[1750px]:text-9xl">
 							Vs
@@ -41,7 +45,7 @@ const MatchMaking = () => {
 							name=""
 							username=""
 							img="/assets/unknown.png"
-							direction="right-7 bottom-2"
+							additionalStyle="right-7 bottom-2 animate-pulse"
 						/>
 					</div>
 				</div>

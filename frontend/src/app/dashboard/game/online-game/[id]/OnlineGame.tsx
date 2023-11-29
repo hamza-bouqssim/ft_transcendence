@@ -1,11 +1,11 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import PlayerScore from "@/app/components/PlayerScore";
-import PongGame from "../classes/PongGame";
+import PongGame from "../../classes/PongGame";
 import Swal from "sweetalert2";
-import { SocketContext } from "../SocketContext";
+import { SocketContext } from "../../SocketContext";
 import { LoserPlayerPopUp } from "@/app/components/GamePopUp";
-import { gameData } from "../page";
+import { gameData } from "../../page";
 import { useAtomValue } from "jotai";
 import { io } from "socket.io-client";
 
@@ -17,7 +17,7 @@ const OnlineGame = () => {
 	// const socket = io("http://localhost:8000/game", {
 	// 	withCredentials: true,
 	// });
-	console.log("onlinegame", socket);
+	// console.log("onlinegame", socket);
 
 	const parentCanvasRef = useRef<HTMLDivElement>(null);
 
