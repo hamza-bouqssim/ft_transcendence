@@ -17,15 +17,14 @@ const extractCookie = (req: Request): string | null => {
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     constructor(private readonly authService: AuthService) {
-      
       super({
         jwtFromRequest: ExtractJwt.fromExtractors([extractCookie]),
         secretOrKey: 'my-secret'
       });
     }
-  
+    
     async validate(payload: any) {
-      const user = await this.authService.findUser(payload.userId);
+      const user = await this.authService.findUser(payload.sub);
       if (!user) {
         throw new UnauthorizedException();
       }

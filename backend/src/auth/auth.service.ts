@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { BadRequestException, ConflictException, ForbiddenException, HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Inject,ConflictException, ForbiddenException, HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { AuthDto } from './dto/auth.dto';
 import { Request, Response } from 'express';
@@ -9,7 +9,10 @@ import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-    constructor(private readonly prisma: PrismaService, private readonly jwtService: JwtService,){}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly jwtService: JwtService,
+  ) {}
 
     async signIn(dto: LocalAuthDto, req: Request, res: Response) {
 
@@ -118,22 +121,21 @@ export class AuthService {
 
     async findUser(id: string)
     {
-      const user = await this.prisma.user.findFirst({where: {id: id}});
+      const user = await this.prisma.user.findUnique({where: {id: id}});
       return user;
     }
 
-    // async validateUser2(dto : LoginDto)
-    // {
-    //    const user = await this.userservice.findByEmail(dto.email)
-    //    if(!user)
-    //     throw new HttpException('Invalid Credentials', HttpStatus.UNAUTHORIZED);
-    //    if(user && (await bcrypt.compare(dto.password, user.password)))
-    //    {
-    //         const  { password , ...result} = user;
-    //         return result;
-    //    }
-    //    return null;
-    // }
+    async generateNickname(email: string) :Promise<string>{
+      const username = email.split('@')[0];
+      const cleanedUsername = username.replace(/[^a-zA-Z0-9]/g, '');
+      const nickname = cleanedUsername.length > 0 ? cleanedUsername : 'defaultNickname';
+      return nickname;
+    }
+
+
+
+  
+
 
     
 }

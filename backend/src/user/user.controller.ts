@@ -13,15 +13,13 @@ import { AuthGuard } from '@nestjs/passport';
 export class UserController {
 
     constructor(private readonly userService:UserService, 
-        private readonly jwtService: JwtService,
-        private readonly prisma: PrismaService,
         ){}
 
     @Get('info')
     @UseGuards(AuthGuard('jwt'))
     async grabMyInfos(@Req() req) {
       
-      const user = await whichWithAuthenticated(req, this.jwtService, this.prisma);
+     const user = req.user
 
       return {
         username: user.username,
@@ -44,7 +42,7 @@ export class UserController {
 
       try {
 
-        const user = await whichWithAuthenticated(req, this.jwtService, this.prisma);
+       const user = req.user
         // console.log(user.email)
         const updated = this.userService.changeDisplayedName(user.email, request.newDisplayName);
         return updated;
@@ -59,7 +57,7 @@ export class UserController {
 
       try {
 
-        const user = await whichWithAuthenticated(req, this.jwtService, this.prisma);
+       const user = req.user
 
         const updated = this.userService.changeUserName(user.email, req.newUserName);
         return updated;
@@ -95,7 +93,7 @@ export class UserController {
     async changeAvatar(@Req() req, @UploadedFile() file: Express.Multer.File)
     {
       try {
-        const user = await whichWithAuthenticated(req, this.jwtService, this.prisma);
+       const user = req.user
         const imagePath = file.path;
         // console.log("here is the image path :   " + imagePath);
         const updatedAvatar = this.userService._changeAvatar(user.email, imagePath);
@@ -109,7 +107,7 @@ export class UserController {
     @UseGuards(AuthGuard('jwt'))
     async listFriends(@Req() req)
     {
-      const user = await whichWithAuthenticated(req, this.jwtService, this.prisma);
+     const user = req.user
       return await this.userService.listFriends(user.id);
     }
 
@@ -117,7 +115,7 @@ export class UserController {
     @UseGuards(AuthGuard('jwt'))
     async pendingRequests(@Req() req)
     {
-      const user = await whichWithAuthenticated(req, this.jwtService, this.prisma);
+     const user = req.user
       return await this.userService.pendingRequests(user.id);
     }
 
@@ -125,14 +123,14 @@ export class UserController {
     @UseGuards(AuthGuard('jwt'))
     async blockedFriends(@Req() req)
     {     
-      const user = await whichWithAuthenticated(req, this.jwtService, this.prisma);
+     const user = req.user
       return await this.userService.blockedFriends(user.id);
     }
     @Get('All-users')
     @UseGuards(AuthGuard('jwt'))
     async allUsers(@Req() req)
     {
-      const user = await whichWithAuthenticated(req, this.jwtService, this.prisma);
+     const user = req.user
       return await this.userService.allUsers(user.id);
     }
     

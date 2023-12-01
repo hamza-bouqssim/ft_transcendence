@@ -11,7 +11,6 @@ const generateFakeUser = () => ({
 	avatar_url: faker.image.avatar(),
 	two_factor_auth: faker.random.boolean().toString(),
 	two_factor_secret_key: faker.random.alphaNumeric(20),
-	rank: faker.random.word(),
 });
 
 const generateFakeFriends = (users: { id: string }[]) => {

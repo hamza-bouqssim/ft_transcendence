@@ -18,9 +18,7 @@ import { fetchConversationThunk } from "@/app/store/conversationSlice";
 
 
 const ConversationChannelPage = () => {
-  const socket = useContext(socketContext)
-  const { channel } = useContext(socketContext);
-
+  const {channel } = useContext(socketContext);
 
     return ( 
 
@@ -29,7 +27,7 @@ const ConversationChannelPage = () => {
                 <CoversationSideBar />
               </div> 
               {channel ? 
-                <div className="bg-white xl:m-10  xl:mr-10 xl:ml-2 w-full xl:w-[65%]  xl:rounded-[20px]">
+                 <div className="bg-white xl:m-10  xl:mr-10 xl:ml-2 w-full xl:w-[65%]  xl:rounded-[20px] xl:mt-32">
                     <MessagePanel></MessagePanel> 
                 </div>
 :

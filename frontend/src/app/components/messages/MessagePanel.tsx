@@ -11,30 +11,12 @@ import UpdateComponent from "../updateComponent/UpdateComponent";
 import { InfoRoom } from "../InfoRoom/InfoRoom";
 import {useContext} from 'react'
 
-type Props  = {
-    messages : messageTypes[];
-    sendTypingStatus: () => void;
-}
 
-const MessagePanel : FC<Props> = ({messages, sendTypingStatus}) => {
-        const [content, setContent] = useState('');
+const MessagePanel = () => {
+
         const [updateRome,setUpdateRome] = useState<boolean>(false)
-        const { id } = useParams();
-
-        const sendMessage = async (e : React.FormEvent<HTMLFormElement>) => {
-            e.preventDefault();
-            if(!id || !content)
-                return ;
-            const participentsId = id;
-            console.log(participentsId);
-            try{
-                await postNewMessage({participentsId, content});
-                setContent('');
-            }catch(err){
-                alert("error");
-                console.log(err);
-            }
-        };
+        
+     
      
     return (
         <div className="p-2 md:p-6   h-full flex items-center w-full justify-between"> 
@@ -42,8 +24,8 @@ const MessagePanel : FC<Props> = ({messages, sendTypingStatus}) => {
                     <MessagePanelHeader setUpdateRome={setUpdateRome} updateRome={updateRome} />
                     { !updateRome ? 
                         <>
-                            <MessageContainer messages={messages}/>
-                            <MessageInputField content= {content} setContent={setContent} sendMessage={sendMessage}/>
+                            <MessageContainer />
+
                         </>
                         :
                         <UpdateComponent></UpdateComponent>

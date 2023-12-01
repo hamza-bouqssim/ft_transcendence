@@ -90,10 +90,8 @@ export type FetchMessagePayload = {
 export type messageTypes = {
     id : string;
     content : string;
-    conversation: ConversationTypes;
     createdAt : string;
     sender : User;
-    recipient : User;
 }
 export type messageEventPayload = {
     id : string;

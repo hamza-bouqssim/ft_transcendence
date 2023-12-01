@@ -2,11 +2,10 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
-import { ParticipentService } from 'src/Participent/Participent.service';
 
 @Injectable()
 export class FriendRequestService {
-    constructor(private readonly prisma: PrismaService , private readonly participentService : ParticipentService){}
+    constructor(private readonly prisma: PrismaService ){}
     
     async sendRequest(friendDisplay_name: string, _Display_name:string){
 

@@ -56,8 +56,6 @@ const CreatGroups: React.FC<CreateGroupsProps> = ({ setNewRooms }) => {
           }).catch(error => {
             console.error('Error creating room:', error);
           });       
-
-
   };
 
     return (

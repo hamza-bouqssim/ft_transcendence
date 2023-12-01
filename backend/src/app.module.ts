@@ -2,30 +2,28 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { PrismaService } from 'prisma/prisma.service';
 import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from 'prisma/prisma.module';
-import { JwtModule } from '@nestjs/jwt';
 import { RoomsModule } from './Rooms/rooms.module';
+import { ConversationsModule } from './conversations/conversations.module';
+import { GatewayModule } from './gateway/gateway.module';;
+import { UserModule } from './user/user.module';
+import { WebSocketAdapter } from './gateway/gateway.adapter';
+import { FriendRequestModule } from './friend-request/friend-request.module';
 
 
 @Module({
 	imports: [
 		AuthModule,
-		PrismaModule,
+    PrismaModule,
 		RoomsModule,
-		// UserModule,
-		// ConversationsModule,
-		// ParticipentModule,
-		// MessagesModule,
-		// FriendRequestModule,
+    ConversationsModule,
+    GatewayModule,
+		UserModule,
+    FriendRequestModule
 		// GameModule,
-		// GatewayModule,
-		// EventEmitterModule.forRoot(),
-		// GameModule,
-		// RoomsModule
 	],
 	controllers: [AppController],
-	providers: [AppService, PrismaService],
+	providers: [AppService],
 })
 export class AppModule {}
