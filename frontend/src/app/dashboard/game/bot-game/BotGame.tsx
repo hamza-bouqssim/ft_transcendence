@@ -4,7 +4,10 @@ import PlayerScore from "@/app/components/PlayerScore";
 import PongGame from "../classes/PongGame";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
-import { LoserPlayerPopUp } from "@/app/components/GamePopUp";
+import {
+	LoserPlayerPopUp,
+	WinnerPlayerPopUp,
+} from "@/app/components/GamePopUp";
 import { useAtomValue } from "jotai";
 import { gameData } from "../page";
 
@@ -23,12 +26,11 @@ const BotGame = () => {
 	const [startGame, setStartGame] = useState<boolean>(false);
 
 	useEffect(() => {
-		let endGame: any;
-
-		if (score.botScore === 2 || score.playerScore === 2) {
-			setStartGame((prev: any) => !prev);
+		if (score.botScore === 8 || score.playerScore === 8) {
+			score.playerScore === 8
+				? WinnerPlayerPopUp(router)
+				: LoserPlayerPopUp(router);
 			pongRef.current.clear();
-			LoserPlayerPopUp(router);
 		} else if (pongRef.current)
 			setScore({
 				...score,
@@ -74,10 +76,8 @@ const BotGame = () => {
 					playerScore: pongRef.current.playerScore,
 					botScore: pongRef.current.botScore,
 				});
-				endGame = () => pongRef.current.clearGame();
 			});
 		}
-		// return () => endGame();
 	}, [score]);
 
 	return (

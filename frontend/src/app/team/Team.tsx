@@ -12,8 +12,8 @@ const Team = () => {
 	const mappedNames: JSX.Element[] = teams.map(
 		(e, i): JSX.Element => (
 			<Image
-				className="cursor-pointer rounded-[50%] border-[2px] border-[var(--blue-color)] transition duration-300 ease-linear hover:scale-90 md:w-28 lg:w-36 xl:w-48 2xl:w-56"
 				key={i}
+				className="cursor-pointer rounded-[50%] border-[2px] border-[var(--blue-color)] transition duration-300 ease-linear hover:scale-90 md:w-28 lg:w-36 xl:w-48 2xl:w-56"
 				src={e}
 				width={100}
 				height={100}

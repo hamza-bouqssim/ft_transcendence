@@ -13,14 +13,8 @@ const OnlineGame = () => {
 	const gameDataValues = useAtomValue(gameData);
 	const router = useRouter();
 	const socket = useContext<any>(SocketContext);
-
-	// const socket = io("http://localhost:8000/game", {
-	// 	withCredentials: true,
-	// });
-	// console.log("onlinegame", socket);
-
 	const parentCanvasRef = useRef<HTMLDivElement>(null);
-
+	const [startGame, setStartGame] = useState<boolean>(false);
 	const [score, setScore] = useState<{
 		playerOne: number;
 		playerTwo: number;
@@ -28,7 +22,6 @@ const OnlineGame = () => {
 		playerOne: 0,
 		playerTwo: 0,
 	});
-	const [startGame, setStartGame] = useState<boolean>(false);
 
 	useEffect(() => {
 		socket.on("connect", () => {
@@ -75,7 +68,6 @@ const OnlineGame = () => {
 			},
 		}).then(() => {
 			socket.emit("launchGameRequest", gameDataValues.chosenMapIndex);
-			// console.log("req to start Game!");
 			socket.on("launchGame", () => {
 				setStartGame((prev: any) => !prev);
 				pong = new PongGame(
@@ -85,7 +77,7 @@ const OnlineGame = () => {
 				);
 			});
 			socket.on("gameIsFinished", () => {
-				pong.clear();
+				// pong.clear();
 				LoserPlayerPopUp(router);
 				// endGame = () => pong.clear();
 				// endGame();

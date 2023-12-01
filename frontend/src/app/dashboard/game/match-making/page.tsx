@@ -8,8 +8,8 @@ import { useEffect, useContext } from "react";
 import { useRouter } from "next/navigation";
 import { SocketContext } from "../SocketContext";
 
-const sleep = async (ms: number) =>
-	new Promise((resolve) => setTimeout(resolve, ms));
+// const sleep = async (ms: number) =>
+// 	new Promise((resolve) => setTimeout(resolve, ms));
 
 const MatchMaking = () => {
 	const { change, setChange } = useContext(ChangeContext);
@@ -17,12 +17,12 @@ const MatchMaking = () => {
 	const socket = useContext(SocketContext);
 
 	useEffect(() => {
-		const listner = (data: any) => {
+		const listener = (data: any) => {
 			router.push(`./online-game/${data.idGame}`);
 		};
-		socket.on("startGame", listner);
+		socket.on("startGame", listener);
 		return () => {
-			socket.off("startGame", listner);
+			socket.off("startGame", listener);
 		};
 	}, [socket]);
 

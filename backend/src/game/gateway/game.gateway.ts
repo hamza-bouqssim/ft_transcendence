@@ -43,7 +43,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	private paddleW = 170;
 	private playerOneScore: number = 0;
 	private playerTwoScore: number = 0;
-	private gameInterval: any;
+	private updateBallPosition: any;
 	private moveInterval: any;
 	private userId: string;
 	private mapIndex: number;
@@ -625,7 +625,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	startGame() {
 		Runner.run(Runner.create(), engine);
 
-		this.gameInterval = setInterval(() => {
+		this.updateBallPosition = setInterval(() => {
 			this.server.emit('updateBallPosition', this.ball.position);
 			this.calScore();
 		}, 15);
@@ -664,10 +664,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			///////////////////////
 			this.server.emit('gameIsFinished', {});
 
-			// Clear Intervals:
-			clearInterval(this.moveInterval);
-			clearInterval(this.gameInterval);
+			// Clear Game
+			this.handleClearGame();
 		}
+	}
+
+	handleClearGame() {
+		// Clear Intervals:
+		clearInterval(this.moveInterval);
+		clearInterval(this.updateBallPosition);
 	}
 
 	@SubscribeMessage('keyevent')
