@@ -32,11 +32,11 @@ const TopRightBar = (props: Change) => {
 			router.push("/", { scroll: false });
 		} catch (err) {
 			alert("failed to logout");
-			console.log(err);
+			// console.log(err);
 		}
 	}
 	return (
-		<div className="fixed right-0 z-10 flex h-12 w-64 items-center justify-end gap-2 rounded-l-3xl lg:right-7 min-[1750px]:h-14 min-[1750px]:w-80 min-[1750px]:gap-4">
+		<div className="fixed right-3 top-3 z-10 flex h-12 w-64 items-center justify-end gap-2 rounded-l-3xl lg:right-7 min-[1750px]:h-14 min-[1750px]:w-80 min-[1750px]:gap-4">
 			<FontAwesomeIcon
 				icon={faBell}
 				className="left-0 cursor-pointer rounded-[50%] bg-[#ffffff38] p-3 hover:bg-[--pink-color] min-[1750px]:h-6 min-[1750px]:w-6"
@@ -46,7 +46,7 @@ const TopRightBar = (props: Change) => {
   				<Image
     				className="h-10 w-10 rounded-[50%] bg-black min-[1750px]:h-12 min-[1750px]:w-12"
     				key={0}
-    				src={"/assets/user2.jpeg"}
+    				src={user.avatar_url}
     				width={72}
     				height={51}
     				alt="user"
@@ -54,8 +54,8 @@ const TopRightBar = (props: Change) => {
 					/>
 )}
 				<div className="font-['Whitney_Bold'] leading-3">
-					<h6 className="text-sm min-[1750px]:text-lg">{user?.username}</h6>
-					<span className="text-xs min-[1750px]:text-sm">{user?.email}</span>
+					<h6 className="text-sm min-[1750px]:text-lg">{user?.display_name}</h6>
+					<span className="text-xs min-[1750px]:text-sm">{user?.username}</span>
 				</div>
 
 				<FontAwesomeIcon

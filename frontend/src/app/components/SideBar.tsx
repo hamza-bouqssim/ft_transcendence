@@ -22,7 +22,6 @@ type Change = {
 const SideBar = (props: Change) => {
 	const ulRef = useRef<HTMLUListElement>(null);
 
-
 	const [isLoggedOut, setIsLoggedOut] = useState<boolean>(false);
 
 	const messageBox = (): boolean => {
@@ -47,10 +46,10 @@ const SideBar = (props: Change) => {
 
 	return (
 		<aside
-			className={` z-20 h-full  bg-gradient-to-b from-[#2E2F54] via-[#3B5282] to-[#2E2F54]  text-white duration-300 ease-in-out flex flex-col items-center justify-between`}
+			className={` fixed bottom-0 left-0 right-0 z-20 flex justify-between  bg-gradient-to-b from-[#2E2F54] via-[#3B5282] to-[#2E2F54]  text-white duration-300 ease-in-out md:relative md:h-full md:flex-col md:items-center`}
 		>
 			<ul
-				className=" h-full  font-bold"
+				className=" flex h-full w-full justify-between font-bold md:w-auto md:flex-col md:justify-start"
 				ref={ulRef}
 			>
 				{/* <FontAwesomeIcon
@@ -59,39 +58,21 @@ const SideBar = (props: Change) => {
 				${props.sideBar ? "left-[230px] rotate-[-270deg]" : "rotate-[270deg]"}`}
 					onClick={props.onClick}
 				/> */}
-				<ListItem
-					icon={faHouse}
-					additionalStyle=""
-					spanText="Home"
-					
-				/>
+
+				<Link href={"/dashboard"}>
+					<ListItem icon={faHouse} additionalStyle="" spanText="Home" />
+				</Link>
 				<Link href={"/dashboard/chat"}>
-				<ListItem
-					icon={faComment}
-					additionalStyle=""
-					spanText="Chat"
-					
-				/>
+					<ListItem icon={faComment} additionalStyle="" spanText="Chat" />
 				</Link>
 				<Link href={"/dashboard/game"}>
-					<ListItem
-						icon={faGamepad}
-						additionalStyle=""
-						spanText="Game"
-						
-					/>
+					<ListItem icon={faGamepad} additionalStyle="" spanText="Game" />
 				</Link>
 				<Link href={"/dashboard/settings"}>
-					<ListItem
-						icon={faGear}
-						additionalStyle=""
-						spanText="Settings"
-						
-					/>
+					<ListItem icon={faGear} additionalStyle="" spanText="Settings" />
 				</Link>
-			</ul>
-			<ul>
 				<Link
+					className="block md:hidden"
 					href={"/"}
 					onClick={(e) => {
 						if (!messageBox()) e.preventDefault();
@@ -101,7 +82,21 @@ const SideBar = (props: Change) => {
 						icon={faRightFromBracket}
 						additionalStyle=" w-full"
 						spanText="LogOut"
-						
+					/>
+				</Link>
+			</ul>
+			<ul>
+				<Link
+					className="hidden md:block"
+					href={"http://localhost:8000/auth/logout"}
+					// onClick={(e) => {
+					// 	if (!messageBox()) e.preventDefault();
+					// }}
+				>
+					<ListItem
+						icon={faRightFromBracket}
+						additionalStyle=" w-full"
+						spanText="LogOut"
 					/>
 				</Link>
 			</ul>

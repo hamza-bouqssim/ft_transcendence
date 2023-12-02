@@ -9,7 +9,7 @@ COPY ./package.json ./
 COPY ./package-lock.json ./
 
 COPY . .
-
+RUN npm install
 RUN chmod +x init.sh
 
 EXPOSE 8000

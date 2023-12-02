@@ -1,4 +1,4 @@
-version: '3.1'
+version: "3.1"
 services:
   postgres:
     image: postgres
@@ -6,13 +6,13 @@ services:
     ports:
       - "5432:5432"
     environment:
-        POSTGRES_USER: postgres
-        POSTGRES_PASSWORD: transcandance800
-        POSTGRES_DB: transcandance
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: transcandance800
+      POSTGRES_DB: transcandance
     volumes:
       - $PWD/db:/var/lib/postgresql/data
     networks:
-      - mynetwork  
+      - mynetwork
 
   frontend:
     build: ./frontend/.
@@ -25,7 +25,7 @@ services:
       - ./frontend:/app/
       - /app/node_modules
     networks:
-      - mynetwork 
+      - mynetwork
 
   api:
     build: ./backend/.
@@ -44,7 +44,7 @@ services:
     depends_on:
       - postgres
     networks:
-      - mynetwork  
+      - mynetwork
 
 networks:
-  mynetwork:  
+  mynetwork:

@@ -21,12 +21,12 @@ export const GoogleSignInButton = () => {
 			await loginGoogle();
 		} catch (err) {
 			alert("failed to login");
-			console.log(err);
+			// console.log(err);
 		}
 	};
 
 	return (
-		<button onClick={() => alert("hello")}>
+		<button>
 			<Image
 				className="w-5 hover:scale-150 hover:transform hover:transition hover:duration-300 hover:ease-in-out sm:w-6 md:w-7 2xl:w-[38px]"
 				src={require("../../../public/assets/google.svg")}
@@ -89,6 +89,17 @@ export const MenuButton = (props: any) => {
 		</button>
 	);
 };
+export const MenuButton2 = (props: any) => {
+	
+	return (
+		<button
+			className={`h-[35px] w-[197px] ${props.background}
+				 rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`}
+		>
+			{props.value}
+		</button>
+	);
+};
 export const LogoutButton = (props: any) => {
 	const router = useRouter();
 	const logoutFunction =  async () =>{
@@ -111,3 +122,21 @@ export const LogoutButton = (props: any) => {
 		</button>
 	);
 };
+
+export const GoToProfileBtn = (props : any) =>{
+	const router = useRouter();
+
+	const handleFunction = () =>{
+		router.push("/dashboard", { scroll: false });
+
+	}
+	return (
+		<button onClick={handleFunction}
+			className={`h-[35px] w-[225px] ${props.background} ${
+				props.value === "Logout" ? "text-white" : "text-black"
+			} rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`}
+		>
+			{props.value}
+		</button>
+	)
+}

@@ -1,17 +1,18 @@
-import { BadRequestException, ConflictException, ForbiddenException, HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
+/* eslint-disable prettier/prettier */
+import { BadRequestException, Inject,ConflictException, ForbiddenException, HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { AuthDto } from './dto/auth.dto';
 import { Request, Response } from 'express';
 import * as bcrypt from 'bcrypt';
-
 import { LocalAuthDto } from './dto/local.auth.dto';
 import { JwtService } from '@nestjs/jwt';
-import { LoginDto } from 'src/user/dto/auth.dto';
-import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class AuthService {
-    constructor(private readonly prisma: PrismaService, private readonly jwtService: JwtService, private userservice : UserService){}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly jwtService: JwtService,
+  ) {}
 
     async signIn(dto: LocalAuthDto, req: Request, res: Response) {
 
@@ -39,7 +40,8 @@ export class AuthService {
     if (!token) {
       throw new ForbiddenException();
     }
-    res.cookie('token', token);
+    res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });;
+ 
   
     return res.send({ msg: 'local succes' });
   }
@@ -72,7 +74,6 @@ export class AuthService {
             avatar_url: "../../../../frontend/nextjs/public/assets/user.jpeg",
             two_factor_auth: "",
             two_factor_secret_key: "",
-            rank: "",
           },
         });
        
@@ -82,12 +83,13 @@ export class AuthService {
     signUser(userId: string, dto: AuthDto, type:string)
     {
       return this.jwtService.sign({
-        sub: userId, 
-        email: dto.email,
-        username: dto.username,
-        display_name: dto.display_name,
-        avatar_url: dto.avatar_url,
-        claim: type,
+          id: userId, 
+          email: dto.email,
+          username: dto.username,
+          display_name: dto.display_name,
+          avatar_url: dto.avatar_url,
+          claim: type,
+        
       });
     }
 
@@ -111,7 +113,6 @@ export class AuthService {
           avatar_url: dto.avatar_url,
           two_factor_auth: "",
           two_factor_secret_key: "",
-          rank: ""
         },
       });
     
@@ -120,36 +121,21 @@ export class AuthService {
 
     async findUser(id: string)
     {
-      const user = await this.prisma.user.findFirst({where: {id: id}});
+      const user = await this.prisma.user.findUnique({where: {id: id}});
       return user;
     }
 
-    async validateUser2(dto : LoginDto)
-    {
-        /* we need to check inside our database if a user with the provider user that is inside
-        our dto is inside our user table or not 
-
-        so first we need to go to the user service and create a function for retrieving the user based on the email from our user table,
-        so lets go to the user service and create a function called fundByEmail
-        */ 
-       const user = await this.userservice.findByEmail(dto.email)
-       if(!user)
-        throw new HttpException('Invalid Credentials', HttpStatus.UNAUTHORIZED);
-       /* iam going to use the dto.password and pass the hashed version of the user password 
-       which we can get from the user object */
-       // so the compare function first hash the dto.password and then compare the hashed version of the dto.password with user.password which is already hashed inside the database
-       if(user && (await bcrypt.compare(dto.password, user.password)))
-       {
-            const { password , ...result} = user;
-            console.log(password)
-            return result;
-       }
-       /*if this condition here is not correct which means that the email and the password are not correct 
-       so we should throw an exeption */
-       return null;
-
-
+    async generateNickname(email: string) :Promise<string>{
+      const username = email.split('@')[0];
+      const cleanedUsername = username.replace(/[^a-zA-Z0-9]/g, '');
+      const nickname = cleanedUsername.length > 0 ? cleanedUsername : 'defaultNickname';
+      return nickname;
     }
+
+
+
+  
+
 
     
 }

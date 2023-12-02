@@ -1,15 +1,40 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import { ConversationTypes } from '../utils/types'
-import { getConversation, getConversationMessage } from '../utils/api';
+import { ConversationTypes, CreateConversationParams } from '../utils/types'
+import { createConversation, findConversationUsers, getConversation, getConversationMessage } from '../utils/api';
 
 export interface ConversationsState {
-  conversations : Map<string, ConversationTypes>; 
+  conversations: ConversationTypes[];
+  loading: boolean;
 }
 
 const initialState: ConversationsState = {
-  conversations: new Map(),
+  conversations: [],
+  loading: false,
+};
+
+// for create the conversation
+
+export const createConversationThunk = createAsyncThunk('conversations/create', async(display_name : string , { rejectWithValue })=>{
+  try {
+    const response = await createConversation(display_name);
+
+
+    if (!response.data.success) {
+      throw new Error(response.data.error);
+    }
+    return response;
+  } catch (err: any) {
+      console.error("Error", err);
+
+    if (err.response && err.response.data) {
+      return rejectWithValue(err.response.data); // Return the entire error object
+    } else {
+      throw new Error("create conversation failed with an unknown error");
+    }
 }
+
+})
 
 export const fetchConversationThunk = createAsyncThunk('conversations/fetch', async () => {
   const response = await getConversation();
@@ -17,20 +42,36 @@ export const fetchConversationThunk = createAsyncThunk('conversations/fetch', as
 
 });
 
-export const fetchMessagesThunk = createAsyncThunk('messages/fetch', async (id : string) => {
-  const response = await getConversationMessage(id);
-  return response;
-})
+// export const fetchMessagesThunk = createAsyncThunk('messages/fetch', async (id : string) => {
+//   const response = await getConversationMessage(id);
+//   return response;
+// })
 
+
+export const fetchConversationUserThunk = createAsyncThunk('conversation/fetch',async(display_name : string) =>{
+  const response = await findConversationUsers(display_name);
+  return response;
+
+})
 export const conversationsSlice = createSlice({
   name: 'conversations',
   initialState,
   reducers: {
-        // this is for adding a conversations 
-    addConversation: (state , action : PayloadAction<ConversationTypes>) => {
-      console.log("add conversation")
-        // state.conversations.push(action.payload);
-    }
+    addConversation: (state, action: PayloadAction<ConversationTypes>) => {
+      console.log('addConversation');
+      // state.conversations.push(action.payload);
+    },
+    updateConversation: (state, action: PayloadAction<ConversationTypes>) => {
+      console.log('Inside updateConversation');
+      const conversation = action.payload;
+      console.log("ps ", conversation);
+      const index = state.conversations.findIndex(
+        (c) => c.id === conversation.id
+      );
+      console.log("index here", index);
+      state.conversations.splice(index, 1);
+      state.conversations.unshift(conversation);
+    },
   },
 
   extraReducers: (builder) => {
@@ -39,17 +80,21 @@ export const conversationsSlice = createSlice({
         // state.conversations = action.payload.data;
 
         // state.conversations.set(action.payload.data[0].id.toString(), action.payload.data[0])
-        action.payload.data.forEach((conversation : any)=>{
-          state.conversations.set(conversation.id, conversation);
-        });
+        state.conversations = action.payload.data;
+        state.loading = false;
+    }).addCase(fetchConversationThunk.pending, (state, action) =>{
+        state.loading = true;
     })
-    .addCase(fetchMessagesThunk.fulfilled, (state, action) =>{
-     
-    })
+    .addCase(createConversationThunk.fulfilled, (state, action) =>{
+        state.conversations.unshift(action.payload.data);
+    }).addCase(fetchConversationUserThunk.fulfilled, (state, action) =>{
+
+    });
   }
 })
 
 // Action creators are generated for each case reducer function
-export const { addConversation } = conversationsSlice.actions
+export const { addConversation, updateConversation } =
+  conversationsSlice.actions;
 
-export default conversationsSlice.reducer
+export default conversationsSlice.reducer;

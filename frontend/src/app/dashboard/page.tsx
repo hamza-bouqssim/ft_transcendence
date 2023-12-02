@@ -14,23 +14,23 @@ import HistoryMatches from "../components/HistoryMatches";
 const Dashboard = () => {
 	
 	const [results, setResults] = useState({
-		WINS: 0,
-		LEVEL: 654.7,
-		LOSSES: 0
+		WINS: 3,
+		LEVEL: 4,
+		LOSSES: 1
 	});
 
 	const [history_match, setHistoryMatch] = useState([
 		{
-			playerOne: "assets/rgatnaou.jpg",
+			playerOne: "assets/rgatnaou.jpeg",
 			resultOne: "1",
-			playerTwo: 'assets/mjalloul.jpg',
+			playerTwo: 'assets/mjalloul.jpeg',
 			resultTwo: "0",
 			duration: "00:00:35",
 			date: "2023-05-10",
 			totalMatches: "33"
 		},
 		{
-			playerOne: "assets/rgatnaou.jpg",
+			playerOne: "assets/rgatnaou.jpeg",
 			resultOne: "1",
 			playerTwo: 'assets/hamza.png',
 			resultTwo: "1",
@@ -39,7 +39,7 @@ const Dashboard = () => {
 			totalMatches: "1"
 		},
 		{
-			playerOne: "assets/rgatnaou.jpg",
+			playerOne: "assets/rgatnaou.jpeg",
 			resultOne: "1",
 			playerTwo: 'assets/soukaina.png',
 			resultTwo: "2",

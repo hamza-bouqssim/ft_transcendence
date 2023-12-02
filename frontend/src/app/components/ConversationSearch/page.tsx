@@ -1,12 +1,10 @@
-import styles from "./index.module.scss"
+import styles from "./index.module.scss";
 import { MdSearch } from "react-icons/md";
 
 const ConversationSearch = () => {
     return ( 
-        <div className={styles.div}>
-            <input className={styles.h1} placeholder="Research/ Lancer une conversation"></input>
-            {/* <MdSearch size={30} className={styles.search}/> */}
-            
+        <div className="flex mx-auto items-center justify-center w-full mt-10">
+            <input className="rounded-full text-black focus:outline-none bg-[#D9D9D9] w-full  bg-opacity-20  p-3" placeholder="search & Lancer une conversation"></input>
         </div>
      );
 }

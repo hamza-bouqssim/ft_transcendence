@@ -50,7 +50,7 @@ const RankingFriendsSwitch = () => {
       {
         "rank": 1,
         "username": "rgatnaou",
-        "picture": "assets/rgatnaou.jpg"
+        "picture": "assets/rgatnaou.jpeg"
       },
       {
         "rank": 2,
@@ -66,22 +66,22 @@ const RankingFriendsSwitch = () => {
       {
         "rank": 4,
         "username": "mjalloul",
-        "picture": "assets/mjalloul.jpg"
+        "picture": "assets/mjalloul.jpeg"
       },
       {
         "rank": 5,
         "username": "abdollah",
-        "picture": "assets/mjalloul.jpg"
+        "picture": "assets/mjalloul.jpeg"
       },
       {
         "rank": 6,
         "username": "redone",
-        "picture": "assets/mjalloul.jpg"
+        "picture": "assets/mjalloul.jpeg"
       }
     ]);
 
     const [user, setUser] = useState({
-      "picture": "assets/rgatnaou.jpg",
+      "picture": "assets/rgatnaou.jpeg",
       "username": "rgatnaou",
       "display_name": "RedOne Gatnaou"
     })

@@ -1,0 +1,25 @@
+.form {
+    width: 800px;
+}
+
+.Row {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin: 8px 0;
+}
+
+.btn {
+    margin: 8px 0;
+}
+
+.inputPass {
+    margin: 8px 0;
+}
+
+
+
+.formConversation {
+    width: 100%;
+}
