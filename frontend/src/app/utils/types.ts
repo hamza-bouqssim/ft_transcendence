@@ -31,13 +31,6 @@ export type chat = {
     recipient : User;
 }
 
-export type CreateChangeParams = {
-    display_name : string;
-    username : string;
-    avatarUrl : string;
-    password: string;
-}
-
 
 export type   ConversationTypes= {
     id : string;
@@ -69,8 +62,11 @@ export type FriendsTypes = {
 }
 
 export type BloquesTypes = {
-   
-    user : User;
+    id : string;
+    display_name : string;
+    username : string;
+    avatar_url : string;
+    userBloque : User;
 }
 
 
@@ -94,10 +90,8 @@ export type FetchMessagePayload = {
 export type messageTypes = {
     id : string;
     content : string;
-    conversation: ConversationTypes;
     createdAt : string;
     sender : User;
-    recipient : User;
 }
 export type messageEventPayload = {
     id : string;

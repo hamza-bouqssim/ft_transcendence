@@ -25,7 +25,6 @@ const LoginForm = () => {
 			router.push("/dashboard", { scroll: false });
 		} catch (err) {
 			alert("failed to login");
-
 		}
 	};
 	return (

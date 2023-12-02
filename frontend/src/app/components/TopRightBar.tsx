@@ -21,7 +21,7 @@ const TopRightBar = (props: Change) => {
         setLoading(true);
         getAuthUser().then(({data}) => {
             setUser(data);
-        }).catch((err)=> {});
+        }).catch((err)=> {console.log(err);});
     }, [])
 	const router = useRouter();
 
@@ -32,11 +32,11 @@ const TopRightBar = (props: Change) => {
 			router.push("/", { scroll: false });
 		} catch (err) {
 			alert("failed to logout");
-			
+			// console.log(err);
 		}
 	}
 	return (
-		<div className="fixed right-0 z-10 flex h-12 w-64 items-center justify-end gap-2 rounded-l-3xl lg:right-7 min-[1750px]:h-14 min-[1750px]:w-80 min-[1750px]:gap-4">
+		<div className="fixed right-3 top-3 z-10 flex h-12 w-64 items-center justify-end gap-2 rounded-l-3xl lg:right-7 min-[1750px]:h-14 min-[1750px]:w-80 min-[1750px]:gap-4">
 			<FontAwesomeIcon
 				icon={faBell}
 				className="left-0 cursor-pointer rounded-[50%] bg-[#ffffff38] p-3 hover:bg-[--pink-color] min-[1750px]:h-6 min-[1750px]:w-6"

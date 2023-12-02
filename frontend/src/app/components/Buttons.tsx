@@ -109,6 +109,7 @@ export const LogoutButton = (props: any) => {
 			router.push("/", { scroll: false });
 		} catch (err) {
 			alert("failed to logout");
+			console.log(err);
 		}
 	}
 	return (

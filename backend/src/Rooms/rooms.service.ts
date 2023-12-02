@@ -267,6 +267,7 @@ export class RoomsService {
 
 
   async getAllFreind(id: string) {
+    console.log(id)
       const friends = await this.prisma.friend.findMany({
         where: {
           OR: [
@@ -281,6 +282,7 @@ export class RoomsService {
           ]
         },
       });
+      console.log(friends)
       if (!friends || friends.length === 0) {
         throw new Error('No friends found for the given user.');
       }
@@ -303,3 +305,4 @@ export class RoomsService {
   }
 
 }
+

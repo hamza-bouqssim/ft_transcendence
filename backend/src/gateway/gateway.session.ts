@@ -12,7 +12,6 @@ export interface IGateWaySession {
     getOnlineUserIds(): string[];
     getUserBySocketId(socketId: string): User | undefined; // Add this line
 
-
 }
 @Injectable() 
 export class GateWaySessionManager implements IGateWaySession {
@@ -32,12 +31,11 @@ export class GateWaySessionManager implements IGateWaySession {
         return this.sessions;
     }
     getOnlineUserIds(): string[] {
-        // Implement the logic to get online user IDs
-        // For example, you can return an array of all user IDs in the session
         return Array.from(this.sessions.keys());
     }
     getUserBySocketId(socketId: string): User | undefined {
         const socket = Array.from(this.sessions.values()).find(s => s.id === socketId);
         return socket ? socket.user : undefined;
     }
+    
 }

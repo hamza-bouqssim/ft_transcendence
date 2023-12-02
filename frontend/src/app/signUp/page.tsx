@@ -1,4 +1,4 @@
-	"use client";
+"use client";
 import PingPong from "../components/PingPong";
 import {
 	GithubSignInButton,

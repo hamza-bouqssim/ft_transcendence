@@ -7,11 +7,10 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getAuthUser } from "./utils/api";
 import { User } from "./utils/types";
-import { socket } from "./utils/context/socketContext";
 
 
 const Home = () => {
-
+	
 	return (
 			<main className="font-['Whitney_BlackSC'] text-white">
 				<Header />

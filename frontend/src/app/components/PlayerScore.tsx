@@ -13,19 +13,21 @@ type PlayerScoreProps = {
 const PlayerScore = (props: PlayerScoreProps) => {
 	return (
 		<div
-			className={`glassmorphism relative flex h-[225px] w-[390px] flex-col items-center gap-6 px-1 py-3 ${
-				props.flag === "right" ? "mb-auto mt-10" : "mb-10 mt-auto"
+			className={`glassmorphism relative flex h-[64px] w-[96%] max-w-[300px] items-center md:h-[110px] md:max-w-[450px] xl:h-[190px] xl:max-w-[300px] xl:flex-col xl:gap-6 xl:px-1 xl:py-3 min-[1750px]:h-[230px] min-[1750px]:max-w-[400px] ${
+				props.flag === "top"
+					? "ml-auto mr-0 flex-row-reverse xl:mb-auto xl:mt-10 min-[1750px]:mt-20"
+					: "ml-0 mr-auto xl:mb-10 xl:mt-auto min-[1750px]:mb-20"
 			}`}
 		>
 			<div
 				className={`${
 					props.startGame ? "visible" : "invisible"
-				} flex w-full items-center justify-evenly ${
-					props.flag === "right" ? "flex-row-reverse items-end" : ""
+				} flex w-[60%] items-center gap-4 xl:w-full ${
+					props.flag === "top" ? "flex-row-reverse pr-2" : "pl-2"
 				}`}
 			>
 				<Image
-					className={`h-12 w-12 rounded-[50%] border-2 border-[#CFF4FF] shadow-[0_0_50px_2px_var(--blue-color)] md:h-16 md:w-16 min-[1750px]:h-24 min-[1750px]:w-24`}
+					className={`h-12 w-12 rounded-[50%] border-2 border-[#CFF4FF] shadow-[0_0_50px_2px_var(--blue-color)] md:h-20 md:w-20 min-[1750px]:h-24 min-[1750px]:w-24`}
 					style={{ background: props.playerBgColor }}
 					id="0"
 					src={props.isBotPlayer ? "/assets/bot.png" : "/assets/hamza.png"}
@@ -36,14 +38,14 @@ const PlayerScore = (props: PlayerScoreProps) => {
 
 				<div
 					className={`font-['Whitney_Bold'] text-white ${
-						props.flag === "right" ? "right-32 text-right" : "left-32"
+						props.flag === "top" ? "right-32 text-right" : "left-32"
 					}`}
 				>
-					<h3 className="text-sm md:text-lg min-[1750px]:text-3xl">
+					<h3 className="text-sm md:text-xl xl:text-xl min-[1750px]:text-3xl">
 						{props.name}
 					</h3>
 					<span
-						className={`mt-[-5px] block text-xs lg:text-sm min-[1750px]:text-xl`}
+						className={`mt-[-5px] block text-xs md:text-sm lg:text-sm min-[1750px]:text-xl`}
 					>
 						{props.username}
 					</span>
@@ -53,7 +55,7 @@ const PlayerScore = (props: PlayerScoreProps) => {
 			<div
 				className={`${
 					props.startGame ? "visible" : "invisible"
-				} w-24 text-center font-['Whitney_Bold'] text-4xl md:text-5xl min-[1750px]:text-7xl`}
+				} w-[40%] text-center font-['Whitney_Bold'] text-2xl md:text-5xl xl:w-full xl:text-5xl min-[1750px]:text-6xl`}
 			>
 				{props.score}
 			</div>

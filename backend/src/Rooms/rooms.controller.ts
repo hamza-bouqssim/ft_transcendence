@@ -29,6 +29,7 @@ export class RoomsController {
   async createRooms(@Body() data, @Res() res: any , @Req() req) {
     try {
       const {id}=req.user
+      console.log("create room" , id , data.data)
       const chatRoom = await this.roomsService.creatRooms(data.data,id);
       return res.status(201).json({data: chatRoom });
     } catch (error) {
@@ -44,6 +45,7 @@ export class RoomsController {
     try {
       const {id}=req.user
       const update = await this.roomsService.updateRooms(data.data,id);
+      console.log(update);
       return res.status(200).json({data: update });
     } catch (error) {
       return res.status(500).json({ error: error});
@@ -111,6 +113,7 @@ export class RoomsController {
       const friend = await this.roomsService.getAllFreind(id);
       return res.status(200).json({data: friend });
     } catch (error) {
+      console.log(error)
       return res.status(500).json({ error: error});
     }
 
@@ -155,3 +158,5 @@ export class RoomsController {
   }
 
 }
+
+

@@ -29,6 +29,7 @@ class PongGame {
 	private lunchGameInterval: any;
 	private handleKeyDown: any;
 	private handleKeyUp: any;
+	private maxBallSpeed: number = 10;
 	private sound = {
 		topPaddleSound: new Howl({
 			src: ["/assets/sounds/leftPaddle.wav"],
@@ -62,20 +63,6 @@ class PongGame {
 			inertia: Infinity,
 			restitution: 1,
 		});
-		if (this.socket) {
-			socket.on("updateBallVelocity", (data: any) => {
-				
-				Body.setVelocity(this.ball, {
-					x: data.x,
-					y: data.y,
-				});
-			});
-		} else {
-			Body.setVelocity(this.ball, {
-				x: this.currentBallSpeed.x,
-				y: this.currentBallSpeed.y,
-			});
-		}
 
 		// Create Two Paddles:
 		const topRect = Bodies.rectangle(this.divWidth / 2, 0, this.divWidth, 20, {
@@ -155,7 +142,7 @@ class PongGame {
 			this.bottomPaddle,
 			this.rightRect,
 			this.leftRect,
-			bottomRect,
+			// bottomRect,
 			topRect,
 		]);
 
@@ -170,22 +157,59 @@ class PongGame {
 			},
 		});
 		Render.run(render);
+
+		if (this.socket) this.moveOnlineModeBall();
+		else {
+			this.setBotModeBall();
+			this.moveBotPaddle();
+		}
+
+		this.movePaddle();
+
+		//Run Game
+		this.startGame();
+	}
+
+	startGame = (): void => {
 		this.lunchGameInterval = setTimeout(() => {
 			// run the engine
 			Runner.run(Runner.create(), engine);
 		}, 1000);
-	}
+	};
 
-	// setBallSpeed = (): void => {
-	// 	Body.setVelocity(this.ball, {
-	// 		x: (this.currentBallSpeed.x += 0.5),
-	// 		y: (this.currentBallSpeed.y += 0.5),
-	// 	});
+	moveOnlineModeBall = (): void => {
+		this.socket.on("setBallVelocity", (data: any) => {
+			Body.setVelocity(this.ball, {
+				x: data.x,
+				y: data.y,
+			});
+		});
+		this.socket.on("updateBallPosition", (data: any) => {
+			Body.setPosition(this.ball, {
+				x: data.x,
+				y: data.y,
+			});
+		});
+	};
 
-	// 	Events.on(engine, "collisionStart", () => {
+	setBotModeBall = (): void => {
+		Body.setVelocity(this.ball, {
+			x: this.currentBallSpeed.x,
+			y: this.currentBallSpeed.y,
+		});
+	};
 
-	// 	})
-	// };
+	setBallSpeed = (): void => {
+		// Limit the ball's speed
+		if (
+			this.currentBallSpeed.x < this.maxBallSpeed &&
+			this.currentBallSpeed.y < this.maxBallSpeed
+		)
+			Body.setVelocity(this.ball, {
+				x: (this.currentBallSpeed.x += 0.2),
+				y: (this.currentBallSpeed.y += 0.2),
+			});
+	};
 
 	// resetObjsDefaultPosition = (): void => {
 	// 	Matter.Body.setPosition(this.ball, {
@@ -274,106 +298,34 @@ class PongGame {
 		// clearInterval(moveInterval);
 	};
 
-	// movePaddle = (): void => {
-	// 	document.addEventListener("keydown", (e) => {
-	// 		if (e.key === "d" || e.key === "ArrowRight")
-	// 			this.socket.emit("keyevent", {
-	// 				key: e.key,
-	// 				state: "keydown",
-	// 			});
-	// 		else if (e.key === "a" || e.key === "ArrowLeft")
-	// 			this.socket.emit("keyevent", {
-	// 				key: e.key,
-	// 				state: "keydown",
-	// 			});
-	// 	});
-
-	// 	document.addEventListener("keyup", (e) => {
-	// 		if (e.key === "d" || e.key === "ArrowRight")
-	// 			this.socket.emit("keyevent", {
-	// 				key: e.key,
-	// 				state: "keyup",
-	// 			});
-	// 		else if (e.key === "a" || e.key === "ArrowLeft")
-	// 			this.socket.emit("keyevent", {
-	// 				key: e.key,
-	// 				state: "keyup",
-	// 			});
-	// 	});
-	// 	if (this.socket) {
-	// 		this.socket.on("updatePaddlePosition", (data: any) => {
-	// 			Body.setPosition(this.bottomPaddle, {
-	// 				x: data.xPosition,
-	// 				y: this.bottomPaddle.position.y,
-	// 			});
-	// 		});
-	// 	}
-
-	// document.addEventListener("keydown", (e) => {
-	// 	if (e.key === "d" || e.key === "ArrowRight") {
-	// 		this.socket.emit("movePaddle", () => {
-	// 			movingRight: true;
-	// 		});
-	// 	} else if (e.key === "a" || e.key === "ArrowLeft") {
-	// 		movingLeft: true;
-	// 	}
-	// });
-
-	// document.addEventListener("keyup", (e) => {
-	// 	if (e.key === "d" || e.key === "ArrowRight") movingRight = false;
-	// 	else if (e.key === "a" || e.key === "ArrowLeft") movingLeft = false;
-	// });
-
-	// this.moveInterval = setInterval(() => {
-	// 	let stepX;
-
-	// 	if (movingLeft) {
-	// 		stepX = this.bottomPaddle.body.position.x - 11;
-	// 		if (stepX <= this.bottomPaddle.width / 2) {
-	// 			stepX = this.bottomPaddle.width / 2;
-	// 		}
-	// 		Matter.Body.setPosition(this.bottomPaddle.body, {
-	// 			x: stepX,
-	// 			y: this.bottomPaddle.body.position.y,
-	// 		});
-	// 	} else if (movingRight) {
-	// 		stepX = this.bottomPaddle.body.position.x + 11;
-	// 		if (stepX >= this.divWidth - this.bottomPaddle.width / 2) {
-	// 			stepX = this.divWidth - this.bottomPaddle.width / 2;
-	// 		}
-	// 		Matter.Body.setPosition(this.bottomPaddle.body, {
-	// 			x: stepX,
-	// 			y: this.bottomPaddle.body.position.y,
-	// 		});
-	// 	}
-	// }, 10);
-
-	// when a player score a point
-	// clearInterval(moveInterval);
-	// };
-
-	setNewBallVelocity = () => {
-		if (this.currentBallSpeed.x < 16 && this.currentBallSpeed.y < 16)
-			Body.setVelocity(this.ball, {
-				x: (this.currentBallSpeed.x += 0.5),
-				y: (this.currentBallSpeed.y += 0.5),
-			});
-	};
-
 	moveBotPaddle = () => {
 		let currentPositionX;
+
+		// Events.on(engine, "collisionStart", (e) => {
+		// 	const pairs = e.pairs[0];
+		// 	if (pairs.bodyA === this.topPaddle || pairs.bodyB === this.topPaddle) {
+		// 		this.sound.topPaddleSound.play();
+		// 		this.setBallSpeed();
+		// 	} else if (
+		// 		pairs.bodyA === this.bottomPaddle ||
+		// 		pairs.bodyB === this.bottomPaddle
+		// 	) {
+		// 		this.sound.bottomPaddleSound.play();
+		// 		this.setBallSpeed();
+		// 	}
+		// });
 
 		Events.on(engine, "collisionStart", (e) => {
 			const pairs = e.pairs[0];
 			if (pairs.bodyA === this.topPaddle || pairs.bodyB === this.topPaddle) {
 				this.sound.topPaddleSound.play();
-				this.setNewBallVelocity();
+				this.setBallSpeed();
 			} else if (
 				pairs.bodyA === this.bottomPaddle ||
 				pairs.bodyB === this.bottomPaddle
 			) {
 				this.sound.bottomPaddleSound.play();
-				this.setNewBallVelocity();
+				this.setBallSpeed();
 			}
 		});
 

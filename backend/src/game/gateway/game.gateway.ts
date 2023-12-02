@@ -3,10 +3,13 @@ import {
 	SubscribeMessage,
 	WebSocketGateway,
 	WebSocketServer,
+	OnGatewayConnection,
 } from '@nestjs/websockets';
-import { Server } from 'socket.io';
+import { Server ,Socket} from 'socket.io';
 import { OnModuleInit } from '@nestjs/common';
 import { Bodies, Composite, Engine, Runner, Body } from 'matter-js';
+import { GameService } from '../game.service';
+import { AuthenticatedSocket } from "src/utils/interfaces";
 
 const engine = Engine.create({
 	gravity: {
@@ -20,7 +23,7 @@ const engine = Engine.create({
 	credentials : true,
 	namespace: '/game',
 })
-export class GameGateway implements OnModuleInit {
+export class GameGateway implements OnGatewayConnection{
 	@WebSocketServer()
 	server: Server;
 
@@ -33,22 +36,35 @@ export class GameGateway implements OnModuleInit {
 	private movingLeft: boolean = false;
 	private posPaddleX = this.canvasWidth / 2;
 	private paddleW = 170;
+	private playerOneScore: number = 0;
+	private playerTwoScore: number = 0;
 
 	private pong: any;
 
-	constructor() {
+	constructor(private readonly gameservice : GameService) {
 		this.handlePaddleMove();
 		// console.log("cons")
 	}
 
-	onModuleInit() {
-		this.server.on('connection', (socket) => {
-		
-		});
-		this.handleLaunchGame();
-	}
+	// onModuleInit() {
+	// 	this.server.on('connection', (socket : any) => {
+	// 		console.log(socket);
+	// 		console.log('A Pong client connected!');
+	// 	});
+	// 	// this.handleLaunchGame();
+	// }
+	handleConnection(client : Socket ) {
 
-	handleLaunchGame() {
+        // this.sessions.setUserSocket(socket.user.id,socket);
+        // // socket.emit('connected', {status : 'good'});
+        // console.log("the session is");
+        // console.log(this.sessions.getSockets());
+        // if(socket.user.id)
+        //     console.log(socket.user.email ,"is online");
+    
+	}
+	@SubscribeMessage("launchGameRequest")
+	handleLaunchGameRequest() {
 		// Create Ball:
 		this.ball = Bodies.circle(this.canvasWidth / 2, this.canvasHeight / 2, 15, {
 			label: 'ball',
@@ -64,6 +80,7 @@ export class GameGateway implements OnModuleInit {
 			x: 8,
 			y: 8,
 		});
+		this.server.emit("setBallVelocity", this.ball.velocity)
 
 		// Create Two Paddles:
 		this.topPaddle = Bodies.rectangle(this.canvasWidth / 2, 30, 170, 15, {
@@ -150,17 +167,55 @@ export class GameGateway implements OnModuleInit {
 			this.bottomPaddle,
 			rightRect,
 			leftRect,
-			bottomRect,
+			// bottomRect,
 			topRect,
 		]);
 
 		// run the engine:
+		this.server.emit("launchGame", {});
 		Runner.run(Runner.create(), engine);
 
 		const gameInterval = setInterval(() => {
-			let ballVelocity = engine.world.bodies[0].velocity;
-			this.server.emit('updateBallVelocity', ballVelocity);
+			this.server.emit('updateBallPosition', this.ball.position);
+			this.calScore();
 		}, 15);
+	}
+
+	resetToDefaultPosition() {
+		// Reset Ball Position
+		Body.setPosition(this.ball, {
+			x: this.canvasWidth / 2,
+			y: this.canvasHeight / 2
+		})
+
+		//Reset Paddles Position
+		Body.setPosition(this.bottomPaddle, {
+			x: this.canvasWidth / 2,
+			y: this.canvasHeight - 30,
+		})
+	}
+
+	calScore() {
+		if (this.ball.position.y + this.ball.circleRadius >= this.canvasHeight - 8)
+		{
+			this.playerOneScore++;
+			this.server.emit("updateScore",
+				{
+					playerOneScore: this.playerOneScore,
+					playerTwoScore: this.playerTwoScore
+				}
+			)
+			this.resetToDefaultPosition();
+		}
+	}
+
+	@SubscribeMessage("join-game")
+	handleJoinGame(@MessageBody() data : any)
+	{
+		this.server.emit("join-queue", {
+			content: data.socketId
+		})
+		this.gameservice.joinQueue(data.socketId);
 	}
 
 	@SubscribeMessage('keyevent')
@@ -196,6 +251,10 @@ export class GameGateway implements OnModuleInit {
 			}
 			if (stepX != 0) {
 				this.posPaddleX = stepX;
+				Body.setPosition(this.bottomPaddle, {
+					x: stepX,
+					y: this.bottomPaddle.position.y
+				})
 				this.server.emit('updatePaddlePosition', {
 					paddleLabel: 'bottomPaddle',
 					xPosition: stepX,
@@ -204,32 +263,4 @@ export class GameGateway implements OnModuleInit {
 		}, 20);
 	}
 
-	// handlePaddleMove() {
-	// 	const moveInterval = setInterval(() => {
-	// 		let stepX = 0;
-	// 		const paddleWidth = 170;
-
-	// 		if (this.movingLeft) {
-	// 			stepX = this.bottomPaddle.position.x - 11;
-	// 			if (stepX <= paddleWidth / 2) {
-	// 				stepX = paddleWidth / 2;
-	// 			}
-	// 		} else if (this.movingRight) {
-	// 			stepX = this.bottomPaddle.position.x + 11;
-	// 			if (stepX >= this.canvasWidth - paddleWidth / 2) {
-	// 				stepX = this.canvasHeight - paddleWidth / 2;
-	// 			}
-	// 		}
-	// 		if (stepX != 0) {
-	// 			Body.setPosition(this.bottomPaddle, {
-	// 				x: stepX,
-	// 				y: this.bottomPaddle.position.y,
-	// 			});
-	// 			this.server.emit('updatePaddlePosition', {
-	// 				paddleLabel: 'bottomPaddle',
-	// 				xPosition: stepX,
-	// 			});
-	// 		}
-	// 	}, 20);
-	// }
 }

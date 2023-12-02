@@ -28,6 +28,5 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy)
         }
         return user;
     }
-   
       
 }

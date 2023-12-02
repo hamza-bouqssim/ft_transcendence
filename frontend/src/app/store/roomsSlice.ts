@@ -63,6 +63,7 @@ const roomSlice = createSlice({
       .addCase(getAllRooms.fulfilled, (state:any, action: PayloadAction<Room[]>) => {
         state.status = 'succeeded';
         state.rooms = action.payload.data;
+        console.log(state.rooms)
       })
       .addCase(getAllRooms.rejected, (state:any, action: PayloadAction<string>) => {
         state.status = 'failed';
@@ -74,6 +75,7 @@ const roomSlice = createSlice({
       })
       .addCase(updateRooms.fulfilled, (state:any, action: PayloadAction<Room>) => {
         const updateData = action.payload.data
+        console.log(updateData)
         const index = state.rooms.findIndex((room: Room) => room.id === updateData.id);
         if (index !== -1) {
           state.rooms[index] = action.payload.data;

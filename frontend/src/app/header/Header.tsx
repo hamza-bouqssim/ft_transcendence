@@ -23,7 +23,7 @@ const Header = () => {
             getAuthUser().then(({data}) => {
                 setUser(data);
                 setLoading(false)})
-            .catch((err)=> { setLoading(false);});
+            .catch((err)=> {console.log(err); setLoading(false);});
     },[])
 	const navRef = useRef<HTMLDivElement>(null),
 		barsIconRef = useRef<HTMLDivElement>(null),
@@ -48,6 +48,7 @@ const Header = () => {
 	};
 	const router = useRouter();
 	const logoutFunction =  async () =>{
+		console.log("this one")
 		try {
 			await getlogout();
 			let data;
@@ -56,6 +57,7 @@ const Header = () => {
 			router.push("/", { scroll: false });
 		} catch (err) {
 			alert("failed to logout");
+			console.log(err);
 		}
 	}
 

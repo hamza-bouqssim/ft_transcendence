@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import {  User } from '@prisma/client';
@@ -50,11 +49,11 @@ export class ConversationsService  {
         );
     }
 
-    async find(user : User){
+    async find(user : any){
       return this.findParticipentChat(user);
     }
 
-    async findParticipent(_display_name : string, user : User)
+    async findParticipent(_display_name : string, user : any)
     {
         // const chatroom = this.prisma.chatRoom.findUnique()
         const chat = await this.prisma.chatParticipents.findFirst({
@@ -69,7 +68,7 @@ export class ConversationsService  {
     }
  
 
-    async CreateParticipent(_display_name : string, user : User)
+    async CreateParticipent(_display_name : string, user : any)
     {
       const newParticipent = await this.prisma.chatParticipents.create({
         data: {
@@ -87,7 +86,7 @@ export class ConversationsService  {
  
 
 
-  async  findParticipentChat(user :User) {
+  async  findParticipentChat(user :any) {
     const chatParticipents = await this.prisma.chatParticipents.findMany({
       where: {
         OR: [
@@ -112,67 +111,37 @@ export class ConversationsService  {
 }
 
 
-async createMessags(user : User, params: CreateMessageParams) {
-    let recipientUser;
-    let senderUser;
-  const chat = await this.prisma.chatParticipents.findUnique({
+async createMessags(user : any, params: CreateMessageParams) {
+   
+    const chat = await this.prisma.chatParticipents.findUnique({
         where: {
           id: params.participentsId,
         },
-        include: {
-            sender: true,
-            recipient: true,
-          }
       });
-      if(!chat)
+    if(!chat)
         throw new HttpException('Conversation not found', HttpStatus.BAD_REQUEST)
-    if((chat.sender.id !== user.id) && (chat.recipient.id !== user.id))
+
+    
+    if((chat.senderId !== user.sub) && (chat.recipientId !== user.sub))
     {
         throw new HttpException('Cannot create message in this conversation', HttpStatus.BAD_REQUEST)
     }
-  
-  
 
-    if(user.id === chat.recipient.id)
-    {
-
-        const newChat = await  this.prisma.chatParticipents.update({
-          where: { id: chat.id},
-          data: { senderId: user.id, recipientId: chat.sender.id },
-        });
-        console.log(newChat);
-    }
-    if(chat.sender.id === user.id)
-    {
-        senderUser = user;
-        recipientUser = chat.recipient;
-    }else if (chat.sender.id !== user.id)
-    {
-      senderUser = user;
-      recipientUser = chat.sender;
-    }
-
-    const content = params.content;
     const messageCreate = await this.prisma.message.create({
       data: {
-        content,
+        content:params.content,
         sender: {
-          connect: { id: senderUser.id }, // Replace with the actual sender's user ID
-        },
-        recipient: {
-          connect: { id: recipientUser.id }, // Replace with the actual recipient's user ID
+          connect: { id: user.sub },
         },
         participents: {
-          connect: { id: chat.id }, // Replace with the actual ChatParticipents ID
-        },
-        
-        
-       
+          connect: { id: chat.id }, 
+        },     
       },
       include: {
         sender: true,
-        recipient: true,
+       
       },
+      
     });
 
     await this.prisma.chatParticipents.update({
@@ -180,14 +149,11 @@ async createMessags(user : User, params: CreateMessageParams) {
       data: {
         lastMessageId: messageCreate.id,
       },
-    });
-
-
-   
+    });   
     return messageCreate;
   }
 
-async findConversationUsers(user : User, _display_name : string)
+async findConversationUsers(user : any, _display_name : string)
 {
   const chat = await this.prisma.chatParticipents.findFirst({
     where: {
@@ -207,7 +173,6 @@ async getMessageByConversationId(conversationId : string){
       messages: {
         include: {
           sender: true,
-          recipient: true,
         },
         orderBy: {
           createdAt: 'desc',
@@ -235,6 +200,3 @@ async getMessageByConversationId(conversationId : string){
 }
 
   
-
-
-

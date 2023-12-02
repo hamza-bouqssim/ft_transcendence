@@ -1,113 +1,79 @@
-import {AvatarStyle, MessageContainerStyle, MessageItemAvatar, MessageItemContainer, MessageItemContent, MessageItemDetails, MessageItemHeader} from "@/app/utils/styles"
-import { ConversationTypes, User, messageTypes } from "@/app/utils/types";
-import { FC, useEffect, useState } from "react";
+import {MessageContainerStyle, MessageItemAvatar, MessageItemContainer, MessageItemContent, MessageItemDetails, MessageItemHeader} from "@/app/utils/styles"
+import { User, messageTypes } from "@/app/utils/types";
+import { FC, useEffect, useState,useContext } from "react";
 import {formatRelative} from 'date-fns'
 import { getAuthUser } from "@/app/utils/api";
-import Image from "next/image";
-import { fetchConversationThunk } from "@/app/store/conversationSlice";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/app/store";
-import { useParams } from "next/navigation";
-
-type Props  = {
-    messages : messageTypes[];
-}
-const MessageContainer  : FC<Props>  = ({messages}) => {
-    const [ user, setUser] = useState<User | undefined>();
+import MessageInputField from "./MessageInputField";
+import {socketContext } from "@/app/utils/context/socketContext";
+import {getConversationMessage} from '@/app/utils/api'
+import Image from  'next/image'
+import { socket } from "@/app/dashboard/game/SocketContext";
+const MessageContainer = () => {
     const [loading, setLoading] = useState<boolean>(false);
-    const [conversation, setConversation] = useState<ConversationTypes[]>([]);
-
+    const [Message,setMessage] = useState<messageTypes[]>([]);
     const controller = new AbortController();
+    const [user,setUser] = useState(null)
+    const { channel } = useContext(socketContext);
     useEffect(() => {
-            setLoading(true);
             getAuthUser().then(({data}) => {  
                 setUser(data);
-                setLoading(false)})
-            .catch((err)=> { setLoading(false);});
-    }, [])
-	const dispatch = useDispatch<AppDispatch>();
+                })
+            .catch((err)=> {console.log(err);});
+    }, [channel.id])
+    // const sendMessage = async (e : React.FormEvent<HTMLFormElement>) => {
+    //     e.preventDefault();
+    //     if(!id || !content)
+    //         return ;
+    //     const participentsId = id;
+    //     console.log(participentsId);
+    //     try{
+    //         await postNewMessage({participentsId, content});
+    //         setContent('');
+    //     }catch(err){
+    //         alert("error");
+    //         console.log(err);
+    //     }
+    // };
 
-    useEffect (() => {
-        dispatch(fetchConversationThunk())
-        .unwrap()
-        .then(({data}) => {
-          setConversation(data);
-        }).catch((err)=>{
-          console.log(err);
-        }
-        );
-      },[conversation])
+    useEffect(() => {
+        const id = channel.id;
+        console.log(id)
+        getConversationMessage(id)
+          .then(( data :any) => {
+            setMessage(data.data);
+            console.log("sdfdsfsdfsd",data.data)
+          })
+          .catch((err:any) => console.log(err));
+      }, [channel.id]);
+    
+
       
-      const {id} = useParams();
-      const selectedConversation = conversation.find((conv) => conv.id === id);
-      console.log("conversation here-->", selectedConversation);
-      const recipientUser = selectedConversation?.recipient;
-
-    const functionSearchUsers = () =>{
-
-
-    }  
-
-    // const functionHandleDisplay_name = () =>{
-    //     let test;
-    //         messages.map((elem)=>{
-    //             test = elem.recipient.display_name;
-
-    //         })
-    //         return test;
-    // }
-
-    const functionHandleAvatarUrl = () =>{
-        let test;
-            messages?.map((elem)=>{
-                test = elem.recipient.avatar_url;
-
-            })
-            return test;
-
-
-    }
-    const functionHandleUserName = () =>{
-        let test;
-            messages?.map((elem)=>{
-                test = elem.recipient.username;
-
-            })
-            return test;
-    }
-
+    console.log(Message)
     return (
-        
-    <div className="h-[calc(100%-121px)] overflow-auto py-3">
-        <div className="flex items-center justify-between p-5 rounded-full text-black  bg-[#F2F3FD]">
-            <div className="flex items-center">
-            <Image src={recipientUser?.avatar_url} className="h-14 w-14 rounded-[50%] bg-black " alt="Description of the image" width={60}   height={60} />
 
-                    <h1 className="ml-2">{recipientUser?.username}  {recipientUser?.display_name}</h1>
-            </div>
-        </div>
-        <MessageContainerStyle>
-        
-         {messages && messages.map((m) =>(
-            <MessageItemContainer key={m.id}>
-                <Image src={m.sender.avatar_url} className="h-10 w-10 rounded-[50%] bg-black " alt="Description of the image" width={60}   height={60} />
+        <>
+        <div className="h-[calc(100%-135px)]   overflow-auto py-3">
+             {Message && Message?.map((m:messageTypes) =>(
+                <MessageItemContainer key={m.id}>
+                    <img src={m.sender?.avatar_url} className="h-10 w-10 rounded-[50%] bg-black " alt="Description of the image" width={60}   height={60} />
                         <MessageItemDetails>
                             <MessageItemHeader key={m.id}>
-                            <span className="senderName" style={{color : user?.id === m.sender.id ? '#8982a6' : '#778ba5'}}>
-                                {m.sender.username}
-                            </span>
-                            <span className="time">
-                                {formatRelative(new Date(m.createdAt), new Date())}
-                            </span>
+                                <span className="senderName" style={{color : user?.id === m.sender.id ? '#8982a6' : '#778ba5'}}>
+                                    {m.sender?.username}
+                                </span>
+                                <span className="time">
+                                    {formatRelative(new Date(m.createdAt), new Date())}
+                                </span>
                             </MessageItemHeader>
-                            <MessageItemContent>{m.content}</MessageItemContent>
-                        </MessageItemDetails>
-
-            </MessageItemContainer>
-         ) )}
-         </MessageContainerStyle>
-    </div>
+                        <MessageItemContent>{m.content}</MessageItemContent>
+                    </MessageItemDetails>
+                </MessageItemContainer> 
+            ))}
+             
+        </div>
+            <MessageInputField Message={Message} setMessage={setMessage} />
+        </>
     )
 }
 
-export default MessageContainer;
+export default MessageContainer; 

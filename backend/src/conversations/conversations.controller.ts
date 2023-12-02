@@ -4,17 +4,18 @@ import { ConversationsService } from './conversations.service';
 import { UserService } from 'src/user/user.service';
 import { Request } from 'src/user/interfaces/request.interface';
 import { whichWithAuthenticated } from 'src/user/utils/auth-utils';
-import { PrismaService } from 'prisma/prisma.service';
-
-import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
+import { PrismaService } from 'prisma/prisma.service';
+import { AuthGuard } from '@nestjs/passport';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { createMessageDto } from './dtos/CreateMessage.dto';
 
 
 
 @Controller('chat')
 @UseGuards(AuthGuard('jwt'))
 export class ConversationsController {
-constructor(private  conversationService : ConversationsService , private eventEmitter : EventEmitter2,  private userService : UserService, private jwtservice : JwtService, private prisma : PrismaService )
+constructor(private  conversationService : ConversationsService ,)
 {}
 
 
@@ -22,7 +23,7 @@ constructor(private  conversationService : ConversationsService , private eventE
 @Post('conversation')
  async CreateConversations(@Body() request: {display_name : string}, @Req() req, @Res() res){
     try {
-        const user = req.user
+        const user =req.user
         const returnValue = await this.conversationService.createConversations(user,  request.display_name);
         return res.status(200).json({ success: true, response: returnValue });
     } catch (err) {
@@ -32,19 +33,16 @@ constructor(private  conversationService : ConversationsService , private eventE
 
 }
 
-
-
 @Get('findconversation')
 async  findConversation(@Req() req: Request){
-    const user =  req.user
-    console.log("findconversation")
+    const user = req.user
     const find = await this.conversationService.find(user);
     return find;
 }
 
 @Post('findConversationUser')
 async findConversationUser(@Body() request: {display_name : string}, @Req() req: Request){
-    const user =  await whichWithAuthenticated(req, this.jwtservice, this.prisma);
+    const user = req.user
     const find = await this.conversationService.findConversationUsers(user, request.display_name);
     return find;
 
@@ -52,18 +50,18 @@ async findConversationUser(@Body() request: {display_name : string}, @Req() req:
 @Get(':id')
 async getconversationById(@Param('id') id: string){
     // return this.conversationService.find();
-    console.log(":id")
     const conversation = await this.conversationService.findConversationById(id);
+    console.log(conversation)
     return conversation;
 }
-@Post('create_messages')
-async createConversation(@Req() req: Request , @Body() dto : createMessageDto)
-{    
-    const user = await whichWithAuthenticated(req, this.jwtservice, this.prisma);
-    const messages = await this.conversationService.createMessags(user, dto);
-    return this.eventEmitter.emit('message.create', messages);
+// @Post('create_messages')
+// async createConversation(@Req() req: Request , @Body() dto : createMessageDto)
+// {    
+//     const user =req.user
+//     const messages = await this.conversationService.createMessags(user, dto);
+//     return this.eventEmitter.emit('message.create', messages);
     
-}
+// }
 
 @Get('messages/:conversationId')
 async getMessagesFromConversatin(@Param('conversationId') conversationId : string){

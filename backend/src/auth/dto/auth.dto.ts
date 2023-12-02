@@ -2,11 +2,9 @@
 import { IsNotEmpty, IsString } from "class-validator";
 
 export class AuthDto{
-   
-
     @IsString()
     @IsNotEmpty()
-    display_name: string;
+    username: string;
 
     @IsString()
     @IsNotEmpty()
@@ -14,8 +12,7 @@ export class AuthDto{
 
     
     @IsString()
-    @IsNotEmpty()
-    username?: string;
+    display_name?: string;
 
     @IsString()
     password?: string;

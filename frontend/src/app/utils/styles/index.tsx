@@ -13,7 +13,7 @@ export const InputField = styled.input`
 
 `;
 export const InputFieldStyling = styled.input`
-    /* background-color: #F2F3FD; */
+    background-color: #F2F3FD;
     border: none;
     color : #151515;
     font-family: 'Inter';
@@ -39,29 +39,8 @@ export const Body = styled.body`
     overflow-x: hidden;
 `;
 
-
-export const SearchResultStyling = styled.div`
-    padding : 10px;
-    background-color: #151515;
-`
-
-export const containerStylingName = styled.div`
-    font-size: 10px;
-    font-weight: bold;
-    display: grid;
-`
-
 export const InputContainer = styled.div<InputContainerProps>`
     display: flex;
-    background-color: ${(prop) => prop.backgroundColor || '#1e1b34'};
-    padding: 12px 16px;
-    border-radius: 10px;
-    width: 100%;
-    box-sizing: border-box;
-
-`;
-
-export const InputContainerSearching = styled.div<InputContainerProps>`
     background-color: ${(prop) => prop.backgroundColor || '#1e1b34'};
     padding: 12px 16px;
     border-radius: 10px;
@@ -233,15 +212,6 @@ export const OnlineStyling = styled.div`
     margin-left: -1rem;
 `;
 
-export const OflineStyling = styled.div`
-
-    background-color: red;
-    border-radius: 50%;
-    width : 12px;
-    height : 12px;
-    margin-left: -1rem;
-`;
-
 export const ConversationSideBarItem = styled.div `
 
 
@@ -261,12 +231,6 @@ export const ModalContentBodyStyle = styled.div `
 
 
 `;
-export const ModalContentBodySearchingStyle = styled.div `
-
-        padding: 18px;
-
-
-`;
 
 export const OverlayStyle = styled.div `
 
@@ -278,20 +242,6 @@ export const OverlayStyle = styled.div `
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 99;
-
-`;
-
-export const OverlayStyleSearching = styled.div `
-
-    height: 800px;
-    width: 800px;
-    margin-left : 300px;
-    background-color : #0000008a;
-    position: fixed;
-    display: flex;
-    /* justify-content: center;
-    align-items: center; */
     z-index: 99;
 
 `;
@@ -313,34 +263,10 @@ export const ModalHeadersStyle = styled.header`
     }
 `;
 
-
-export const ModalHeadersSearchingStyle = styled.header`
-    width: 100%;
-    background-color:#5B8CD3;
-    padding: 10px 18px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    & h2 {
-        font-weight:300;
-        margin: 0;
-        margin-top:3px; 
-        
-    }
-`;
-
 export const ModalContainerStyle = styled.div `
 
     background-color: #0000008a;
     width: 300px;
-    box-sizing: border-box;
-    border-radius: 40px;
-`;
-
-export const ModalContainerSearchingStyle = styled.div `
-
-    background-color: #0000008a;
-    width: 800px;
     box-sizing: border-box;
     border-radius: 40px;
 `;

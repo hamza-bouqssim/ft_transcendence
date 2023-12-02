@@ -1,5 +1,5 @@
 import axios, { Axios, AxiosRequestConfig } from 'axios'
-import { ConversationTypes, CreateConversationParams, CreateRequestParams,CreateMessageParams, FetchMessagePayload, User, UserCredentialsParams, createUserParams } from './types';
+import { AcceptRequestParams, ConversationTypes, CreateConversationParams, CreateMessageParams, CreateRequestParams, FetchMessagePayload, User, UserCredentialsParams, createUserParams } from './types';
 
 const API = axios.create({
     baseURL: "http://localhost:8000/",
@@ -38,26 +38,6 @@ export const getRequest = () => axios.get(`http://localhost:8000/user/pending-re
 
 export const getBloques = () => axios.get(`http://localhost:8000/user/blocked-friends`, config);
 
-
-export const createRoomsApi = (data:any) =>{
-    const response = API.post("/rooms/createRooms",{data})
-    return response;  
-}
-  
-export const updateRoomsApi = (data:any) =>{
-    const response = API.post("/rooms/updateRooms",{data})
-    return response;  
-}
-  
-export const deleteRoomsApi = (id:string) =>{
-    const response = API.post("/rooms/deleteRooms",{id})
-    return response;  
-}
-  
-export const getAllRoomsApi = () =>{
-    const response = API.get("/rooms/getAllRooms")
-    return response;  
-}
 export const DebloqueUser = async (id : string) => axios.post(`http://localhost:8000/friend-request/unblock-friend`, {friendIdToUnblock : id}, config);
 
 export const bloqueFriend = async (id : string) => axios.post(`http://localhost:8000/friend-request/block-friend`, {friendIdToBlock : id}, config);
@@ -84,3 +64,26 @@ export const searchingBar = async (display_name : string) => axios.post(`http://
 
 
 export const findConversationUsers = async ( display_name : string) => axios.post(`http://localhost:8000/chat/findConversationUser`, {display_name : display_name}, config);
+
+
+export const createRoomsApi = (data:any) =>{
+    const response = API.post("/rooms/createRooms",{data})
+    return response;  
+}
+  
+export const updateRoomsApi = (data:any) =>{
+    const response = API.post("/rooms/updateRooms",{data})
+    return response;  
+}
+  
+export const deleteRoomsApi = (id:string) =>{
+    const response = API.post("/rooms/deleteRooms",{id})
+    return response;  
+}
+  
+export const getAllRoomsApi = () =>{
+    const response = API.get("/rooms/getAllRooms")
+    return response;  
+}
+
+

@@ -25,6 +25,7 @@ const CreatGroups: React.FC<CreateGroupsProps> = ({ setNewRooms }) => {
   const { updateChannel,channel} = useContext(socketContext);
   const [idUserAdd,setIdUserAdd] = useState([]);
 
+  console.log(idUserAdd)
   const handleCreateGroup = () => {
         if ((groupPrivacy === "Protected" &&  !groupPassword)) {
           // Handle the case where both groupName and groupPassword are required for Protected groups
@@ -54,7 +55,7 @@ const CreatGroups: React.FC<CreateGroupsProps> = ({ setNewRooms }) => {
            setNewRooms(false)
           }).catch(error => {
             console.error('Error creating room:', error);
-          });
+          });       
   };
 
     return (
