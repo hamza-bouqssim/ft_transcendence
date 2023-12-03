@@ -8,7 +8,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { OnModuleInit } from '@nestjs/common';
-import { Bodies, Composite, Engine, Runner, Body } from 'matter-js';
+import { Bodies, Composite, Engine, Runner, Body, World } from 'matter-js';
 import { GameService } from '../game.service';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'prisma/prisma.service';
@@ -22,6 +22,8 @@ const engine = Engine.create({
 	},
 });
 
+const runner: any = Runner.create();
+
 @WebSocketGateway({
 	origin: ['http://localhost:3000'],
 	credentials: true,
@@ -32,19 +34,43 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@WebSocketServer()
 	server: Server;
 
-	private canvasWidth: number = 560;
-	private canvasHeight: number = 836;
+	// private canvasWidth: number = 560;
+	// private canvasHeight: number = 836;
+	private defaultCanvasSizes: any = {
+		width: 560,
+		height: 836,
+	};
+	private currentCanvasSizes: any = {
+		width: this.defaultCanvasSizes.width,
+		height: this.defaultCanvasSizes.height,
+	};
+	private paddleSizes: any = {
+		width: 170,
+		height: 15,
+	};
+	private currentBallSpeed: any = {
+		x: 4,
+		y: 4,
+	};
+	private map = (
+		inputSize: number,
+		defaultCanvasSize: number,
+		currentCanvasSize: number,
+	): number => {
+		return (inputSize * currentCanvasSize) / defaultCanvasSize;
+	};
 	private ball: any;
 	private topPaddle: any;
 	private bottomPaddle: any;
+	private rightRect: any;
+	private leftRect: any;
 	private movingRight: boolean = false;
 	private movingLeft: boolean = false;
-	private posPaddleX = this.canvasWidth / 2;
-	private paddleW = 170;
+	private posPaddleX = this.defaultCanvasSizes.width / 2;
 	private playerOneScore: number = 0;
 	private playerTwoScore: number = 0;
 	private updateBallPosition: any;
-	private moveInterval: any;
+	private movePaddleInterval: any;
 	private userId: string;
 	private mapIndex: number;
 	private queueStartGame: {
@@ -115,16 +141,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	// 	return tokenQueryParam || tokenHeader || token;
 	// }
 
-	async handleConnection(socket : AuthenticatedSocket, ...args: any[]) {
-        console.log("new Incoming connection");
-        console.log(socket.user);
-        if(socket.user)
-        {
-            const newStatus = await this.prisma.user.update({
-                where: { id: socket.user.id},
-                data: { status: "ingame"},
-            });
-        }
+	async handleConnection(socket: AuthenticatedSocket, ...args: any[]) {
+		console.log('new Incoming connection');
+		console.log(socket.user);
+		if (socket.user) {
+			const newStatus = await this.prisma.user.update({
+				where: { id: socket.user.id },
+				data: { status: 'ingame' },
+			});
+		}
 		const userId = socket.user.id;
 		if (this.queueInGame.length > 0) {
 			const findGame = this.getInGameQueue(userId);
@@ -140,18 +165,17 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		}
 		console.log('waitting', this.queueStartGame);
 		console.log('ingame', this.queueInGame);
-    }
-	
-	async handleDisconnect(socket: AuthenticatedSocket) {
-        console.log("Connection closed");
-        console.log(socket.user);
-        if (socket.user) {
-            const newStatus = await this.prisma.user.update({
-                where: { id: socket.user.id},
-                data: { status: "online"},
+	}
 
-            });
-        }
+	async handleDisconnect(socket: AuthenticatedSocket) {
+		console.log('Connection closed');
+		console.log(socket.user);
+		if (socket.user) {
+			const newStatus = await this.prisma.user.update({
+				where: { id: socket.user.id },
+				data: { status: 'online' },
+			});
+		}
 		const userId = socket.user.id;
 		const queue = this.getStratQueue(userId);
 		if (queue) {
@@ -181,7 +205,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			console.log('queueInGame d', this.queueInGame);
 			console.log('queueStartGame d', this.queueStartGame);
 		}
-    }
+	}
 
 	// async handleConnection(client: any) {
 	// 	// const user = whichWithAuthenticated(req)
@@ -373,8 +397,40 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	// End Queue---------------------------------------
 
 	@SubscribeMessage('launchGameRequest')
-	handleLaunchGameRequest(@MessageBody() chosenMapIndex: number) {
-		this.mapIndex = chosenMapIndex;
+	handleLaunchGameRequest(@MessageBody() gameData: any) {
+		this.mapIndex = gameData.chosenMapIndex;
+
+		// Update Canvas. Paddles && ball Size With New Mapped Values:
+		this.currentCanvasSizes = {
+			width: gameData.canvasSizes.width,
+			height: gameData.canvasSizes.height,
+		};
+
+		this.paddleSizes = {
+			width: this.map(
+				this.paddleSizes.width,
+				this.defaultCanvasSizes.width,
+				this.currentCanvasSizes.width,
+			),
+			height: this.map(
+				this.paddleSizes.height,
+				this.defaultCanvasSizes.height,
+				this.currentCanvasSizes.height,
+			),
+		};
+
+		this.currentBallSpeed = {
+			x: this.map(
+				this.currentBallSpeed.x,
+				this.defaultCanvasSizes.width,
+				this.currentCanvasSizes.width,
+			),
+			y: this.map(
+				this.currentBallSpeed.y,
+				this.defaultCanvasSizes.height,
+				this.currentCanvasSizes.height,
+			),
+		};
 
 		console.log('map Index:', this.mapIndex);
 
@@ -397,79 +453,108 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	handleDefaultGameMap() {
 		// Create Ball:
-		this.ball = Bodies.circle(this.canvasWidth / 2, this.canvasHeight / 2, 15, {
-			label: 'ball',
-			render: {
-				fillStyle: '#FFF',
+		this.ball = Bodies.circle(
+			this.currentCanvasSizes.width / 2,
+			this.currentCanvasSizes.height / 2,
+			this.map(
+				15,
+				this.defaultCanvasSizes.width,
+				this.currentCanvasSizes.width,
+			),
+			{
+				label: 'ball',
+				render: {
+					fillStyle: '#FFF',
+				},
+				frictionAir: 0,
+				friction: 0,
+				inertia: Infinity,
+				restitution: 1,
 			},
-			frictionAir: 0,
-			friction: 0,
-			inertia: Infinity,
-			restitution: 1,
-		});
+		);
 
 		Body.setVelocity(this.ball, {
-			x: 4,
-			y: 4,
+			x: this.currentBallSpeed.x,
+			y: this.currentBallSpeed.y,
 		});
 		this.server.emit('setBallVelocity', this.ball.velocity);
 
 		// Create Two Paddles:
-		this.topPaddle = Bodies.rectangle(this.canvasWidth / 2, 30, 170, 15, {
-			label: 'topPaddle',
-			render: {
-				fillStyle: '#4FD6FF',
+		this.topPaddle = Bodies.rectangle(
+			this.currentCanvasSizes.width / 2,
+			this.map(
+				30,
+				this.defaultCanvasSizes.height,
+				this.currentCanvasSizes.height,
+			),
+			this.paddleSizes.width,
+			this.paddleSizes.height,
+			{
+				label: 'topPaddle',
+				render: {
+					fillStyle: '#4FD6FF',
+				},
+				isStatic: true,
+				// chamfer: { radius: 10 },
 			},
-			isStatic: true,
-			chamfer: { radius: 10 },
-		});
+		);
+
 		this.bottomPaddle = Bodies.rectangle(
-			this.canvasWidth / 2,
-			this.canvasHeight - 30,
-			170,
-			15,
+			this.currentCanvasSizes.width / 2,
+			this.currentCanvasSizes.height -
+				this.map(
+					30,
+					this.defaultCanvasSizes.height,
+					this.currentCanvasSizes.height,
+				),
+			this.paddleSizes.width,
+			this.paddleSizes.height,
 			{
 				label: 'bottomPaddle',
 				render: {
 					fillStyle: '#FF5269',
 				},
 				isStatic: true,
-				chamfer: { radius: 10 },
+				// chamfer: { radius: 10 },
 			},
 		);
+
+		// const topRect = Bodies.rectangle(
+		// 	this.canvasWidth / 2,
+		// 	0,
+		// 	this.canvasWidth,
+		// 	20,
+		// 	{
+		// 		render: {
+		// 			fillStyle: 'red',
+		// 		},
+		// 		isStatic: true,
+		// 	},
+		// );
+
+		// const bottomRect = Bodies.rectangle(
+		// 	this.canvasWidth / 2,
+		// 	this.canvasHeight,
+		// 	this.canvasWidth,
+		// 	20,
+		// 	{
+		// 		render: {
+		// 			fillStyle: 'yellow',
+		// 		},
+		// 		isStatic: true,
+		// 	},
+		// );
 
 		// Create Two Boundies:
-		const topRect = Bodies.rectangle(
-			this.canvasWidth / 2,
-			0,
-			this.canvasWidth,
-			20,
-			{
-				render: {
-					fillStyle: 'red',
-				},
-				isStatic: true,
-			},
-		);
-
-		const bottomRect = Bodies.rectangle(
-			this.canvasWidth / 2,
-			this.canvasHeight,
-			this.canvasWidth,
-			20,
-			{
-				render: {
-					fillStyle: 'yellow',
-				},
-				isStatic: true,
-			},
-		);
-
-		const rightRect = Bodies.rectangle(
-			this.canvasWidth,
-			this.canvasHeight / 2,
-			20,
-			this.canvasHeight,
+		this.rightRect = Bodies.rectangle(
+			this.currentCanvasSizes.width,
+			this.currentCanvasSizes.height / 2,
+			this.map(
+				20,
+				this.defaultCanvasSizes.width,
+				this.currentCanvasSizes.width,
+			),
+			this.currentCanvasSizes.height,
 			{
 				label: 'rightRect',
 				render: {
@@ -479,11 +564,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			},
 		);
 
-		const leftRect = Bodies.rectangle(
+		this.leftRect = Bodies.rectangle(
 			0,
-			this.canvasHeight / 2,
-			20,
-			this.canvasHeight,
+			this.currentCanvasSizes.height / 2,
+			this.map(
+				20,
+				this.defaultCanvasSizes.width,
+				this.currentCanvasSizes.width,
+			),
+			this.currentCanvasSizes.height,
 			{
 				label: 'leftRect',
 				render: {
@@ -493,22 +582,57 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			},
 		);
 
+		const separator = Bodies.rectangle(
+			this.currentCanvasSizes.width / 2,
+			this.currentCanvasSizes.height / 2,
+			this.currentCanvasSizes.width,
+			this.map(
+				8,
+				this.defaultCanvasSizes.height,
+				this.currentCanvasSizes.height,
+			),
+			{
+				isSensor: true,
+				render: {
+					fillStyle: '#CFF4FF',
+				},
+			},
+		);
+
+		const centerCirle = Bodies.circle(
+			this.currentCanvasSizes.width / 2,
+			this.currentCanvasSizes.height / 2,
+			this.map(8, this.defaultCanvasSizes.width, this.currentCanvasSizes.width),
+			{
+				isSensor: true,
+				render: {
+					fillStyle: '#CFF4FF',
+				},
+			},
+		);
+
 		Composite.add(engine.world, [
-			this.ball,
 			this.topPaddle,
 			this.bottomPaddle,
-			rightRect,
-			leftRect,
+			separator,
+			centerCirle,
+			this.ball,
+			this.rightRect,
+			this.leftRect,
 			// bottomRect,
-			topRect,
+			// topRect,
 		]);
 	}
 
 	handleGameCircleObstacles() {
 		const topLeftObstacle = Bodies.circle(
-			this.canvasWidth / 4,
-			this.canvasHeight / 4,
-			50,
+			this.currentCanvasSizes.width / 4,
+			this.currentCanvasSizes.height / 4,
+			this.map(
+				50,
+				this.defaultCanvasSizes.width,
+				this.currentCanvasSizes.width,
+			),
 			{
 				isStatic: true,
 				render: {
@@ -518,9 +642,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		);
 
 		const topRightObstacle = Bodies.circle(
-			(3 * this.canvasWidth) / 4,
-			this.canvasHeight / 4,
-			40,
+			(3 * this.currentCanvasSizes.width) / 4,
+			this.currentCanvasSizes.height / 4,
+			this.map(
+				40,
+				this.defaultCanvasSizes.width,
+				this.currentCanvasSizes.width,
+			),
 			{
 				isStatic: true,
 				render: {
@@ -530,9 +658,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		);
 
 		const bottomRightObstacle = Bodies.circle(
-			(3 * this.canvasWidth) / 4,
-			(3 * this.canvasHeight) / 4,
-			50,
+			(3 * this.currentCanvasSizes.width) / 4,
+			(3 * this.currentCanvasSizes.height) / 4,
+			this.map(
+				50,
+				this.defaultCanvasSizes.width,
+				this.currentCanvasSizes.width,
+			),
 			{
 				isStatic: true,
 				render: {
@@ -542,9 +674,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		);
 
 		const bottomLeftObstacle = Bodies.circle(
-			this.canvasWidth / 4,
-			(3 * this.canvasHeight) / 4,
-			40,
+			this.currentCanvasSizes.width / 4,
+			(3 * this.currentCanvasSizes.height) / 4,
+			this.map(
+				40,
+				this.defaultCanvasSizes.width,
+				this.currentCanvasSizes.width,
+			),
 			{
 				isStatic: true,
 				render: {
@@ -563,10 +699,23 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	handleVerticalObstacles() {
 		const verticalObstacle1 = Bodies.rectangle(
-			this.canvasWidth - 65,
-			this.canvasHeight / 5,
-			15,
-			170,
+			this.currentCanvasSizes.width -
+				this.map(
+					65,
+					this.defaultCanvasSizes.width,
+					this.currentCanvasSizes.width,
+				),
+			this.currentCanvasSizes.height / 5,
+			this.map(
+				15,
+				this.defaultCanvasSizes.width,
+				this.currentCanvasSizes.width,
+			),
+			this.map(
+				170,
+				this.defaultCanvasSizes.height,
+				this.currentCanvasSizes.height,
+			),
 			{
 				render: {
 					fillStyle: 'white',
@@ -576,10 +725,18 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		);
 
 		const verticalObstacle2 = Bodies.rectangle(
-			this.canvasWidth / 2,
-			this.canvasHeight / 3,
-			15,
-			100,
+			this.currentCanvasSizes.width / 2,
+			this.currentCanvasSizes.height / 3,
+			this.map(
+				15,
+				this.defaultCanvasSizes.width,
+				this.currentCanvasSizes.width,
+			),
+			this.map(
+				100,
+				this.defaultCanvasSizes.height,
+				this.currentCanvasSizes.height,
+			),
 			{
 				render: {
 					fillStyle: 'white',
@@ -589,10 +746,22 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		);
 
 		const verticalObstacle3 = Bodies.rectangle(
-			65,
-			(2 * this.canvasHeight) / 3,
-			15,
-			170,
+			this.map(
+				65,
+				this.defaultCanvasSizes.width,
+				this.currentCanvasSizes.width,
+			),
+			(2 * this.currentCanvasSizes.height) / 3,
+			this.map(
+				15,
+				this.defaultCanvasSizes.width,
+				this.currentCanvasSizes.width,
+			),
+			this.map(
+				170,
+				this.defaultCanvasSizes.height,
+				this.currentCanvasSizes.height,
+			),
 			{
 				render: {
 					fillStyle: 'white',
@@ -602,10 +771,23 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		);
 
 		const verticalObstacle4 = Bodies.rectangle(
-			this.canvasWidth - 65,
-			(4 * this.canvasHeight) / 5,
-			15,
-			170,
+			this.currentCanvasSizes.width -
+				this.map(
+					65,
+					this.defaultCanvasSizes.width,
+					this.currentCanvasSizes.width,
+				),
+			(4 * this.currentCanvasSizes.height) / 5,
+			this.map(
+				15,
+				this.defaultCanvasSizes.width,
+				this.currentCanvasSizes.width,
+			),
+			this.map(
+				170,
+				this.defaultCanvasSizes.height,
+				this.currentCanvasSizes.height,
+			),
 			{
 				render: {
 					fillStyle: 'white',
@@ -634,27 +816,31 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	resetToDefaultPosition() {
 		// Reset Ball Position
 		Body.setPosition(this.ball, {
-			x: this.canvasWidth / 2,
-			y: this.canvasHeight / 2,
+			x: this.currentCanvasSizes.width / 2,
+			y: this.currentCanvasSizes.height / 2,
 		});
 
-		//Reset Paddles Position
+		// Reset Paddles Position
 		Body.setPosition(this.bottomPaddle, {
-			x: this.canvasWidth / 2,
-			y: this.canvasHeight - 30,
+			x: this.currentCanvasSizes.width / 2,
+			y:
+				this.currentCanvasSizes.height -
+				this.map(
+					30,
+					this.defaultCanvasSizes.height,
+					this.currentCanvasSizes.height,
+				),
 		});
 	}
 
 	calScore() {
-		if (
-			this.ball.position.y + this.ball.circleRadius >=
-			this.canvasHeight - 8
-		) {
+		if (this.ball.position.y > this.bottomPaddle.position.y) {
 			this.playerOneScore++;
 			this.server.emit('updateScore', {
 				playerOneScore: this.playerOneScore,
 				playerTwoScore: this.playerTwoScore,
 			});
+			// this.sound.win.play();
 			this.resetToDefaultPosition();
 		}
 		if (this.playerOneScore === 2 || this.playerTwoScore === 2) {
@@ -671,39 +857,62 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	handleClearGame() {
 		// Clear Intervals:
-		clearInterval(this.moveInterval);
+		clearInterval(this.movePaddleInterval);
 		clearInterval(this.updateBallPosition);
-	}
 
-	@SubscribeMessage('keyevent')
-	handleKeyDown(@MessageBody() data: any) {
-		if (data.state === 'keydown') {
-			if (data.key === 'd' || data.key === 'ArrowRight')
-				this.movingRight = true;
-			else if (data.key === 'a' || data.key === 'ArrowLeft')
-				this.movingLeft = true;
-		} else {
-			if (data.key === 'd' || data.key === 'ArrowRight')
-				this.movingRight = false;
-			else if (data.key === 'a' || data.key === 'ArrowLeft')
-				this.movingLeft = false;
-		}
+		// const displayBodies = (str: string) => {
+		// 	console.log(str);
+		// 	for (let body of engine.world.bodies) console.log(body);
+		// };
+
+		// displayBodies('before');
+		for (let body of engine.world.bodies) Composite.remove(engine.world, body);
+		// Composite.remove(engine.world, [
+		// 	this.bottomPaddle,
+		// 	this.ball,
+		// 	this.rightRect,
+		// ]);
+		// displayBodies('after');
+
+		// Remove Events:
+		// Events.off(engine, 'collisionStart', this.handleCollisionStart);
+		// Events.off(engine, 'beforeUpdate', this.handleBeforeUpdate);
+
+		// clearTimeout Of Paddle Game Runner:
+		// clearTimeout(this.lunchGameInterval);
+
+		// Stop The Runner:
+		Runner.stop(runner);
+
+		// Clear Engine:
+		Engine.clear(engine);
+		World.clear(engine.world, false);
+
+		// Remove Listeners:
+		// document.removeEventListener('keydown', this.handleKeyDown);
+		// document.removeEventListener('keyup', this.handleKeyUp);
+
+		// Close Socket!
+		// clearInterval(this.moveInterval);
+		// this.socket.disconnect();
 	}
 
 	handlePaddleMove() {
-		this.moveInterval = setInterval(() => {
+		this.movePaddleInterval = setInterval(() => {
 			let stepX = 0;
-			const paddleWidth = 170;
 
 			if (this.movingLeft) {
 				stepX = this.posPaddleX - 13;
-				if (stepX <= this.paddleW / 2) {
-					stepX = this.paddleW / 2;
+				if (stepX <= this.paddleSizes.width / 2) {
+					stepX = this.paddleSizes.width / 2;
 				}
 			} else if (this.movingRight) {
 				stepX = this.posPaddleX + 13;
-				if (stepX >= this.canvasWidth - this.paddleW / 2) {
-					stepX = this.canvasWidth - this.paddleW / 2;
+				if (
+					stepX >=
+					this.currentCanvasSizes.width - this.paddleSizes.width / 2
+				) {
+					stepX = this.currentCanvasSizes.width - this.paddleSizes.width / 2;
 				}
 			}
 			if (stepX != 0) {

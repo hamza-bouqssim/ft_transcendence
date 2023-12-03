@@ -1,18 +1,12 @@
 /* eslint-disable prettier/prettier */
-import {
-	Body,
-	Controller,
-	Get,
-	Post,
-	Req,
-	Res,
-	UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Req,    Res,  UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthDto } from './dto/local.auth.dto';
 import { Request,  Response } from 'express';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
+import { SignAuthDto } from './dto/signIn.dto';
+
 
 @Controller('auth')
 export class AuthController {
@@ -20,27 +14,19 @@ export class AuthController {
                  private jwtService: JwtService){}
 
     @Post('signin')
-    signIn(@Body() dto: LocalAuthDto, @Req() req: Request, @Res() res: Response)
+    async signIn(@Body() dto: SignAuthDto, @Req() req: Request, @Res() res: Response)
     {
+        const token= await this.authService.signIn(dto);
+        console.log("tocken", token)
+        res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });;
+
+        return res.status(200).json("is suses")
         
-        return this.authService.signIn(dto, req, res);
     }
 
-	@Get('signout')
-	signOut(@Req() req: Request, @Res() res: Response) {
-		return this.authService.signOut(req, res);
-	}
-
-    @Get('test')
-    @UseGuards()
-    testEndpoint() {
-        return { message: 'this shit is working!' };
-    }
-
-    @Get('signout')
-    signOut(@Req() req : Request, @Res() res: Response)
-    {
-        return this.authService.signOut(req, res);
+    @Post('signup')
+    signUp(@Body() dto: LocalAuthDto){
+        return this.authService.signUp(dto); 
     }
 
     @Get('google/login')

@@ -1,9 +1,9 @@
 /* eslint-disable prettier/prettier */
 import { Body, Controller, Get, Param,  Post, Put, Req,  UnauthorizedException, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UserService } from './user.service';
-import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from 'prisma/prisma.service';
-import { whichWithAuthenticated } from './utils/auth-utils';
+// import { JwtService } from '@nestjs/jwt';
+// import { PrismaService } from 'prisma/prisma.service';
+// import { whichWithAuthenticated } from './utils/auth-utils';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { v4 as uuidv4 } from 'uuid';
@@ -20,9 +20,9 @@ export class UserController {
     async grabMyInfos(@Req() req) {
       
      const user = req.user
+     console.log(user)
 
       return {
-        id: user.id,
         username: user.username,
         email : user.email,
         display_name: user.display_name,
@@ -134,6 +134,11 @@ export class UserController {
      const user = req.user
       return await this.userService.allUsers(user.id);
     }
+    @Post('search')
+    async searchUsers(@Body() request: {displayName : string}) {
+      const test = this.userService.findByDisplayNameSearching(request.displayName);
+      return test;
+  }
     
 }
 

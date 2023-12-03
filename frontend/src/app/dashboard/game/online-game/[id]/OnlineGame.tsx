@@ -14,6 +14,7 @@ const OnlineGame = () => {
 	const router = useRouter();
 	const socket = useContext<any>(SocketContext);
 	const parentCanvasRef = useRef<HTMLDivElement>(null);
+	const pongRef = useRef<any>();
 	const [startGame, setStartGame] = useState<boolean>(false);
 	const [score, setScore] = useState<{
 		playerOne: number;
@@ -67,27 +68,20 @@ const OnlineGame = () => {
 				clearInterval(timerInterval);
 			},
 		}).then(() => {
-			socket.emit("launchGameRequest", gameDataValues.chosenMapIndex);
+			socket.emit("launchGameRequest", gameDataValues);
 			socket.on("launchGame", () => {
 				setStartGame((prev: any) => !prev);
-				pong = new PongGame(
+				pongRef.current = new PongGame(
 					parentCanvasRef.current!,
 					gameDataValues.chosenMapIndex,
 					socket,
 				);
 			});
 			socket.on("gameIsFinished", () => {
-				// pong.clear();
+				pongRef.current.clear();
 				LoserPlayerPopUp(router);
-				// endGame = () => pong.clear();
-				// endGame();
 			});
 		});
-		// return () =>
-		// {
-		// 	alert("Unmounted!")
-		// 	// endGame();
-		// }
 	}, []);
 
 	return (

@@ -1,9 +1,5 @@
-"use client";
-import {
-	Conversation,
-	ConversationSideBarContainer,
-	ConversationSideBarItem,
-} from "@/app/utils/styles";
+"use client"
+import { Conversation, ConversationSideBarContainer, ConversationSideBarItem } from "@/app/utils/styles"
 import { ConversationTypes, User } from "@/app/utils/types";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -73,7 +69,6 @@ const ChatComponnent  = () =>{
 
 	const getDisplayLastMessage = (conversation : ConversationTypes) =>{
 
-	const getDisplayLastMessage = (conversation: ConversationTypes) => {
 		let lastMessage = null;
 		lastMessage = conversation.lastMessage;
 		if(lastMessage == null)
@@ -82,37 +77,20 @@ const ChatComponnent  = () =>{
 			return lastMessage.content;
 		
 	}
-	const joinRoom =(id:string) =>{
 
-		if(oldId)
-			socket.emit("leaveToRoom",{id:oldId})
-		socket.emit("joinToRoom",{id:id})
-	}
+    return (
+        <div className="text-black  my-10 h-[calc(100%-200px)] overflow-auto ">
+			{show &&  <CreateConversationModal   setShow={setShow} />   }
 
-	return (
-		<div className="my-10  h-[calc(100%-200px)] overflow-auto text-black ">
-			{show && <CreateConversationModal setShow={setShow} />}
-
-			<div className="flex gap-px border-2 border-solid  p-2 px-20 ">
-				<h1 className=" p-2 text-lg font-bold  text-blue-500">
-					Private Messages
-				</h1>
-				<button
-					onClick={() => {
-						setShow(!show);
-					}}
-					className=" absolute right-5 rounded-full bg-[#fc7785] p-4"
-				>
-					<IoMdAdd />
-				</button>
-			</div>
+		<div className="flex p-2 gap-px px-20  border-solid border-2 ">
+			<h1 className=" text-lg p-2 font-bold  text-blue-500">Private Messages</h1>
+			<button onClick={() => {setShow(!show)}} className=" absolute right-5 p-4 bg-[#fc7785] rounded-full" ><IoMdAdd /></button>
+		</div>
 			<div className="p-2">
 				{conversation.map(function(elem){
 						function handleClick()
 						{
-							joinRoom(elem.id)
 							updateChannel(elem)
-							setOldId(elem.id)
 						}
 						return(
 							<div onClick={handleClick}  key={elem.id}  className="cursor-pointer rounded-lg hover:bg-[#F2F3FD] flex items-start justify-between px-2 py-3">
@@ -127,15 +105,14 @@ const ChatComponnent  = () =>{
 									{formatRelative(new Date(elem.createdAt), new Date())}
 								</div>
 							</div>
-							<div className="text-black">
-								{formatRelative(new Date(elem.createdAt), new Date())}
-							</div>
-						</div>
-					);
-				})}
+							
+								
+						)
+					}) }
 			</div>
-		</div>
-	);
-};
+					
+			</div>
+    )
+}
 
 export default ChatComponnent;

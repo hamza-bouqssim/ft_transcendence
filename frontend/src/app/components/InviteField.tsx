@@ -4,7 +4,7 @@ import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
 
 const InviteField = () => {
 	return (
-		<div className="flex h-[65px] w-full items-center justify-between rounded-[15px] p-2 hover:bg-[#E4E4E4] min-[1750px]:h-[80px] min-[1750px]:p-3">
+		<div className="flex h-[65px] w-full items-center justify-between rounded-[15px] p-2 min-[1750px]:p-3 hover:bg-[#E4E4E4] min-[1750px]:h-[80px]">
 			<div className="ml-[.2rem] h-[50px] w-[50px] shrink-0 overflow-hidden rounded-[50%] bg-black min-[1750px]:h-[65px] min-[1750px]:w-[65px]">
 				<Image
 					className="h-full w-full"

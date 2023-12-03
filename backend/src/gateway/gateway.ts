@@ -1,13 +1,12 @@
+/* eslint-disable prettier/prettier */
 import { SubscribeMessage, MessageBody,WebSocketGateway,WebSocketServer,OnGatewayDisconnect, OnGatewayConnection } from '@nestjs/websockets';
 import { PrismaModule } from 'prisma/prisma.module';
 import { Server ,Socket} from 'socket.io';
 import { AuthenticatedSocket } from "src/utils/interfaces";
 import { IGateWaySession } from './gateway.session';
 import { Services } from 'src/utils/constants';
-import { Message } from '@prisma/client';
 import {Inject} from '@nestjs/common'
 import { PrismaService } from 'prisma/prisma.service';
-import { OnEvent } from "@nestjs/event-emitter";
 import { CreateMessageRoom, RoomId } from 'src/Rooms/dto/rooms.dto';
 import { RoomsService } from 'src/Rooms/rooms.service';
 import { ConversationsService } from 'src/conversations/conversations.service';
@@ -103,56 +102,4 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         }
     }
 
-	@SubscribeMessage('getOnlineUsers')
-	handleGetOnlineUsers(socket: AuthenticatedSocket) {
-		// console.log("get online users*****************");
-		// console.log(this.server.sockets.adapter.rooms);
-		const onlineUsers: User[] = [];
-		for (const [roomId, roomSet] of this.server.sockets.adapter.rooms) {
-			const roomSockets = Array.from(roomSet);
-			// console.log("here******");
-
-			for (const socketId of roomSockets) {
-				const user = this.sessions.getUserBySocketId(socketId);
-				// console.log("this user is -->", user);
-
-				if (user) {
-					onlineUsers.push(user);
-				}
-			}
-		}
-		socket.emit('getOnlineUsers', onlineUsers);
-
-		return onlineUsers;
-	}
-
-	@SubscribeMessage('onClientConnect')
-	onClientConnect(
-		@MessageBody() data: any,
-		@ConnectedSocket() Client: AuthenticatedSocket,
-	) {
-		// console.log("onClient connect*****************");
-		// console.log(data);
-		// console.log(Client.user);
-	}
-
-	@OnEvent('message.create')
-	handleMessageCreateEvent(payload: Message) {
-		// console.log("create message*************");
-		// console.log(payload);
-		// we are going to emit this onMessage event
-		// this.server.emit('onMessage', payload);
-		const { senderId, recipientId } = payload;
-		const senderSocket = this.sessions.getUserSocket(senderId);
-		const recipientSocket = this.sessions.getUserSocket(recipientId);
-		// console.log("senderSocket", senderSocket);
-		// console.log("recipientSocket", recipientSocket)
-		// console.log("senderId", payload.senderId);
-		if (senderSocket && recipientSocket) {
-			senderSocket.emit('onMessage', payload);
-			recipientSocket.emit('onMessage', payload);
-		} // }else{
-		//     console.log("The recipient is not authenticated:");
-		// }
-	}
 }

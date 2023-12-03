@@ -52,7 +52,9 @@ const Dashboard = () => {
 	return (
 		<div>
 			<div className="container">
+
 				<div className="row">
+
 					<div className="col-1">
 						<div className="play relative rounded-[54px]">
 							<img src="/assets/hand.png" className="thehand absolute  -top-[41px] -right-[9px] rounded-r-full w-[490px] animate-bounce " alt="" />
@@ -123,13 +125,16 @@ const Dashboard = () => {
 									<div className="my"></div>
 									<div className="my"></div>
 									<div className="my"></div>
+									
 								</div>
 							</div>
 						</div>
+
 					</div>
 				</div>
+
 			</div>
-		</div>
+    	</div>
 	);
 };
 export default Dashboard;

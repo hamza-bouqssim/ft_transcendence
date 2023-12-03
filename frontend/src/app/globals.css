@@ -33,9 +33,9 @@
 .glassmorphism {
 	@apply rounded-2xl bg-[rgba(255,255,255,0.09)] shadow-[0_4px_30px_rgba(0,0,0,.1)];
 	/* -webkit-backdrop-filter: blur(7.6px);
-	-webkit-border-radius: 25px;
-	-moz-border-radius: 25px;
-	-ms-border-radius: 25px;
+  -webkit-border-radius: 25px;
+  -moz-border-radius: 25px;
+  -ms-border-radius: 25px;
   -o-border-radius: 25px; */
 }
 

@@ -1,8 +1,8 @@
 /* eslint-disable prettier/prettier */
 
-import { Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
-import { AuthenticatedSocket } from 'src/utils/interfaces';
+import { Injectable } from "@nestjs/common";
+import { User } from "@prisma/client";
+import { AuthenticatedSocket } from "src/utils/interfaces";
 
 export interface IGateWaySession {
     getUserSocket(id : string) : AuthenticatedSocket | undefined;
@@ -13,7 +13,7 @@ export interface IGateWaySession {
     getUserBySocketId(socketId: string): User | undefined; // Add this line
 
 }
-@Injectable()
+@Injectable() 
 export class GateWaySessionManager implements IGateWaySession {
     private sessions: Map<string, AuthenticatedSocket> = new Map();
     getUserSocket(id: string) : AuthenticatedSocket | undefined {

@@ -5,16 +5,7 @@ import { User } from "@/app/utils/types";
 import { useContext, useEffect, useState } from "react";
 
 const ConversationPanel = () => {
-    const [ user, setUser] = useState<User | undefined>();
-    const [loading, setLoading] = useState<boolean>(false);
-    useEffect(() => {
-            setLoading(true);
-            getAuthUser().then(({data}) => {
-                setUser(data);
-                setLoading(false)})
-            .catch((err)=> {console.log(err); setLoading(false);});
-          
-    }, [])
+
     // console.log(user);
     return (
         <Page>

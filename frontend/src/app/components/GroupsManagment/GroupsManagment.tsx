@@ -1,4 +1,4 @@
-"use client";
+"use client" 
 import { IoMdAdd } from "react-icons/io";
 import {useRouter,usePathname} from 'next/navigation'
 import { useDispatch, useSelector } from 'react-redux';
@@ -92,13 +92,10 @@ import {socketContext } from "@/app/utils/context/socketContext";
         ))}
         <div className="md:h-16 h-28">
 
-		lastDate: "2023-11-08",
-	},
-	{
-		id: "7",
-		name: "David",
-		lastMessage: "What's up?",
-		image:
-			"https://imgs.search.brave.com/q1LfdV9YRvahK6U3b6iCYGwsp9B2DwP5EZUREYeG8jg/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9pbWFn/ZXMuY3RmYXNzZXRz/Lm5ldC9ocmx0eDEy/cGw4aHEvNmJpNndL/SU01RERNNVUxUHRH/VkZjUC8xYzdmY2U2/ZGUzM2JiNjU3NTU0/OGE2NDZmZjliMDNh/YS9uYXR1cmUtcGhv/dG9ncmFwaHktcGlj/dHVyZXMuanBnP2Zp/dD1maWxsJnc9NjAw/Jmg9NDAw", // Replace with the actual URL
+        </div>
+      </div>
+    );
+  };
+  
 
 export default GroupsManagement;

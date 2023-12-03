@@ -10,6 +10,7 @@
 //     @IsNotEmpty()
 //     email: string;
 
+    
 //     @IsString()
 //     display_name: string;
 
@@ -29,29 +30,22 @@
 //     @IsString()
 //     rank: string
 // }
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from "class-validator";
 
 export class LocalAuthDto {
-	@IsString()
-	@IsNotEmpty()
-	id?: string;
+    @IsString()
+    @IsNotEmpty()
+    username: string;
 
-	@IsString()
-	@IsNotEmpty()
-	username: string;
+    @IsString()
+    @IsNotEmpty()
+    email: string;
 
-	@IsString()
-	@IsNotEmpty()
-	email: string;
+    @IsString()
+    @IsNotEmpty()
+    display_name: string;
 
-	@IsString()
-	@IsNotEmpty()
-	display_name: string;
-
-	@IsString()
-	@IsNotEmpty()
-	password_hashed: string;
-
-	@IsString()
-	avatar_url?: string;
+    @IsString()
+    @IsNotEmpty()
+    password_hashed: string;
 }

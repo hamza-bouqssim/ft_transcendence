@@ -29,7 +29,6 @@ model User {
   username String 
   status String @default("offline")
   email String @unique
-  status String @default("offline")
   password String
   display_name String @unique
   avatar_url String
@@ -47,12 +46,6 @@ model User {
   blockingUsers       BlockUser[] @relation("blockingUsers")
   blockedByUsers      BlockUser[] @relation("blockedByUsers")
   messageRome  MessageRome[]
-  StateGame                   StateGame?
-  Achievement                 Achievement[]
-  MatchHistory1               Match_History[]    @relation("playerOne")
-  MatchHistory2               Match_History[]    @relation("playerTow")
-  queue                       Queue[]
-
   StateGame                   StateGame?
   Achievement                 Achievement[]
   MatchHistory1               Match_History[]    @relation("playerOne")

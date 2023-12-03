@@ -6,6 +6,7 @@ import { Request, Response } from 'express';
 import * as bcrypt from 'bcrypt';
 import { LocalAuthDto } from './dto/local.auth.dto';
 import { JwtService } from '@nestjs/jwt';
+import { SignAuthDto } from './dto/signIn.dto';
 
 @Injectable()
 export class AuthService {
@@ -14,9 +15,9 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-    async signIn(dto: LocalAuthDto, req: Request, res: Response) {
+    async signIn(dto: SignAuthDto) {
 
-      if(!dto.email || !dto.password_hashed)
+      if(!dto.email || !dto.password)
       {
         throw new UnauthorizedException('You Missed Entering some required fields !');
       }
@@ -25,26 +26,22 @@ export class AuthService {
         throw new UnauthorizedException('Incorrect user!');
       }
       
-      const checkPass = await bcrypt.compare(dto.password_hashed, user.password);
+      
+      const checkPass = await bcrypt.compare(dto.password, user.password);
       if (!checkPass) {
         throw new UnauthorizedException('Incorrect Password!');
       }
-      const infoDto: AuthDto = {
-        username: dto.username,
-        email: dto.email,
-        display_name: dto.display_name,
-        avatar_url: dto.avatar_url
-
-      }
-    const token = this.signUser(user.id, infoDto, 'user');
+ 
+      const payload = {sub: user.id, email: user.email};
+      console.log(payload)
+      const token = this.jwtService.sign(payload)
+      console.log(token)
     if (!token) {
       throw new ForbiddenException();
     }
-    res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });;
+    return token;
  
-  
-    return res.send({ msg: 'local succes' });
-  }
+  }        
    
     async signUp(dto: LocalAuthDto) {
         const existingUser = await this.prisma.user.findFirst({
@@ -71,27 +68,23 @@ export class AuthService {
             email: dto.email,
             password: hashedPass,
             display_name: dto.display_name, 
-            avatar_url: "../../../../frontend/nextjs/public/assets/user.jpeg",
+            avatar_url: "https://cdn.landesa.org/wp-content/uploads/default-user-image.png",
             two_factor_auth: "",
             two_factor_secret_key: "",
           },
         });
-
+       
        return createNewUser;
     }
     
-    signUser(userId: string, dto: AuthDto, type:string)
-    {
-      return this.jwtService.sign({
-          id: userId, 
-          email: dto.email,
-          username: dto.username,
-          display_name: dto.display_name,
-          avatar_url: dto.avatar_url,
-          claim: type,
+    // signUser(userId: string)
+    // {
+    //   return this.jwtService.sign({
+    //       id: userId, 
+    //       claim: "my-secret",
         
-      });
-    }
+    //   });
+    // }
 
     async signOut( req: Request, res: Response ){
 
