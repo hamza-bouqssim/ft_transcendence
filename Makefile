@@ -12,7 +12,7 @@ help:
 	@echo "  prune           - prune all"
 
 
-build:
+build: 
 	docker-compose build
 
 up:

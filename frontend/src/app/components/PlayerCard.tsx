@@ -5,13 +5,13 @@ type PlayerCardProps = {
 	name: string;
 	username: string;
 	img: string;
-	direction: string;
+	additionalStyle: string;
 };
 
 const PlayerCard = (props: PlayerCardProps) => {
 	return (
 		<div
-			className={`pointer-events-none absolute z-0 h-[180px] w-[180px] overflow-hidden rounded-[40px] p-4 lg:h-[280px] lg:w-[240px] lg:p-0 min-[1750px]:h-[390px] min-[1750px]:w-[370px] ${props.direction} sm:h-[200px] sm:bg-white lg:top-[50%] lg:translate-y-[-50%]`}
+			className={`pointer-events-none absolute z-0 h-[180px] w-[180px] overflow-hidden rounded-[40px] p-4 lg:h-[280px] lg:w-[240px] lg:p-0 min-[1750px]:h-[390px] min-[1750px]:w-[370px] ${props.additionalStyle} sm:h-[200px] sm:bg-white lg:top-[50%] lg:translate-y-[-50%]`}
 		>
 			<div className="m-auto h-[120px] w-[120px] overflow-hidden rounded-[50%] bg-blue-100 sm:h-[130px] sm:w-[130px] lg:h-[80%] lg:w-full lg:rounded-[40px]">
 				<Image
