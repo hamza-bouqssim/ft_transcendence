@@ -7,48 +7,44 @@ import MessageInputField from "./MessageInputField";
 import {socketContext } from "@/app/utils/context/socketContext";
 import {getConversationMessage} from '@/app/utils/api'
 import Image from  'next/image'
-import { socket } from "@/app/dashboard/game/SocketContext";
 const MessageContainer = () => {
-    const [loading, setLoading] = useState<boolean>(false);
+    const [, setLoadloadinging] = useState<boolean>(false);
     const [Message,setMessage] = useState<messageTypes[]>([]);
     const controller = new AbortController();
     const [user,setUser] = useState(null)
     const { channel } = useContext(socketContext);
+    const { oldId,setOldId } = useContext(socketContext);
+    const socket  = useContext(socketContext).socket;
+
+
     useEffect(() => {
             getAuthUser().then(({data}) => {  
                 setUser(data);
                 })
             .catch((err)=> {console.log(err);});
     }, [channel.id])
-    // const sendMessage = async (e : React.FormEvent<HTMLFormElement>) => {
-    //     e.preventDefault();
-    //     if(!id || !content)
-    //         return ;
-    //     const participentsId = id;
-    //     console.log(participentsId);
-    //     try{
-    //         await postNewMessage({participentsId, content});
-    //         setContent('');
-    //     }catch(err){
-    //         alert("error");
-    //         console.log(err);
-    //     }
-    // };
 
+
+    const joinRoom =(id:string) =>{
+
+		if(oldId)
+			socket.emit("leaveToRoom",{id:oldId})
+		socket.emit("joinToRoom",{id:id})
+        setOldId(id);
+	}
+
+    // room and chat
     useEffect(() => {
         const id = channel.id;
         console.log(id)
         getConversationMessage(id)
           .then(( data :any) => {
             setMessage(data.data);
-            console.log("sdfdsfsdfsd",data.data)
+            joinRoom(id);
           })
           .catch((err:any) => console.log(err));
       }, [channel.id]);
     
-
-      
-    console.log(Message)
     return (
 
         <>
