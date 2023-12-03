@@ -425,25 +425,25 @@ class PongGame {
 		});
 	};
 
-	setBallSpeed = (): void => {
-		// Limit the ball's speed
-		if (
-			this.currentBallSpeed.x < this.maxBallSpeed &&
-			this.currentBallSpeed.y < this.maxBallSpeed
-		)
-			Body.setVelocity(this.ball, {
-				x: (this.currentBallSpeed.x += this.map(
-					0.2,
-					this.defaultCanvasSizes.width,
-					this.divWidth,
-				)),
-				y: (this.currentBallSpeed.y += this.map(
-					0.2,
-					this.defaultCanvasSizes.height,
-					this.divHeight,
-				)),
-			});
-	};
+	// setBallSpeed = (): void => {
+	// 	// Limit the ball's speed
+	// 	if (
+	// 		this.currentBallSpeed.x < this.maxBallSpeed &&
+	// 		this.currentBallSpeed.y < this.maxBallSpeed
+	// 	)
+	// 		Body.setVelocity(this.ball, {
+	// 			x: (this.currentBallSpeed.x += this.map(
+	// 				0.2,
+	// 				this.defaultCanvasSizes.width,
+	// 				this.divWidth,
+	// 			)),
+	// 			y: (this.currentBallSpeed.y += this.map(
+	// 				0.2,
+	// 				this.defaultCanvasSizes.height,
+	// 				this.divHeight,
+	// 			)),
+	// 		});
+	// };
 
 	movePaddle = (): void => {
 		if (this.socket) {

@@ -22,7 +22,10 @@ const PlayMode = () => {
 export const gameData = atom({
 	chosenGameMode: "",
 	chosenMapIndex: 0,
-	user: {},
+	canvasSizes: {
+		width: 560,
+		height: 836
+	},
 });
 
 export default PlayMode;
