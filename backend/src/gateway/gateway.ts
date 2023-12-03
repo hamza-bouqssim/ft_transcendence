@@ -1,13 +1,12 @@
+/* eslint-disable prettier/prettier */
 import { SubscribeMessage, MessageBody,WebSocketGateway,WebSocketServer,OnGatewayDisconnect, OnGatewayConnection } from '@nestjs/websockets';
 import { PrismaModule } from 'prisma/prisma.module';
 import { Server ,Socket} from 'socket.io';
 import { AuthenticatedSocket } from "src/utils/interfaces";
 import { IGateWaySession } from './gateway.session';
 import { Services } from 'src/utils/constants';
-import { Message } from '@prisma/client';
 import {Inject} from '@nestjs/common'
 import { PrismaService } from 'prisma/prisma.service';
-import { OnEvent } from "@nestjs/event-emitter";
 import { CreateMessageRoom, RoomId } from 'src/Rooms/dto/rooms.dto';
 import { RoomsService } from 'src/Rooms/rooms.service';
 import { ConversationsService } from 'src/conversations/conversations.service';

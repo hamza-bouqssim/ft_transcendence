@@ -20,13 +20,19 @@ const LoginForm = () => {
 	const router = useRouter();
 
 	const onSubmit = async (data: UserCredentialsParams) => {
+		console.log("here---");
 		try {
+			console.log("csdcsdcsd",data.email)
 			await postLoginUser(data);
 			router.push("/dashboard", { scroll: false });
+
 		} catch (err) {
-			alert("failed to login");
+			console.log(err)
+			alert("failed to l;ogin")
 		}
 	};
+
+	console.log("sinin here")
 	return (
 		<div className="custom-shape absolute transition-all duration-700 ease-in-out sm:left-[40%] md:bg-white md:px-8 md:py-8">
 			<div className="custom-shape flex flex-col items-center gap-4 bg-white px-4 py-7 transition-all duration-700 ease-in-out sm:gap-5 sm:px-9 sm:py-10 md:bg-transparent md:px-6 md:py-4 2xl:py-36">

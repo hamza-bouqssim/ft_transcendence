@@ -25,4 +25,3 @@ export const ModalContainerSearching : FC<PropsWithChildren> = ({
 }) => {
     return <ModalContainerSearchingStyle>{children}</ModalContainerSearchingStyle >
 }
-

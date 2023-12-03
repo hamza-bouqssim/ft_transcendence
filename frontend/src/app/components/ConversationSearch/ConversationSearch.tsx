@@ -1,15 +1,28 @@
-import "./style.css"
-import "./style.css"
+import { UsersTypes } from "@/app/utils/types";
+import { useState, useEffect } from "react";
+import { MdSearch } from "react-icons/md";
+import styles from "./ConversationSearch.module.css"; 
+import CreateSearchModal from "./Modal/CreateSearchModal";
+
 const ConversationSearch = () => {
-    return ( 
-        <div className="div">
-            <input className="input" placeholder="search Lancer une conversation">
-            </input>
-            {/* <MdSearch size={30} className={styles.search}/> */}
+
+	const [show, setShow] = useState<any>(false);
+
+    return (
+        <div className={`search-container ${styles.searchContainer}`}>
+            {show &&  <CreateSearchModal   setShow={setShow} />   }
+
+            <input
+                className={`rounded-l-lg text-black focus:outline-none bg-[#D9D9D9] bg-opacity-20 p-3 ${styles.input}`}
+                placeholder="Find your friends"
+                onClick={() => {setShow(!show)}} 
+            
+            />
             
         </div>
-     );
-}
- 
-export default ConversationSearch;
+    );
+};
 
+
+
+export default ConversationSearch;
