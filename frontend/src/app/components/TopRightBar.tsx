@@ -2,11 +2,11 @@ import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faBell } from "@fortawesome/free-solid-svg-icons";
 import { LogoutButton, MenuButton } from "./Buttons";
-import { useEffect, useState } from "react";
+import { useEffect, useState ,useContext} from "react";
 import { getAuthUser, getlogout } from "../utils/api";
-import { User } from "../utils/types";
 import { useRouter } from "next/navigation";
 import { deleteCookie } from "cookies-next";
+import { socketContext } from "../utils/context/socketContext";
 
 type Change = {
 	menu: boolean;
@@ -14,13 +14,10 @@ type Change = {
 };
 
 const TopRightBar = (props: Change) => {
-	const [ user, setUser] = useState<User | undefined>();
-
-    const [loading, setLoading] = useState<boolean>(false);
+	const {Userdata,setUserdata} = useContext(socketContext)
     useEffect(() => {
-        setLoading(true);
         getAuthUser().then(({data}) => {
-            setUser(data);
+			setUserdata(data)
         }).catch((err)=> {console.log(err);});
     }, [])
 	const router = useRouter();
@@ -35,6 +32,7 @@ const TopRightBar = (props: Change) => {
 			// console.log(err);
 		}
 	}
+	
 	return (
 		<div className="fixed right-3 top-3 z-10 flex h-12 w-64 items-center justify-end gap-2 rounded-l-3xl lg:right-7 min-[1750px]:h-14 min-[1750px]:w-80 min-[1750px]:gap-4">
 			<FontAwesomeIcon
@@ -42,11 +40,11 @@ const TopRightBar = (props: Change) => {
 				className="left-0 cursor-pointer rounded-[50%] bg-[#ffffff38] p-3 hover:bg-[--pink-color] min-[1750px]:h-6 min-[1750px]:w-6"
 			/>
 			<div className="flex h-full w-52 items-center justify-between rounded-l-3xl bg-[#ffffff38] pl-1 pr-4 lg:w-56 lg:rounded-3xl min-[1750px]:w-64">
-			{user && user.avatar_url && (
+			{Userdata && Userdata.avatar_url && (
   				<Image
     				className="h-10 w-10 rounded-[50%] bg-black min-[1750px]:h-12 min-[1750px]:w-12"
     				key={0}
-    				src={user.avatar_url}
+    				src={Userdata.avatar_url}
     				width={72}
     				height={51}
     				alt="user"
@@ -54,8 +52,8 @@ const TopRightBar = (props: Change) => {
 					/>
 )}
 				<div className="font-['Whitney_Bold'] leading-3">
-					<h6 className="text-sm min-[1750px]:text-lg">{user?.display_name}</h6>
-					<span className="text-xs min-[1750px]:text-sm">{user?.username}</span>
+					<h6 className="text-sm min-[1750px]:text-lg">{Userdata?.display_name}</h6>
+					<span className="text-xs min-[1750px]:text-sm">{Userdata?.username}</span>
 				</div>
 
 				<FontAwesomeIcon

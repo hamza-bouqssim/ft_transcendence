@@ -32,12 +32,22 @@ interface Room {
 
 function AppWithProviders({ children }: PropsWithChildren & Props) {
 	const [channel, setChannel] = useState<User | ConversationTypes |null>(null); // Initial value
+	const[oldId,setOldId] = useState(null);
+	const[Userdata,setUserdata] = useState<User |  null>(null);
 	const updateChannel = (newAddress:User | ConversationTypes| null) => {
 	  setChannel(newAddress);
 	};
 	return (
 		<Provider store={store} >
-			<socketContext.Provider value={{socket,updateChannel,channel}}>{children}</socketContext.Provider>
+			<socketContext.Provider 
+				value={{socket,
+						updateChannel,
+						channel,
+						oldId,
+						setOldId,
+						Userdata,
+						setUserdata
+					}}>{children}</socketContext.Provider>
 		</Provider>
 	);
 }
@@ -62,6 +72,7 @@ export default function RootLayout({
 		<html lang="en">
 			<body>
 				<div className="flex h-screen w-full text-white">
+					<AppWithProviders socket={socket}>
 					{(pathName.endsWith("/online_game") || pathName.endsWith("/bot_game")) ? null : (
 						<SideBar
 							sideBar={change.sideBar}
@@ -92,7 +103,6 @@ export default function RootLayout({
 						{children}
 					</div> */}
 
-					<AppWithProviders socket={socket}>
 						<ChangeContext.Provider value={changeValues}>
 							<div className="h-full w-full">{children}</div>
 						</ChangeContext.Provider>
