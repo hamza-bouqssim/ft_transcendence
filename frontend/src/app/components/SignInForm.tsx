@@ -21,7 +21,7 @@ const SignInForm = forwardRef((props: any, ref: any) => {
 
 	type FormData = {
 		email: string;
-		password_hashed: string;
+		password: string;
 	};
 
 	const {
@@ -44,12 +44,13 @@ const SignInForm = forwardRef((props: any, ref: any) => {
 
 	const onSubmit = async (data: UserCredentialsParams) => {
 		try {
+			console.log("data-->",data);
 			await postLoginUser(data);
-			setCookie("logged", true);
 			router.push("/dashboard", { scroll: false });
 		} catch (err) {
-			alert("failed to login");
-			// console.log(err);
+			console.log(err);
+
+			// alert("failed to login");
 		}
 	};
 
@@ -76,7 +77,7 @@ const SignInForm = forwardRef((props: any, ref: any) => {
 					<FontAwesomeIcon icon={faKey} className="icon-style left-[30px]" />
 					<input
 						type={show ? "text" : "password"}
-						{...register("password_hashed", {
+						{...register("password", {
 							required: "Password is required",
 						})}
 						className="custom-shape input-style"
