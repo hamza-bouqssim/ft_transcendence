@@ -2,6 +2,8 @@ import { Injectable,HttpStatus,HttpException } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { RoomId ,DeleteChatRoom,UpdateChatRoom,CreateChatRoom,getAllRooms ,CreateMessageRoom} from "src/Rooms/dto/rooms.dto";
 import * as bcrypt from 'bcrypt';
+
+
 @Injectable()
 export class RoomsService {
 
@@ -11,26 +13,42 @@ export class RoomsService {
 
   }
 
-  async getAllRooms(data: getAllRooms) {
+  async getAllRooms(id:string) {
     const memberInfo = await this.prisma.member.findMany({
       where: {
-        user_id: data.id,
+        user_id: id,
       },
     });
-  
     if (!memberInfo || memberInfo.length === 0) {
       throw new HttpException("No members found for the given user in any chat room.", HttpStatus.BAD_REQUEST);
     }
   
     const roomIds = memberInfo.map((member) => member.chatRoomId);
-    console.log("ok")
+
     const chatRooms = await this.prisma.chatRoom.findMany({
       where: {
         id: {
           in: roomIds,
         },
       },
+      select: {
+        id: true,
+        name: true,
+        Privacy: true,
+        picture: true,
+        createdAt: true,
+        updatedAt: true,
+        members: {
+          where: {
+            user_id: id,
+          },
+          select: {
+            isAdmin: true,
+          },
+        },
+      },
     });
+  
   
     if (!chatRooms || chatRooms.length === 0) {
       throw new HttpException("No chat rooms found for the given user.", HttpStatus.BAD_REQUEST );
@@ -41,10 +59,10 @@ export class RoomsService {
   
   
   
-  async creatRooms(data:CreateChatRoom)
+  async creatRooms(data:CreateChatRoom,id:string)
   {
     const userExists = await this.prisma.user.findUnique({
-      where: { id: data.userId },
+      where: { id:id },
     });
 
     if (!userExists) {
@@ -59,7 +77,7 @@ export class RoomsService {
     }
     let hashedPassword;
     
-    if(data.Privacy ==='protected')
+    if(data.Privacy ==='Protected')
     {
       hashedPassword = await bcrypt.hash(data.password, 10);
     }
@@ -73,7 +91,7 @@ export class RoomsService {
           create: [
             {
               user: {
-                connect: { id: data.userId },
+                connect: { id: id},
               },
               isAdmin: true,
             },
@@ -87,35 +105,56 @@ export class RoomsService {
   }
 
 
-  async updateRooms(updateChatRoom:UpdateChatRoom)
+  async updateRooms(data:UpdateChatRoom,id:string)
   {
     const existingChatRoom = await this.prisma.chatRoom.findUnique({
-      where: { id: updateChatRoom.id },
+      where: { id: data.id },
       include: {
         members: {
           where: {
-            user_id: updateChatRoom.userId,
+            user_id: id,
             isAdmin: true,
           },
         },
       },
     });
-
+    
     if (!existingChatRoom) {
-      throw new Error(`Chat room with ID ${updateChatRoom.id} not found.`);
+      throw new Error(`Chat room with ID ${data.id} not found.`);
     }
 
     if (!existingChatRoom.members.length) {
-      throw new Error(`User with ID ${updateChatRoom.userId} is not an admin for the chat room.`);
+      throw new Error(`User  is not an admin for the chat room.`);
+    }
+    let hashedPassword;
+    if(data.Privacy ==='Protected' && data.password)
+    {
+      hashedPassword = await bcrypt.hash(data.password, 10);
     }
 
     const updatedChatRoom = await this.prisma.chatRoom.update({
-      where: { id: updateChatRoom.id },
+      where: { id: data.id },
       data: {
-        name: updateChatRoom.name || existingChatRoom.name,
-        Privacy: updateChatRoom.Privacy || existingChatRoom.Privacy,
-        password: updateChatRoom.password || existingChatRoom.password,
-        picture: updateChatRoom.picture || existingChatRoom.picture,
+        name: data.name || existingChatRoom.name,
+        Privacy: data.Privacy || existingChatRoom.Privacy,
+        password: hashedPassword || existingChatRoom.password,
+        picture: data.picture || existingChatRoom.picture,
+      },
+      select: {
+        id: true,
+        name: true,
+        Privacy: true,
+        picture: true,
+        createdAt: true,
+        updatedAt: true,
+        members: {
+          where: {
+            user_id: id,
+          },
+          select: {
+            isAdmin: true,
+          },
+        },
       },
     });
     return updatedChatRoom;
@@ -123,27 +162,26 @@ export class RoomsService {
   }
 
 
-  async deleteRooms(deleteChatRoom:DeleteChatRoom)
+  async deleteRooms(deleteChatRoom:DeleteChatRoom,id:string)
   {
     const chatRoom = await this.prisma.chatRoom.findUnique({
       where: { id: deleteChatRoom.id },
       include: {
         members: {
           where: {
-            user_id: deleteChatRoom.userId,
+            user_id: id,
             isAdmin: true,
           },
         },
         messageRome: true,
       },
     });
-
     if (!chatRoom) {
       throw new Error(`Chat room with ID ${deleteChatRoom.id} not found.`);
     }
 
     if (!chatRoom.members.length) {
-      throw new Error(`User with ID ${deleteChatRoom.userId} is not an admin for the chat room.`);
+      throw new Error(`User  is not an admin for the chat room.`);
     }
 
     await this.prisma.member.deleteMany({
@@ -162,6 +200,16 @@ export class RoomsService {
 
   //member mangment 
 
+  async isOwner(id: string, roomId: RoomId): Promise<boolean> {
+    const member = await this.prisma.member.findFirst({
+      where: {
+        user_id:id,
+        chatRoomId: roomId.id,
+        isAdmin: true,
+      },
+    });
+    return !!member;
+  }
 
   async addMemberToRooms()
   {
@@ -215,14 +263,39 @@ export class RoomsService {
   {
 
   }
+  
 
-  async createMessage(createMessageRoom: CreateMessageRoom)
+
+  async getAllFreind(id: string) {
+    console.log(id)
+      const friends = await this.prisma.friend.findMany({
+        where: {
+          OR: [
+          {
+            user_id: id,
+            status: "ACCEPTED", 
+          },
+          {
+            friend_id: id,
+            status: "ACCEPTED", 
+          },
+          ]
+        },
+      });
+      console.log(friends)
+      if (!friends || friends.length === 0) {
+        throw new Error('No friends found for the given user.');
+      }
+      return friends;
+  }
+
+  async createMessage(createMessageRoom: CreateMessageRoom,id:string)
   {
     const message = await this.prisma.messageRome.create({
       data: {
         content : createMessageRoom.content,
         chatRoomId : createMessageRoom.chatRoomId,
-        senderId: createMessageRoom.senderId,
+        senderId: id,
       },
     });
     if (!message) {
@@ -232,3 +305,4 @@ export class RoomsService {
   }
 
 }
+

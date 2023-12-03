@@ -4,5 +4,6 @@ import { Socket } from "socket.io";
 
 /* eslint-disable prettier/prettier */
 export interface AuthenticatedSocket extends Socket{
-    user: User;
+   
+    user: any;
 }

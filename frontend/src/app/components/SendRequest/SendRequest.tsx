@@ -95,4 +95,38 @@ const SendRequest = () => {
 	);
 };
 
+      const handleClickAcceptRequest = async (id : string) => {
+        try {
+          await dispatch(fetchAcceptFriendRequestThunk(id));
+          alert("You are accepting the request !")
+        } catch (error) {
+          console.error("Error accepting friend request:", error);
+        }
+      };
+      return (
+
+        <Conversation>
+
+				<ConversationSideBarContainer>
+					{request.map(function(elem){
+						return(
+							<ConversationSideBarItem key={elem.id}>
+                <Image src={elem.user.avatar_url} className="h-14 w-14 rounded-[50%] bg-black " alt="Description of the image" width={60}   height={60} />
+								<div>
+					 				<span  className="ConversationName">{elem.user.username} {elem.user.display_name}</span>
+					 			</div>
+                    <FontAwesomeIcon icon={faCheck}  className="text-black" onClick={() => handleClickAcceptRequest(elem.id)}/>
+                    <FontAwesomeIcon icon={faXmark} className="text-black"/>
+
+
+							</ConversationSideBarItem>
+								
+						)
+					}) }
+				</ConversationSideBarContainer>
+			</Conversation>
+           
+    )
+}
+
 export default SendRequest;

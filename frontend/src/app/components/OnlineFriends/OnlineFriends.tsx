@@ -16,40 +16,25 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import { MenuButton, MenuButton2 } from "../Buttons";
 
-const OnlineFriends = () => {
-	const [users, setUsers] = useState<UsersTypes[]>([]);
-	const [Onlineusers, setOnlineUsers] = useState<UsersTypes[]>([]);
-
-	const dispatch = useDispatch<AppDispatch>();
-
-	useEffect(() => {
-		dispatch(fetchUsersThunk())
-			.unwrap()
-			.then(({ data }) => {
-				setUsers(data);
-			})
-			.catch((err) => {
-				console.log(err);
-			});
-	});
+const OnlineFriends = () =>{
+    const [users, setUsers] = useState<UsersTypes[]>([]);
+    const [Onlineusers, setOnlineUsers] = useState<UsersTypes[]>([]);
+    const dispatch = useDispatch<AppDispatch>();
 
 	const socket = useContext(socketContext);
 
-	useEffect(() => {
-		socket.emit("getOnlineUsers");
-		socket.on("getOnlineUsers", (onlineUsers) => {
-			console.log("online friend-->", onlineUsers);
-			setOnlineUsers(onlineUsers);
-		});
-		console.log("socket here", socket.id);
-		return () => {
-			socket.off("getOnlineUsers");
-		};
-	}, [socket]);
-	const isUserOnline = (userId: string) => {
-		return Onlineusers.some((user: any) => user.id === userId);
-	};
-	const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+   
+    const isUserOnline = (userId: string) => {
+        return Onlineusers.some((user : any) => user.id === userId);
+      };
+      const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+
+      const handleMenuClick = (friendId: string) => {
+        setOpenMenuId(openMenuId === friendId ? null : friendId);
+    };
+    return (
+        <div className="text-black  my-10 h-[calc(100%-200px)] overflow-auto ">
+        <Conversation>
 
 	const handleMenuClick = (friendId: string) => {
 		setOpenMenuId(openMenuId === friendId ? null : friendId);

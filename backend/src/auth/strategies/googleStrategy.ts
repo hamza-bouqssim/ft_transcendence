@@ -12,22 +12,18 @@ export class GoogleStrategy extends PassportStrategy(Strategy){
     constructor(private readonly authService: AuthService,
                 private readonly jwtService: JwtService){
         super({
-            clientID: '561394335528-056uem81bs6ql473v5q80cpun2cfb37t.apps.googleusercontent.com', //this SHIT is hard coded, go put you SHIT in ENV file !!!!!!!!!!!!!!!!!!!!!!
-            clientSecret: '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', //this SHIT is hard coded, go put your SHIT in ENV file !!!!!!!!!!!!!!!!!!!!!!
-            callbackURL: 'http://localhost:3000/auth/google/redirect',
+            clientID: '733824333433-o5h97tg504iukbekbfg6bgntrcqlomfd.apps.googleusercontent.com', //this SHIT is hard coded, go put you SHIT in ENV file !!!!!!!!!!!!!!!!!!!!!!
+            clientSecret: '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', //this SHIT is hard coded, go put your SHIT in ENV file !!!!!!!!!!!!!!!!!!!!!!
+            callbackURL: 'http://localhost:8000/auth/google/redirect',
             scope: ['profile', 'email'],
         });
     }
     async validate(accessToken:string ,refreshToken: string, profile: Profile){
-
-        // console.log("accessToken: " + accessToken);
-        // console.log(refreshToken);
-        // console.log(profile);
         const authDto: AuthDto = {
-            email: profile.emails[0]?.value,
-            username: profile.name?.givenName,
-            display_name: profile.displayName,
-            avatar_url: profile._json.picture || "api_backend/src/uploads/default-profile-photo.jpg",
+          email: profile.emails[0]?.value,
+          username: profile.displayName,
+          display_name: await this.authService.generateNickname(profile.emails[0]?.value),
+          avatar_url: profile._json.picture || "api_backend/src/uploads/default-profile-photo.jpg",
         };
         const user = await this.authService.validateUser(authDto);
         if(!user)

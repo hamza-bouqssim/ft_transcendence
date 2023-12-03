@@ -4,7 +4,7 @@ import * as cookie from 'cookie';
 import * as cookieParser from "cookie-parser";
 import { plainToInstance } from "class-transformer";
 import * as jwt from 'jsonwebtoken'; // Import JWT library
-import { User } from "./User";
+import { User } from "./dtos/User";
 
 export class WebSocketAdapter extends IoAdapter {
   private authenticateSocket(socket: AuthenticatedSocket, next: (err?: any) => void) {

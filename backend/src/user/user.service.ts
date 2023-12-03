@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
+import { JwtStrategy } from 'src/auth/strategies/jwt.strategy';
 import { findUserParams } from 'src/utils/types';
 
 @Injectable()
@@ -13,6 +14,10 @@ export class UserService {
         const data = await this.prisma.user.findFirst({where: {
             username,
         }})
+
+
+
+        
 
 
         if(!data)
@@ -125,6 +130,7 @@ export class UserService {
                         username: true,
                         display_name: true,
                         avatar_url: true,
+                        status:true,
                     },
                 },
             },
@@ -200,4 +206,6 @@ export class UserService {
             }
         });
     }
+
+  
 }

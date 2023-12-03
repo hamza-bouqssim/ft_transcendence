@@ -4,11 +4,11 @@ import { ConversationsController } from './conversations.controller';
 import { ConversationsService } from './conversations.service';
 import { PrismaService } from 'prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
-import { ParticipentService } from 'src/Participent/Participent.service';
-import { JwtService } from '@nestjs/jwt';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Module({
+  imports:[],
   controllers: [ConversationsController],
-  providers: [ConversationsService , PrismaService,  UserService, ParticipentService, JwtService]
+  providers: [ConversationsService,PrismaService,UserService ,]
 })
 export class ConversationsModule {}

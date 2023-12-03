@@ -20,14 +20,14 @@ enum Result {
 }
 
 enum EventType {
-  BALL_HIT
-  SCORE
   UNPROCESSED
+  FINAL
 }
 
 model User {
   id String @id @default(uuid())
   username String 
+  status String @default("offline")
   email String @unique
   status String @default("offline")
   password String
@@ -40,7 +40,6 @@ model User {
   senderOfChatParticipents ChatParticipents[] @relation("sender")
   recipientOfChatParticipents ChatParticipents[] @relation("recipient")
   senderOfmessage Message[] @relation("senderMessage")
-  RecipientOfmessage Message[] @relation("recipientMessage")
   notifications Notification[]
   player1 Pong_match[]  @relation("player1")
   player2 Pong_match[]  @relation("player2")
@@ -48,6 +47,11 @@ model User {
   blockingUsers       BlockUser[] @relation("blockingUsers")
   blockedByUsers      BlockUser[] @relation("blockedByUsers")
   messageRome  MessageRome[]
+  StateGame                   StateGame?
+  Achievement                 Achievement[]
+  MatchHistory1               Match_History[]    @relation("playerOne")
+  MatchHistory2               Match_History[]    @relation("playerTow")
+  queue                       Queue[]
 
   StateGame                   StateGame?
   Achievement                 Achievement[]
@@ -79,29 +83,28 @@ model Friend {
 
 model ChatParticipents {
   id          String      @id @default(uuid())
-  sender      User     @relation("sender", fields: [senderId], references: [id])
   senderId    String
-  recipient   User     @relation("recipient", fields: [recipientId], references: [id])
   recipientId String
-  messages    Message[] @relation("participentsMessages")
-  lastMessage Message?   @relation("lastMessageSent", fields: [lastMessageId], references: [id])
   lastMessageId String?
   createdAt DateTime @default(now())
+  recipient   User     @relation("recipient", fields: [recipientId], references: [id])
+  messages    Message[] @relation("participentsMessages")
+  lastMessage Message?   @relation("lastMessageSent", fields: [lastMessageId], references: [id])
+  sender      User     @relation("sender", fields: [senderId], references: [id])
 
 }
 
 model Message {
   id String @id @default(uuid())
   content String?
-  sender User @relation("senderMessage", fields: [senderId], references: [id])
   senderId String
-  recipient User @relation("recipientMessage", fields: [recipientId], references: [id])
-  recipientId String
-  participents ChatParticipents @relation("participentsMessages", fields: [participentsId], references: [id])
+  // recipientId String
   participentsId String
-  lastMessageFor ChatParticipents[] @relation("lastMessageSent")
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  lastMessageFor ChatParticipents[] @relation("lastMessageSent")
+  participents ChatParticipents @relation("participentsMessages", fields: [participentsId], references: [id])
+  // recipient User @relation("recipientMessage", fields: [recipientId], references: [id])
+  sender User @relation("senderMessage", fields: [senderId], references: [id])
 }
 
 model Notification {
@@ -165,7 +168,6 @@ model StateGame {
 model Achievement {
   id      String @id @default(uuid())
   user_id String 
-
   content String
   type    String
   picture String

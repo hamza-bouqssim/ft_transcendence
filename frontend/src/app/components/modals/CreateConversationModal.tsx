@@ -9,14 +9,24 @@ type props = {
 	setShow: Dispatch<React.SetStateAction<Boolean>>;
 };
 
-export const CreateConversationModal:FC<props> = ({setShow}) => {
-    const ref = createRef<HTMLDivElement>();
-    useEffect(() => {
-        const handleKeyDown = (e : KeyboardEvent) => e.key === 'Escape' && setShow(false);
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-        console.log(ref);
-    })
+const CreateConversationModal: FC<props> = ({ setShow }) => {
+	const ref = createRef<HTMLDivElement>();
+	useEffect(() => {
+		const handleKeyDown = (e: KeyboardEvent) =>
+			e.key === "Escape" && setShow(false);
+		window.addEventListener("keydown", handleKeyDown);
+		return () => window.removeEventListener("keydown", handleKeyDown);
+		console.log(ref);
+	}, []);
+
+// export const CreateConversationModal:FC<props> = ({setShow}) => {
+//     const ref = createRef<HTMLDivElement>();
+//     useEffect(() => {
+//         const handleKeyDown = (e : KeyboardEvent) => e.key === 'Escape' && setShow(false);
+//         window.addEventListener('keydown', handleKeyDown);
+//         return () => window.removeEventListener('keydown', handleKeyDown);
+//         console.log(ref);
+//     })
 
     const handleOverlayClick = (e : React.MouseEvent<HTMLDivElement, MouseEvent>) => {
 
@@ -43,3 +53,5 @@ export const CreateConversationModal:FC<props> = ({setShow}) => {
     )
     
 }
+
+export default CreateConversationModal;

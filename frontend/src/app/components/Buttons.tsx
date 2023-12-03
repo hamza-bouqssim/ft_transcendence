@@ -26,7 +26,7 @@ export const GoogleSignInButton = () => {
 	};
 
 	return (
-		<button onClick={() => alert("hello")}>
+		<button>
 			<Image
 				className="w-5 hover:scale-150 hover:transform hover:transition hover:duration-300 hover:ease-in-out sm:w-6 md:w-7 2xl:w-[38px]"
 				src={require("../../../public/assets/google.svg")}

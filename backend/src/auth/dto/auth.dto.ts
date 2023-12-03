@@ -1,22 +1,18 @@
 /* eslint-disable prettier/prettier */
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class AuthDto {
-	@IsString()
-	@IsNotEmpty()
-	id?: string;
-
-	@IsString()
-	@IsNotEmpty()
-	display_name: string;
+export class AuthDto{
+    @IsString()
+    @IsNotEmpty()
+    username: string;
 
 	@IsString()
 	@IsNotEmpty()
 	email: string;
 
-	@IsString()
-	@IsNotEmpty()
-	username?: string;
+    
+    @IsString()
+    display_name?: string;
 
 	@IsString()
 	password?: string;
