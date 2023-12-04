@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { ConversationTypes, CreateConversationParams } from '../utils/types'
-import { createConversation, getConversation, getConversationMessage } from '../utils/api';
+import { createConversation, findConversationUsers, getConversation, getConversationMessage } from '../utils/api';
 
 export interface ConversationsState {
   conversations: ConversationTypes[];
@@ -15,11 +15,25 @@ const initialState: ConversationsState = {
 
 // for create the conversation
 
-export const createConversationThunk = createAsyncThunk('conversations/create', async(data : CreateConversationParams)=>{
-  const response = await createConversation(data);
-  console.log("response here");
-  console.log(response);
-  return response;
+export const createConversationThunk = createAsyncThunk('conversations/create', async(display_name : string , { rejectWithValue })=>{
+  try {
+    const response = await createConversation(display_name);
+
+
+    if (!response.data.success) {
+      throw new Error(response.data.error);
+    }
+    return response;
+  } catch (err: any) {
+      console.error("Error", err);
+
+    if (err.response && err.response.data) {
+      return rejectWithValue(err.response.data); // Return the entire error object
+    } else {
+      throw new Error("create conversation failed with an unknown error");
+    }
+}
+
 })
 
 export const fetchConversationThunk = createAsyncThunk('conversations/fetch', async () => {
@@ -33,6 +47,12 @@ export const fetchConversationThunk = createAsyncThunk('conversations/fetch', as
 //   return response;
 // })
 
+
+export const fetchConversationUserThunk = createAsyncThunk('conversation/fetch',async(display_name : string) =>{
+  const response = await findConversationUsers(display_name);
+  return response;
+
+})
 export const conversationsSlice = createSlice({
   name: 'conversations',
   initialState,
@@ -66,8 +86,9 @@ export const conversationsSlice = createSlice({
         state.loading = true;
     })
     .addCase(createConversationThunk.fulfilled, (state, action) =>{
-        console.log("fulffiled");
         state.conversations.unshift(action.payload.data);
+    }).addCase(fetchConversationUserThunk.fulfilled, (state, action) =>{
+
     });
   }
 })

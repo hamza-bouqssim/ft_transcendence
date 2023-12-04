@@ -2,26 +2,19 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRobot, faEarthAmericas } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
-import { useContext } from "react";
-import { SocketContext } from "../dashboard/game/SocketContext";
+import { useSetAtom } from "jotai";
+import { gameData } from "../dashboard/game/page";
 
 const PlayModeCard = ({ flag }: any) => {
-	const socket = useContext<any>(SocketContext);
+	const setChosenGameMode = useSetAtom(gameData);
 
 	const handleClick = (
 		e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
 	): void => {
-		if (flag === "online") {
-			console.log(socket);
-			// e.preventDefault();
-			alert("prevented!");
-			socket.emit("join-game", {
-				socketId: socket.id,
-			});
-			socket.on("join-queue", (data: any) => {
-				alert(data.content);
-			});
-		}
+		setChosenGameMode((prevGameData) => ({
+			...prevGameData,
+			chosenGameMode: e.currentTarget.innerText,
+		}));
 	};
 
 	return (
@@ -33,11 +26,8 @@ const PlayModeCard = ({ flag }: any) => {
 				/>
 			</div>
 			<Link
-				href={
-					flag === "bot"
-						? "/dashboard/game/bot_game"
-						: "/dashboard/game/online_game"
-				}
+				onClick={(e) => handleClick(e)}
+				href={"/dashboard/game/choose-map"}
 				className="w-[80%] rounded-3xl bg-[--pink-color] py-3 text-center font-['Whitney_Bold'] text-sm duration-100 ease-in-out hover:bg-[--purple-color] min-[940px]:py-4 min-[940px]:text-xl"
 			>
 				{flag === "bot" ? "Play With Bot" : "Online Game"}

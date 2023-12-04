@@ -3,6 +3,7 @@ import conversationReducer from './conversationSlice';
 import messageReducer from './messageSlice';
 import requestReducer from './requestSlice';
 import UsersReducer from './usersSlice';
+import roomReducer from './roomsSlice'
 
 export const store = configureStore({
   reducer: {
@@ -10,13 +11,13 @@ export const store = configureStore({
     messages: messageReducer,
     request : requestReducer,
     users : UsersReducer,
+    room: roomReducer,
+
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ serializableCheck: false }),
   devTools: true,
 });
 
-// Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>;
-// Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
 export type AppDispatch = typeof store.dispatch;

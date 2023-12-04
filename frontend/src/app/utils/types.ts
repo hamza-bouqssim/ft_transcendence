@@ -10,7 +10,7 @@ export type createUserParams = {
 
 export type UserCredentialsParams = {
     email: string;
-    password_hashed: string;
+    password: string;
 }
 
 export type RequestTypes = {
@@ -50,6 +50,7 @@ export type UsersTypes = {
     username : string;
     display_name : string;
     avatar_url : string;
+    status : string;
 }
 
 
@@ -62,6 +63,7 @@ export type FriendsTypes = {
 }
 
 export type BloquesTypes = {
+    user : User;
     id : string;
     display_name : string;
     username : string;
@@ -90,10 +92,8 @@ export type FetchMessagePayload = {
 export type messageTypes = {
     id : string;
     content : string;
-    conversation: ConversationTypes;
     createdAt : string;
     sender : User;
-    recipient : User;
 }
 export type messageEventPayload = {
     id : string;

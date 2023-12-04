@@ -14,7 +14,6 @@ export class UserService {
             username,
         }})
 
-
         if(!data)
         {
             throw new NotFoundException('User with this name : '+ username + ' not found !')
@@ -24,6 +23,7 @@ export class UserService {
             return {id, username, display_name, avatar_url};
         
     }
+
 
     async changeDisplayedName(_email: string, newDisplayedName: string){
         const find = await this.prisma.user.findUnique({where: {email:_email}});
@@ -125,6 +125,7 @@ export class UserService {
                         username: true,
                         display_name: true,
                         avatar_url: true,
+                        status : true,
                     },
                 },
             },
@@ -141,6 +142,7 @@ export class UserService {
     }
     
     
+    
     async pendingRequests(userId: string)
     {
         return await this.prisma.friend.findMany({where: { friend_id: userId, status: 'PENDING'}, select: {id : true , user: {select: {id: true, username: true, display_name: true, avatar_url:true}}}});
@@ -151,7 +153,6 @@ export class UserService {
         return await this.prisma.friend.findMany({where: {friend_id: userId, status: 'BLOCKED'}, select: {user: {select: {id: true, username: true, display_name: true, avatar_url:true}}}});
     }
     
-    //------------SOUKAINA PART 
     async findByEmail(email : string)
     {
         return await this.prisma.user.findUnique({
@@ -180,6 +181,17 @@ export class UserService {
             }
         })
     }
+
+    async findByDisplayNameSearching(displayName: string) {
+        return await this.prisma.user.findMany({
+            where: {
+                display_name: {
+                    contains: displayName,
+                },
+            },
+        });
+    }
+    
     
     async findUserById(finduserParams : findUserParams)
     {
@@ -200,4 +212,6 @@ export class UserService {
             }
         });
     }
+
+  
 }

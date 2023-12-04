@@ -12,17 +12,17 @@ help:
 	@echo "  prune           - prune all"
 
 
-build:
-	docker compose build
+build: 
+	docker-compose build
 
 up:
-	docker compose up
+	docker-compose up
 
 stop:
-	docker compose stop
+	docker-compose stop
 
 down:
-	docker compose down
+	docker-compose down
 
 bash-api:
 	docker exec -it  nestJs bash

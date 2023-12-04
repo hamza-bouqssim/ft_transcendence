@@ -2,12 +2,13 @@
 import { useState, createContext, PropsWithChildren, Component } from "react";
 import SideBar from "../components/SideBar";
 import TopRightBar from "../components/TopRightBar";
-
+import { io } from "socket.io-client";
 import { Provider } from "react-redux";
 import { socket, socketContext } from "../utils/context/socketContext";
 import { store } from "../store";
 import { Socket } from "socket.io-client";
 import { usePathname } from "next/navigation";
+import { ConversationTypes, User } from "../utils/types";
 
 export const SideBarContext: any = createContext<any>(null);
 export const ChangeContext: React.Context<any> = createContext(null);
@@ -16,10 +17,37 @@ type Props = {
 	// setUser : React.Dispatch<React.SetStateAction<User | undefined>>;
 	socket: Socket;
 };
+interface Room {
+	id: string;
+	name: string;
+	Privacy: string;
+	password:string;
+	picture: string;
+	createdAt: string;
+	updatedAt: string;
+	members: {
+	  isAdmin: boolean;
+	};
+}
+
 function AppWithProviders({ children }: PropsWithChildren & Props) {
+	const [channel, setChannel] = useState<User | ConversationTypes |null>(null); // Initial value
+	const[oldId,setOldId] = useState(null);
+	const[Userdata,setUserdata] = useState<User |  null>(null);
+	const updateChannel = (newAddress:User | ConversationTypes| null) => {
+	  setChannel(newAddress);
+	};
 	return (
-		<Provider store={store}>
-			<socketContext.Provider value={socket}>{children}</socketContext.Provider>
+		<Provider store={store} >
+			<socketContext.Provider 
+				value={{socket,
+						updateChannel,
+						channel,
+						oldId,
+						setOldId,
+						Userdata,
+						setUserdata
+					}}>{children}</socketContext.Provider>
 		</Provider>
 	);
 }
@@ -40,11 +68,11 @@ export default function RootLayout({
 
 	const changeValues = { change, setChange };
 	const pathName = usePathname();
-
 	return (
 		<html lang="en">
 			<body>
 				<div className="flex h-screen w-full text-white">
+					<AppWithProviders socket={socket}>
 					{(pathName.endsWith("/online_game") || pathName.endsWith("/bot_game")) ? null : (
 						<SideBar
 							sideBar={change.sideBar}
@@ -75,7 +103,6 @@ export default function RootLayout({
 						{children}
 					</div> */}
 
-					<AppWithProviders socket={socket}>
 						<ChangeContext.Provider value={changeValues}>
 							<div className="h-full w-full">{children}</div>
 						</ChangeContext.Provider>
