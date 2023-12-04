@@ -77,12 +77,6 @@ const ChatComponnent  = () =>{
 			return lastMessage.content;
 		
 	}
-	const joinRoom =(id:string) =>{
-
-		if(oldId)
-			socket.emit("leaveToRoom",{id:oldId})
-		socket.emit("joinToRoom",{id:id})
-	}
 
     return (
         <div className="text-black  my-10 h-[calc(100%-200px)] overflow-auto ">
@@ -96,9 +90,7 @@ const ChatComponnent  = () =>{
 				{conversation.map(function(elem){
 						function handleClick()
 						{
-							joinRoom(elem.id)
 							updateChannel(elem)
-							setOldId(elem.id)
 						}
 						return(
 							<div onClick={handleClick}  key={elem.id}  className="cursor-pointer rounded-lg hover:bg-[#F2F3FD] flex items-start justify-between px-2 py-3">

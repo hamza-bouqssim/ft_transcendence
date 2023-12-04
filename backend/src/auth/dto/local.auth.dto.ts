@@ -48,7 +48,4 @@ export class LocalAuthDto {
     @IsString()
     @IsNotEmpty()
     password_hashed: string;
-
-    @IsString()
-    avatar_url?: string
 }

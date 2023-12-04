@@ -10,10 +10,9 @@ const About = () => {
 	];
 	const mappedImages = images.map((el, i) => {
 		return (
-			<div>
+			<div key={i}>
 				<Image
 					className="w-16 cursor-pointer transition duration-300 ease-linear hover:scale-125 lg:w-20 2xl:w-24"
-					key={i}
 					src={el}
 					width={100}
 					height={100}

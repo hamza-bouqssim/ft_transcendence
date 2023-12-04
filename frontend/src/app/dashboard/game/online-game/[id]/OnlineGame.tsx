@@ -1,16 +1,21 @@
 import { useContext, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import PlayerScore from "@/app/components/PlayerScore";
-import PongGame from "../classes/PongGame";
+import PongGame from "../../classes/PongGame";
 import Swal from "sweetalert2";
-import { SocketContext } from "../SocketContext";
+import { SocketContext } from "../../SocketContext";
+import { LoserPlayerPopUp } from "@/app/components/GamePopUp";
+import { gameData } from "../../page";
+import { useAtomValue } from "jotai";
+import { io } from "socket.io-client";
 
 const OnlineGame = () => {
+	const gameDataValues = useAtomValue(gameData);
+	const router = useRouter();
 	const socket = useContext<any>(SocketContext);
-
-	console.log("socket:", socket);
-
 	const parentCanvasRef = useRef<HTMLDivElement>(null);
-
+	const pongRef = useRef<any>();
+	const [startGame, setStartGame] = useState<boolean>(false);
 	const [score, setScore] = useState<{
 		playerOne: number;
 		playerTwo: number;
@@ -18,7 +23,6 @@ const OnlineGame = () => {
 		playerOne: 0,
 		playerTwo: 0,
 	});
-	const [startGame, setStartGame] = useState<boolean>(false);
 
 	useEffect(() => {
 		socket.on("connect", () => {
@@ -36,13 +40,15 @@ const OnlineGame = () => {
 	useEffect(() => {
 		let timerInterval: any;
 		let endGame: any;
+		let pong: PongGame;
+
 		Swal.fire({
 			title: "Game Will Start In",
 			icon: "info",
 			iconColor: "var(--pink-color)",
 			color: "#ffff",
 			html: "<b style='font-size:80px'></b>&emsp;Seconds",
-			timer: 5 * 1000,
+			timer: 3 * 1000,
 			background: "#2E2F54",
 			customClass: "rounded-[30px] font-['Whitney_BlackSc'] text-sm",
 			timerProgressBar: true,
@@ -62,16 +68,20 @@ const OnlineGame = () => {
 				clearInterval(timerInterval);
 			},
 		}).then(() => {
-			socket.emit("launchGameRequest", () => {
-				console.log("req to start Game!");
-			});
+			socket.emit("launchGameRequest", gameDataValues);
 			socket.on("launchGame", () => {
 				setStartGame((prev: any) => !prev);
-				const pong = new PongGame(parentCanvasRef.current!, socket);
-				endGame = () => pong.clearGame();
+				pongRef.current = new PongGame(
+					parentCanvasRef.current!,
+					gameDataValues.chosenMapIndex,
+					socket,
+				);
+			});
+			socket.on("gameIsFinished", () => {
+				pongRef.current.clear();
+				LoserPlayerPopUp(router);
 			});
 		});
-		return () => endGame();
 	}, []);
 
 	return (
