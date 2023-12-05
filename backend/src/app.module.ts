@@ -10,6 +10,7 @@ import { GatewayModule } from './gateway/gateway.module';;
 import { UserModule } from './user/user.module';
 import { WebSocketAdapter } from './gateway/gateway.adapter';
 import { FriendRequestModule } from './friend-request/friend-request.module';
+import { GameModule } from './game/game.module';
 
 
 @Module({
@@ -20,8 +21,8 @@ import { FriendRequestModule } from './friend-request/friend-request.module';
     ConversationsModule,
     GatewayModule,
 		UserModule,
-    FriendRequestModule
-		// GameModule,
+    FriendRequestModule,
+	GameModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],

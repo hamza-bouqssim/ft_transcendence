@@ -8,7 +8,6 @@ import "swiper/css/pagination";
 import { useRouter } from "next/navigation";
 import { useAtomValue, useSetAtom } from "jotai";
 import { gameData } from "../page";
-import { getAuthUser } from "@/app/utils/api";
 import { SocketContext } from "../SocketContext";
 
 const ChooseMap = () => {
@@ -18,11 +17,11 @@ const ChooseMap = () => {
 	const router = useRouter();
 	const swiperRef = useRef<any>(null);
 
-	useEffect(() => {
-		getAuthUser().then((userData: any) =>
-			setGameData((prevState: any) => ({ ...prevState, user: userData.data })),
-		);
-	});
+	// useEffect(() => {
+	// 	getAuthUser().then((userData: any) =>
+	// 		setGameData((prevState: any) => ({ ...prevState, user: userData.data })),
+	// 	);
+	// });
 
 	// const socket = useContext<any>(SocketContext);
 

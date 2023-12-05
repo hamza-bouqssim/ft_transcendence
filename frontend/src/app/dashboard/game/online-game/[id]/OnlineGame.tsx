@@ -8,6 +8,7 @@ import { LoserPlayerPopUp } from "@/app/components/GamePopUp";
 import { gameData } from "../../page";
 import { useAtomValue } from "jotai";
 import { io } from "socket.io-client";
+import { socketContext } from "@/app/utils/context/socketContext";
 
 const OnlineGame = () => {
 	const gameDataValues = useAtomValue(gameData);
@@ -24,7 +25,29 @@ const OnlineGame = () => {
 		playerTwo: 0,
 	});
 
+	const { Userdata } = useContext<any>(socketContext);
+
+// 	avatar_url
+// : 
+// "https://lh3.googleusercontent.com/a/ACg8ocLbffsAwsoJcCzPio-9893BMFnG9IJOC6IJebXDAeEM_w=s96-c"
+// display_name
+// : 
+// "yassinekhadiri77"
+// email
+// : 
+// "yassinekhadiri77@gmail.com"
+// username
+// : 
+	// "Yassine Khadiri"
+	
 	useEffect(() => {
+		console.log("user data", Userdata);
+		console.log("userName", Userdata?.username);
+		
+	}, [Userdata])
+
+
+useEffect(() => {
 		socket.on("connect", () => {
 			console.log("A Pong Client Is Connected!");
 		});
@@ -39,8 +62,19 @@ const OnlineGame = () => {
 
 	useEffect(() => {
 		let timerInterval: any;
-		let endGame: any;
-		let pong: PongGame;
+		const lunchGameListener = () => {
+			setStartGame((prev: any) => !prev);
+			pongRef.current = new PongGame(
+				parentCanvasRef.current!,
+				gameDataValues.chosenMapIndex,
+				socket,
+			);
+		};
+
+		const gameIsFinishedListener = () => {
+			pongRef.current.clear();
+			LoserPlayerPopUp(router);
+		};
 
 		Swal.fire({
 			title: "Game Will Start In",
@@ -68,31 +102,32 @@ const OnlineGame = () => {
 				clearInterval(timerInterval);
 			},
 		}).then(() => {
-			socket.emit("launchGameRequest", gameDataValues);
-			socket.on("launchGame", () => {
-				setStartGame((prev: any) => !prev);
-				pongRef.current = new PongGame(
-					parentCanvasRef.current!,
-					gameDataValues.chosenMapIndex,
-					socket,
-				);
+			// socket.emit("launchGameRequest", gameDataValues);
+			socket.emit("launchGameRequest", {
+				mapIndex: gameDataValues.chosenGameMode,
+				width: parentCanvasRef.current!.getBoundingClientRect().width,
+				height: parentCanvasRef.current!.getBoundingClientRect().height
 			});
-			socket.on("gameIsFinished", () => {
-				pongRef.current.clear();
-				LoserPlayerPopUp(router);
-			});
+
+			socket.on("launchGame", lunchGameListener);
+			socket.on("gameIsFinished", gameIsFinishedListener);
 		});
-	}, []);
+
+		return () => {
+			socket.off("launchGame", lunchGameListener);
+			socket.off("gameIsFinished", gameIsFinishedListener);
+		}
+	},[]);
 
 	return (
 		<div className="absolute left-[50%] top-[50%] flex h-[642px] w-[96%] -translate-x-[50%] -translate-y-[50%] flex-col items-center justify-evenly md:h-[900px] md:gap-3 md:px-4 xl:h-[700px] xl:max-w-[1280px] xl:flex-row-reverse xl:px-10 min-[1750px]:h-[900px] min-[1750px]:max-w-[1600px]">
 			<PlayerScore
 				flag="top"
-				name="hamzaBouQssi"
-				username="@hbouqssi"
+				name={Userdata?.username}
+				username={Userdata?.display_name}
 				score={score.playerOne}
 				playerBgColor={"#4FD6FF"}
-				isBotPlayer={false}
+				profileImage={Userdata?.avatar_url}
 				startGame={startGame}
 			/>
 			<div
@@ -101,11 +136,11 @@ const OnlineGame = () => {
 			></div>
 			<PlayerScore
 				flag="bottom"
-				name="hamzaBouQssi"
-				username="@hbouqssi"
+				name={Userdata?.username}
+				username={Userdata?.display_name}
 				score={score.playerTwo}
 				playerBgColor={"#FF5269"}
-				isBotPlayer={false}
+				profileImage={Userdata?.avatar_url}
 				startGame={startGame}
 			/>
 		</div>
