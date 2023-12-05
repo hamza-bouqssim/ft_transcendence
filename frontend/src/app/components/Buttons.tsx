@@ -105,8 +105,8 @@ export const LogoutButton = (props: any) => {
 	const logoutFunction =  async () =>{
 		try {
 			await getlogout();
-			deleteCookie('logged');
-			router.push("/", { scroll: false });
+			// deleteCookie('logged');
+			// router.push("/", { scroll: false });
 		} catch (err) {
 			alert("failed to logout");
 			console.log(err);
