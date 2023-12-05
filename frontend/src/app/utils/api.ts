@@ -16,7 +16,6 @@ export const postRegisterUser = async (data: createUserParams) => axios.post(`ht
 export const postLoginUser = async (data : UserCredentialsParams) => axios.post(`http://localhost:8000/auth/signin`, data, config)
 
 
-// export const getAuthUser = () => axios.get<User>(`http://localhost:8000/chat/status`, config)
 export const getAuthUser = () => axios.get<User>(`http://localhost:8000/user/info`, config)
 
 export const getConversation = () => axios.get(`http://localhost:8000/chat/findconversation`, config)

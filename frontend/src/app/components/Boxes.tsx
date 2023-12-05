@@ -1,14 +1,6 @@
 import React from "react";
 
-interface BoxesProps {
-    title : any;
-    value : any;
-    color:  any;
-   }
-   
-
-
-const Boxes : React.FC<BoxesProps> = ({ title, value, color}) => 
+const Boxes = ({title, value, color}) =>
 {
     return (
         <div className="box-1" style={{ backgroundColor: color}}>

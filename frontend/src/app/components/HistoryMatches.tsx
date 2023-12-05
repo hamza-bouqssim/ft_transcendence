@@ -1,16 +1,6 @@
 import React from 'react'
 
-interface HistoryMatchesProps {
-    playerOne: any;
-    resultOne: any;
-    playerTwo: any;
-    resultTwo: any;
-    duration: any;
-    date: any;
-    totalMatches: any;
-  }
-
-const HistoryMatches: React.FC<HistoryMatchesProps> = ({ playerOne, resultOne, playerTwo, resultTwo, duration, date, totalMatches }) => {
+const HistoryMatches = ({playerOne, resultOne, playerTwo, resultTwo, duration, date, totalMatches}) => {
   return (
     <div className="history-results mt-[20px]  w-full h-[40px] bg-[#79a9f28d] rounded-[40px] flex  justify-between   px-1 py-1 hover:bg-[#95c0ff8d]">
 

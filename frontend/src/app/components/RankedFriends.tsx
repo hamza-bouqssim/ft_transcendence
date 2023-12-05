@@ -1,13 +1,6 @@
 import React from 'react'
 
-interface RankedFriendsProps {
-   rank : any;
-   picture : any;
-   username: any;
-  }
-  
-
-const RankedFriends : React.FC<RankedFriendsProps> = ({ rank, picture, username}) => {
+const RankedFriends = ({rank, picture, username}) => {
   return (
     
             <div className='flex  justify-between py-[2px] bg-gray-100  w-[98%] mt-[5px]  h-[40px] rounded-[40px] hover:bg-gray-200'>

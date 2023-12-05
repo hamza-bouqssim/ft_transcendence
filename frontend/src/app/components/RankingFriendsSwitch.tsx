@@ -5,39 +5,52 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import RankedFriends from './RankedFriends';
 
 const RankingFriendsSwitch = () => {
-    const [showRank, setShowRank] = useState(true);
+    const [showRank, setShowRank] = useState(false);
     const [showFriends, setShowFriends] = useState(false);
     const [showSendReqCompo, setShowSendReqCompo] = useState(false);
-    const [clickedButton, setClickedButton] = useState('rank');
+    const [clickedButton, setClickedButton] = useState('user');
+    const [showuser, setShowUser] = useState(true);
     const _showRank = () => {
       setShowRank(true);
       setShowFriends(false);
       setShowSendReqCompo(false);
+      setShowUser(false);
       setClickedButton('rank');
     }
     const _showFriends = () =>{
       setShowFriends(true);
       setShowRank(false);
       setShowSendReqCompo(false);
+      setShowUser(false);
       setClickedButton('friends');
     }
     const _sendreq = () => {
       setShowSendReqCompo(true);
       setShowFriends(false);
       setShowRank(false);
+      setShowUser(false);
       setClickedButton('friends');
     }
     const _backTo = () => {
       setShowFriends(true);
       setShowRank(false);
       setShowSendReqCompo(false);
+      setShowUser(false);
       setClickedButton('friends');
+    }
+
+    const _showUser = () => {
+      setShowUser(true);
+      setShowRank(false);
+      setShowFriends(false);
+      setShowSendReqCompo(false);
+      setClickedButton('user');
     }
     const [players, setPlayers] = useState([
       {
         "rank": 1,
         "username": "rgatnaou",
-        "picture": "assets/rgatnaou.jpg"
+        "picture": "assets/rgatnaou.jpeg"
       },
       {
         "rank": 2,
@@ -53,29 +66,46 @@ const RankingFriendsSwitch = () => {
       {
         "rank": 4,
         "username": "mjalloul",
-        "picture": "assets/mjalloul.jpg"
+        "picture": "assets/mjalloul.jpeg"
       },
       {
         "rank": 5,
         "username": "abdollah",
-        "picture": "assets/mjalloul.jpg"
+        "picture": "assets/mjalloul.jpeg"
       },
       {
         "rank": 6,
         "username": "redone",
-        "picture": "assets/mjalloul.jpg"
+        "picture": "assets/mjalloul.jpeg"
       }
     ]);
+
+    const [user, setUser] = useState({
+      "picture": "assets/rgatnaou.jpeg",
+      "username": "rgatnaou",
+      "display_name": "RedOne Gatnaou"
+    })
   return (
     <div className='flex flex-col items-center gap-2 pt-5 pb-10 bg-white w-full h-full rounded-[70px] overflow-hidden'>
       <div className='w-[80%] h-[22%] p-2 bg-gray-100 rounded-[50px] flex gap-1 items-center '>
 
+        <button onClick={_showUser} className={`w-1/2 ${clickedButton === 'user' ? 'bg-[#498CDA] text-white' : 'bg-gray-300 text-gray-600'} h-full rounded-3xl duration-300 hover:scale-105`}>User</button>
         <button  onClick={_showRank} className={`w-1/2 bg-[#498CDA] ${clickedButton === 'rank' ? 'bg-[#498CDA] text-white' : 'bg-gray-300 text-gray-600'} h-full rounded-3xl duration-300 hover:scale-105`}>Rank</button>
         <button onClick={_showFriends} className={`w-1/2 ${clickedButton === 'friends' ? 'bg-[#498CDA] text-white' : 'bg-gray-300 text-gray-600'} h-full rounded-3xl duration-300 hover:scale-105`}>Friends</button>
 
       </div>
 
-      {showRank ? (
+      {
+        showuser && (
+          <div className='pt-[10px]  flex justify-center items-center flex-col relative w-full h-[75%] rounded-[50px] text-black animate-bounce'>
+            <img src={user.picture} alt="" className='w-[145px] h-[145px] rounded-full border-solid border-4 border-[#498CDA]' />
+            <h1>{user.display_name}</h1>
+            <h5>@{user.username}</h5>
+          </div>
+        )}
+
+
+      {showRank && (
         
         
         <div className=' items-center justify-center  gap-10 relative w-full h-[75%] rounded-[50px] flex overflow-auto scrollbar-hide'>
@@ -103,9 +133,9 @@ const RankingFriendsSwitch = () => {
           </div>
 
         </div>
-      ) : null}
+      )}
 
-      {showFriends ? (
+      {showFriends && (
 
         <div className='relative w-[90%] h-[75%] flex flex-col'>
 
@@ -123,9 +153,9 @@ const RankingFriendsSwitch = () => {
           </button>
         </div>
 
-        ): null}
+        )}
 
-      {showSendReqCompo ? (
+      {showSendReqCompo && (
 
       <div className='relative w-[90%] h-[75%] flex flex-col'>
         <div className='w-full h-[25%] justify-between flex  p-1'>
@@ -137,9 +167,7 @@ const RankingFriendsSwitch = () => {
           <FontAwesomeIcon icon={faCheck} className='bg-[#498CDA] w-[25px] h-[25px] p-1 rounded-full duration-300 hover:scale-105'/>
         </button>
       </div>
-        ): null
-
-      }
+        )}
       
     </div>
   )
