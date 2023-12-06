@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import InviteField from './InviteField';
 import { faCheck, faPlus  } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import RankedFriends from './RankedFriends';
+import { socketContext } from '../utils/context/socketContext';
 
 const RankingFriendsSwitch = () => {
     const [showRank, setShowRank] = useState(false);
@@ -80,11 +81,8 @@ const RankingFriendsSwitch = () => {
       }
     ]);
 
-    const [user, setUser] = useState({
-      "picture": "assets/rgatnaou.jpeg",
-      "username": "rgatnaou",
-      "display_name": "RedOne Gatnaou"
-    })
+    const {Userdata} = useContext(socketContext);
+  
   return (
     <div className='flex flex-col items-center gap-2 pt-5 pb-10 bg-white w-full h-full rounded-[70px] overflow-hidden'>
       <div className='w-[80%] h-[22%] p-2 bg-gray-100 rounded-[50px] flex gap-1 items-center '>
@@ -98,9 +96,9 @@ const RankingFriendsSwitch = () => {
       {
         showuser && (
           <div className='pt-[10px]  flex justify-center items-center flex-col relative w-full h-[75%] rounded-[50px] text-black animate-bounce'>
-            <img src={user.picture} alt="" className='w-[145px] h-[145px] rounded-full border-solid border-4 border-[#498CDA]' />
-            <h1>{user.display_name}</h1>
-            <h5>@{user.username}</h5>
+            <img src={Userdata?.avatar_url} alt="" className='w-[145px] h-[145px] rounded-full border-solid border-4 border-[#498CDA]' />
+            <h1>{Userdata?.display_name}</h1>
+            <h5>@{Userdata?.username}</h5>
           </div>
         )}
 

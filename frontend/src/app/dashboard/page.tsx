@@ -102,12 +102,7 @@ const Dashboard = () => {
 
 						</div>
 
-
-						
-
 					</div>
-					
-					
 					
 					<div className="col-2">
 

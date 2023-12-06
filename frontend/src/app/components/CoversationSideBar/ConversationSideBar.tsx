@@ -19,7 +19,7 @@ const CoversationSideBar = () => {
 	const router = useRouter();
 	const pathname = usePathname()
  	const [selectUsers, setSelectUsers] = useState<string>("online");     
-	 const {channel ,updateChannel} = useContext(socketContext);
+	const {channel ,updateChannel} = useContext(socketContext);
 
     return (
 		<div className="w-full h-full relative p-2  xl:rounded-[20px] pt-4 bg-white">

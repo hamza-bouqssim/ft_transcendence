@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Body, Controller, Get, Param,  Post, Put, Req,  UnauthorizedException, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Param,  Post,  Req,  Res,  UnauthorizedException, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UserService } from './user.service';
 // import { JwtService } from '@nestjs/jwt';
 // import { PrismaService } from 'prisma/prisma.service';
@@ -12,15 +12,13 @@ import { AuthGuard } from '@nestjs/passport';
 @Controller('user')
 export class UserController {
 
-    constructor(private readonly userService:UserService, 
-        ){}
+    constructor(private readonly userService:UserService){}
 
     @Get('info')
     @UseGuards(AuthGuard('jwt'))
     async grabMyInfos(@Req() req) {
       
      const user = req.user
-     console.log(user)
 
       return {
         username: user.username,
@@ -39,31 +37,27 @@ export class UserController {
 
     @Post('changedisplayname')
     @UseGuards(AuthGuard('jwt'))
-    async displayedName(@Body() request:{newDisplayName: string}, @Req() req ){
-
+    async displayedName(@Body() request:{newDisplayName: string}, @Req() req , @Res() res){
       try {
-
-       const user = req.user
-        // console.log(user.email)
-        const updated = this.userService.changeDisplayedName(user.email, request.newDisplayName);
-        return updated;
+        const user = req.user;
+        const updated = await this.userService.changeDisplayedName(user.email, request.newDisplayName);
+        return res.status(200).json({ success: true, response: updated});
       }catch(error){
-        throw new Error('Failed to update the displayed name');
+        // throw new Error('Failed to update the displayed name');
+          return res.status(401).json({ success: false, message: error.message || 'An unexpected error occurred' });
+
       }
     }
 
-    @Put('changeusername')
+    @Post('changeusername')
     @UseGuards(AuthGuard('jwt'))
-    async changeUserName(@Body() request: {newUserName : string}, @Req() req){
-
+    async changeUserName(@Body() request: {newUserName : string}, @Req() req, @Res() res){
       try {
-
-       const user = req.user
-
-        const updated = this.userService.changeUserName(user.email, req.newUserName);
-        return updated;
+        const user = req.user
+        const updated = await this.userService.changeUserName(user.email, req.newUserName);
+        return res.status(200).json({ success: true, response: updated});
       }catch(error){
-        throw new Error('Failed to update the username');
+        return res.status(401).json({ success: false, message: error.message || 'An unexpected error occurred' });
       }
     }
 
@@ -96,7 +90,6 @@ export class UserController {
       try {
        const user = req.user
         const imagePath = file.path;
-        // console.log("here is the image path :   " + imagePath);
         const updatedAvatar = this.userService._changeAvatar(user.email, imagePath);
         return updatedAvatar;
       } catch (error) {
@@ -139,6 +132,13 @@ export class UserController {
       const test = this.userService.findByDisplayNameSearching(request.displayName);
       return test;
   }
+  @Get('table-friends')
+  @UseGuards(AuthGuard('jwt'))
+    async allFriend(@Req() req){
+      const user = req.user;
+      return await this.userService.allFriendsRequest(user.id);
+
+    }
     
 }
 

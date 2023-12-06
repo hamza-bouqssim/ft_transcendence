@@ -12,7 +12,6 @@ export class GameController {
 
 	@Post('join')
 	async joinQueue(@Body('id') id: string) {
-		console.log('id', id);
 		return await this.gameService.joinQueue(id);
 	}
 
@@ -28,7 +27,6 @@ export class GameController {
 
 	@Get('queue')
 	async getQueue() {
-		console.log('get queue');
 		return 'get queue';
 		// await this.gameService.getQueue();
 	}

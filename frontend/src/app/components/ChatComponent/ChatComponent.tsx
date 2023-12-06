@@ -27,21 +27,19 @@ const ChatComponnent  = () =>{
 	const [oldId,setOldId] = useState(null); 
 	const [conversation , setConversation] = useState<ConversationTypes[]>([]);
 	const dispatch = useDispatch<AppDispatch>();
-	//   useEffect(() => {
-	// 	getConversation().then(({data}) =>{
-	// 		setConversation(data);
-	// 	}).catch((err)=> console.log(err))
-	// }, [conversation])
+
 	useEffect (() => {
         dispatch(fetchConversationThunk())
         .unwrap()
         .then(({data}) => {
           setConversation(data);
         }).catch((err)=>{
-          console.log(err);
+			
         }
         );
-      },[conversation])
+      },[conversation]);
+
+
     useEffect(() => {
         getAuthUser().then(({data}) => {
             setUser(data);

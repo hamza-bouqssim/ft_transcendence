@@ -21,6 +21,8 @@ const ListFriends = () => {
 
 
     const [Friends, setFriends] = useState<FriendsTypes[]>([]);
+    const dispatch = useDispatch<AppDispatch>();
+    const [openMenuId, setOpenMenuId] = useState<string | null>(null);
     const [change, setChange] = useState<{
       sideBar: boolean;
       chatBox: boolean;
@@ -45,22 +47,19 @@ const ListFriends = () => {
       },)
 
       const router = useRouter();
-    // console.log("friends here", Friends);
-      const handleFunction = (friends : FriendsTypes) =>{
+       const handleFunction = (friends : FriendsTypes) =>{
 
         let display_name ;
         display_name  = friends.display_name;
         return display_name;
 
       }
-      const dispatch = useDispatch<AppDispatch>();
-        const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+     
       const handleMenuClick = (friendId: string) => {
           setOpenMenuId(openMenuId === friendId ? null : friendId);
       };
 
       const handlleBloque = async (id: string) => {
-        console.log("id friend is -->", id);
       
         try {
           await dispatch(fetchBlockFriendThunk(id));

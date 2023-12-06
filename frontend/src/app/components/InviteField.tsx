@@ -1,8 +1,50 @@
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
+import { useEffect, useState } from "react";
+import { FriendsTypes } from "../utils/types";
+import { fetchGetAllFriends } from "../store/requestSlice";
+import { AppDispatch } from "../store";
+import { useDispatch } from "react-redux";
+import { fetchUsersThunk } from "../store/usersSlice";
 
 const InviteField = () => {
+	// display all users without my friends 
+
+	const [friends, setFriends] = useState<FriendsTypes[]>([]);
+	const [Users, setUsers] = useState<FriendsTypes[]>([]);
+	const [others, setOthers] = useState<FriendsTypes[]>([]);
+	const dispatch = useDispatch<AppDispatch>();
+
+
+
+	// fetch all users
+
+	useEffect (() => {
+        dispatch(fetchGetAllFriends())
+        .unwrap()
+        .then(({data}) => {
+          setFriends(data);
+        }).catch((err)=>{
+        }
+        );
+      },)
+
+
+	  useEffect (() => {
+		dispatch(fetchUsersThunk())
+		.unwrap()
+		.then(({data}) => {
+		  setUsers(data);
+		}).catch((err)=>{
+		}
+		);
+	  },);
+  
+
+
+
+
 	return (
 		<div className="flex h-[65px] w-full items-center justify-between rounded-[15px] p-2 min-[1750px]:p-3 hover:bg-[#E4E4E4] min-[1750px]:h-[80px]">
 			<div className="ml-[.2rem] h-[50px] w-[50px] shrink-0 overflow-hidden rounded-[50%] bg-black min-[1750px]:h-[65px] min-[1750px]:w-[65px]">

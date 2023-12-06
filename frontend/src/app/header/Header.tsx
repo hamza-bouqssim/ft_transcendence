@@ -48,7 +48,6 @@ const Header = () => {
 	};
 	const router = useRouter();
 	const logoutFunction =  async () =>{
-		console.log("this one")
 		try {
 			await getlogout();
 			let data;

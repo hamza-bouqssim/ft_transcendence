@@ -17,7 +17,7 @@ const TopRightBar = (props: Change) => {
 	const {Userdata,setUserdata} = useContext(socketContext)
     useEffect(() => {
         getAuthUser().then(({data}) => {
-			setUserdata(data)
+			setUserdata(data);
         }).catch((err)=> {console.log(err);});
     }, [])
 	const router = useRouter();
@@ -29,7 +29,6 @@ const TopRightBar = (props: Change) => {
 			router.push("/", { scroll: false });
 		} catch (err) {
 			alert("failed to logout");
-			// console.log(err);
 		}
 	}
 	

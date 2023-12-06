@@ -31,6 +31,14 @@ export type chat = {
     recipient : User;
 }
 
+export type CreateChangeParams = {
+    display_name : string;
+    username : string;
+    avatarUrl : string;
+    password: string;
+}
+
+
 
 export type   ConversationTypes= {
     id : string;

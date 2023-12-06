@@ -10,8 +10,7 @@ const API = axios.create({
 const config : AxiosRequestConfig = { withCredentials: true}
 
 export const postRegisterUser = async (data: createUserParams) => axios.post(`http://localhost:8000/auth/signup`, data, config)
-
-
+ 
 
 export const postLoginUser = async (data : UserCredentialsParams) => axios.post(`http://localhost:8000/auth/signin`, data, config)
 
@@ -25,7 +24,7 @@ export const getConversationMessage = (id : string) => axios.get(`http://localho
 
 export const loginGoogle = () => axios.get(`http://localhost:8000/auth/google/login`, config)
 
-export const getlogout = () => axios.get(`http://localhost:8000/auth/signout`, config);
+export const getlogout = () => axios.get(`http://localhost:8000/auth/logout`, config);
 
 export const postNewMessage = async (data : CreateMessageParams) => axios.post(`http://localhost:8000/chat/create_messages`, data, config);
 

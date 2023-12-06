@@ -33,9 +33,7 @@ export class AuthService {
       }
  
       const payload = {sub: user.id, email: user.email};
-      console.log(payload)
       const token = this.jwtService.sign(payload)
-      console.log(token)
     if (!token) {
       throw new ForbiddenException();
     }
@@ -48,13 +46,13 @@ export class AuthService {
             where: {
               OR: [
                 { email: dto.email },
-                { username: dto.username },
+                { display_name: dto.display_name },
               ],
             },
           });
         
           if (existingUser) {
-            throw new ConflictException('Email or username is already taken.');
+            throw new ConflictException('Email or display_name is already taken.');
           }
         const salt = await bcrypt.genSalt(10);
         const hashedPass = await bcrypt.hash(dto.password_hashed, salt);
