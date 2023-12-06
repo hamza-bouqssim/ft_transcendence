@@ -23,7 +23,7 @@ const ChatComponnent  = () =>{
     const [ user, setUser] = useState<User | undefined>();
     const [loading, setLoading] = useState<boolean>(false);
 	const [show, setShow] = useState<any>(false);
-    const {updateChannel, channel } = useContext(socketContext);
+    const { updateChannel, channel } = useContext(socketContext);
 	const [oldId,setOldId] = useState(null); 
 	const [conversation , setConversation] = useState<ConversationTypes[]>([]);
 	const dispatch = useDispatch<AppDispatch>();

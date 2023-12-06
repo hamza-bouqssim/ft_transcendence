@@ -1,17 +1,17 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { getAuthUser } from "../utils/api";
+import { getAuthUser } from "@/app/utils/api";
 import { redirect, useRouter } from "next/navigation";
-import { User } from "../utils/types";
+import { User } from "@/app/utils/types";
 import { getSession } from "next-auth/react";
 import "./page.css"
-import Boxes from "../components/Boxes";
-import RankingFriendsSwitch from "../components/RankingFriendsSwitch";
-import HistoryMatches from "../components/HistoryMatches";
+import Boxes from "@/app/components/Boxes";
+import RankingFriendsSwitch from "@/app/components/usersFiles/RankingFriendsSwitch";
+import HistoryMatches from "@/app/components/HistoryMatches";
 
 
-const Dashboard = () => {
+const ProfileUsers= () => {
 	
 	const [results, setResults] = useState({
 		WINS: 3,
@@ -106,7 +106,7 @@ const Dashboard = () => {
 					
 					<div className="col-2">
 
-						<div className="rank-container overflow-hidden p-2">
+						<div className="rank-container overflow-hidden p-3">
 							   <RankingFriendsSwitch/>
 						</div>
 
@@ -132,4 +132,4 @@ const Dashboard = () => {
     	</div>
 	);
 };
-export default Dashboard;
+export default ProfileUsers;

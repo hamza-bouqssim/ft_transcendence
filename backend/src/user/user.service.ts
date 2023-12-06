@@ -103,7 +103,7 @@ export class UserService {
         if (!updatedAvatar)
             throw new HttpException("Error",  HttpStatus.BAD_REQUEST);
         
-            return updatedAvatar;
+            return {message : 'Updating Image succefuly'};
     }
 
     async listFriends(userId: string) {
@@ -224,5 +224,45 @@ export class UserService {
         });
     }
 
+    async allFriendsId(userId: string) {
+        const friends = await this.prisma.friend.findMany({
+          where: {
+            OR: [
+              { user_id: userId },
+              { friend_id: userId },
+            ],
+          },
+          include: {
+            user: true,
+            friends: true,
+          },
+        });
+        const processedFriends = friends.map((friend) => {
+            if (friend.user.id === userId) {
+              return friend.friends; // Display friend data if the user initiated the request
+            } else {
+              return friend.user; // Display user data if the friend initiated the request
+            }
+          });
+      
+    
+        return processedFriends;
+      }
+
+      async userInfo(user_id : string){
+
+        const user = await this.prisma.user.findUnique({
+            where: { id: user_id},
+            
+            
+          });
+          if (!user) {
+            throw new NotFoundException('User not found');
+          }
+          return user;
+      
+
+
+      }
   
 }

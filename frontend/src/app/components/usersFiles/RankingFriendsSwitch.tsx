@@ -1,10 +1,15 @@
-import React, { useContext, useState } from 'react'
-import InviteField from './InviteField';
+import React, { useContext, useEffect, useState } from 'react'
+import InviteField from '../InviteField';
 import { faCheck, faPlus  } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import RankedFriends from './RankedFriends';
-import { socketContext } from '../utils/context/socketContext';
+import RankedFriends from '../RankedFriends';
+import { socketContext } from '@/app/utils/context/socketContext';
 import Image from 'next/image';
+import { fetchUserInfo } from '@/app/store/usersSlice';
+import { FriendsTypes, User, UsersTypes } from '@/app/utils/types';
+import { AppDispatch } from '@/app/store';
+import { useDispatch } from 'react-redux';
+import { useParams } from 'next/navigation';
 
 const RankingFriendsSwitch = () => {
     const [showRank, setShowRank] = useState(false);
@@ -12,6 +17,8 @@ const RankingFriendsSwitch = () => {
     const [showSendReqCompo, setShowSendReqCompo] = useState(false);
     const [clickedButton, setClickedButton] = useState('user');
     const [showuser, setShowUser] = useState(true);
+    const [userData, setUserData] = useState<UsersTypes[]>([]);
+
     const _showRank = () => {
       setShowRank(true);
       setShowFriends(false);
@@ -81,8 +88,21 @@ const RankingFriendsSwitch = () => {
         "picture": "https://cdn.landesa.org/wp-content/uploads/default-user-image.png"
       }
     ]);
+    const dispatch = useDispatch<AppDispatch>();
 
-    const {Userdata} = useContext(socketContext);
+    const { id } = useParams();
+      
+    useEffect(() => {
+      const id_user = id;
+      dispatch(fetchUserInfo(id_user)).unwrap()
+        .then(( data :any) => {
+          setUserData(data.data);
+          
+        })
+        .catch((err:any) => console.log(err));
+    }, );
+  
+  console.log("user hna--->", userData);
   
   return (
     <div className='flex flex-col items-center gap-2 pt-5 pb-10 bg-white w-full h-full rounded-[70px] overflow-hidden'>
@@ -94,14 +114,15 @@ const RankingFriendsSwitch = () => {
 
       </div>
 
-      {
+      {/* {
         showuser && (
           <div className='pt-[10px]  flex justify-center items-center flex-col relative w-full h-[75%] rounded-[50px] text-black animate-bounce'>
-            <Image src={players[2]?.picture}  className='w-[110px] h-[110px] rounded-full ' alt="Description of the image" width={60}   height={60} />
-            <h1>{Userdata?.display_name}</h1>
+            <Image src={userData?.avatar_url} className='w-[145px] h-[145px] rounded-full border-solid border-4 border-[#498CDA]' alt="Description of the image" width={60}   height={60} />
+
+            <h1>{userData.}</h1>
             <h5>@{Userdata?.username}</h5>
           </div>
-        )}
+        )}  */}
 
 
       {showRank && (
@@ -111,16 +132,20 @@ const RankingFriendsSwitch = () => {
 
           
           <div className='w-[110px] rounded-full bg-gray-100 h-[110px] border-solid border-4 border-amber-900 overflow-hidden'>
-          <Image src={players[1]?.picture} className='w-[110px] h-[110px] rounded-full ' alt="Description of the image" width={60}   height={60} />
+            <Image src={players[2]?.picture}  className='w-[110px] h-[110px] rounded-full ' alt="Description of the image" width={60}   height={60} />
+
+            
           </div>
 
          
           <div className='w-[140px] rounded-full bg-gray-100 h-[140px] top-0 absolute border-solid border-4 border-amber-500 overflow-hidden hover:bg-black'>
           <Image src={players[0]?.picture}  className='w-[140px] h-[140px] rounded-full ' alt="Description of the image" width={60}   height={60} />
+
           </div>
           
           <div className='w-[110px] rounded-full bg-gray-100 h-[110px] border-solid border-4 border-gray-700 overflow-hidden'>
-          <Image src={players[2]?.picture}  className='w-[110px] h-[110px] rounded-full ' alt="Description of the image" width={60}   height={60} />
+          <Image src={players[1]?.picture} className='w-[110px] h-[110px] rounded-full ' alt="Description of the image" width={60}   height={60} />
+
           </div>
 
           <div className='absolute  w-[50%] mt-[150px] top-2 text-black'>
@@ -140,9 +165,6 @@ const RankingFriendsSwitch = () => {
 
         <div className=' overflow-auto scrollbar-hide'>
           <InviteField />
-         
-          
-
          
         </div>
 

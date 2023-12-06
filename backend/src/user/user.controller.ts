@@ -62,40 +62,75 @@ export class UserController {
     }
 
 
+    // @Post('changeAvatar')
+    // @UseGuards(AuthGuard('jwt'))
+    // @UseInterceptors(FileInterceptor('file', {
+    //   storage: diskStorage({
+    //     destination: 'src/uploads',
+    //     filename: (req, file, callback) => {
+    //       const filename: string = path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
+    //       const extension: string = path.parse(file.originalname).ext;
+    //       callback(null, `${filename}${extension}`);
+    //     },
+    //   }),
+    //   fileFilter: (req, file, _callback) => {
+    //     if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+    //       _callback(null, true);//accept that type
+    //     }
+    //     else {
+    //       _callback(new UnauthorizedException('Only JPEG and PNG files are allowed'), false); // refuse somthing else like .pdf ...etc
+    //     }
+    //   },
+    //   limits: {
+    //     fileSize: 1024 * 1024, // still don't know why this don't work !!!!!!!!! figure it out !
+    //   },
+    // }))
+    // async changeAvatar(@Req() req, @UploadedFile() file: Express.Multer.File)
+    // {
+    //   try {
+    //    const user = req.user
+    //     const imagePath = file.path;
+    //     const updatedAvatar = this.userService._changeAvatar(user.email, imagePath);
+    //     return updatedAvatar;
+    //   } catch (error) {
+    //     throw new Error('Failed to update the Avatar');
+    //   }
+    // }
     @Post('changeAvatar')
     @UseGuards(AuthGuard('jwt'))
     @UseInterceptors(FileInterceptor('file', {
       storage: diskStorage({
-        destination: 'src/uploads',
-        filename: (req, file, callback) => {
-          const filename: string = path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
-          const extension: string = path.parse(file.originalname).ext;
-          callback(null, `${filename}${extension}`);
-        },
-      }),
-      fileFilter: (req, file, _callback) => {
-        if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
-          _callback(null, true);//accept that type
-        }
-        else {
-          _callback(new UnauthorizedException('Only JPEG and PNG files are allowed'), false); // refuse somthing else like .pdf ...etc
-        }
-      },
-      limits: {
-        fileSize: 1024 * 1024, // still don't know why this don't work !!!!!!!!! figure it out !
-      },
-    }))
-    async changeAvatar(@Req() req, @UploadedFile() file: Express.Multer.File)
-    {
-      try {
-       const user = req.user
-        const imagePath = file.path;
-        const updatedAvatar = this.userService._changeAvatar(user.email, imagePath);
-        return updatedAvatar;
-      } catch (error) {
-        throw new Error('Failed to update the Avatar');
-      }
-    }
+            destination: 'src/uploads',
+            filename: (req, file, callback) => {
+              const filename: string = path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
+              const extension: string = path.parse(file.originalname).ext;
+              callback(null, `${filename}${extension}`);
+            },
+          }),
+          fileFilter: (req, file, _callback) => {
+            if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+              _callback(null, true);//accept that type
+            }
+            else {
+              _callback(new UnauthorizedException('Only JPEG and PNG files are allowed'), false); // refuse somthing else like .pdf ...etc
+            }
+          },
+          limits: {
+            fileSize: 1024 * 1024, // still don't know why this don't work !!!!!!!!! figure it out !
+          },
+     
+}))
+async changeAvatar(@Req() req, @UploadedFile() file: Express.Multer.File) {
+  try {
+    const user = req.user;
+    const imagePath = file.path;
+    const updatedAvatar = await this.userService._changeAvatar(user.email, imagePath);
+    return { success: true, response: updatedAvatar };
+  } catch (error) {
+    console.error(error);
+    return { success: false, message: 'Failed to update the Avatar' };
+  }
+}
 
     @Get('my-friends')
     @UseGuards(AuthGuard('jwt'))
@@ -139,6 +174,21 @@ export class UserController {
       return await this.userService.allFriendsRequest(user.id);
 
     }
+    @Post('table_friends_id')
+    @UseGuards(AuthGuard('jwt'))
+
+    async allFriendsId(@Body() request: {id_user : string}){
+      return await this.userService.allFriendsId(request.id_user);
+
+    }
+
+    @Post('get_user')
+    @UseGuards(AuthGuard('jwt'))
+    async getUserId(@Body() request: {id_user : string}){
+      return await this.userService.userInfo(request.id_user);
+
+    }
+     
     
 }
 

@@ -19,6 +19,7 @@ export type RequestTypes = {
 }
 
 export type User = {
+  
     id: string;
     email: string;
     username : string;
@@ -31,12 +32,14 @@ export type chat = {
     recipient : User;
 }
 
-export type CreateChangeParams = {
-    display_name : string;
-    username : string;
-    avatarUrl : string;
-    password: string;
-}
+  export type CreateChangeParams = {
+        display_name: string;
+        username: string;
+        avatarUrl: string;
+        password: string;
+      };
+      
+
 
 
 
@@ -53,6 +56,7 @@ export type AcceptRequestParams ={
 }
 
 export type UsersTypes = {
+    user : User;
     id : string;
     email : string;
     username : string;

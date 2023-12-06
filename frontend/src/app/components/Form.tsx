@@ -1,14 +1,16 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import PopUp from "./popUp";
 import Swal from "sweetalert2";
 import { useForm } from "react-hook-form";
-import { CreateChangeParams } from "../utils/types";
+import { CreateChangeParams, User } from "../utils/types";
 import { AppDispatch } from "../store";
 import { useDispatch } from "react-redux";
-import { fetchUpdateAvatarUrl, fetchUpdateDisplayName, fetchUpdateUserName } from "../store/usersSlice";
+import {  fetchUpdateAvatar, fetchUpdateDisplayName, fetchUpdateUserName } from "../store/usersSlice";
 import Image from "next/image";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { socketContext } from "../utils/context/socketContext";
+import { getAuthUser } from "../utils/api";
 
 
 
@@ -18,7 +20,7 @@ const Form = () => {
 	const [pass, setPass] = useState<string>("");
 	const [confirm, setConfirm] = useState<string>("");
 	const [show, setShow] = useState<boolean>(false);
-	const {register, handleSubmit, formState: { errors }} = useForm<CreateChangeParams>();
+	const {register, handleSubmit,formState: { errors }} = useForm<CreateChangeParams>();
 	const dispatch = useDispatch<AppDispatch>();
 
 	const ToastFunction = (message : any) => {
@@ -31,7 +33,7 @@ const Form = () => {
 		  draggable: true,
 		});
 	  };
-
+	
 	
 
 	const onSubmit = async (data: CreateChangeParams) => {
@@ -46,7 +48,7 @@ const Form = () => {
 
 		  }
 		  const res2 = await dispatch(fetchUpdateUserName(data.username));
-		  if(res1.payload.success)
+		  if(res2.payload.success)
 		  {
 			ToastFunction(res2.payload.response.message);
 
@@ -54,11 +56,37 @@ const Form = () => {
 			ToastFunction(res2.payload.message);
 
 		  }
+		  data.avatarUrl = "https://media.macphun.com/img/uploads/customer/how-to/579/15531840725c93b5489d84e9.43781620.jpg?q=85&w=1340";
+		  console.log("avatar-->", data.avatarUrl[0]);
+		  const formData = new FormData();
+
+		  formData.append('file', data.avatarUrl); 
+		  const res3 = await dispatch(fetchUpdateAvatar(formData));
+		  console.log("res3-->", res3);
+    		if (res3.payload.success) {
+      			ToastFunction(res3.payload.response.message);
+    		} else {
+      			ToastFunction(res3.payload.message);
+    		}
+
+
+
+		 
+    	
+    
 		} catch (err: any) {
 			ToastFunction(`An unknown error occurred`);
 		}
 	  };
-	const [src, setSrc] = useState<string>("/assets/user2.jpeg");
+
+	  const [user, setUser] = useState<User | undefined>();
+
+	  useEffect(() => {
+        getAuthUser().then(({data}) => {
+            setUser(data);
+        })
+        .catch((err)=> {console.log(err);});
+    }, [user])
 
 	return (
 		<div>
@@ -72,25 +100,30 @@ const Form = () => {
 				<div className=" ">
 					<Image
 						className="h-24 w-24 rounded-[50%] bg-sky-200 min-[1750px]:h-24 min-[1750px]:w-24"
-						src={src}
+						src={user?.avatar_url}
 						width={72}
 						height={51}
 						alt="user"
 					/>
 				</div> 
 				 <div className="">
-					<input
-						type="file"
-						accept="image/*"
-						className="hidden"
-						id="file"
-						{...register('avatarUrl', {required: 'avatarUrl is required'})}
-
-						onChange={(e) => {
-							if (e.target.files)
-								setSrc(URL.createObjectURL(e.target.files[0]));
-						}}
-					/>
+				 <input
+  					type="file"
+  					accept="image/*"
+  					className="hidden"
+  					id="file"
+  					{...register('avatarUrl', { required: 'avatarUrl is required' })}
+  					// 	onChange={(e) => {
+    				// 	const selectedFile = e.target.files && e.target.files[0];
+    				// 	console.log('Selected file:', selectedFile);
+					// 	console.log("file-->", selectedFile?.name);
+					// 	setUser((prevUser) => ({
+					// 		...prevUser!,
+					// 		avatar_url: selectedFile?.name || prevUser?.avatar_url || '',
+					// 	  }));
+  					// }}
+				/>
+				
 					<label
 						className="rounded-[20px] bg-[#5B8CD4] px-6 py-3"
 						htmlFor="file"
@@ -102,12 +135,15 @@ const Form = () => {
 					type="button"
 					className="rounded-[20px] bg-[#EA7F87] px-8 py-3"
 					onClick={() => {
-						setSrc("/assets/unknown.png");
+							setUser((prevUser) => ({
+							...prevUser!,
+							avatar_url:  prevUser?.avatar_url || '',
+						  }));
+  				
 					}}
 					value="Delete"
 				/>
 			</div>
-				{/* {show ? <PopUp setShow={setShow} /> : null} */}
 				<div className="my-2">
 					<label htmlFor="fullName" className="block py-2 pl-4">
 						Username
