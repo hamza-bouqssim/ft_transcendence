@@ -9,6 +9,7 @@ import { gameData } from "../../page";
 import { useAtomValue } from "jotai";
 import { io } from "socket.io-client";
 import { socketContext } from "@/app/utils/context/socketContext";
+import { UserData } from "next-auth/providers/42-school";
 
 const OnlineGame = () => {
 	const gameDataValues = useAtomValue(gameData);
@@ -16,6 +17,7 @@ const OnlineGame = () => {
 	const socket = useContext<any>(SocketContext);
 	const parentCanvasRef = useRef<HTMLDivElement>(null);
 	const pongRef = useRef<any>();
+	const opponentPlayer = useRef<any>(null);
 	const [startGame, setStartGame] = useState<boolean>(false);
 	const [score, setScore] = useState<{
 		playerOne: number;
@@ -27,27 +29,25 @@ const OnlineGame = () => {
 
 	const { Userdata } = useContext<any>(socketContext);
 
-// 	avatar_url
-// : 
-// "https://lh3.googleusercontent.com/a/ACg8ocLbffsAwsoJcCzPio-9893BMFnG9IJOC6IJebXDAeEM_w=s96-c"
-// display_name
-// : 
-// "yassinekhadiri77"
-// email
-// : 
-// "yassinekhadiri77@gmail.com"
-// username
-// : 
+	// 	avatar_url
+	// :
+	// "https://lh3.googleusercontent.com/a/ACg8ocLbffsAwsoJcCzPio-9893BMFnG9IJOC6IJebXDAeEM_w=s96-c"
+	// display_name
+	// :
+	// "yassinekhadiri77"
+	// email
+	// :
+	// "yassinekhadiri77@gmail.com"
+	// username
+	// :
 	// "Yassine Khadiri"
-	
+
 	useEffect(() => {
 		console.log("user data", Userdata);
 		console.log("userName", Userdata?.username);
-		
-	}, [Userdata])
+	}, [Userdata]);
 
-
-useEffect(() => {
+	useEffect(() => {
 		socket.on("connect", () => {
 			console.log("A Pong Client Is Connected!");
 		});
@@ -61,18 +61,20 @@ useEffect(() => {
 	}, []);
 
 	useEffect(() => {
+		// if (!pongRef.current) {
 		let timerInterval: any;
-		const lunchGameListener = () => {
-			setStartGame((prev: any) => !prev);
-			pongRef.current = new PongGame(
-				parentCanvasRef.current!,
-				gameDataValues.chosenMapIndex,
-				socket,
-			);
-		};
+
+		// const lunchGameListener = (payload : any) => {
+		// 	setStartGame((prev: any) => !prev);
+		// 	pongRef.current = new PongGame(
+		// 		parentCanvasRef.current!,
+		// 		gameDataValues.chosenMapIndex,
+		// 		socket,
+		// 	);
+		// };
 
 		const gameIsFinishedListener = () => {
-			pongRef.current.clear();
+			// pongRef.current.clear();
 			LoserPlayerPopUp(router);
 		};
 
@@ -103,31 +105,46 @@ useEffect(() => {
 			},
 		}).then(() => {
 			// socket.emit("launchGameRequest", gameDataValues);
+			// if (opponentPlayer.current)
+			// {
+			// if (opponentPlayer.current) return;
 			socket.emit("launchGameRequest", {
 				mapIndex: gameDataValues.chosenGameMode,
 				width: parentCanvasRef.current!.getBoundingClientRect().width,
-				height: parentCanvasRef.current!.getBoundingClientRect().height
+				height: parentCanvasRef.current!.getBoundingClientRect().height,
 			});
 
-			socket.on("launchGame", lunchGameListener);
+			socket.on("launchGame", (payload: any) => {
+				// console.log("opponant : ", payload.opponant);
+				if (opponentPlayer.current) return;
+				opponentPlayer.current = payload.opponant;
+				console.log("opponant  user: ", opponentPlayer.current);
+				setStartGame((prev: any) => !prev);
+				pongRef.current = new PongGame(
+					parentCanvasRef.current!,
+					gameDataValues.chosenMapIndex,
+					socket,
+				);
+			});
 			socket.on("gameIsFinished", gameIsFinishedListener);
 		});
+		// }
 
-		return () => {
-			socket.off("launchGame", lunchGameListener);
-			socket.off("gameIsFinished", gameIsFinishedListener);
-		}
-	},[]);
+		// return () => {
+		// 	socket.off("launchGame", lunchGameListener);
+		// 	socket.off("gameIsFinished", gameIsFinishedListener);
+		// }
+	}, []);
 
 	return (
 		<div className="absolute left-[50%] top-[50%] flex h-[642px] w-[96%] -translate-x-[50%] -translate-y-[50%] flex-col items-center justify-evenly md:h-[900px] md:gap-3 md:px-4 xl:h-[700px] xl:max-w-[1280px] xl:flex-row-reverse xl:px-10 min-[1750px]:h-[900px] min-[1750px]:max-w-[1600px]">
 			<PlayerScore
 				flag="top"
-				name={Userdata?.username}
-				username={Userdata?.display_name}
+				userName={opponentPlayer.current?.username}
+				displayName={opponentPlayer.current?.display_name}
 				score={score.playerOne}
-				playerBgColor={"#4FD6FF"}
-				profileImage={Userdata?.avatar_url}
+				color={"#4FD6FF"}
+				profileImage={opponentPlayer.current?.avatar_url}
 				startGame={startGame}
 			/>
 			<div
@@ -136,10 +153,10 @@ useEffect(() => {
 			></div>
 			<PlayerScore
 				flag="bottom"
-				name={Userdata?.username}
-				username={Userdata?.display_name}
+				userName={Userdata?.username}
+				displayName={Userdata?.display_name}
 				score={score.playerTwo}
-				playerBgColor={"#FF5269"}
+				color={"#FF5269"}
 				profileImage={Userdata?.avatar_url}
 				startGame={startGame}
 			/>

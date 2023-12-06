@@ -6,23 +6,22 @@ import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from 'prisma/prisma.module';
 import { RoomsModule } from './Rooms/rooms.module';
 import { ConversationsModule } from './conversations/conversations.module';
-import { GatewayModule } from './gateway/gateway.module';;
+import { GatewayModule } from './gateway/gateway.module';
 import { UserModule } from './user/user.module';
 import { WebSocketAdapter } from './gateway/gateway.adapter';
 import { FriendRequestModule } from './friend-request/friend-request.module';
 import { GameModule } from './game/game.module';
 
-
 @Module({
 	imports: [
 		AuthModule,
-    PrismaModule,
+		PrismaModule,
 		RoomsModule,
-    ConversationsModule,
-    GatewayModule,
+		ConversationsModule,
+		GatewayModule,
 		UserModule,
-    FriendRequestModule,
-	GameModule,
+		FriendRequestModule,
+		GameModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],

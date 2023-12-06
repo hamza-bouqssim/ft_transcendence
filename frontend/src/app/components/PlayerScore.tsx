@@ -2,13 +2,12 @@ import Image from "next/image";
 
 type PlayerScoreProps = {
 	flag: string;
-	score: number;
-	name: string;
-	username: string;
+	userName: string;
+	displayName: string;
+	color: string;
 	profileImage: any;
-	playerBgColor: string;
-	// isBotPlayer: boolean;
 	startGame: boolean;
+	score: number;
 };
 
 const PlayerScore = (props: PlayerScoreProps) => {
@@ -18,7 +17,8 @@ const PlayerScore = (props: PlayerScoreProps) => {
 				props.flag === "top"
 					? "ml-auto mr-0 flex-row-reverse xl:mb-auto xl:mt-10 min-[1750px]:mt-20"
 					: "ml-0 mr-auto xl:mb-10 xl:mt-auto min-[1750px]:mb-20"
-			} border-[${props.playerBgColor}] border-2`}
+			}`}
+			style={{ border: `solid 4px ${props.color}` }}
 		>
 			<div
 				className={`${
@@ -29,7 +29,7 @@ const PlayerScore = (props: PlayerScoreProps) => {
 			>
 				<Image
 					className={`h-12 w-12 rounded-[50%] border-2 border-[#CFF4FF] shadow-[0_0_50px_2px_var(--blue-color)] md:h-20 md:w-20 min-[1750px]:h-24 min-[1750px]:w-24`}
-					style={{ background: props.playerBgColor }}
+					style={{ background: props.color }}
 					id="0"
 					src={props.profileImage}
 					width={40}
@@ -40,15 +40,15 @@ const PlayerScore = (props: PlayerScoreProps) => {
 				<div
 					className={`font-['Whitney_Bold'] text-white ${
 						props.flag === "top" ? "right-32 text-right" : "left-32"
-					  }`}
+					}`}
 				>
 					<h3 className="text-sm md:text-xl xl:text-xl min-[1750px]:text-3xl">
-						{props.name}
+						{props.userName}
 					</h3>
 					<span
 						className={`mt-[-5px] block text-xs md:text-sm lg:text-sm min-[1750px]:text-xl`}
 					>
-						{"@" + props.username}
+						{"@" + props.displayName}
 					</span>
 				</div>
 			</div>

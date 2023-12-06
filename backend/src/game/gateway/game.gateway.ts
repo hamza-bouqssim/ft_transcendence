@@ -7,12 +7,10 @@ import {
 	OnGatewayConnection,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { OnModuleInit } from '@nestjs/common';
 import { Bodies, Composite, Engine, Runner, Body, World } from 'matter-js';
 import { GameService } from '../game.service';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'prisma/prisma.service';
-import { whichWithAuthenticated } from 'src/user/utils/auth-utils';
 import { AuthenticatedSocket } from 'src/utils/interfaces';
 
 const engine = Engine.create({
@@ -34,8 +32,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@WebSocketServer()
 	server: Server;
 
-	// private canvasWidth: number = 560;
-	// private canvasHeight: number = 836;
 	private defaultCanvasSizes: any = {
 		width: 560,
 		height: 836,
@@ -71,8 +67,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	private playerTwoScore: number = 0;
 	private updateBallPosition: any;
 	private movePaddleInterval: any;
-	private mapIndex : any;
-	private userId : any;
+	private mapIndex: any;
+	private userId: any;
 	private queueStartGame: {
 		userId: string;
 		sockets: string[];
@@ -92,54 +88,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		private readonly gameservice: GameService,
 		private readonly jwtService: JwtService,
 		private readonly prisma: PrismaService,
-	) {
-		this.handlePaddleMove();
-	}
+	) {}
 	sleep = async (ms: number) =>
 		new Promise((resolve) => setTimeout(resolve, ms));
-
-	// async getUserId(token: string) {
-	// 	const decodedToken = this.jwtService.decode(token) as {
-	// 		[key: string]: any;
-	// 	};
-	// 	let user: any;
-
-	// 	if (decodedToken && decodedToken.email) {
-	// 		user = await this.prisma.user.findUnique({
-	// 			where: { email: decodedToken.email },
-	// 		});
-	// 		console.log(user);
-	// 		// console.log("connect1", this.queueInGame);
-	// 		return user.id;
-	// 	}
-	// }
-
-	// extractTokenFromConnection(client: Socket): any | null {
-	// 	// Implement your logic to extract the token from the connection.
-	// 	// For example, if tokens are passed in query parameters:
-	// 	let token;
-	// 	const tokenQueryParam = client.handshake.query.token;
-	// 	const tokenTmp = client.handshake.headers.cookie;
-
-	// 	if (tokenTmp && typeof tokenTmp === 'string') {
-	// 		const cookies = tokenTmp.split(';');
-	// 		const tokenCookie = cookies.find((cookie) =>
-	// 			cookie.trim().startsWith('token='),
-	// 		);
-	// 		if (tokenCookie) {
-	// 			token = tokenCookie.split('=')[1];
-	// 		} else {
-	// 			token = null;
-	// 		}
-	// 	} else {
-	// 		token = null;
-	// 	}
-
-	// 	// If tokens are passed in headers:
-	// 	const tokenHeader = client.handshake.headers['authorization'];
-
-	// 	return tokenQueryParam || tokenHeader || token;
-	// }
 
 	async handleConnection(socket: AuthenticatedSocket, ...args: any[]) {
 		console.log('new Incoming connection');
@@ -202,70 +153,14 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				}
 				if (findGame.socket1.length === 0 || findGame.socket2.length === 0)
 					this.queueInGame = this.queueInGame.filter(
-						(queue) => this.userId !== queue.user1 && this.userId !== queue.user2,
+						(queue) =>
+							this.userId !== queue.user1 && this.userId !== queue.user2,
 					);
 			}
 			console.log('queueInGame d', this.queueInGame);
 			console.log('queueStartGame d', this.queueStartGame);
 		}
 	}
-
-	// async handleConnection(client: any) {
-	// 	// const user = whichWithAuthenticated(req)
-	// 	// const token;
-	// 	console.log('+++++');
-	// 	const token = this.extractTokenFromConnection(client);
-	// 	if (token === null) return;
-	// 	const userId = await this.getUserId(token);
-	// 	if (this.queueInGame.length > 0) {
-	// 		const findGame = this.getInGameQueue(userId);
-	// 		if (findGame) {
-	// 			if (findGame.user1 === userId) {
-	// 				console.log('pushSocketToQueue1', this.queueInGame);
-	// 				findGame.socket1.push(client.id);
-	// 			} else {
-	// 				console.log('pushSocketToQueue2', this.queueInGame);
-	// 				findGame.socket2.push(client.id);
-	// 			}
-	// 		}
-	// 	}
-	// 	console.log('waitting', this.queueStartGame);
-	// 	console.log('ingame', this.queueInGame);
-	// 	// console.log("connect1", this.queueInGame);
-	// }
-
-	// async handleDisconnect(client: any) {
-	// 	console.log(client.handshake);
-	// 	const token = this.extractTokenFromConnection(client);
-	// 	const userId = await this.getUserId(token);
-	// 	const queue = this.getStratQueue(userId);
-	// 	if (queue) {
-	// 		if (queue.sockets.length === 1)
-	// 			this.queueStartGame = this.queueStartGame.filter(
-	// 				(queue) => queue.userId !== userId,
-	// 			);
-	// 		else queue.sockets = queue.sockets.filter((id) => id !== client.id);
-	// 		console.log('queueStartGamet d', this.queueStartGame);
-	// 	} else {
-	// 		const findGame = this.getInGameQueue(userId);
-	// 		if (findGame) {
-	// 			if (findGame.user1 === userId) {
-	// 				findGame.socket1 = findGame.socket1.filter((id) => id !== client.id);
-	// 				if (findGame.socket1.length === 0) {
-	// 					console.log('user1 leave game');
-	// 				}
-	// 			} else {
-	// 				findGame.socket2 = findGame.socket2.filter((id) => id !== client.id);
-	// 				if (findGame.socket2.length === 0) console.log('user2 leave game');
-	// 			}
-	// 			if (findGame.socket1.length === 0 || findGame.socket2.length === 0)
-	// 				this.queueInGame = this.queueInGame.filter(
-	// 					(queue) => userId !== queue.user1 && userId !== queue.user2,
-	// 				);
-	// 		}
-	// 		console.log('queueInGame d', this.queueInGame);
-	// 	}
-	// }
 
 	@SubscribeMessage('joinGame')
 	handleJoinGame(client: AuthenticatedSocket, data: any) {
@@ -277,16 +172,18 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		console.log('waitting', this.queueStartGame);
 		console.log('inGame', this.queueInGame);
 	}
-
 	//emit to user a message in an event---------------------------------------
 	emitToGame(userId: string, payload: any, event: string) {
 		const queue = this.queueInGame.find(
 			(game) => game.user2 === userId || game.user1 === userId,
 		);
+		if (!queue) {
+			console.log('game not found??? ', event);
+			return;
+		}
 		const socketIds = [...queue.socket1, ...queue.socket2];
 
 		socketIds.forEach((socketId) => {
-			console.log(socketId, '++++++++++++++++++---------------------->>>>');
 			this.server.to(socketId).emit(event, payload);
 		});
 	}
@@ -345,7 +242,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				(queue) => queue.userId !== userIdOne && queue.userId !== userIdTwo,
 			);
 			const currentGame = this.getInGameQueue(userIdOne);
-			console.log(`${userIdTwo}++++++++++++++++++++++++++++++++++++++++++`);
 			const idGame = userIdOne + userIdTwo;
 			await this.sleep(4000);
 			this.emitToGame(
@@ -353,8 +249,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				{ opponentId: userIdTwo, idGame },
 				'startGame',
 			);
-
-
 
 			console.log('testtting');
 			// this.emitToUser1InGame(userIdTwo, { opponentId: userIdTwo }, 'startGame');
@@ -400,27 +294,25 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 	closeAllSockets(sockets: any[]) {
-		sockets.forEach(socket => {
+		sockets.forEach((socket) => {
 			socket.disconnect();
 		});
-
 	}
 
-	endGame(game :  any) {
-
-		const {user1, user2, duration} = game;
+	endGame(game: any) {
+		const { user1, user2, duration } = game;
 
 		// const history1 = this.gameService.createMatchHistory(user1, user2, score1, score2, duration);
 		// const history2 = this.gameService.createMatchHistory(user2, user1, score2, score1, duration);
 		// const stateGame = this.gameService.calStateGame(score1, score2);
 		// this.emitToUser1InGame(user1, { history1 }, "endGame");
 		// this.emitToUser2InGame(user2, { history2 }, "endGame");
-		this.queueInGame = this.queueInGame.filter((game) => game.user1 != user1)
+		this.queueInGame = this.queueInGame.filter((game) => game.user1 != user1);
 	}
 	// End Queue---------------------------------------
 
 	@SubscribeMessage('launchGameRequest')
-	handleLaunchGameRequest(@MessageBody() gameData: any) {
+	async handleLaunchGameRequest(@MessageBody() gameData: any) {
 		this.mapIndex = gameData.mapIndex;
 
 		// Update Canvas. Paddles && ball Size With New Mapped Values:
@@ -456,7 +348,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		};
 
 		// console.log('map Index:', this.mapIndex);
-
 		// This Function Will Run In All Maps:
 		this.handleDefaultGameMap();
 
@@ -469,8 +360,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				this.handleVerticalObstacles();
 				break;
 		}
-
-		this.server.emit('launchGame', {});
+		const game = this.getInGameQueue(this.userId);
+		const opponant2 = await this.gameservice.findUserById(game.user2);
+		console.log(
+			'----------------------------------------------------test197----------------------------------------------------',
+		);
+		this.emitToUser1InGame(this.userId, { opponant: opponant2 }, 'launchGame');
+		const opponant1 = await this.gameservice.findUserById(game.user1);
+		this.emitToUser2InGame(this.userId, { opponant: opponant1 }, 'launchGame');
+		this.handlePaddleMove();
 		this.startGame();
 	}
 
@@ -500,7 +398,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			x: this.currentBallSpeed.x,
 			y: this.currentBallSpeed.y,
 		});
-		this.server.emit('setBallVelocity', this.ball.velocity);
+		this.emitToGame(this.userId, this.ball.velocity, 'setBallVelocity');
 
 		// Create Two Paddles:
 		this.topPaddle = Bodies.rectangle(
@@ -828,11 +726,78 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		]);
 	}
 
+	@SubscribeMessage('keyevent')
+	handleKeyDown(@MessageBody() data: any) {
+		if (data.state === 'keydown') {
+			if (data.key === 'd' || data.key === 'ArrowRight')
+				this.movingRight = true;
+			else if (data.key === 'a' || data.key === 'ArrowLeft')
+				this.movingLeft = true;
+		} else {
+			if (data.key === 'd' || data.key === 'ArrowRight')
+				this.movingRight = false;
+			else if (data.key === 'a' || data.key === 'ArrowLeft')
+				this.movingLeft = false;
+		}
+	}
+
+	handlePaddleMove() {
+		this.movePaddleInterval = setInterval(() => {
+			let stepX = 0;
+
+			if (this.movingLeft) {
+				stepX =
+					this.posPaddleX -
+					this.map(
+						13,
+						this.defaultCanvasSizes.width,
+						this.currentCanvasSizes.width,
+					);
+				if (stepX <= this.paddleSizes.width / 2) {
+					stepX = this.paddleSizes.width / 2;
+				}
+			} else if (this.movingRight) {
+				stepX =
+					this.posPaddleX +
+					this.map(
+						13,
+						this.defaultCanvasSizes.width,
+						this.currentCanvasSizes.width,
+					);
+				if (
+					stepX >=
+					this.currentCanvasSizes.width - this.paddleSizes.width / 2
+				) {
+					stepX = this.currentCanvasSizes.width - this.paddleSizes.width / 2;
+				}
+			}
+			if (stepX != 0) {
+				this.posPaddleX = stepX;
+				Body.setPosition(this.bottomPaddle, {
+					x: stepX,
+					y: this.bottomPaddle.position.y,
+				});
+				this.emitToGame(
+					this.userId,
+					{
+						paddleLabel: 'bottomPaddle',
+						xPosition: stepX,
+					},
+					'updatePaddlePosition',
+				);
+			}
+		}, 15);
+	}
+
 	startGame() {
 		Runner.run(Runner.create(), engine);
 
 		this.updateBallPosition = setInterval(() => {
-			this.server.emit('updateBallPosition', this.ball.position);
+			if (!this.getInGameQueue(this.userId)) {
+				clearInterval(this.updateBallPosition);
+				return;
+			}
+			this.emitToGame(this.userId, this.ball.position, 'updateBallPosition');
 			this.calcScore();
 		}, 15);
 	}
@@ -857,33 +822,51 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		});
 	}
 
-	calcScore() {
-		if (this.ball.position.y > this.bottomPaddle.position.y) {
+	emitScore() {
+		if (this.ball.position.y > this.bottomPaddle.position.y)
 			this.playerOneScore++;
-			this.server.emit('updateScore', {
+		else if (this.ball.position.y < this.topPaddle.position.y)
+			this.playerTwoScore++;
+		this.emitToGame(
+			this.userId,
+			{
 				playerOneScore: this.playerOneScore,
 				playerTwoScore: this.playerTwoScore,
-			});
-			// this.sound.win.play();
-			this.resetToDefaultPosition();
-		}
-		if (this.playerOneScore === 2 || this.playerTwoScore === 2) {
-			// TODO: latter We Will Close The Socket With The Specific SocketID:
-			console.log("endgame");
-			const game = this.getInGameQueue(this.userId);
-			if (game) {	
-				// if (game.socket1.length === 0)
-				this.endGame(game);
-				game.status = 'finnish';
-				console.log("game: ",this.queueInGame);
-			}
-			this.playerOneScore = 0;
-			this.playerTwoScore = 0;
-			///////////////////////
-			this.server.emit('gameIsFinished', {});
+			},
+			'updateScore',
+		);
+		// this.sound.win.play();
+		this.resetToDefaultPosition();
+	}
 
-			// Clear Game
-			this.handleClearGame();
+	getScore() {
+		const game = this.getInGameQueue(this.userId);
+		if (game) {
+			// if (this.userId === game.user1)
+			// else if (this.userId === game.user2)
+		}
+	}
+
+	calcScore() {
+		if (
+			this.ball.position.y > this.bottomPaddle.position.y ||
+			this.ball.position.y < this.topPaddle.position.y
+		)
+			this.emitScore();
+		if (this.playerOneScore === 10 || this.playerTwoScore === 10) {
+			// TODO: later We Will Close The Socket With The Specific SocketID:
+			console.log('endgame++++++++++++++++++++++++++++++++++++');
+			const game = this.getInGameQueue(this.userId);
+			if (game) {
+				this.emitToGame(this.userId, {}, 'gameIsFinished');
+				// Clear Game
+				this.handleClearGame();
+				this.endGame(game);
+				console.log(this.playerOneScore, this.playerTwoScore);
+			}
+			// this.playerOneScore = 0;
+			// this.playerTwoScore = 0;
+			console.log('emitted finished game!');
 		}
 	}
 
@@ -896,7 +879,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		// 	console.log(str);
 		// 	for (let body of engine.world.bodies) console.log(body);
 		// };
-
 		// displayBodies('before');
 		for (let body of engine.world.bodies) Composite.remove(engine.world, body);
 		// Composite.remove(engine.world, [
@@ -920,44 +902,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		Engine.clear(engine);
 		World.clear(engine.world, false);
 
-		// Remove Listeners:
-		// document.removeEventListener('keydown', this.handleKeyDown);
-		// document.removeEventListener('keyup', this.handleKeyUp);
-
 		// Close Socket!
 		// clearInterval(this.moveInterval);
 		// this.socket.disconnect();
-	}
-
-	handlePaddleMove() {
-		this.movePaddleInterval = setInterval(() => {
-			let stepX = 0;
-
-			if (this.movingLeft) {
-				stepX = this.posPaddleX - 13;
-				if (stepX <= this.paddleSizes.width / 2) {
-					stepX = this.paddleSizes.width / 2;
-				}
-			} else if (this.movingRight) {
-				stepX = this.posPaddleX + 13;
-				if (
-					stepX >=
-					this.currentCanvasSizes.width - this.paddleSizes.width / 2
-				) {
-					stepX = this.currentCanvasSizes.width - this.paddleSizes.width / 2;
-				}
-			}
-			if (stepX != 0) {
-				this.posPaddleX = stepX;
-				Body.setPosition(this.bottomPaddle, {
-					x: stepX,
-					y: this.bottomPaddle.position.y,
-				});
-				this.server.emit('updatePaddlePosition', {
-					paddleLabel: 'bottomPaddle',
-					xPosition: stepX,
-				});
-			}
-		}, 20);
 	}
 }
