@@ -40,12 +40,10 @@ export class WebSocketAdapter extends IoAdapter {
     const chat = server.of('/chat');
 
     game.use((socket, next) => {
-     console.log("game")
       this.authenticateSocket(socket, next);
     });
 
     chat.use(async (socket: AuthenticatedSocket, next) => {
-     console.log("chat")
 
       this.authenticateSocket(socket, next);
     });

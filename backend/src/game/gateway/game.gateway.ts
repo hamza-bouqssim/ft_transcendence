@@ -142,8 +142,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	// }
 
 	async handleConnection(socket: AuthenticatedSocket, ...args: any[]) {
-		console.log('new Incoming connection');
-		console.log(socket.user);
 		if (socket.user) {
 			const newStatus = await this.prisma.user.update({
 				where: { id: socket.user.id },
@@ -155,21 +153,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			const findGame = this.getInGameQueue(userId);
 			if (findGame) {
 				if (findGame.user1 === userId) {
-					console.log('pushSocketToQueue1', this.queueInGame);
 					findGame.socket1.push(socket.id);
 				} else {
-					console.log('pushSocketToQueue2', this.queueInGame);
 					findGame.socket2.push(socket.id);
 				}
 			}
 		}
-		console.log('waitting', this.queueStartGame);
-		console.log('ingame', this.queueInGame);
 	}
 
 	async handleDisconnect(socket: AuthenticatedSocket) {
-		console.log('Connection closed');
-		console.log(socket.user);
 		if (socket.user) {
 			const newStatus = await this.prisma.user.update({
 				where: { id: socket.user.id },
@@ -184,14 +176,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 					(queue) => queue.userId !== userId,
 				);
 			else queue.sockets = queue.sockets.filter((id) => id !== socket.id);
-			console.log('queueStartGamet d', this.queueStartGame);
 		} else {
 			const findGame = this.getInGameQueue(userId);
 			if (findGame) {
 				if (findGame.user1 === userId) {
 					findGame.socket1 = findGame.socket1.filter((id) => id !== socket.id);
 					if (findGame.socket1.length === 0) {
-						console.log('user1 leave game');
 					}
 				} else {
 					findGame.socket2 = findGame.socket2.filter((id) => id !== socket.id);
@@ -202,8 +192,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 						(queue) => userId !== queue.user1 && userId !== queue.user2,
 					);
 			}
-			console.log('queueInGame d', this.queueInGame);
-			console.log('queueStartGame d', this.queueStartGame);
+		
 		}
 	}
 
@@ -272,8 +261,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		// console.log("index:", this.mapIndex)
 		this.pushSocketToQueue(this.userId, client.id, 0);
 		if (this.queueStartGame.length >= 2) this.checkQueue();
-		console.log('waitting', this.queueStartGame);
-		console.log('inGame', this.queueInGame);
 	}
 
 	//emit to user a message in an event---------------------------------------
@@ -322,7 +309,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	//try to lunch game------------------------------
 	async checkQueue() {
 		let map = this.mapReadyToPlay();
-		console.log('checkQueue', this.queueStartGame);
 		if (!map) return;
 		while (map.length >= 2) {
 			const userIdOne = map[0].userId;
@@ -343,7 +329,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				(queue) => queue.userId !== userIdOne && queue.userId !== userIdTwo,
 			);
 			const currentGame = this.getInGameQueue(userIdOne);
-			console.log(`${userIdTwo}++++++++++++++++++++++++++++++++++++++++++`);
 			const idGame = userIdOne + userIdTwo;
 			await this.sleep(4000);
 			this.emitToGame(
@@ -351,7 +336,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				{ opponentId: userIdTwo, idGame },
 				'startGame',
 			);
-			console.log('testtting');
 			// this.emitToUser1InGame(userIdTwo, { opponentId: userIdTwo }, 'startGame');
 			// this.emitToUser2InGame(userIdOne, { opponentId: userIdOne }, "startGame");
 			currentGame.status = 'playing';
@@ -375,10 +359,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			const findGame = this.getInGameQueue(userId);
 			if (findGame) {
 				if (findGame.user1 === userId) {
-					console.log('pushSocketToQueue1', this.queueInGame);
 					findGame.socket1.push(socketId);
 				} else {
-					console.log('pushSocketToQueue2', this.queueInGame);
 					findGame.socket2.push(socketId);
 				}
 			}
@@ -432,7 +414,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			),
 		};
 
-		console.log('map Index:', this.mapIndex);
 
 		// This Function Will Run In All Maps:
 		this.handleDefaultGameMap();

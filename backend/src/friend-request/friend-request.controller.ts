@@ -21,7 +21,6 @@ export class FriendRequestController {
           const returnvalue = await this.friendshipService.sendRequest(request.display_name, user.display_name);
           return res.status(200).json({ success: true, response: returnvalue });
         } catch (err) {
-          console.log(err);
           return res.status(401).json({ success: false, message: err.message || 'An unexpected error occurred' });
         }
       }
@@ -58,11 +57,13 @@ export class FriendRequestController {
         return this.friendshipService.unblock(request.friendIdToUnblock, user.id);
     }
 
-    @Get('all-Friends')
-    async allFriends(@Req() req)
-    {
-        const user = req.user;
-      return this.friendshipService.allMyFriends(user.ud);
+    // @Get('all-Friends')
+    // async allFriends(@Req() req)
+    // {
+    //     const user = req.user;
+    //   return this.friendshipService.allMyFriends(user.ud);
 
-    }
+    // }
+
+    
 }

@@ -484,7 +484,6 @@ class PongGame {
 
 			this.handleKeyDown = (e: KeyboardEvent): void => {
 				if (e.key === "d" || e.key === "ArrowRight") {
-					console.log("event!");
 					movingRight = true;
 				} else if (e.key === "a" || e.key === "ArrowLeft") movingLeft = true;
 			};

@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Injectable,HttpStatus,HttpException } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { RoomId ,DeleteChatRoom,UpdateChatRoom,CreateChatRoom,getAllRooms ,CreateMessageRoom} from "src/Rooms/dto/rooms.dto";
@@ -299,7 +300,6 @@ export class RoomsService {
           ]
         },
       });
-      console.log(friends)
       if (!friends || friends.length === 0) {
         throw new Error('No friends found for the given user.');
       }

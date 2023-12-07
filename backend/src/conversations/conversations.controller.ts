@@ -1,14 +1,8 @@
 /* eslint-disable prettier/prettier */
 import { Body, Controller, Get, Param, Post, UseGuards, Req, Res } from '@nestjs/common';
 import { ConversationsService } from './conversations.service';
-import { UserService } from 'src/user/user.service';
 import { Request } from 'src/user/interfaces/request.interface';
-import { whichWithAuthenticated } from 'src/user/utils/auth-utils';
-import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from 'prisma/prisma.service';
 import { AuthGuard } from '@nestjs/passport';
-import { EventEmitter2 } from '@nestjs/event-emitter';
-import { createMessageDto } from './dtos/CreateMessage.dto';
 
 
 
@@ -27,7 +21,6 @@ constructor(private  conversationService : ConversationsService ,)
         const returnValue = await this.conversationService.createConversations(user,  request.display_name);
         return res.status(200).json({ success: true, response: returnValue });
     } catch (err) {
-        console.log(err);
         return res.status(401).json({ success: false, message: err.message || 'An unexpected error occurred' });
     }
 

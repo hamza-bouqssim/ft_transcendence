@@ -18,7 +18,6 @@ const CreateSearchModal:FC<props> = ({setShow}) => {
         const handleKeyDown = (e : KeyboardEvent) => e.key === 'Escape' && setShow(false);
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-        console.log(ref);
     })
 
 

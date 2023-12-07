@@ -1,4 +1,5 @@
-import { Controller, Get,Body, Res,UseGuards ,Post,Req,Inject} from '@nestjs/common';
+/* eslint-disable prettier/prettier */
+import { Controller, Get,Body, Res,UseGuards ,Post,Req} from '@nestjs/common';
 import { RoomsService } from './rooms.service';
 import { CreateChatRoom,UpdateChatRoom ,DeleteChatRoom,RoomId} from './dto/rooms.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -36,7 +37,6 @@ export class RoomsController {
   async createRooms(@Body() data, @Res() res: any , @Req() req) {
     try {
       const {id}=req.user
-      console.log("create room" , id , data.data)
       const chatRoom = await this.roomsService.creatRooms(data.data,id);
       this.eventEmitter.emit(
         'order.created',
@@ -56,7 +56,6 @@ export class RoomsController {
     try {
       const {id}=req.user
       const update = await this.roomsService.updateRooms(data.data,id);
-      console.log(update);
       return res.status(200).json({data: update });
     } catch (error) {
       return res.status(500).json({ error: error});
@@ -124,7 +123,6 @@ export class RoomsController {
       const friend = await this.roomsService.getAllFreind(id);
       return res.status(200).json({data: friend });
     } catch (error) {
-      console.log(error)
       return res.status(500).json({ error: error});
     }
 

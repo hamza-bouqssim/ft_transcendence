@@ -13,8 +13,21 @@ import { useRouter } from "next/navigation";
 import { UserCredentialsParams } from "../utils/types";
 import { postLoginUser } from "../utils/api";
 import { setCookie } from "cookies-next";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const SignInForm = forwardRef((props: any, ref: any) => {
+	const ToastFunction = (message : any) => {
+		toast.error(message, {
+		  position: toast.POSITION.TOP_RIGHT,
+		  autoClose: 5000, // You can customize the duration
+		  hideProgressBar: false,
+		  closeOnClick: true,
+		  pauseOnHover: true,
+		  draggable: true,
+		});
+	  };
 	const [show, setShow] = useState<boolean>(false),
 		faEyeRef = useRef<SVGSVGElement>(null),
 		faEyeSlashRef = useRef<SVGSVGElement>(null);
@@ -44,18 +57,28 @@ const SignInForm = forwardRef((props: any, ref: any) => {
 
 	const onSubmit = async (data: UserCredentialsParams) => {
 		try {
-			console.log("data-->",data);
 			await postLoginUser(data);
+			ToastFunction(`You are signIn succefully`);
 			router.push("/dashboard", { scroll: false });
-		} catch (err) {
-			console.log(err);
+		} catch (err : any) {
+			if (err.response) {
+			
+			  const errorMessage = err.response.data.message;
+			ToastFunction(`Failed to login: ${errorMessage}`);
+			} else if (err.request) 
+			{
+			  ToastFunction(`No response from the server`);
 
-			// alert("failed to login");
-		}
+			} else {
+			  ToastFunction(`Error in request setup`);
+			}
+		  }
+		
 	};
 
 	return (
 		<div ref={ref}>
+			 <ToastContainer />
 			<form
 				action=""
 				className="relative flex h-full w-full flex-col items-center justify-center gap-3 sm:gap-4"

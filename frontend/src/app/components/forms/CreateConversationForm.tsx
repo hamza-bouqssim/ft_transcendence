@@ -23,7 +23,7 @@ export const CreateConversationForm = () => {
         const onSubmit = async  (data : CreateConversationParams) => {
           try{
             const res = await dispatch(createConversationThunk(data.display_name));
-            console.log("respose hereeee", res);
+            console.log("response-->");
               if (res.payload && typeof res.payload === 'object') {
                 const responseData = res.payload as { data?: { response?: { message?: string } } };
                 const message = responseData.data?.response?.message;

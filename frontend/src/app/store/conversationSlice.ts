@@ -17,17 +17,18 @@ const initialState: ConversationsState = {
 
 export const createConversationThunk = createAsyncThunk('conversations/create', async(display_name : string , { rejectWithValue })=>{
   try {
+
     const response = await createConversation(display_name);
-
-
-    if (!response.data.success) {
+    
+ 
+    if (!response.data.success)
+    {
       throw new Error(response.data.error);
     }
     return response;
   } catch (err: any) {
-      console.error("Error", err);
-
-    if (err.response && err.response.data) {
+    if (err.response && err.response.data) 
+    {
       return rejectWithValue(err.response.data); // Return the entire error object
     } else {
       throw new Error("create conversation failed with an unknown error");
@@ -61,17 +62,7 @@ export const conversationsSlice = createSlice({
       console.log('addConversation');
       // state.conversations.push(action.payload);
     },
-    updateConversation: (state, action: PayloadAction<ConversationTypes>) => {
-      console.log('Inside updateConversation');
-      const conversation = action.payload;
-      console.log("ps ", conversation);
-      const index = state.conversations.findIndex(
-        (c) => c.id === conversation.id
-      );
-      console.log("index here", index);
-      state.conversations.splice(index, 1);
-      state.conversations.unshift(conversation);
-    },
+ 
   },
 
   extraReducers: (builder) => {
@@ -81,9 +72,7 @@ export const conversationsSlice = createSlice({
 
         // state.conversations.set(action.payload.data[0].id.toString(), action.payload.data[0])
         state.conversations = action.payload.data;
-        state.loading = false;
     }).addCase(fetchConversationThunk.pending, (state, action) =>{
-        state.loading = true;
     })
     .addCase(createConversationThunk.fulfilled, (state, action) =>{
         state.conversations.unshift(action.payload.data);
@@ -94,7 +83,7 @@ export const conversationsSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { addConversation, updateConversation } =
+export const { addConversation} =
   conversationsSlice.actions;
 
 export default conversationsSlice.reducer;

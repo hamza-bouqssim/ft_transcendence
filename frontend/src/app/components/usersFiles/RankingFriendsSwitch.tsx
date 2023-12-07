@@ -1,10 +1,15 @@
-import React, { useContext, useState } from 'react'
-import InviteField from './InviteField';
+import React, { useContext, useEffect, useState } from 'react'
+import InviteField from '../InviteField';
 import { faCheck, faPlus  } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import RankedFriends from './RankedFriends';
-import { socketContext } from '../utils/context/socketContext';
+import RankedFriends from '../RankedFriends';
+import { socketContext } from '@/app/utils/context/socketContext';
 import Image from 'next/image';
+import { fetchUserInfo } from '@/app/store/usersSlice';
+import { FriendsTypes, User, UsersTypes } from '@/app/utils/types';
+import { AppDispatch } from '@/app/store';
+import { useDispatch } from 'react-redux';
+import { useParams } from 'next/navigation';
 
 const RankingFriendsSwitch = () => {
     const [showRank, setShowRank] = useState(false);
@@ -12,6 +17,9 @@ const RankingFriendsSwitch = () => {
     const [showSendReqCompo, setShowSendReqCompo] = useState(false);
     const [clickedButton, setClickedButton] = useState('user');
     const [showuser, setShowUser] = useState(true);
+    const [userData, setUserData] = useState<UsersTypes | null>(null);
+    console.log("tes");
+
     const _showRank = () => {
       setShowRank(true);
       setShowFriends(false);
@@ -81,8 +89,33 @@ const RankingFriendsSwitch = () => {
         "picture": "https://cdn.landesa.org/wp-content/uploads/default-user-image.png"
       }
     ]);
+    const dispatch = useDispatch<AppDispatch>();
 
-    const {Userdata} = useContext(socketContext);
+    const { id } = useParams();
+      
+    useEffect(() => {
+      const id_user = id;
+      dispatch(fetchUserInfo(id_user))
+        .unwrap()
+        .then((data: any) => {
+          console.log("API Response:", data.data);
+    
+          // Assuming you want to create a new object with display_name and username
+          const modifiedUserData: UsersTypes = {
+            id: data.data.id,
+            email: data.data.email,
+            username: data.data.username,
+            display_name: data.data.display_name,
+            avatar_url: data.data.avatar_url,
+            status: data.data.status,
+          };
+    
+          setUserData(modifiedUserData);
+        })
+        .catch((err: any) => console.log(err));
+    }, [id, dispatch]);
+
+    console.log("user hereeee->", userData?.display_name);
   
   return (
     <div className='flex flex-col items-center gap-2 pt-5 pb-10 bg-white w-full h-full rounded-[70px] overflow-hidden'>
@@ -92,35 +125,40 @@ const RankingFriendsSwitch = () => {
         <button  onClick={_showRank} className={`w-1/2 bg-[#498CDA] ${clickedButton === 'rank' ? 'bg-[#498CDA] text-white' : 'bg-gray-300 text-gray-600'} h-full rounded-3xl duration-300 hover:scale-105`}>Rank</button>
         <button onClick={_showFriends} className={`w-1/2 ${clickedButton === 'friends' ? 'bg-[#498CDA] text-white' : 'bg-gray-300 text-gray-600'} h-full rounded-3xl duration-300 hover:scale-105`}>Suggestion</button>
 
-      </div>
+      </div> 
 
       {
         showuser && (
           <div className='pt-[10px]  flex justify-center items-center flex-col relative w-full h-[75%] rounded-[50px] text-black animate-bounce'>
-            <Image src={players[2]?.picture}  className='w-[110px] h-[110px] rounded-full ' alt="Description of the image" width={60}   height={60} />
-            <h1>{Userdata?.display_name}</h1>
-            <h5>@{Userdata?.username}</h5>
+            <Image src={userData?.avatar_url} className='w-[145px] h-[145px] rounded-full border-solid border-4 border-[#498CDA]' alt="Description of the image" width={60}   height={60} />
+
+            <h1>{userData?.display_name}</h1>
+            <h5>@{userData?.username}</h5>
           </div>
-        )}
+        )}  
 
 
-      {showRank && (
+       {showRank && (
         
         
         <div className=' items-center justify-center  gap-10 relative w-full h-[75%] rounded-[50px] flex overflow-auto scrollbar-hide'>
 
           
           <div className='w-[110px] rounded-full bg-gray-100 h-[110px] border-solid border-4 border-amber-900 overflow-hidden'>
-          <Image src={players[1]?.picture} className='w-[110px] h-[110px] rounded-full ' alt="Description of the image" width={60}   height={60} />
+            <Image src={players[2]?.picture}  className='w-[110px] h-[110px] rounded-full ' alt="Description of the image" width={60}   height={60} />
+
+            
           </div>
 
          
           <div className='w-[140px] rounded-full bg-gray-100 h-[140px] top-0 absolute border-solid border-4 border-amber-500 overflow-hidden hover:bg-black'>
           <Image src={players[0]?.picture}  className='w-[140px] h-[140px] rounded-full ' alt="Description of the image" width={60}   height={60} />
+
           </div>
           
           <div className='w-[110px] rounded-full bg-gray-100 h-[110px] border-solid border-4 border-gray-700 overflow-hidden'>
-          <Image src={players[2]?.picture}  className='w-[110px] h-[110px] rounded-full ' alt="Description of the image" width={60}   height={60} />
+          <Image src={players[1]?.picture} className='w-[110px] h-[110px] rounded-full ' alt="Description of the image" width={60}   height={60} />
+
           </div>
 
           <div className='absolute  w-[50%] mt-[150px] top-2 text-black'>
@@ -132,7 +170,7 @@ const RankingFriendsSwitch = () => {
           </div>
 
         </div>
-      )}
+      )} 
 
       {showFriends && (
 
@@ -140,9 +178,6 @@ const RankingFriendsSwitch = () => {
 
         <div className=' overflow-auto scrollbar-hide'>
           <InviteField />
-         
-          
-
          
         </div>
 
@@ -161,9 +196,9 @@ const RankingFriendsSwitch = () => {
           <button className='h-full bg-[#498CDA] w-[49%] rounded-[10px]'>Search</button>
 
         </div>
-        <button  onClick={_backTo} className='absolute bottom-0 right-0 mb-[-35px] mr-4 rounded-full'>
+        {/* <button  onClick={_backTo} className='absolute bottom-0 right-0 mb-[-35px] mr-4 rounded-full'>
           <FontAwesomeIcon icon={faCheck} className='bg-[#498CDA] w-[25px] h-[25px] p-1 rounded-full duration-300 hover:scale-105'/>
-        </button>
+        </button> */}
       </div>
         )}
       

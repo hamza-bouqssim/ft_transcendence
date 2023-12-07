@@ -10,8 +10,7 @@ const API = axios.create({
 const config : AxiosRequestConfig = { withCredentials: true}
 
 export const postRegisterUser = async (data: createUserParams) => axios.post(`http://localhost:8000/auth/signup`, data, config)
-
-
+ 
 
 export const postLoginUser = async (data : UserCredentialsParams) => axios.post(`http://localhost:8000/auth/signin`, data, config)
 
@@ -25,7 +24,7 @@ export const getConversationMessage = (id : string) => axios.get(`http://localho
 
 export const loginGoogle = () => axios.get(`http://localhost:8000/auth/google/login`, config)
 
-export const getlogout = () => axios.get(`http://localhost:8000/auth/signout`, config);
+export const getlogout = () => axios.get(`http://localhost:8000/auth/logout`, config);
 
 export const postNewMessage = async (data : CreateMessageParams) => axios.post(`http://localhost:8000/chat/create_messages`, data, config);
 
@@ -57,18 +56,32 @@ export const changeDisplayedName = async (DisplayName : string) => axios.post(`h
 
 export const changeUserName = async (UserName : string) => axios.post(`http://localhost:8000/user/changeusername`, {newUserName: UserName}, config);
 
-export const changeAvatar = async (AvatarUrl : string) => axios.post(`http://localhost:8000/user/changeAvatar`, {file : AvatarUrl}, config);
+// export const changeAvatar = async (AvatarUrl : string) => axios.post(`http://localhost:8000/user/changeAvatar`, {file : AvatarUrl}, config);
 
+export const dataUser = async (id_user: string) => axios.post(`http://localhost:8000/user/get_user`, {id_user : id_user}, config);
+
+export const changeAvatar = async (avatarFormData: FormData) => {
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    };
+  
+    return axios.post(`http://localhost:8000/user/changeAvatar`, avatarFormData, config);
+  };
 export const searchingBar = async (display_name : string) => axios.post(`http://localhost:8000/user/search`, {displayName : display_name}, config);
 
 
 export const findConversationUsers = async ( display_name : string) => axios.post(`http://localhost:8000/chat/findConversationUser`, {display_name : display_name}, config);
+// tabel friends
 
+export const tableFriends = async () => axios.get(`http://localhost:8000/user/table-friends`, config);
 
 export const createRoomsApi = (data:any) =>{
     const response = API.post("/rooms/createRooms",{data})
     return response;  
 }
+
   
 export const updateRoomsApi = (data:any) =>{
     const response = API.post("/rooms/updateRooms",{data})

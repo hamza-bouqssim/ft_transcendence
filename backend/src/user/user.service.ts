@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { findUserParams } from 'src/utils/types';
 
@@ -24,55 +24,66 @@ export class UserService {
         
     }
 
+    async allFriendsRequest(userId : string)
+    {
+        const friendsAsUser = await this.prisma.friend.findMany({
+            where: {
+                OR: [
+                    {user_id: userId},
+                    {friend_id: userId}
+                ]
+            
+            },
+        
+        });
+        return friendsAsUser;
+
+    }
+
 
     async changeDisplayedName(_email: string, newDisplayedName: string){
-        const find = await this.prisma.user.findUnique({where: {email:_email}});
+        const find = await this.prisma.user.findUnique({where: {email:_email}});        
+            if(!find)
+                throw new HttpException("User Not Found!", HttpStatus.BAD_REQUEST); 
+            if (find.display_name === newDisplayedName)
+                throw new HttpException("This Display Name already in use, Choose another one !!!", HttpStatus.BAD_REQUEST);
 
-        // console.log("old: " + (find?.display_name || 'null') + "\n new:  " + newDisplayedName);
-        
-        if(!find)
-            throw new UnauthorizedException("User Not Found!")
-        if (find.display_name === newDisplayedName)
-            throw new UnauthorizedException("This Display Name already in use, Choose another one !!!");
-        //should search if there a user with the same display_name that i want to put to that user
         const search = await this.prisma.user.findUnique({
-            where:{
-                display_name: newDisplayedName
-            }
+            where : {
+            display_name: newDisplayedName
+        }
         })
+
         if(search)
         {
-            throw new UnauthorizedException("Display_name alrighdy in use");
+            throw new HttpException("Display_name alrighdy in use", HttpStatus.BAD_REQUEST);
         }
+
         const updatedDipslayName = await this.prisma.user.update({
             where: {email: _email},
             data: {display_name: newDisplayedName}
         })
 
         if(!updatedDipslayName)
-            throw new UnauthorizedException("Error");
+            throw new HttpException("Error", HttpStatus.BAD_REQUEST);
         
-            return updatedDipslayName;
-    }
+        return {message : 'Update display_name  succefully'}    }
 
     async changeUserName(_email: string, newUserName: string){
         const find = await this.prisma.user.findUnique({where: {email:_email}});
 
-        
         if(!find)
-            throw new UnauthorizedException("User Not Found!")
+            throw new HttpException("User Not Found!", HttpStatus.BAD_REQUEST)
         if (find.username === newUserName)
-            throw new UnauthorizedException("This UserName already in use, Choose another one !!!");
-
+            throw new HttpException("This UserName already in use, Choose another one !!!", HttpStatus.BAD_REQUEST);
         const updatedUserName = await this.prisma.user.update({
             where: {email: _email},
-            data: {username: newUserName}
+            data: {username: newUserName},
         })
-
         if (!updatedUserName)
-            throw new UnauthorizedException("Error");
-        
-            return updatedUserName;
+            throw new HttpException("Error",  HttpStatus.BAD_REQUEST);
+        return {message : 'Update username succefully'}
+
     }
 
     async _changeAvatar(_email: string, avatarPath: any)
@@ -82,7 +93,7 @@ export class UserService {
         // console.log("old: " + (find?.avatar_url || 'null') + "\n new:  " + avatarPath);
         
         if(!find)
-            throw new UnauthorizedException("User Not Found!")
+            throw new HttpException("User Not Found!",  HttpStatus.BAD_REQUEST)
 
         const updatedAvatar = await this.prisma.user.update({
             where: {email: _email},
@@ -90,9 +101,9 @@ export class UserService {
         })
 
         if (!updatedAvatar)
-            throw new UnauthorizedException("Error");
+            throw new HttpException("Error",  HttpStatus.BAD_REQUEST);
         
-            return updatedAvatar;
+            return {message : 'Updating Image succefuly'};
     }
 
     async listFriends(userId: string) {
@@ -213,5 +224,45 @@ export class UserService {
         });
     }
 
+    async allFriendsId(userId: string) {
+        const friends = await this.prisma.friend.findMany({
+          where: {
+            OR: [
+              { user_id: userId },
+              { friend_id: userId },
+            ],
+          },
+          include: {
+            user: true,
+            friends: true,
+          },
+        });
+        const processedFriends = friends.map((friend) => {
+            if (friend.user.id === userId) {
+              return friend.friends; // Display friend data if the user initiated the request
+            } else {
+              return friend.user; // Display user data if the friend initiated the request
+            }
+          });
+      
+    
+        return processedFriends;
+      }
+
+      async userInfo(user_id : string){
+
+        const user = await this.prisma.user.findUnique({
+            where: { id: user_id},
+            
+            
+          });
+          if (!user) {
+            throw new NotFoundException('User not found');
+          }
+          return user;
+      
+
+
+      }
   
 }

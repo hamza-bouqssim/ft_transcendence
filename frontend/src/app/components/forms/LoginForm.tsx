@@ -22,12 +22,10 @@ const LoginForm = () => {
 	const onSubmit = async (data: UserCredentialsParams) => {
 		console.log("here---");
 		try {
-			console.log("csdcsdcsd",data.email)
 			await postLoginUser(data);
 			router.push("/dashboard", { scroll: false });
 
 		} catch (err) {
-			console.log(err)
 			alert("failed to l;ogin")
 		}
 	};

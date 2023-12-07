@@ -32,7 +32,6 @@ const FriendsBloque = () =>{
         dispatch(fetchBlocksThunk())
         .unwrap()
         .then(({data}) => {
-          // console.log("data here-->",data);
           setBloques(data);
         }).catch((err)=>{
           console.log(err);
@@ -41,7 +40,6 @@ const FriendsBloque = () =>{
       },)
 
       const handleDebloque = async (id: string) => {
-        console.log("id friend is -->", id);
       
         try {
           await dispatch(fetchDebloqueUserThunk(id));

@@ -38,7 +38,6 @@ export const CreateSearchForm = () => {
     
                     if (response.ok) {
                         const data = await response.json();
-                        console.log("searching", data);
                         setSearchResults(data);
                     }
                 } catch (error) {
@@ -51,11 +50,9 @@ export const CreateSearchForm = () => {
                 fetchSearchResults();
             } else {
                 // Clear search results if the searchQuery is empty
-                console.log("here nop");
                 setSearchResults([]);
             }
     
-            console.log("searchingelem-->", searchResults);
         }, [searchQuery]);
     return (
           

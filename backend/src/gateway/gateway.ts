@@ -51,22 +51,17 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
     }
     @SubscribeMessage("message.create")
     async handleMessageCreateEvent(socket : AuthenticatedSocket,payload : any){
-        // const { senderId, recipientId } = payload;
-        console.log("payload",socket)
         const messages = await this.conversationService.createMessags(socket.user, payload);
-        console.log(messages)
         this.server.to(payload.participentsId.toString()).emit ('onMessage', messages);
     }
     
     @SubscribeMessage('joinToRoom')
     handleJoinRome(client: Socket, roomId: RoomId){
-        console.log("join room-->", roomId.id);
-        client.join(roomId.id.toString());
+         client.join(roomId.id.toString());
     }
     
     @SubscribeMessage('leaveToRoom')
     handleLeaveRome (client: Socket, roomId: RoomId) {
-        console.log("leaveToRoom-->", roomId.id)
         client.leave (roomId.id);
     }
 

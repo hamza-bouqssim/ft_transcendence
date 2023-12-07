@@ -27,10 +27,8 @@ export class GameService {
 			await this.leaveQueue(userIdOne);
 			await this.leaveQueue(userIdTwo);
 			//Pong_match(userIdOne, userIdTwo)
-			console.log('ready to play');
 			return await this.prisma.queue.count();
 		}
-		console.log('not enough players');
 		return queueCount;
 	}
 
@@ -49,7 +47,6 @@ export class GameService {
 				user: { connect: { id: userId } },
 			},
 		});
-		console.log(join);
 		// this.readyToPlay();
 		return join;
 	}
@@ -70,8 +67,6 @@ export class GameService {
 			},
 		});
 
-		console.log('get rooms : ');
-		console.log(rooms);
 		return rooms;
 	}
 
@@ -84,7 +79,6 @@ export class GameService {
 				playerTwo: { connect: { id: userIdTwo } },
 			},
 		});
-		console.log(match);
 		return match;
 	}
 
@@ -136,7 +130,6 @@ export class GameService {
 				match: { connect: { id: matchId } },
 			},
 		});
-		console.log(match);
 		return match;
 	}
 	async deleteMatchHistory(playerId: string) {

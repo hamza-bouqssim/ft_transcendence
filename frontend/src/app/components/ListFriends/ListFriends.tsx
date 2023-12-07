@@ -20,18 +20,20 @@ import { fetchBlockFriendThunk, fetchGetAllFriends } from "@/app/store/requestSl
 const ListFriends = () => {
 
 
-  const [change, setChange] = useState<{
-    sideBar: boolean;
-    chatBox: boolean;
-    menu: boolean;
-  }>({
-    sideBar: false,
-    chatBox: false,
-    menu: false,
-  });
-  
-  
-  const [Friends, setFriends] = useState<FriendsTypes[]>([]);
+    const [Friends, setFriends] = useState<FriendsTypes[]>([]);
+    const dispatch = useDispatch<AppDispatch>();
+    const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+    const [change, setChange] = useState<{
+      sideBar: boolean;
+      chatBox: boolean;
+      menu: boolean;
+    }>({
+      sideBar: false,
+      chatBox: false,
+      menu: false,
+    });
+
+
   
       useEffect (() => {
         dispatch(fetchGetAllFriends())
@@ -45,22 +47,19 @@ const ListFriends = () => {
       },)
 
       const router = useRouter();
-    // console.log("friends here", Friends);
-      const handleFunction = (friends : FriendsTypes) =>{
+       const handleFunction = (friends : FriendsTypes) =>{
 
         let display_name ;
         display_name  = friends.display_name;
         return display_name;
 
       }
-      const dispatch = useDispatch<AppDispatch>();
-        const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+     
       const handleMenuClick = (friendId: string) => {
           setOpenMenuId(openMenuId === friendId ? null : friendId);
       };
 
       const handlleBloque = async (id: string) => {
-        console.log("id friend is -->", id);
       
         try {
           await dispatch(fetchBlockFriendThunk(id));

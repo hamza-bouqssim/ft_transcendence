@@ -39,7 +39,6 @@ const MessageContainer = () => {
     // room and chat
     useEffect(() => {
         const id = channel.id;
-        console.log(id)
         getConversationMessage(id)
           .then(( data :any) => {
             setMessage(data.data);
