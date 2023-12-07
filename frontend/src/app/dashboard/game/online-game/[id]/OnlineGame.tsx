@@ -113,22 +113,22 @@ const OnlineGame = () => {
 				width: parentCanvasRef.current!.getBoundingClientRect().width,
 				height: parentCanvasRef.current!.getBoundingClientRect().height,
 			});
-
 			socket.on("launchGame", (payload: any) => {
+				console.log("start game", payload)
 				// console.log("opponant : ", payload.opponant);
-				if (opponentPlayer.current) return;
-				opponentPlayer.current = payload.opponant;
-				console.log("opponant  user: ", opponentPlayer.current);
-				setStartGame((prev: any) => !prev);
-				pongRef.current = new PongGame(
-					parentCanvasRef.current!,
-					gameDataValues.chosenMapIndex,
-					socket,
-				);
+				// if (opponentPlayer.current) return;
+				// opponentPlayer.current = payload.opponant;
+				// console.log("opponant  user: ", opponentPlayer.current);
+				// setStartGame((prev: any) => !prev);
+				// pongRef.current = new PongGame(
+				// 	parentCanvasRef.current!,
+				// 	gameDataValues.chosenMapIndex,
+				// 	socket,
+				// );
 			});
 			socket.on("gameIsFinished", gameIsFinishedListener);
 		});
-		// }
+		// } 
 
 		// return () => {
 		// 	socket.off("launchGame", lunchGameListener);

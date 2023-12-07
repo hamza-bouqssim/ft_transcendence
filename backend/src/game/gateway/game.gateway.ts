@@ -22,6 +22,16 @@ const engine = Engine.create({
 
 const runner: any = Runner.create();
 
+type GameQ = {
+	indexMap: number;
+	user1: string;
+	user2: string;
+	status: string;
+	socket1: string[];
+	socket2: string[];
+	duration: number;
+}
+
 @WebSocketGateway({
 	origin: ['http://localhost:3000'],
 	credentials: true,
@@ -74,15 +84,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		sockets: string[];
 		indexMap: number;
 	}[] = [];
-	private queueInGame: {
-		indexMap: number;
-		user1: string;
-		user2: string;
-		status: string;
-		socket1: string[];
-		socket2: string[];
-		duration: number;
-	}[] = [];
+
+
+	private queueInGame: GameQ[] = [];
 
 	constructor(
 		private readonly gameservice: GameService,
@@ -164,13 +168,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	@SubscribeMessage('joinGame')
 	handleJoinGame(client: AuthenticatedSocket, data: any) {
-		console.log('test--------------');
+		
+		console.log('join Game--------------');
+		// return ;
 		this.mapIndex = data.mapIndex;
 		// console.log("index:", this.mapIndex)
 		this.pushSocketToQueue(client.user.sub, client.id, 0);
 		if (this.queueStartGame.length >= 2) this.checkQueue();
-		console.log('waitting', this.queueStartGame);
-		console.log('inGame', this.queueInGame);
+		// console.log('waitting', this.queueStartGame);
+		// console.log('inGame', this.queueInGame);
 	}
 	//emit to user a message in an event---------------------------------------
 	emitToGame(userId: string, payload: any, event: string) {
@@ -238,18 +244,24 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				duration: Date.now(),
 				indexMap: map[0].indexMap,
 			});
+
 			map = map.filter(
 				(queue) => queue.userId !== userIdOne && queue.userId !== userIdTwo,
 			);
 			const currentGame = this.getInGameQueue(userIdOne);
 			const idGame = userIdOne + userIdTwo;
-			await this.sleep(4000);
+
+
+			console.log("pallllaying ",currentGame)
+
+			// await this.sleep(4000);
+
 			this.emitToGame(
 				userIdTwo,
 				{ opponentId: userIdTwo, idGame },
 				'startGame',
 			);
-
+ 
 			console.log('testtting');
 			// this.emitToUser1InGame(userIdTwo, { opponentId: userIdTwo }, 'startGame');
 			// this.emitToUser2InGame(userIdOne, { opponentId: userIdOne }, "startGame");

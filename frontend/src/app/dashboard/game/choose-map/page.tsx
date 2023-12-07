@@ -54,7 +54,6 @@ const ChooseMap = () => {
 			socket.emit("joinGame", {
 				// mapIndex: gameDataValues.chosenMapIndex,
 				mapIndex: swiperRef.current.swiper.realIndex,
-				userData: gameDataValues.user,
 			});
 			router.push("./match-making");
 		} else router.push("./bot-game");

@@ -21,9 +21,9 @@ const MatchMaking = () => {
 			router.push(`./online-game/${data.idGame}`);
 		};
 		socket.on("startGame", listener);
-		return () => {
-			socket.off("startGame", listener);
-		};
+		// return () => {
+		// 	socket.off("startGame", listener);
+		// };
 	}, [socket]);
 
 	return (
