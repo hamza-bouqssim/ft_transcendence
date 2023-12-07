@@ -15,13 +15,22 @@ import { AppDispatch, RootState, store } from "@/app/store";
 import {Provider as ReduxProvider, useDispatch, useSelector} from 'react-redux'
 import { fetchMessagesThunk } from "@/app/store/messageSlice";
 import { fetchConversationThunk } from "@/app/store/conversationSlice";
+import { getAllRooms } from "@/app/store/roomsSlice";
 
 
 const ConversationChannelPage = () => {
   const {channel } = useContext(socketContext);
+  const socket = useContext(socketContext).socket
+  const dispatch= useDispatch<AppDispatch>();
 
+	useEffect(()=>{
+		console.log("socket")
+		socket.on("notification",(payload:any) =>{
+      console.log(payload)
+			dispatch(getAllRooms())
+		})
+	},[socket])
     return ( 
-
             <div className=" flex h-screen  xl:container xl:mx-auto">
               <div className={`h-full  xl:p-10 xl"pl-5 xl:pr-2 ${!channel ? 'block w-full xl:w-[35%]  ' : 'hidden xl:block  xl:w-[35%] '}`}>
                 <CoversationSideBar />
@@ -34,11 +43,6 @@ const ConversationChannelPage = () => {
               <div className="xl:my-10 xl:mr-10  w-full xl:ml-2 xl:w-[65%]   xl:mt-32 hidden xl:flex items-center justify-center">Invit friend to new chat rome</div>
               }
               </div>
-
-
-            
-      
-        
      );
 }
  

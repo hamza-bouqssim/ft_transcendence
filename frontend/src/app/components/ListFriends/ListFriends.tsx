@@ -20,18 +20,18 @@ import { fetchBlockFriendThunk, fetchGetAllFriends } from "@/app/store/requestSl
 const ListFriends = () => {
 
 
-    const [Friends, setFriends] = useState<FriendsTypes[]>([]);
-    const [change, setChange] = useState<{
-      sideBar: boolean;
-      chatBox: boolean;
-      menu: boolean;
-    }>({
-      sideBar: false,
-      chatBox: false,
-      menu: false,
-    });
-
-
+  const [change, setChange] = useState<{
+    sideBar: boolean;
+    chatBox: boolean;
+    menu: boolean;
+  }>({
+    sideBar: false,
+    chatBox: false,
+    menu: false,
+  });
+  
+  
+  const [Friends, setFriends] = useState<FriendsTypes[]>([]);
   
       useEffect (() => {
         dispatch(fetchGetAllFriends())

@@ -22,7 +22,7 @@ const ChooseMap = () => {
 		getAuthUser().then((userData: any) =>
 			setGameData((prevState: any) => ({ ...prevState, user: userData.data })),
 		);
-	});
+	},[]);
 
 	// const socket = useContext<any>(SocketContext);
 

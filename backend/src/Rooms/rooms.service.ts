@@ -20,6 +20,7 @@ export class RoomsService {
       },
     });
     if (!memberInfo || memberInfo.length === 0) {
+      console.log("sdfdsfdsf")
       throw new HttpException("No members found for the given user in any chat room.", HttpStatus.BAD_REQUEST);
     }
   
@@ -57,6 +58,11 @@ export class RoomsService {
     return chatRooms;
   }
   
+// name: 'sacsadadsad',
+// Privacy: 'Public',
+// password: '',
+// picture: null,
+// idUserAdd: [ '6a171716-6e2a-45c8-a9c6-66f3d3fd1908' ]
   
   
   async creatRooms(data:CreateChatRoom,id:string)
@@ -86,22 +92,33 @@ export class RoomsService {
         name: data.name,
         Privacy: data.Privacy,
         password: hashedPassword,
-        picture: data.picture || "https://images.squarespace-cdn.com/content/v1/5f60d7057b9b7d7609ef628f/1603219780222-V253F1WLHBH8HNHXIFUX/group.png",
+        picture: data.picture || 'https://images.squarespace-cdn.com/content/v1/5f60d7057b9b7d7609ef628f/1603219780222-V253F1WLHBH8HNHXIFUX/group.png',
         members: {
           create: [
             {
               user: {
-                connect: { id: id},
+                connect: { id: id },
               },
               isAdmin: true,
             },
+            ...data.idUserAdd.map(userId => ({
+              user: {
+                connect: { id: userId },
+              },
+              isAdmin: false,
+            })),
           ],
         },
       },
+      include:{
+        members:{
+          include:{
+            user:true
+          }
+        }
+      }
     });
-
     return chatRoom;
-
   }
 
 

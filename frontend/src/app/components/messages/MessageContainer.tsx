@@ -7,8 +7,12 @@ import MessageInputField from "./MessageInputField";
 import {socketContext } from "@/app/utils/context/socketContext";
 import {getConversationMessage} from '@/app/utils/api'
 import Image from  'next/image'
+
+
+
+
 const MessageContainer = () => {
-    const [, setLoadloadinging] = useState<boolean>(false);
+    const [setLoadloadinging] = useState<boolean>(false);
     const [Message,setMessage] = useState<messageTypes[]>([]);
     const controller = new AbortController();
     const [user,setUser] = useState(null)
@@ -18,15 +22,14 @@ const MessageContainer = () => {
 
 
     useEffect(() => {
-            getAuthUser().then(({data}) => {  
-                setUser(data);
-                })
-            .catch((err)=> {console.log(err);});
+        getAuthUser().then(({data}) => {  
+            setUser(data);
+            })
+        .catch((err)=> {console.log(err);});
     }, [channel.id])
 
 
     const joinRoom =(id:string) =>{
-
 		if(oldId)
 			socket.emit("leaveToRoom",{id:oldId})
 		socket.emit("joinToRoom",{id:id})
@@ -43,7 +46,7 @@ const MessageContainer = () => {
             joinRoom(id);
           })
           .catch((err:any) => console.log(err));
-      }, [channel.id]);
+    }, [channel.id]);
     
     return (
 

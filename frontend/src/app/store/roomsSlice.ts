@@ -26,29 +26,51 @@ const initialState: RoomState = {
   error: null,
 };
 
-// Async thunk for fetching all rooms
-export const getAllRooms = createAsyncThunk('rooms/getAllRooms', async () => {
+export const getAllRooms = createAsyncThunk('rooms/getAllRooms', async (_,{rejectWithValue} ) => {
+  try {
     const response = await getAllRoomsApi();
-    return response.data;
-
+    return response.data; 
+  } catch (error) {
+    if (error.response && error.response.data && error.response.data.message) {
+      return rejectWithValue(error.response.data.message);
+    } else {
+      return rejectWithValue('Failed to fetch rooms');
+    }
+  }
 });
 
-// Async thunk for creating a room
 export const createRooms = createAsyncThunk('rooms/createRooms', async (data: Room) => {
-  const response = await createRoomsApi(data);
-  return response.data;
+  try
+  {
+    const response = await createRoomsApi(data);
+    return response.data;
+  }catch(error)
+  {
+    return error
+  }
 });
 
-// Async thunk for updating a room
 export const updateRooms = createAsyncThunk('rooms/updateRooms', async (data: Room) => {
-  const response = await updateRoomsApi(data);
-  return response.data;
+  try
+  {
+    const response = await updateRoomsApi(data);
+    console.log(response.data)
+    return response.data;
+  }catch(error)
+  {
+    return error
+  }
 });
 
-// Async thunk for deleting a room
 export const deleteRooms = createAsyncThunk('rooms/deleteRooms', async (roomId: string) => {
-  const response = await deleteRoomsApi(roomId);
-  return response.data;
+  try
+  {
+    const response = await deleteRoomsApi(roomId);
+    return response.data;
+  }catch(error)
+  {
+    return error
+  }
 });
 
 const roomSlice = createSlice({
@@ -63,11 +85,11 @@ const roomSlice = createSlice({
       .addCase(getAllRooms.fulfilled, (state:any, action: PayloadAction<Room[]>) => {
         state.status = 'succeeded';
         state.rooms = action.payload.data;
-        console.log(state.rooms)
       })
-      .addCase(getAllRooms.rejected, (state:any, action: PayloadAction<string>) => {
+      .addCase(getAllRooms.rejected, (state:any, action: PayloadAction<string>) => {;
         state.status = 'failed';
         state.error = action.payload;
+        
       })
       .addCase(createRooms.fulfilled, (state:any, action:any) => {
         const newRoom = action.payload;

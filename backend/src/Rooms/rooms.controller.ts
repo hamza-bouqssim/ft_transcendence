@@ -1,12 +1,17 @@
-import { Controller, Get,Body, Res,UseGuards ,Post,Req} from '@nestjs/common';
+import { Controller, Get,Body, Res,UseGuards ,Post,Req,Inject} from '@nestjs/common';
 import { RoomsService } from './rooms.service';
 import { CreateChatRoom,UpdateChatRoom ,DeleteChatRoom,RoomId} from './dto/rooms.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { WebSocketChatGateway } from 'src/gateway/gateway';
+
 
 
 @Controller("/rooms")
 export class RoomsController {
-  constructor(private roomsService:RoomsService) {}
+  constructor(private roomsService:RoomsService ,
+    private eventEmitter: EventEmitter2
+     ) {}
 
   //rooms management 
 
@@ -17,12 +22,14 @@ export class RoomsController {
     try {
       const {id}=req.user
       const chatRoom = await this.roomsService.getAllRooms(id);
-      return res.status(200).json({data: chatRoom });
+      return res.status(200).json({success : true,data: chatRoom });
     } catch (error) {
-      return res.status(500).json({ error: error});
+      console.log(error.response)
+      return res.status(401).json({success : false,message: error.response});
     }
 
   }
+
 
   @Post("/createRooms")
   @UseGuards(AuthGuard("jwt"))
@@ -31,9 +38,13 @@ export class RoomsController {
       const {id}=req.user
       console.log("create room" , id , data.data)
       const chatRoom = await this.roomsService.creatRooms(data.data,id);
+      this.eventEmitter.emit(
+        'order.created',
+        chatRoom
+      );
       return res.status(201).json({data: chatRoom });
     } catch (error) {
-      return res.status(500).json({ error: error});
+      return res.status(500).json({ message: error});
     }
   }
 
