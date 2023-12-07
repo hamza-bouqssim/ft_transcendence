@@ -100,7 +100,7 @@ const ChatComponnent  = () =>{
 					 				</div>
 								</div>
 								<div className="text-black">
-									{formatRelative(new Date(elem.createdAt), new Date())}
+									{new Date(elem.createdAt).toLocaleTimeString()}
 								</div>
 							</div>
 							

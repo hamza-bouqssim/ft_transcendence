@@ -10,6 +10,7 @@ import { PrismaService } from 'prisma/prisma.service';
 import { CreateMessageRoom, RoomId } from 'src/Rooms/dto/rooms.dto';
 import { RoomsService } from 'src/Rooms/rooms.service';
 import { ConversationsService } from 'src/conversations/conversations.service';
+import { OnEvent } from '@nestjs/event-emitter';
 
 @WebSocketGateway({
     cors:{
@@ -94,5 +95,13 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
           }
         }
     }
+    @OnEvent("notification")
+    handleNotification(payload :any){
+        console.log("create notification******************");
+        console.log(payload);
+        
+    }
+
+
 
 }

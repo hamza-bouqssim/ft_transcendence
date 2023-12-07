@@ -8,9 +8,9 @@ import { RoomsModule } from './Rooms/rooms.module';
 import { ConversationsModule } from './conversations/conversations.module';
 import { GatewayModule } from './gateway/gateway.module';;
 import { UserModule } from './user/user.module';
-import { WebSocketAdapter } from './gateway/gateway.adapter';
 import { FriendRequestModule } from './friend-request/friend-request.module';
-
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
 	imports: [
@@ -20,8 +20,9 @@ import { FriendRequestModule } from './friend-request/friend-request.module';
     ConversationsModule,
     GatewayModule,
 		UserModule,
-    FriendRequestModule
+    FriendRequestModule,
 		// GameModule,
+		EventEmitterModule.forRoot(), ConfigModule.forRoot({ isGlobal : true})
 	],
 	controllers: [AppController],
 	providers: [AppService],

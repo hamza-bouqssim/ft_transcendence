@@ -35,7 +35,7 @@ const OnlineFriends = () =>{
         console.log(err);
       }
       );
-    },);
+    },[]);
 
     useEffect (() => {
       dispatch(fetchGetAllFriends())
@@ -46,7 +46,7 @@ const OnlineFriends = () =>{
         console.log(err);
       }
       );
-    },);
+    },[]);
 
     const handlleBloque = async (id: string) => {
       
@@ -58,7 +58,6 @@ const OnlineFriends = () =>{
           alert("Failed to block the friend. Please try again."); // Show an alert for error handling
       }
     };
-
 
    
     const isUserOnline = (friend: UsersTypes) => {

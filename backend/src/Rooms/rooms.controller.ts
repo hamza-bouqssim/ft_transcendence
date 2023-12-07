@@ -1,13 +1,13 @@
 /* eslint-disable prettier/prettier */
 import { Controller, Get,Body, Res,UseGuards ,Post,Req} from '@nestjs/common';
 import { RoomsService } from './rooms.service';
-import { CreateChatRoom,UpdateChatRoom ,DeleteChatRoom,RoomId} from './dto/rooms.dto';
+import { DeleteChatRoom} from './dto/rooms.dto';
 import { AuthGuard } from '@nestjs/passport';
-
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Controller("/rooms")
 export class RoomsController {
-  constructor(private roomsService:RoomsService) {}
+  constructor(private roomsService:RoomsService, private eventEmitter : EventEmitter2) {}
 
   //rooms management 
 
@@ -31,6 +31,7 @@ export class RoomsController {
     try {
       const {id}=req.user
       const chatRoom = await this.roomsService.creatRooms(data.data,id);
+      return this.eventEmitter.emit('notification', chatRoom);
       return res.status(201).json({data: chatRoom });
     } catch (error) {
       return res.status(500).json({ error: error});
