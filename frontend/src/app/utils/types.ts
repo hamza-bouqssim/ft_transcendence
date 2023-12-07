@@ -56,7 +56,6 @@ export type AcceptRequestParams ={
 }
 
 export type UsersTypes = {
-    user : User;
     id : string;
     email : string;
     username : string;

@@ -17,7 +17,8 @@ const RankingFriendsSwitch = () => {
     const [showSendReqCompo, setShowSendReqCompo] = useState(false);
     const [clickedButton, setClickedButton] = useState('user');
     const [showuser, setShowUser] = useState(true);
-    const [userData, setUserData] = useState<UsersTypes[]>([]);
+    const [userData, setUserData] = useState<UsersTypes | null>(null);
+    console.log("tes");
 
     const _showRank = () => {
       setShowRank(true);
@@ -94,15 +95,27 @@ const RankingFriendsSwitch = () => {
       
     useEffect(() => {
       const id_user = id;
-      dispatch(fetchUserInfo(id_user)).unwrap()
-        .then(( data :any) => {
-          setUserData(data.data);
-          
+      dispatch(fetchUserInfo(id_user))
+        .unwrap()
+        .then((data: any) => {
+          console.log("API Response:", data.data);
+    
+          // Assuming you want to create a new object with display_name and username
+          const modifiedUserData: UsersTypes = {
+            id: data.data.id,
+            email: data.data.email,
+            username: data.data.username,
+            display_name: data.data.display_name,
+            avatar_url: data.data.avatar_url,
+            status: data.data.status,
+          };
+    
+          setUserData(modifiedUserData);
         })
-        .catch((err:any) => console.log(err));
-    }, );
-  
-  console.log("user hna--->", userData);
+        .catch((err: any) => console.log(err));
+    }, [id, dispatch]);
+
+    console.log("user hereeee->", userData?.display_name);
   
   return (
     <div className='flex flex-col items-center gap-2 pt-5 pb-10 bg-white w-full h-full rounded-[70px] overflow-hidden'>
@@ -112,20 +125,20 @@ const RankingFriendsSwitch = () => {
         <button  onClick={_showRank} className={`w-1/2 bg-[#498CDA] ${clickedButton === 'rank' ? 'bg-[#498CDA] text-white' : 'bg-gray-300 text-gray-600'} h-full rounded-3xl duration-300 hover:scale-105`}>Rank</button>
         <button onClick={_showFriends} className={`w-1/2 ${clickedButton === 'friends' ? 'bg-[#498CDA] text-white' : 'bg-gray-300 text-gray-600'} h-full rounded-3xl duration-300 hover:scale-105`}>Suggestion</button>
 
-      </div>
+      </div> 
 
-      {/* {
+      {
         showuser && (
           <div className='pt-[10px]  flex justify-center items-center flex-col relative w-full h-[75%] rounded-[50px] text-black animate-bounce'>
             <Image src={userData?.avatar_url} className='w-[145px] h-[145px] rounded-full border-solid border-4 border-[#498CDA]' alt="Description of the image" width={60}   height={60} />
 
-            <h1>{userData.}</h1>
-            <h5>@{Userdata?.username}</h5>
+            <h1>{userData?.display_name}</h1>
+            <h5>@{userData?.username}</h5>
           </div>
-        )}  */}
+        )}  
 
 
-      {showRank && (
+       {showRank && (
         
         
         <div className=' items-center justify-center  gap-10 relative w-full h-[75%] rounded-[50px] flex overflow-auto scrollbar-hide'>
@@ -157,7 +170,7 @@ const RankingFriendsSwitch = () => {
           </div>
 
         </div>
-      )}
+      )} 
 
       {showFriends && (
 
@@ -183,9 +196,9 @@ const RankingFriendsSwitch = () => {
           <button className='h-full bg-[#498CDA] w-[49%] rounded-[10px]'>Search</button>
 
         </div>
-        <button  onClick={_backTo} className='absolute bottom-0 right-0 mb-[-35px] mr-4 rounded-full'>
+        {/* <button  onClick={_backTo} className='absolute bottom-0 right-0 mb-[-35px] mr-4 rounded-full'>
           <FontAwesomeIcon icon={faCheck} className='bg-[#498CDA] w-[25px] h-[25px] p-1 rounded-full duration-300 hover:scale-105'/>
-        </button>
+        </button> */}
       </div>
         )}
       

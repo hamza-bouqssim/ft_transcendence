@@ -185,7 +185,8 @@ async changeAvatar(@Req() req, @UploadedFile() file: Express.Multer.File) {
     @Post('get_user')
     @UseGuards(AuthGuard('jwt'))
     async getUserId(@Body() request: {id_user : string}){
-      return await this.userService.userInfo(request.id_user);
+      const user =  await this.userService.userInfo(request.id_user);
+      return user;
 
     }
      
