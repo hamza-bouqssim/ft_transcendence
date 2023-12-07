@@ -68,6 +68,8 @@ export default function RootLayout({
 
 	const changeValues = { change, setChange };
 	const pathName = usePathname();
+
+	 
 	return (
 		<html lang="en">
 			<body>

@@ -46,6 +46,7 @@ async findConversationUser(@Body() request: {display_name : string}, @Req() req:
 async getconversationById(@Param('id') id: string){
     // return this.conversationService.find();
     const conversation = await this.conversationService.findConversationById(id);
+    // console.log(conversation)
     return conversation;
 }
 // @Post('create_messages')

@@ -14,6 +14,7 @@ import { ConfigModule } from '@nestjs/config';
 
 @Module({
 	imports: [
+		EventEmitterModule.forRoot(),
 		AuthModule,
     PrismaModule,
 		RoomsModule,

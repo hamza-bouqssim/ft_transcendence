@@ -54,10 +54,10 @@ import {socketContext } from "@/app/utils/context/socketContext";
     const {updateChannel, channel } = useContext(socketContext);
 
     useEffect(() => {
-      dispatch(getAllRooms());
+      dispatch(getAllRooms())
     }, [dispatch]);
-  
-    if (status =="loading"|| status =="idle") {
+ 
+    if (status =="loading") {
       return(
         <div className="flex items-center justify-center mt-40">
         <div
@@ -70,13 +70,12 @@ import {socketContext } from "@/app/utils/context/socketContext";
     }
     
     if (status === 'failed') {
-      return <div className="text-black ">Error: {error}</div>;
+      return <div className="text-gray-500 mt-10 text-center ">{error} </div>;
     }
-    
-  
+
     return (
       <div className="text-black  pb-2 pt-5 h-[calc(100%-160px)] overflow-auto  no-scrollbar">
-        {[...rooms].sort(compareRooms)?.map((data: Room) => (
+        {rooms && [...rooms].sort(compareRooms)?.map((data: Room) => (
           <div key={data.id} onClick={() =>{updateChannel(data)}}  className="cursor-pointer rounded-lg hover:bg-[#F2F3FD] flex items-center justify-between px-2 py-3">
             <div className="flex items-center justify-start">
                 <img className="w-16 h-16  bg-cover rounded-full" src={data.picture} alt="" />

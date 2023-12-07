@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsString ,IsArray} from "class-validator";
 
 
 export class RoomId{
@@ -34,6 +34,10 @@ export class CreateChatRoom{
 
     @IsString()
     picture :string;
+
+    @IsArray()
+    @IsString({ each: true })
+    idUserAdd: string[];
 
 }
 export class UpdateChatRoom{

@@ -10,6 +10,7 @@ import { IoClose } from "react-icons/io5";
 
 import {socketContext } from "@/app/utils/context/socketContext";
 import { deleteRooms, updateRooms } from  '@/app/store/roomsSlice' // Update with the correct path
+import { RestFriend } from '../RestFriend/RestFriend';
 interface Room {
   id: string;
   name: string;
@@ -165,36 +166,7 @@ const handleUpdate = () => {
             
 
             <div className="h-[40%] rounded-xl  mt-5 min-h-[200px] text-black overflow-auto  bg-[#F2F3FD] no-scrollbar   w-full">
-                <p>sdfsdfsdfds</p>
-                <p>sdfsdfsdfds</p>
-                <p>sdfsdfsdfds</p>
-                <p>sdfsdfsdfds</p>
-                <p>sdfsdfsdfds</p>
-                <p>sdfsdfsdfds</p>
-                <p>sdfsdfsdfds</p>
-                <p>sdfsdfsdfds</p>
-                <p>sdfsdfsdfds</p>
-                <p>sdfsdfsdfds</p>
-                <p>sdfsdfsdfds</p>
-                <p>sdfsdfsdfds</p>
-                <p>sdfsdfsdfds</p>
-                <p>sdfsdfsdfds</p>
-                <p>sdfsdfsdfds</p>
-                <p>sdfsdfsdfds</p>
-                <p>sdfsdfsdfds</p>
-                <p>sdfsdfsdfds</p>
-                <p>sdfsdfsdfds</p>
-                <p>sdfsdfsdfds</p>
-                <p>sdfsdfsdfds</p>
-                <p>sdfsdfsdfds</p>
-                <p>sdfsdfsdfds</p>
-                <p>sdfsdfsdfds</p>
-                <p>sdfsdfsdfds</p>
-                <p>sdfsdfsdfds</p>
-                <p>sdfsdfsdfds</p>
-                <p>sdfsdfsdfds</p>
-                <p>sdfsdfsdfds</p>
-                <p>sdfsdfsdfds</p>
+               <RestFriend></RestFriend>
             </div> 
             <div className=" absolute right-0 bottom-20 md:bottom-5 flex items-center justify-center">
               <button  onClick={handleUpdate} className={`${_.isEqual(olddata, channel) ? " hidden " :"block "}rounded-[10px]  bg-[#EA7F87] mt-5 px-5 py-2`}>update</button>

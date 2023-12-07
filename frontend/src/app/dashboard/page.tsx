@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState ,useContext} from "react";
 import { getAuthUser } from "../utils/api";
 import { redirect, useRouter } from "next/navigation";
 import { User } from "../utils/types";
@@ -9,10 +9,11 @@ import "./page.css"
 import Boxes from "../components/Boxes";
 import RankingFriendsSwitch from "../components/RankingFriendsSwitch";
 import HistoryMatches from "../components/HistoryMatches";
+import { socketContext } from "../utils/context/socketContext";
 
 
 const Dashboard = () => {
-	
+
 	const [results, setResults] = useState({
 		WINS: 3,
 		LEVEL: 4,

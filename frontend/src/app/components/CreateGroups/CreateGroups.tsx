@@ -1,11 +1,13 @@
 "use client"
-import React, { useState,useContext } from 'react';
+import React, { useState,useContext,useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { createRooms } from  '@/app/store/roomsSlice' // Update with the correct path
 import {BiImageAdd} from 'react-icons/bi'
 import {FaCheck} from 'react-icons/fa'
 import { socketContext } from '@/app/utils/context/socketContext'
 import { MemberUser } from '../cardMemberUser/MemberUser';
+import { fetchGetAllFriends } from '@/app/store/requestSlice';
+import { FriendsTypes } from '@/app/utils/types';
 
 
 
@@ -25,7 +27,6 @@ const CreatGroups: React.FC<CreateGroupsProps> = ({ setNewRooms }) => {
   const { updateChannel,channel} = useContext(socketContext);
   const [idUserAdd,setIdUserAdd] = useState([]);
 
-  console.log(idUserAdd)
   const handleCreateGroup = () => {
         if ((groupPrivacy === "Protected" &&  !groupPassword)) {
           // Handle the case where both groupName and groupPassword are required for Protected groups
@@ -47,11 +48,11 @@ const CreatGroups: React.FC<CreateGroupsProps> = ({ setNewRooms }) => {
             name: groupName,
             Privacy: groupPrivacy,
             password: groupPassword,
-            picture: null, // Update with the correct path or logic to handle images
+            picture: null,
+            idUserAdd:idUserAdd 
           };
       
           dispatch(createRooms(newGroupData)).then(response => {
-            // Handle the response here
            setNewRooms(false)
           }).catch(error => {
             console.error('Error creating room:', error);
