@@ -29,7 +29,7 @@ export class UserController {
 	@UseGuards(AuthGuard('jwt'))
 	async grabMyInfos(@Req() req) {
 		const user = req.user;
-		console.log(user);
+		// console.log(user);
 
 		return {
 			username: user.username,

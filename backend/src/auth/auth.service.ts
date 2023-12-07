@@ -33,9 +33,9 @@ export class AuthService {
       }
  
       const payload = {sub: user.id, email: user.email};
-      console.log(payload)
+      // console.log(payload)
       const token = this.jwtService.sign(payload)
-      console.log(token)
+      // console.log(token)
     if (!token) {
       throw new ForbiddenException();
     }

@@ -28,8 +28,6 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
     private NsessionOfuser: Map<string, number> = new Map();
 
     async handleConnection(socket : AuthenticatedSocket, ...args: any[]) {
-        console.log("new Incoming connection");
-        console.log(socket.user.sub);
         const userId = socket.user.sub;
         if(socket.user)
         {
@@ -52,7 +50,7 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         // const { senderId, recipientId } = payload;
         console.log("payload",socket)
         const messages = await this.conversationService.createMessags(socket.user, payload);
-        console.log(messages)
+        // console.log(messages)
         this.server.to(payload.participentsId.toString()).emit ('onMessage', messages);
 
     

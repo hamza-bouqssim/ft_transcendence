@@ -71,7 +71,8 @@ class PongGame {
 	constructor(
 		private parentDiv: HTMLDivElement,
 		private chosenMapIndex: number,
-		private socket?: any,
+		private display_name? : string,
+		private socket?: any
 	) {
 		this.divWidth = this.parentDiv.getBoundingClientRect().width;
 		this.divHeight = this.parentDiv.getBoundingClientRect().height;
@@ -450,11 +451,13 @@ class PongGame {
 			document.addEventListener("keydown", (e) => {
 				if (e.key === "d" || e.key === "ArrowRight")
 					this.socket.emit("keyevent", {
+						display_name: this.display_name,
 						key: e.key,
 						state: "keydown",
 					});
-				else if (e.key === "a" || e.key === "ArrowLeft")
+					else if (e.key === "a" || e.key === "ArrowLeft")
 					this.socket.emit("keyevent", {
+						display_name: this.display_name,
 						key: e.key,
 						state: "keydown",
 					});
@@ -463,19 +466,25 @@ class PongGame {
 			document.addEventListener("keyup", (e) => {
 				if (e.key === "d" || e.key === "ArrowRight")
 					this.socket.emit("keyevent", {
+						display_name: this.display_name,
 						key: e.key,
 						state: "keyup",
 					});
 				else if (e.key === "a" || e.key === "ArrowLeft")
 					this.socket.emit("keyevent", {
+						display_name: this.display_name,
 						key: e.key,
 						state: "keyup",
 					});
 			});
 			this.socket.on("updatePaddlePosition", (data: any) => {
 				Body.setPosition(this.bottomPaddle, {
-					x: data.xPosition,
+					x: data.xPosition1,
 					y: this.bottomPaddle.position.y,
+				});
+				Body.setPosition(this.topPaddle, {
+					x: data.xPosition2,
+					y: this.topPaddle.position.y,
 				});
 			});
 		} else {

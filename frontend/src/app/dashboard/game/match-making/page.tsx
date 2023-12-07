@@ -90,5 +90,5 @@ const MatchMaking = () => {
 		</section>
 	);
 };
-
+ 
 export default MatchMaking;

@@ -17,6 +17,7 @@ const OnlineGame = () => {
 	const socket = useContext<any>(SocketContext);
 	const parentCanvasRef = useRef<HTMLDivElement>(null);
 	const pongRef = useRef<any>();
+	const rotateRef = useRef<boolean>(false);
 	const opponentPlayer = useRef<any>(null);
 	const [startGame, setStartGame] = useState<boolean>(false);
 	const [score, setScore] = useState<{
@@ -42,10 +43,10 @@ const OnlineGame = () => {
 	// :
 	// "Yassine Khadiri"
 
-	useEffect(() => {
-		console.log("user data", Userdata);
-		console.log("userName", Userdata?.username);
-	}, [Userdata]);
+	// useEffect(() => {
+	// 	console.log("user data", Userdata);
+	// 	console.log("userName", Userdata?.username);
+	// }, [Userdata]);
 
 	useEffect(() => {
 		socket.on("connect", () => {
@@ -64,17 +65,36 @@ const OnlineGame = () => {
 		// if (!pongRef.current) {
 		let timerInterval: any;
 
-		// const lunchGameListener = (payload : any) => {
+		const lunchGameListener = (payload: any) => {
+			console.log("start game", payload)
+			// console.log("opponant : ", payload.opponant);
+			if (opponentPlayer.current) return;
+			opponentPlayer.current = payload.opponant;
+			rotateRef.current = payload.rotate;
+			setStartGame((prev: any) => !prev);
+			pongRef.current = new PongGame(
+				parentCanvasRef.current!,
+				gameDataValues.chosenMapIndex,
+				Userdata?.display_name,
+				socket,
+			);
+		}
+		// function launch(payload: any) {
+		// 	console.log("start game", payload)
+		// 	// console.log("opponant : ", payload.opponant);
+		// 	if (opponentPlayer.current) return;
+		// 	opponentPlayer.current = payload.opponant;
+		// 	rotateRef.current = payload.rotate;
 		// 	setStartGame((prev: any) => !prev);
 		// 	pongRef.current = new PongGame(
 		// 		parentCanvasRef.current!,
 		// 		gameDataValues.chosenMapIndex,
+		// 		Userdata?.display_name,
 		// 		socket,
 		// 	);
-		// };
-
+		// }
 		const gameIsFinishedListener = () => {
-			// pongRef.current.clear();
+			pongRef.current.clear();
 			LoserPlayerPopUp(router);
 		};
 
@@ -113,27 +133,16 @@ const OnlineGame = () => {
 				width: parentCanvasRef.current!.getBoundingClientRect().width,
 				height: parentCanvasRef.current!.getBoundingClientRect().height,
 			});
-			socket.on("launchGame", (payload: any) => {
-				console.log("start game", payload)
-				// console.log("opponant : ", payload.opponant);
-				// if (opponentPlayer.current) return;
-				// opponentPlayer.current = payload.opponant;
-				// console.log("opponant  user: ", opponentPlayer.current);
-				// setStartGame((prev: any) => !prev);
-				// pongRef.current = new PongGame(
-				// 	parentCanvasRef.current!,
-				// 	gameDataValues.chosenMapIndex,
-				// 	socket,
-				// );
-			});
+			socket.on("launchGame", (payload : any) => lunchGameListener(payload));
 			socket.on("gameIsFinished", gameIsFinishedListener);
 		});
 		// } 
 
-		// return () => {
-		// 	socket.off("launchGame", lunchGameListener);
-		// 	socket.off("gameIsFinished", gameIsFinishedListener);
-		// }
+		return () => {
+			if (score.playerOne === 10 || score.playerTwo === 10)
+				socket.off("launchGame", lunchGameListener);
+				socket.off("gameIsFinished", gameIsFinishedListener);
+		}
 	}, []);
 
 	return (
@@ -148,7 +157,7 @@ const OnlineGame = () => {
 				startGame={startGame}
 			/>
 			<div
-				className="h-[500px] w-full max-w-[340px] shadow-[0_0_50px_2px_var(--blue-color)] md:h-[590px] md:max-w-[380px] xl:h-[700px] xl:max-w-[420px] min-[1750px]:h-[836px] min-[1750px]:max-w-[560px]"
+				className={`${rotateRef.current? "rotate-180" : ""} h-[500px] w-full max-w-[340px] shadow-[0_0_50px_2px_var(--blue-color)] md:h-[590px] md:max-w-[380px] xl:h-[700px] xl:max-w-[420px] min-[1750px]:h-[836px] min-[1750px]:max-w-[560px]`}
 				ref={parentCanvasRef}
 			></div>
 			<PlayerScore
