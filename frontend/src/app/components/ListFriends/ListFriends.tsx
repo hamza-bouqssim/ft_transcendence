@@ -16,9 +16,21 @@ import RightBarUsers from "../RightBarUsers";
 import Image from "next/image";
 import { fetchBlockFriendThunk } from "@/app/store/blockSlice";
 import { fetchGetAllFriendsThunk } from "@/app/store/friendsSlice";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const ListFriends = () => {
+  const ToastFunction = (message : any) => {
+		toast.error(message, {
+		  position: toast.POSITION.TOP_RIGHT,
+		  autoClose: 5000, // You can customize the duration
+		  hideProgressBar: false,
+		  closeOnClick: true,
+		  pauseOnHover: true,
+		  draggable: true,
+		});
+	  };
 
 
     const [Friends, setFriends] = useState<FriendsTypes[]>([]);
@@ -40,7 +52,6 @@ const ListFriends = () => {
    
       const { friends, status, error } = useSelector((state:any) => state.friends);
     
-     console.log("friends here ->", friends);
       useEffect(() => {
         dispatch(fetchGetAllFriendsThunk());
       }, [dispatch]);
@@ -62,17 +73,19 @@ const ListFriends = () => {
       
         try {
           await dispatch(fetchBlockFriendThunk(id));
-            alert("You have blocked this friend successfully");
+            ToastFunction("You have blocked this friend successfully");
+
         } catch (error) {
-          console.error("Error blocking friend:", error);
-            alert("Failed to block the friend. Please try again."); // Show an alert for error handling
+          ToastFunction("Failed to block the friend. Please try again");
+
         }
+
       };
       
      
     return (
         <Conversation>
-
+          <ToastContainer />
 				<ConversationSideBarContainer>
 					{friends.map(function(elem : FriendsTypes){
 						return(

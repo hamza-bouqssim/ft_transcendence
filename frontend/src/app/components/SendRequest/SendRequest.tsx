@@ -10,13 +10,22 @@ import { useDispatch, useSelector } from "react-redux";
 import RightBarUsers from "../RightBarUsers";
 import Image from "next/image";
 import { socket, socketContext } from "@/app/utils/context/socketContext";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const SendRequest  = () => {
-    // const [request, setrequest] = useState<RequestTypes[]>([]);
-    // const socket = useContext(socketContext).socket;
-    console.log("socket here-->", socket);
-
+  
+  const ToastFunction = (message : any) => {
+		toast.error(message, {
+		  position: toast.POSITION.TOP_RIGHT,
+		  autoClose: 5000, 
+		  hideProgressBar: false,
+		  closeOnClick: true,
+		  pauseOnHover: true,
+		  draggable: true,
+		});
+	  };
     const [change, setChange] = useState<{
       menu: boolean;
     }>({
@@ -37,37 +46,39 @@ const SendRequest  = () => {
 
       const handleFunction = (request : RequestTypes) => {
             let ourRequest;
-
             ourRequest = request.user.display_name;
             return ourRequest;
 
       }
 
       const handleClickAcceptRequest = async (id : string) => {
-        console.log("id request-->", id);
         try {
          
           await dispatch(fetchAcceptFriendRequestThunk(id));
-          alert("You are accepting the request !")
+          ToastFunction("You are accepting the request !");
+
         } catch (error) {
-          console.error("Error accepting friend request:", error);
+          ToastFunction(`Error accepting friend request: ${error}`);
+
         }
       };
 
       const handleClickRefuseRequest = async (id : string) =>{
         try{
           await dispatch(fetchREfuseFriendRquestThunk(id));
-          alert("You are refusing the request");
+          ToastFunction("You are refusing the request");
+
 
         }catch(error){
-          console.log("Error refusing friend request", error);
+          ToastFunction(`Error refusing friend request, ${error}`);
+
 
         }
       }
       return (
 
         <Conversation>
-
+        <ToastContainer />
 				<ConversationSideBarContainer>
 					{request.map(function(elem : RequestTypes){
 						return(
