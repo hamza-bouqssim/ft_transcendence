@@ -5,6 +5,7 @@ export function middleware(req: NextRequest) {
 	// the name of the cookies here is 'logged'
 	const cookie = req.cookies.get("token");
 	// console.log('cookie', cookie);
+	// can you check the validation of he cookie { do an request to the backend and check the token}
 	if (!cookie) return NextResponse.redirect(new URL("/signIn", req.url));
 	// check if the first time
 	// check if ther is the 2fa

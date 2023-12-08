@@ -24,7 +24,7 @@ export const gameData = atom({
 	chosenMapIndex: 0,
 	canvasSizes: {
 		width: 560,
-		height: 836
+		height: 836,
 	},
 });
 

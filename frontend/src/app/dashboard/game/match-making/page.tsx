@@ -4,27 +4,41 @@ import { faUserGroup } from "@fortawesome/free-solid-svg-icons";
 import InviteField from "../../../components/InviteField";
 import PlayerCard from "../../../components/PlayerCard";
 import { ChangeContext } from "../../layout";
-import { useEffect, useContext } from "react";
+import { useEffect, useContext, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { SocketContext } from "../SocketContext";
+import { socketContext } from "@/app/utils/context/socketContext";
 
 // const sleep = async (ms: number) =>
 // 	new Promise((resolve) => setTimeout(resolve, ms));
 
-const MatchMaking = () => {
+const MatchMaking = ({ userData, opponentPlayer }: any) => {
 	const { change, setChange } = useContext(ChangeContext);
-	const router = useRouter();
-	const socket = useContext(SocketContext);
+	// const router = useRouter();
+	// const socket = useContext(SocketContext);
+	// const [opponentPlayer, setOpponentPlayer] = useState<{
+	// 	username: string;
+	// 	display_name: string;
+	// 	avatar_url: string;
+	// }>({
+	// 	username: "",
+	// 	display_name: "",
+	// 	avatar_url: "/assets/unknown.png",
+	// });
+	// const { Userdata } = useContext<any>(socketContext);
 
-	useEffect(() => {
-		const listener = (data: any) => {
-			router.push(`./online-game/${data.idGame}`);
-		};
-		socket.on("startGame", listener);
-		// return () => {
-		// 	socket.off("startGame", listener);
-		// };
-	}, [socket]);
+	// useEffect(() => {
+	// 	const listener = (payload: any) => {
+	// 		setOpponentPlayer(payload.opponent);
+	// 		sleep(3000);
+	// 		router.push(`./online-game/${payload.idGame}`);
+	// 	};
+
+	// 	socket.on("startGame", listener);
+	// 	// return () => {
+	// 	// 	socket.off("startGame", listener);
+	// 	// };
+	// }, [socket]);
 
 	return (
 		<section className="relative mx-auto h-[100vh] py-4 text-white xl:container">
@@ -33,19 +47,21 @@ const MatchMaking = () => {
 				<div className="relative m-auto h-full w-full lg:mx-0 lg:w-[70%]">
 					<div className="relative h-[70%] w-full px-2">
 						<PlayerCard
-							name="Hamza BouQssim"
-							username="@hbouqssi"
-							img="/assets/hamza.png"
+							username={userData?.username}
+							display_name={userData?.display_name}
+							img={userData?.avatar_url}
 							additionalStyle="left-7 top-2"
 						/>
 						<h3 className="absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] font-['Whitney_BlackSc'] text-5xl font-bold sm:text-7xl lg:text-8xl min-[1750px]:text-9xl">
 							Vs
 						</h3>
 						<PlayerCard
-							name=""
-							username=""
-							img="/assets/unknown.png"
-							additionalStyle="right-7 bottom-2 animate-pulse"
+							username={opponentPlayer.username}
+							display_name={opponentPlayer.display_name}
+							img={opponentPlayer.avatar_url}
+							additionalStyle={`right-7 bottom-2 ${
+								opponentPlayer.username === "" ? "animate-pulse" : ""
+							} `}
 						/>
 					</div>
 				</div>
@@ -90,5 +106,5 @@ const MatchMaking = () => {
 		</section>
 	);
 };
- 
+
 export default MatchMaking;

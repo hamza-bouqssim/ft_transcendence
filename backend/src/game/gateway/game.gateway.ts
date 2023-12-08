@@ -30,8 +30,8 @@ type GameQ = {
 	socket1: string[];
 	socket2: string[];
 	duration: number;
-}
- 
+};
+
 @WebSocketGateway({
 	origin: ['http://localhost:3000'],
 	credentials: true,
@@ -71,12 +71,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	private rightRect: any;
 	private leftRect: any;
 	private movesUser1 = {
-		movingRight : false,
-		movingLeft: false
+		movingRight: false,
+		movingLeft: false,
 	};
 	private movesUser2 = {
 		movingRight: false,
-		movingLeft: false
+		movingLeft: false,
 	};
 	private posTopPaddleX = this.defaultCanvasSizes.width / 2;
 	private posBottomPaddleX = this.defaultCanvasSizes.width / 2;
@@ -88,12 +88,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	private userId: any;
 	private user1: any;
 	private user2: any;
+	private game: GameQ;
 	private queueStartGame: {
 		userId: string;
 		sockets: string[];
 		indexMap: number;
 	}[] = [];
-
 
 	private queueInGame: GameQ[] = [];
 
@@ -124,7 +124,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 					findGame.socket2.push(socket.id);
 				}
 			}
-		}else {
+		} else {
 			const findQueue = this.getStratQueue(this.userId);
 			if (findQueue) this.getStratQueue(this.userId).sockets.push(socket.id);
 		}
@@ -165,11 +165,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 						console.log('user2 leave game');
 					}
 				}
-				if (findGame.socket1.length === 0 || findGame.socket2.length === 0)
+				if (findGame.socket1.length === 0 || findGame.socket2.length === 0) {
 					this.queueInGame = this.queueInGame.filter(
 						(queue) =>
 							this.userId !== queue.user1 && this.userId !== queue.user2,
 					);
+					this.game = null;
+				}
 			}
 			console.log('queueInGame d', this.queueInGame);
 			console.log('queueStartGame d', this.queueStartGame);
@@ -178,24 +180,18 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	@SubscribeMessage('joinGame')
 	async handleJoinGame(client: AuthenticatedSocket, data: any) {
-		console.log("join game");
-		this.mapIndex = data.mapIndex;
+		console.log('join game');
+		this.mapIndex = 0;
 		// console.log("index:", this.mapIndex)
 		this.pushSocketToQueue(client.user.sub, client.id, 0);
-		if (this.queueStartGame.length >= 2)  await this.checkQueue();
+		if (this.queueStartGame.length >= 2) await this.checkQueue();
 		console.log('waitting1', this.queueStartGame);
 		console.log('inGame1', this.queueInGame);
 	}
 	//emit to user a message in an event---------------------------------------
 	emitToGame(userId: string, payload: any, event: string) {
-		const queue = this.queueInGame.find(
-			(game) => game.user2 === userId || game.user1 === userId,
-		);
-		if (!queue) {
-			console.log('game not found??? ', event);
-			return;
-		}
-		const socketIds = [...queue.socket1, ...queue.socket2];
+		if (!this.game) return;
+		const socketIds = [...this.game.socket1, ...this.game.socket2];
 
 		socketIds.forEach((socketId) => {
 			this.server.to(socketId).emit(event, payload);
@@ -203,9 +199,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 	emitToUser1InGame(userId: string, payload: any, event: string) {
-		const socketIds = this.queueInGame.find(
-			(game) => game.user2 === userId || game.user1 === userId,
-		).socket1;
+		if (!this.game) return;
+		const socketIds = this.game.socket1;
 
 		socketIds.forEach((socketId) => {
 			this.server.to(socketId).emit(event, payload);
@@ -213,9 +208,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 	emitToUser2InGame(userId: string, payload: any, event: string) {
-		const socketIds = this.queueInGame.find(
-			(game) => game.user2 === userId || game.user1 === userId,
-		).socket2;
+		if (!this.game) return;
+		const socketIds = this.game.socket2;
 
 		socketIds.forEach((socketId) => {
 			this.server.to(socketId).emit(event, payload);
@@ -257,20 +251,29 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			map = map.filter(
 				(queue) => queue.userId !== userIdOne && queue.userId !== userIdTwo,
 			);
-			const currentGame = this.getInGameQueue(userIdOne);
-			const idGame = userIdOne + userIdTwo;
+
+			this.game = this.getInGameQueue(userIdOne);
+			const idGame = userIdOne;
 
 			await this.sleep(4000);
-
-			this.emitToGame(
+			if (!this.game) return;
+			console.log('test startgame +++++++++++++++');
+			this.emitToUser1InGame(
 				userIdTwo,
-				{ opponentId: userIdTwo, idGame },
+				{ opponent: this.user2, idGame },
+				'startGame',
+			);
+
+			this.emitToUser2InGame(
+				userIdTwo,
+				{ opponent: this.user1, idGame },
 				'startGame',
 			);
 
 			// this.emitToUser1InGame(userIdTwo, { opponentId: userIdTwo }, 'startGame');
 			// this.emitToUser2InGame(userIdOne, { opponentId: userIdOne }, "startGame");
-			currentGame.status = 'playing';
+
+			this.game.status = 'playing';
 		}
 		return;
 	}
@@ -290,17 +293,18 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		if (this.queueInGame.length > 0) {
 			const findGame = this.getInGameQueue(userId);
 			if (findGame) {
-				if (findGame.user1 === userId) {
+				if (findGame.user1 === userId && !findGame.socket1.includes(socketId)) {
 					console.log('pushSocketToQueue1', this.queueInGame);
 					findGame.socket1.push(socketId);
-				} else {
+				} else if (!findGame.socket2.includes(socketId)) {
 					console.log('pushSocketToQueue2', this.queueInGame);
 					findGame.socket2.push(socketId);
 				}
 			}
 		} else {
 			const findQueue = this.getStratQueue(userId);
-			if (findQueue) this.getStratQueue(userId).sockets.push(socketId);
+			if (findQueue && !findQueue.sockets.includes(socketId))
+				findQueue.sockets.push(socketId);
 			else
 				this.queueStartGame.push({
 					userId,
@@ -323,14 +327,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		// const history2 = this.gameService.createMatchHistory(user2, user1, score2, score1, duration);
 		// const stateGame = this.gameService.calStateGame(score1, score2);
 		// this.emitToUser1InGame(user1, { history1 }, "endGame");
-		// this.emitToUser2InGame(user2, { history2 }, "endGame");
+		// this.emitToUser2InGame(user2, { history2 }, "endGame")
 		this.queueInGame = this.queueInGame.filter((game) => game.user1 != user1);
 	}
 	// End Queue---------------------------------------
 
 	@SubscribeMessage('launchGameRequest')
 	async handleLaunchGameRequest(@MessageBody() gameData: any) {
-		this.mapIndex = gameData.mapIndex;
+		if (!this.game || gameData.user === this.user1.display_name) return;
+		this.mapIndex = 0;
 
 		// Update Canvas. Paddles && ball Size With New Mapped Values:
 		this.currentCanvasSizes = {
@@ -377,13 +382,19 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				this.handleVerticalObstacles();
 				break;
 		}
-		const game = this.getInGameQueue(this.userId);
-	
 		console.log(
 			'----------------------------------------------------test197----------------------------------------------------',
 		);
-		this.emitToUser1InGame(this.userId, { rotate:false ,opponant: this.user2 }, 'launchGame');
-		this.emitToUser2InGame(this.userId, { rotate:true ,opponant: this.user1 }, 'launchGame');
+		this.emitToUser1InGame(
+			this.userId,
+			{ rotate: false, opponant: this.user2 },
+			'launchGame',
+		);
+		this.emitToUser2InGame(
+			this.userId,
+			{ rotate: true, opponant: this.user1 },
+			'launchGame',
+		);
 		this.handlePaddleMove();
 		this.startGame();
 	}
@@ -744,49 +755,40 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	@SubscribeMessage('keyevent')
 	handleKeyDown(@MessageBody() data: any) {
-		let movingLeft : any; 
-		let movingRight : any;
+		if (!this.game) return;
+		let movingLeft: any;
+		let movingRight: any;
 
 		if (data.state === 'keydown') {
-			if (data.key === 'd' || data.key === 'ArrowRight')
-				movingRight = true;
-			else if (data.key === 'a' || data.key === 'ArrowLeft')
-			movingLeft = true;
+			if (data.key === 'd' || data.key === 'ArrowRight') movingRight = true;
+			else if (data.key === 'a' || data.key === 'ArrowLeft') movingLeft = true;
 		} else {
-			if (data.key === 'd' || data.key === 'ArrowRight')
-				movingRight = false;
-			else if (data.key === 'a' || data.key === 'ArrowLeft')
-				movingLeft = false;
+			if (data.key === 'd' || data.key === 'ArrowRight') movingRight = false;
+			else if (data.key === 'a' || data.key === 'ArrowLeft') movingLeft = false;
 		}
 		if (data.display_name === this.user1.display_name)
 			this.movesUser1 = {
 				movingLeft,
-				movingRight
-			}
-		else
-		{
+				movingRight,
+			};
+		else {
 			this.movesUser2 = {
 				movingLeft,
-				movingRight
-			}
+				movingRight,
+			};
 		}
 	}
 
-	applyMove(movesUser : any, posPaddle : number, paddle: any, isButtom: boolean){
+	applyMove(movesUser: any, posPaddle: number, paddle: any, isButtom: boolean) {
 		let stepX = 0;
 
 		if (movesUser.movingLeft) {
-			stepX =
-				posPaddle - 11;
+			stepX = posPaddle - 11;
 			if (stepX <= this.paddleSizes.width / 2)
 				stepX = this.paddleSizes.width / 2;
 		} else if (movesUser.movingRight) {
-			stepX =
-				posPaddle + 11;
-			if (
-				stepX >=
-				this.currentCanvasSizes.width - this.paddleSizes.width / 2
-			)
+			stepX = posPaddle + 11;
+			if (stepX >= this.currentCanvasSizes.width - this.paddleSizes.width / 2)
 				stepX = this.currentCanvasSizes.width - this.paddleSizes.width / 2;
 		}
 		if (stepX != 0) {
@@ -803,30 +805,24 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				'updatePaddlePosition',
 			);
 		}
-		if(isButtom)
-			this.posBottomPaddleX = posPaddle;
-		else
-			this.posTopPaddleX = posPaddle;
-
+		if (isButtom) this.posBottomPaddleX = posPaddle;
+		else this.posTopPaddleX = posPaddle;
 	}
-
 
 	handlePaddleMove() {
 		this.movePaddleInterval = setInterval(() => {
-			if (!this.getInGameQueue(this.userId)) {
+			if (!this.game) {
 				clearInterval(this.updateBallPosition);
 				return;
 			}
 			let stepX1 = 0;
 
 			if (this.movesUser1.movingLeft) {
-				stepX1 =
-					this.posBottomPaddleX - 11;
+				stepX1 = this.posBottomPaddleX - 11;
 				if (stepX1 <= this.paddleSizes.width / 2)
 					stepX1 = this.paddleSizes.width / 2;
 			} else if (this.movesUser1.movingRight) {
-				stepX1 =
-					this.posBottomPaddleX + 11;
+				stepX1 = this.posBottomPaddleX + 11;
 				if (
 					stepX1 >=
 					this.currentCanvasSizes.width - this.paddleSizes.width / 2
@@ -849,17 +845,14 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				// );
 			}
 
-			
 			let stepX2 = 0;
 
 			if (this.movesUser2.movingRight) {
-				stepX2 =
-					this.posTopPaddleX - 11;
+				stepX2 = this.posTopPaddleX - 11;
 				if (stepX2 <= this.paddleSizes.width / 2)
 					stepX2 = this.paddleSizes.width / 2;
 			} else if (this.movesUser2.movingLeft) {
-				stepX2 =
-					this.posTopPaddleX + 11;
+				stepX2 = this.posTopPaddleX + 11;
 				if (
 					stepX2 >=
 					this.currentCanvasSizes.width - this.paddleSizes.width / 2
@@ -874,18 +867,17 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				});
 			}
 			if (stepX2 || stepX1)
-			this.emitToGame(
-				this.userId,
-				{
-					xPosition1: this.posBottomPaddleX,
-					xPosition2: this.posTopPaddleX,
-				},
-				'updatePaddlePosition',
-			);
+				this.emitToGame(
+					this.userId,
+					{
+						xPosition1: this.posBottomPaddleX,
+						xPosition2: this.posTopPaddleX,
+					},
+					'updatePaddlePosition',
+				);
 
 			// this.applyMove(this.movesUser1, this.posBottomPaddleX, this.bottomPaddle,true)
 			// this.applyMove(this.movesUser2, this.posTopPaddleX, this.topPaddle,false)
-
 		}, 15);
 	}
 
@@ -893,7 +885,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		Runner.run(Runner.create(), engine);
 
 		this.updateBallPosition = setInterval(() => {
-			if (!this.getInGameQueue(this.userId)) {
+			if (!this.game) {
 				clearInterval(this.updateBallPosition);
 				return;
 			}
@@ -953,22 +945,24 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			this.ball.position.y < this.topPaddle.position.y
 		)
 			this.emitScore();
-		if (this.playerOneScore === 10 || this.playerTwoScore === 10) {
+		if (this.playerOneScore >= 10 || this.playerTwoScore >= 10) {
 			// TODO: later We Will Close The Socket With The Specific SocketID:
-			const game = this.getInGameQueue(this.userId);
-			if (game) {
+			if (this.game) {
 				this.emitToGame(this.userId, {}, 'gameIsFinished');
 				// Clear Game
 				this.handleClearGame();
 				// this.closeAllSockets([...game.socket1 , ...game.socket2]);
-				this.endGame(game);
+				this.endGame(this.game);
+				this.game = null;
 				console.log(this.playerOneScore, this.playerTwoScore);
 				this.user1 = '';
 				this.user2 = '';
+				this.playerOneScore = 0;
+				this.playerTwoScore = 0;
 			}
-			// this.playerOneScore = 0;
-			// this.playerTwoScore = 0;
 			console.log('emitted finished game!');
+			console.log('waitting0', this.queueStartGame);
+			console.log('ingame0', this.queueInGame);
 		}
 	}
 	handleClearGame() {

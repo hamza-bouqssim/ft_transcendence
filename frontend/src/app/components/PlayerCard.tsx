@@ -2,8 +2,8 @@ import { useAppSelector } from "@/redux_toolkit/hooks";
 import Image from "next/image";
 
 type PlayerCardProps = {
-	name: string;
 	username: string;
+	display_name: string;
 	img: string;
 	additionalStyle: string;
 };
@@ -25,10 +25,10 @@ const PlayerCard = (props: PlayerCardProps) => {
 			</div>
 			<div className="h-full p-2 text-center font-['Whitney_Bold'] text-white sm:text-black">
 				<h3 className="text-sm lg:text-lg min-[1750px]:text-2xl">
-					{props.name}
+					{props.username}
 				</h3>
 				<span className="mt-[-5px] block text-xs lg:text-sm min-[1750px]:text-lg">
-					{props.username}
+					{props.display_name? ("@" + props.display_name) : ""}
 				</span>
 			</div>
 		</div>
