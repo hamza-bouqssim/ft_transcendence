@@ -148,6 +148,10 @@ export class FriendRequestService {
             user_id : friendId, friend_id: userId
         
         }});
+        this.eventEmitter.emit('requestBlock.created', {
+            friendship
+          });
+        
 
         return {message: "Blocked"}
     }
@@ -172,6 +176,10 @@ export class FriendRequestService {
         }
     
         await this.prisma.friend.update({where: {id: friendship.id}, data: {status: 'ACCEPTED'}});
+        this.eventEmitter.emit('requestDebloque.created', {
+            friendship
+          });
+        
         return {message: "Unblocked"}
     }
     

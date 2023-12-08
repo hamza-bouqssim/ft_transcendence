@@ -3,7 +3,9 @@ import conversationReducer from './conversationSlice';
 import messageReducer from './messageSlice';
 import requestReducer from './requestSlice';
 import UsersReducer from './usersSlice';
-import roomReducer from './roomsSlice'
+import roomReducer from './roomsSlice';
+import friendsReducer from './friendsSlice';
+import friendsBlockReducer from './blockSlice'
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +14,8 @@ export const store = configureStore({
     request : requestReducer,
     users : UsersReducer,
     room: roomReducer,
+    friends : friendsReducer,
+    friendsBlock : friendsBlockReducer,
 
   },
   middleware: (getDefaultMiddleware) =>

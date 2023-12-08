@@ -2,22 +2,23 @@
 
 import { AppDispatch } from "@/app/store";
 import { Conversation, ConversationSideBarContainer, ConversationSideBarItem, HeaderOnlineUsers, OflineStyling, OnlineStyling } from "@/app/utils/styles";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {useContext, useEffect, useState} from "react"
-import { UsersTypes } from "@/app/utils/types";
+import { FriendsTypes, UsersTypes } from "@/app/utils/types";
 import { fetchUsersThunk } from "@/app/store/usersSlice";
 import {  socketContext } from "@/app/utils/context/socketContext";
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import { MenuButton, MenuButton2 } from "../Buttons";
-import { fetchBlockFriendThunk, fetchGetAllFriends } from "@/app/store/requestSlice";
+import { fetchBlockFriendThunk } from "@/app/store/blockSlice";
 import { useRouter } from "next/navigation";
+import { fetchGetAllFriendsThunk } from "@/app/store/friendsSlice";
 
 const OnlineFriends = () =>{
   const router = useRouter();
     const [users, setUsers] = useState<UsersTypes[]>([]);
-    const [friends, setFriends] = useState<UsersTypes[]>([]);
+    // const [friends, setFriends] = useState<UsersTypes[]>([]);
     const [online, setOnlineFriends] = useState<UsersTypes[]>([]);
     const dispatch = useDispatch<AppDispatch>();
     const [openMenuId, setOpenMenuId] = useState<string | null>(null);
@@ -37,16 +38,23 @@ const OnlineFriends = () =>{
       );
     },[]);
 
-    useEffect (() => {
-      dispatch(fetchGetAllFriends())
-      .unwrap()
-      .then(({data}) => {
-        setFriends(data);
-      }).catch((err)=>{
-        console.log(err);
-      }
-      );
-    },[]);
+    // useEffect (() => {
+    //   dispatch(fetchGetAllFriendsThunk())
+    //   .unwrap()
+    //   .then(({data}) => {
+    //     setFriends(data);
+    //   }).catch((err)=>{
+    //     console.log(err);
+    //   }
+    //   );
+    // },[]);
+    
+    const { friends, status, error } = useSelector((state:any) => state.friends);
+    
+    console.log("frinds here ->", friends);
+     useEffect(() => {
+       dispatch(fetchGetAllFriendsThunk())
+     }, [dispatch]);
 
     const handlleBloque = async (id: string) => {
       
@@ -70,7 +78,7 @@ const OnlineFriends = () =>{
         <Conversation>
 
 				<ConversationSideBarContainer>
-					{friends.map(function(elem){
+					{friends.map(function(elem : FriendsTypes){
             function handleClick()
 						{
 							router.push(`/dashboard/${elem.id}`)

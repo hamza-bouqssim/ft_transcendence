@@ -6,7 +6,6 @@ import {BiImageAdd} from 'react-icons/bi'
 import {FaCheck} from 'react-icons/fa'
 import { socketContext } from '@/app/utils/context/socketContext'
 import { MemberUser } from '../cardMemberUser/MemberUser';
-import { fetchGetAllFriends } from '@/app/store/requestSlice';
 import { FriendsTypes } from '@/app/utils/types';
 
 

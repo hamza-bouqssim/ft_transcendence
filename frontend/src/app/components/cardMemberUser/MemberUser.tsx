@@ -1,6 +1,6 @@
 "use client"
 import { AppDispatch } from '@/app/store';
-import { fetchGetAllFriends } from '@/app/store/requestSlice';
+import {  fetchGetAllFriendsThunk } from '@/app/store/friendsSlice';
 import { FriendsTypes } from '@/app/utils/types';
 import React  , {useEffect,useState} from 'react'
 import {useDispatch} from 'react-redux'
@@ -24,7 +24,7 @@ export const MemberUser: React.FC<MemberUserProps> = ({ idUserAdd, setIdUserAdd 
     const dispatch = useDispatch<AppDispatch>();
     console.log(Friends)
     useEffect (() => {
-      dispatch(fetchGetAllFriends())
+      dispatch(fetchGetAllFriendsThunk())
       .unwrap()
       .then(({data}) => {
         setFriends(data);

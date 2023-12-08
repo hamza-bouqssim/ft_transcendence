@@ -6,7 +6,7 @@ import { CreateConversationParams, FriendsTypes } from "@/app/utils/types";
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { MenuButton, MenuButton2 } from "../Buttons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // import { faBars } from "@fortawesome/free-solid-svg-icons";
@@ -14,7 +14,8 @@ import '@fortawesome/fontawesome-svg-core/styles.css';
 import { faChevronDown, faEllipsis} from "@fortawesome/free-solid-svg-icons";
 import RightBarUsers from "../RightBarUsers";
 import Image from "next/image";
-import { fetchBlockFriendThunk, fetchGetAllFriends } from "@/app/store/requestSlice";
+import { fetchBlockFriendThunk } from "@/app/store/blockSlice";
+import { fetchGetAllFriendsThunk } from "@/app/store/friendsSlice";
 
 
 const ListFriends = () => {
@@ -35,16 +36,14 @@ const ListFriends = () => {
 
 
   
-      useEffect (() => {
-        dispatch(fetchGetAllFriends())
-        .unwrap()
-        .then(({data}) => {
-          setFriends(data);
-        }).catch((err)=>{
-          console.log(err);
-        }
-        );
-      },)
+   
+   
+      const { friends, status, error } = useSelector((state:any) => state.friends);
+    
+     console.log("friends here ->", friends);
+      useEffect(() => {
+        dispatch(fetchGetAllFriendsThunk());
+      }, [dispatch]);
 
       const router = useRouter();
        const handleFunction = (friends : FriendsTypes) =>{
@@ -75,7 +74,7 @@ const ListFriends = () => {
         <Conversation>
 
 				<ConversationSideBarContainer>
-					{Friends.map(function(elem){
+					{friends.map(function(elem : FriendsTypes){
 						return(
 							<ConversationSideBarItem key={elem.id}>
                 <Image src={elem.avatar_url} className="h-14 w-14 rounded-[50%] bg-black " alt="Description of the image" width={60}   height={60} />

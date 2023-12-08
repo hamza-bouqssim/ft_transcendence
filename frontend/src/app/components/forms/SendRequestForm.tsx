@@ -25,7 +25,6 @@ export const SendRequestForm= () => {
         const {register, handleSubmit, formState: { errors }} = useForm<CreateRequestParams>();
         const dispatch = useDispatch<AppDispatch>();
         const { request, status, error } = useSelector((state:any) => state.request);
-       console.log("error hererere-->", error);
         const onSubmit = async  (data : CreateRequestParams) => {
           try {
             const response = await dispatch(fetchRequestThunk(data));

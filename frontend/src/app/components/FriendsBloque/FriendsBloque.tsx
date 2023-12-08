@@ -6,8 +6,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { MenuButton2 } from "../Buttons";
-import { fetchBlocksThunk, fetchDebloqueUserThunk } from "@/app/store/requestSlice";
-import { useDispatch } from "react-redux";
+import { fetchBlocksThunk, fetchDebloqueUserThunk } from "@/app/store/blockSlice";
+import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/app/store";
 
 
@@ -28,16 +28,27 @@ const FriendsBloque = () =>{
       const dispatch = useDispatch<AppDispatch>();
 
 
-      useEffect (() => {
-        dispatch(fetchBlocksThunk())
-        .unwrap()
-        .then(({data}) => {
-          setBloques(data);
-        }).catch((err)=>{
-          console.log(err);
-        }
-        );
-      },)
+      // useEffect (() => {
+      //   dispatch(fetchBlocksThunk())
+      //   .unwrap()
+      //   .then(({data}) => {
+      //     setBloques(data);
+      //   }).catch((err)=>{
+      //     console.log(err);
+      //   }
+      //   );
+      // },)
+
+     
+
+   
+    const { friendsBlock , status, error } = useSelector((state:any) => state.friendsBlock);
+    console.log("friends block-->", friendsBlock );
+   
+    useEffect(() => {
+      dispatch(fetchBlocksThunk())
+    }, [dispatch]);
+ 
 
       const handleDebloque = async (id: string) => {
       
@@ -65,7 +76,7 @@ const FriendsBloque = () =>{
         <Conversation>
 
 				<ConversationSideBarContainer>
-					{bloques.map(function(elem){
+					{friendsBlock.map(function(elem : BloquesTypes){
 						return(
 							<ConversationSideBarItem key={elem.user.id}>
               <Image src={elem.user.avatar_url} className="h-14 w-14 rounded-[50%] bg-black " alt="Description of the image" width={60}   height={60} />

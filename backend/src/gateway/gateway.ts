@@ -132,6 +132,14 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
             this.server.emit('RefuseNotification', `${RefuseruserId} refuse your request`);
 
         }
+        @OnEvent('requestBlock.created')
+        blockListNotification(data : string){
+            this.server.emit('blockNotification', data);
+        }
+        @OnEvent('requestDebloque.created')
+        debloqueNotification(data: string){
+            this.server.emit('debloqueNotification', data);
+        }
 
     
         

@@ -16,9 +16,7 @@ export interface requestState {
 
 export const fetchGetRequestThunk = createAsyncThunk('request/fetchGetRequestThunk', async (_,{rejectWithValue} ) => {
   try{
-    console.log(" i am here-->");
     const response = await getRequest();
-    console.log("response here-->", response);
     return response.data.data;
   }catch(error : any){
     if (error.response && error.response.data && error.response.data.message) {
@@ -53,7 +51,6 @@ export const fetchRequestThunk = createAsyncThunk('request/create', async (data:
 
 export const fetchAcceptFriendRequestThunk = createAsyncThunk('request/accept', async(id : string) =>{
   const response = await AcceptRequest(id);
-  console.log("response here -->", response);
   return response;
 })
 
@@ -64,28 +61,10 @@ export const fetchREfuseFriendRquestThunk = createAsyncThunk('request/refuse', a
 })
 
 
-export const fetchBlockFriendThunk = createAsyncThunk('request/block', async(id : string) => {
-  const response = await bloqueFriend(id);
-  return response;
-})
 
-export const fetchBlocksThunk = createAsyncThunk('block/fetch', async () => {
-  const response = await getBloques();
-  return response; // Assuming your API response has a 'data' property
 
-});
 
-export const fetchDebloqueUserThunk = createAsyncThunk('Debloque/fetch', async(id : string)=>{
-  const response = await DebloqueUser(id);
-  return response;
-})
 
-//get all friends
-
-export const fetchGetAllFriends = createAsyncThunk('Get/friends', async () =>{
-  const response = await getAllFriends();
-  return response;
-})
 
 export const requestSlice = createSlice({
   name: 'request',
@@ -102,7 +81,6 @@ export const requestSlice = createSlice({
         state.status = 'success';
       }).addCase(fetchRequestThunk.rejected, (state, action) =>{
           state.status = 'failed';
-          console.log("action here-->", action.error)
           
       })
       
@@ -112,27 +90,14 @@ export const requestSlice = createSlice({
       .addCase(fetchGetRequestThunk.fulfilled, (state, action) => {
         state.status = 'success';
         state.request = action.payload;
-        console.log("state request-->", state.request); // Change this line to use action.payload
       }).addCase(fetchGetRequestThunk.rejected, (state: any, action )=>{
         state.status = 'failed';
         state.error = action.payload;
 
       })
       .addCase(fetchAcceptFriendRequestThunk.fulfilled, (state, action) => {
-        // Handle fulfilled case for fetchAcceptFriendRequestThunk
       })
-      .addCase(fetchREfuseFriendRquestThunk.fulfilled, (state, action) => {
-        // Handle fulfilled case for fetchREfuseFriendRquestThunk
-      })
-      .addCase(fetchBlockFriendThunk.fulfilled, (state, action) => {
-        // Handle fulfilled case for fetchBlockFriendThunk
-      })
-      .addCase(fetchDebloqueUserThunk.fulfilled, (state, action) => {
-        // Handle fulfilled case for fetchDebloqueUserThunk
-      })
-      .addCase(fetchGetAllFriends.pending, (state, action) => {
-        // Handle pending case for fetchGetAllFriends
-      });
+     
   },
 });
 

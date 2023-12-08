@@ -146,9 +146,7 @@ async changeAvatar(@Req() req, @UploadedFile() file: Express.Multer.File) {
     @UseGuards(AuthGuard('jwt'))
     async pendingRequests(@Req() req, @Res() res)
     {
-      console.log("enter gherererere");
       try{
-        console.log("pending request -->");
         const user = req.user
         const request = await this.userService.pendingRequests(user.id);
           return res.status(200).json({success : true, data: request});

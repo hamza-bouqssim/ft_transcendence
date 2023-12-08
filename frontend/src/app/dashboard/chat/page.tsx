@@ -7,6 +7,8 @@ import {socketContext } from "@/app/utils/context/socketContext";
 import { useDispatch } from "react-redux"
 import { AppDispatch } from "@/app/store"
 import { fetchGetRequestThunk } from "@/app/store/requestSlice";
+import { fetchGetAllFriendsThunk } from "@/app/store/friendsSlice";
+import { fetchBlocksThunk } from "@/app/store/blockSlice";
 
 
 
@@ -22,19 +24,35 @@ const ConversationChannelPagechat = () => {
 
   useEffect(() => {
     socket.on('AcceptNotification', (data : any) => {
-      dispatch(fetchGetRequestThunk())
+      dispatch(fetchGetRequestThunk());
+      dispatch(fetchGetAllFriendsThunk());
+
     });
 		socket.on('newFriendRequest', (data : any) => {
 			dispatch(fetchGetRequestThunk());
 		  });
     socket.on('RefuseNotification', (data : any) => {
       dispatch(fetchGetRequestThunk());
+
+    })
+    socket.on('blockNotification', (data : any) =>{
+      dispatch(fetchBlocksThunk());
+      dispatch(fetchGetAllFriendsThunk());
+
+      
+    })
+    socket.on('debloqueNotification', (data : any)=>{
+      dispatch(fetchBlocksThunk());
+      dispatch(fetchGetAllFriendsThunk());
+
     })
 		  
       return () => {
         socket.off('AcceptNotification');
         socket.off('newFriendRequest');
         socket.off('RefuseNotification');
+        socket.off('blockNotification');
+        socket.off('debloqueNotification');
       };
 		
 	  }, [socket, dispatch]);
