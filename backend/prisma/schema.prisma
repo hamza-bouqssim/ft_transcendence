@@ -34,6 +34,7 @@ model User {
   avatar_url String
   two_factor_auth String
   two_factor_secret_key String
+  tfa_enabled Boolean @default(false)
   friend Friend[] @relation("UserToFriend")
   friends Friend[] @relation("Friend")
   senderOfChatParticipents ChatParticipents[] @relation("sender")

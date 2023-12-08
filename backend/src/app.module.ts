@@ -11,6 +11,7 @@ import { UserModule } from './user/user.module';
 import { WebSocketAdapter } from './gateway/gateway.adapter';
 import { FriendRequestModule } from './friend-request/friend-request.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { TwoFactorAuthenticationModule } from './two-factor-authentication/two-factor-authentication.module';
 
 
 @Module({
@@ -22,7 +23,8 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     ConversationsModule,
     GatewayModule,
 		UserModule,
-    FriendRequestModule
+    FriendRequestModule,
+	TwoFactorAuthenticationModule
 		// GameModule,
 	],
 	controllers: [AppController],
