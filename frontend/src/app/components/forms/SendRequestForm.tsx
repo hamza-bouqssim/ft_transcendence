@@ -8,29 +8,38 @@ import { AppDispatch } from "@/app/store"
 import { createConversation } from "@/app/utils/api"
 import { Dispatch, FC } from "react"
 import { fetchRequestThunk } from "@/app/store/requestSlice"
-
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const SendRequestForm= () => {
+  const ToastFunction = (message : any) => {
+		toast.error(message, {
+		  position: toast.POSITION.TOP_RIGHT,
+		  autoClose: 5000, // You can customize the duration
+		  hideProgressBar: false,
+		  closeOnClick: true,
+		  pauseOnHover: true,
+		  draggable: true,
+		});
+	  };
         const {register, handleSubmit, formState: { errors }} = useForm<CreateRequestParams>();
         const dispatch = useDispatch<AppDispatch>();
         const { request, status, error } = useSelector((state:any) => state.request);
        console.log("error hererere-->", error);
         const onSubmit = async  (data : CreateRequestParams) => {
-          // dispatch(createConversationThunk(data));
           try {
             const response = await dispatch(fetchRequestThunk(data));
-            console.log("response hna -->", response);
       
             if (response.payload && response.payload.message) {
               const errorMessage = response.payload.message;
-              alert(`Error: ${errorMessage}`);
+              ToastFunction(`Error: ${errorMessage}`);
             } else {
-              alert("Friend request sent successfully");
+              ToastFunction("Friend request sent successfully");
+
             }
           } catch (err: any) {
-            console.error("Error:", err);
-            alert(`Error: ${err.message || 'An unexpected error occurred'}!`);
+            ToastFunction(`Error: ${err.message || 'An unexpected error occurred'}!`);
+
           }
             
            
@@ -40,6 +49,7 @@ export const SendRequestForm= () => {
     return (
 
           <StylingForm>
+            	<ToastContainer />
             <h1 className="text-black">Add conversation</h1>
             <form className={styles.formConversation} onSubmit={handleSubmit(onSubmit)}>
               <ContainerStyling>
