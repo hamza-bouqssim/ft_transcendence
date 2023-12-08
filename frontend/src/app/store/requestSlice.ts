@@ -34,50 +34,19 @@ export const fetchGetRequestThunk = createAsyncThunk('request/fetchGetRequestThu
   
 
 });
-// export const fetchRequestThunk = createAsyncThunk('request/create', async(data : CreateRequestParams)=>{
-//     const response = await SendRequest(data);
-//     console.log("rx",response)
-//     return response;
-//   });
 
-// export const fetchRequestThunk = createAsyncThunk('request/create', async(data : CreateRequestParams, { rejectWithValue }) => {
-//   try {
-//       const response = await SendRequest(data);
-
-//       if (!response.data.success) {
-//           throw new Error(response.data.error);
-//       }
-
-//       return response;
-//     } catch (err: any) {
-//       console.error("Error", err);
-  
-//       if (err.response && err.response.data) {
-//         return rejectWithValue(err.response.data); // Return the entire error object
-//       } else {
-//         throw new Error("Request failed with an unknown error");
-//       }
-//     }
-   
-// });
-export const fetchRequestThunk = createAsyncThunk('request/create', async(data: CreateRequestParams, { rejectWithValue }) => {
+export const fetchRequestThunk = createAsyncThunk('request/create', async (data: CreateRequestParams, { rejectWithValue }) => {
   try {
-    console.log("iam herererere");
     const response = await SendRequest(data);
-    console.log("response is -->", response);
     if (!response.data.success) {
       throw new Error(response.data.error);
     }
-
-    // Return only the relevant data
-    return response; // Adjust this based on the structure of your API response
+    return response.data; // Assuming the structure of your fulfilled payload
   } catch (err: any) {
-    console.error("Error", err);
-
     if (err.response && err.response.data) {
       return rejectWithValue(err.response.data); // Return the entire error object
     } else {
-      throw new Error("Request failed with an unknown error");
+      throw new Error("create conversation failed with an unknown error");
     }
   }
 });
@@ -127,9 +96,17 @@ export const requestSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchRequestThunk.pending, (state, action) => {
-       
-      }).addCase(fetchGetRequestThunk.pending, (state: any) =>{
+      .addCase(fetchRequestThunk.pending, (state) => {
+       state.status = 'loading';
+      }).addCase(fetchRequestThunk.fulfilled, (state, action) =>{
+        state.status = 'success';
+      }).addCase(fetchRequestThunk.rejected, (state, action) =>{
+          state.status = 'failed';
+          console.log("action here-->", action.error)
+          
+      })
+      
+      .addCase(fetchGetRequestThunk.pending, (state: any) =>{
         state.status = 'loading';
       })
       .addCase(fetchGetRequestThunk.fulfilled, (state, action) => {
@@ -138,8 +115,8 @@ export const requestSlice = createSlice({
         console.log("state request-->", state.request); // Change this line to use action.payload
       }).addCase(fetchGetRequestThunk.rejected, (state: any, action )=>{
         state.status = 'failed';
-        console.log("failled");
         state.error = action.payload;
+
       })
       .addCase(fetchAcceptFriendRequestThunk.fulfilled, (state, action) => {
         // Handle fulfilled case for fetchAcceptFriendRequestThunk

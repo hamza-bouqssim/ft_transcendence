@@ -1,6 +1,6 @@
 import { Conversation, InputContainer, InputField, InputLabel, TextField, StylingForm, ContainerStyling, InputFieldStyling, ButtonStyling } from "@/app/utils/styles"
 import styles  from "./index.module.css"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { addConversation, createConversationThunk } from "@/app/store/conversationSlice"
 import { useForm } from "react-hook-form"
 import { CreateConversationParams, CreateRequestParams, createUserParams } from "@/app/utils/types"
@@ -14,16 +14,26 @@ import { fetchRequestThunk } from "@/app/store/requestSlice"
 export const SendRequestForm= () => {
         const {register, handleSubmit, formState: { errors }} = useForm<CreateRequestParams>();
         const dispatch = useDispatch<AppDispatch>();
-
+        const { request, status, error } = useSelector((state:any) => state.request);
+       console.log("error hererere-->", error);
         const onSubmit = async  (data : CreateRequestParams) => {
           // dispatch(createConversationThunk(data));
-        
-            dispatch(fetchRequestThunk(data)).then(()=>{
-              alert("You are sending request")
-            }).catch((err)=>{
-             console.log(err); 
-            })
-
+          try {
+            const response = await dispatch(fetchRequestThunk(data));
+            console.log("response hna -->", response);
+      
+            if (response.payload && response.payload.message) {
+              const errorMessage = response.payload.message;
+              alert(`Error: ${errorMessage}`);
+            } else {
+              alert("Friend request sent successfully");
+            }
+          } catch (err: any) {
+            console.error("Error:", err);
+            alert(`Error: ${err.message || 'An unexpected error occurred'}!`);
+          }
+            
+           
         }
        
         
