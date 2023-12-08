@@ -7,12 +7,14 @@ import * as bcrypt from 'bcrypt';
 import { LocalAuthDto } from './dto/local.auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { SignAuthDto } from './dto/signIn.dto';
+import { TwoFactorAuthenticationService } from 'src/two-factor-authentication/two-factor-authentication.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
+    private readonly twofactorAuth:TwoFactorAuthenticationService
   ) {}
 
     async signIn(dto: SignAuthDto) {
@@ -26,12 +28,21 @@ export class AuthService {
         throw new UnauthorizedException('Incorrect user!');
       }
       
-      
       const checkPass = await bcrypt.compare(dto.password, user.password);
       if (!checkPass) {
         throw new UnauthorizedException('Incorrect Password!');
       }
- 
+      
+      if(user.tfa_enabled)
+      {
+        console.log("tfaCode =====>  : " +dto.tfaCode + "\n  and tfa is :  " + user.tfa_enabled);
+        console.log("two factor key :  " +  user.two_factor_secret_key)
+        
+        console.log("hello");
+        const isValid = await this.twofactorAuth.verifyCode(dto.tfaCode ,user.two_factor_secret_key);
+        if (!isValid)
+          throw new UnauthorizedException("Invalid 2fa Code");
+      }
       const payload = {sub: user.id, email: user.email};
       const token = this.jwtService.sign(payload)
     if (!token) {

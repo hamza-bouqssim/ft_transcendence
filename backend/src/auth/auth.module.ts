@@ -7,6 +7,8 @@ import { FortyTwoStrategy } from './strategies/42Strategy';
 import { PrismaService } from 'prisma/prisma.service';
 import { JwtModule ,JwtService} from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { TwoFactorAuthenticationService } from 'src/two-factor-authentication/two-factor-authentication.service';
+import { TwoFactorAuthenticationModule } from 'src/two-factor-authentication/two-factor-authentication.module';
 
 
 @Module({
@@ -21,7 +23,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     PrismaService,
     FortyTwoStrategy,
     GoogleStrategy,
-    JwtStrategy
+    JwtStrategy, TwoFactorAuthenticationService
   ],
   controllers: [AuthController],
 

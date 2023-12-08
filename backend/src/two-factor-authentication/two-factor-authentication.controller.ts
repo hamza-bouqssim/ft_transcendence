@@ -13,7 +13,10 @@ export class TwoFactorAuthenticationController {
     {
         const {uri, secret} = await this.tfaService.generateOtp(req.email);
         await this.tfaService.enableTwoFactor(req.user.email, secret);
+        console.log(req.user.email);
         res.contentType('image/png'); 
         return toFileStream(res, uri);
     }
+
+    //TODO: Disable the 2FA
 }

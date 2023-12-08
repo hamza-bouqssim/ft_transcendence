@@ -18,7 +18,10 @@ export class TwoFactorAuthenticationService {
 
     async verifyCode(code:string, secret: string)
     {
-        return authenticator.verify({token: code, secret});
+        return authenticator.verify({
+            token: code,
+             secret
+            });
     }
     
     async enableTwoFactor(_email: string, secret: string)
