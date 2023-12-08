@@ -25,6 +25,10 @@ const ConversationChannelPage = () => {
 
 	useEffect(()=>{
 		console.log("socket")
+    socket.on('connect', () => {
+			console.log('Socket connected:', socket.id);
+		  });
+  
 		socket.on("notification",(payload:any) =>{
       console.log(payload)
 			dispatch(getAllRooms())

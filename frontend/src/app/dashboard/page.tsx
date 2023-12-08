@@ -10,9 +10,14 @@ import Boxes from "../components/Boxes";
 import RankingFriendsSwitch from "../components/RankingFriendsSwitch";
 import HistoryMatches from "../components/HistoryMatches";
 import { socketContext } from "../utils/context/socketContext";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../store";
+import { fetchGetRequestThunk } from "../store/requestSlice";
 
 
 const Dashboard = () => {
+
+
 
 	const [results, setResults] = useState({
 		WINS: 3,

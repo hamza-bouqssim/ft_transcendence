@@ -4,6 +4,9 @@ import CoversationSideBar from "@/app/components/CoversationSideBar/Conversation
 import { useContext, useEffect, useState , PropsWithChildren} from "react";
 import MessagePanel from "@/app/components/messages/MessagePanel";
 import {socketContext } from "@/app/utils/context/socketContext";
+import { useDispatch } from "react-redux"
+import { AppDispatch } from "@/app/store"
+import { fetchGetRequestThunk } from "@/app/store/requestSlice";
 
 
 
@@ -12,74 +15,29 @@ import {socketContext } from "@/app/utils/context/socketContext";
 const ConversationChannelPagechat = () => { 
     const { channel } = useContext(socketContext);
 
-    // const [message , setMessage] = useState<messageTypes[]>([])
-    // const socket = useContext(socketContext).socket
-    // const [change, setChange] = useState<{
-    //   sideBar: boolean;
-    //   chatBox: boolean;
-    //   menu: boolean;
-    // }>({
-    //   sideBar: false,
-    //   chatBox: false,
-    //   menu: false,
-    // });
-    // const [conversation , setConversation] = useState<ConversationTypes[]>([]);
-    // const dispatch = useDispatch<AppDispatch>();
-    // const [ user, setUser] = useState<User | undefined>();
-    // const [loading, setLoading] = useState<boolean>(false);
+   
+    const socket = useContext(socketContext).socket
 
-    
-    // useEffect(() => {
-    //         setLoading(true);
-    //         getAuthUser().then(({data}) => {
-    //             setUser(data);
-    //             setLoading(false)})
-    //         .catch((err)=> {console.log(err); setLoading(false);});
-    // },[])
-    // useEffect(() => {
-    // 	dispatch(fetchConversationThunk())
-    // 	.unwrap()
-    // 	.then(({data}) => {
-    // 		setConversation(data);
-    // 	}).catch((err)=>{
-    // 		console.log(err);
-    // 	}
-    // 	);
-    // })
+	const dispatch= useDispatch<AppDispatch>();
 
-    // useEffect(() => {
-    //   getConversation().then(({data}) =>{
-    //     setConversation(data)
-    //   }).catch((err)=> console.log(err))
-    // }, [])
-
-
-    // useEffect (() => {
-    //   const conversationId = id;
-    //   dispatch(fetchMessagesThunk(conversationId))
-    //   .unwrap()
-    //   .then(({data}) => {
-    //     setMessage(data);
-    //   }).catch((err)=>{
-    //     console.log(err);
-    //   }
-    //   );
-    // },[])
-
-    //   // for sockets
-    // useEffect(()=>{
-    //   console.log("socket" ,socket)
-    //     socket.on('connected', () => console.log("socket here connected"));
-    //     socket.on('onMessage', (payload : messageEventPayload) => {
-    //       console.log("message received");
-    //       console.log(payload);
-    //       setMessage((prev) => [payload, ...prev]);
-    //     });
-    //     return () =>{
-    //       socket.off('connected');
-    //       socket.off('onMessage');
-    //     }
-    // },[socket])
+  useEffect(() => {
+    socket.on('AcceptNotification', (data : any) => {
+      dispatch(fetchGetRequestThunk())
+    });
+		socket.on('newFriendRequest', (data : any) => {
+			dispatch(fetchGetRequestThunk());
+		  });
+    socket.on('RefuseNotification', (data : any) => {
+      dispatch(fetchGetRequestThunk());
+    })
+		  
+      return () => {
+        socket.off('AcceptNotification');
+        socket.off('newFriendRequest');
+        socket.off('RefuseNotification');
+      };
+		
+	  }, [socket, dispatch]);
     return ( 
         <div className=" flex h-screen  xl:container xl:mx-auto">  
           <div className={`h-full  xl:p-10 xl"pl-5 xl:pr-2 ${!channel ? 'block w-full xl:w-[35%]  ' : 'hidden xl:block  xl:w-[35%] '}`}>

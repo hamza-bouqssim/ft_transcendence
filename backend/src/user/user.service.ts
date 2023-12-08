@@ -156,7 +156,7 @@ export class UserService {
     
     async pendingRequests(userId: string)
     {
-        return await this.prisma.friend.findMany({where: { friend_id: userId, status: 'PENDING'}, select: {id : true , user: {select: {id: true, username: true, display_name: true, avatar_url:true}}}});
+        return await this.prisma.friend.findMany({where: { friend_id: userId, status: 'PENDING'}, select: {id : true , user: {select: {id: true, username: true, display_name: true, avatar_url:true}}, friends: true}});
     }
 
     async blockedFriends(userId: string)

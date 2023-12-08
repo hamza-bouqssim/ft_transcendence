@@ -5,13 +5,18 @@ import { Conversation, ConversationSideBarContainer, ConversationSideBarItem } f
 import { AcceptRequestParams, RequestTypes, UsersTypes } from "@/app/utils/types";
 import { faCheck, faChevronDown, faTimesCircle, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useContext, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import RightBarUsers from "../RightBarUsers";
 import Image from "next/image";
+import { socket, socketContext } from "@/app/utils/context/socketContext";
+
 
 const SendRequest  = () => {
-    const [request, setrequest] = useState<RequestTypes[]>([]);
+    // const [request, setrequest] = useState<RequestTypes[]>([]);
+    // const socket = useContext(socketContext).socket;
+    console.log("socket here-->", socket);
+
     const [change, setChange] = useState<{
       menu: boolean;
     }>({
@@ -20,18 +25,17 @@ const SendRequest  = () => {
            
     const dispatch = useDispatch<AppDispatch>();
 
-    useEffect (() => {
+   
+    const { request, status, error } = useSelector((state:any) => state.request);
+    console.log("request hererrrr-->", request);
+    console.log("status-->", status);
+    console.log("error-->", error);
+   
+    useEffect(() => {
       dispatch(fetchGetRequestThunk())
-      .unwrap()
-      .then(({data}) => {
-        setrequest(data);
-      }).catch((err)=>{
-        console.log(err);
-      }
-      );
-    },)
-
-
+    }, [dispatch]);
+ 
+   
 
       const handleFunction = (request : RequestTypes) => {
             let ourRequest;
@@ -44,6 +48,7 @@ const SendRequest  = () => {
       const handleClickAcceptRequest = async (id : string) => {
         console.log("id request-->", id);
         try {
+         
           await dispatch(fetchAcceptFriendRequestThunk(id));
           alert("You are accepting the request !")
         } catch (error) {
@@ -66,7 +71,7 @@ const SendRequest  = () => {
         <Conversation>
 
 				<ConversationSideBarContainer>
-					{request.map(function(elem){
+					{request.map(function(elem : RequestTypes){
 						return(
 							<ConversationSideBarItem key={elem.id}>
                 <Image src={elem.user.avatar_url} className="h-14 w-14 rounded-[50%] bg-black " alt="Description of the image" width={60}   height={60} />

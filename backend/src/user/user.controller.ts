@@ -9,10 +9,12 @@ import { diskStorage } from 'multer';
 import { v4 as uuidv4 } from 'uuid';
 import * as path from 'path';
 import { AuthGuard } from '@nestjs/passport';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+
 @Controller('user')
 export class UserController {
 
-    constructor(private readonly userService:UserService){}
+    constructor(private readonly userService:UserService, private eventEmitter: EventEmitter2){}
 
     @Get('info')
     @UseGuards(AuthGuard('jwt'))
@@ -142,10 +144,20 @@ async changeAvatar(@Req() req, @UploadedFile() file: Express.Multer.File) {
 
     @Get('pending-requests')
     @UseGuards(AuthGuard('jwt'))
-    async pendingRequests(@Req() req)
+    async pendingRequests(@Req() req, @Res() res)
     {
-     const user = req.user
-      return await this.userService.pendingRequests(user.id);
+      console.log("enter gherererere");
+      try{
+        console.log("pending request -->");
+        const user = req.user
+        const request = await this.userService.pendingRequests(user.id);
+          return res.status(200).json({success : true, data: request});
+      }catch(error){
+        return res.status(500).json({ message: error});
+
+      }
+      
+
     }
 
     @Get('blocked-friends')

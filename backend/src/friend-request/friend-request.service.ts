@@ -1,11 +1,12 @@
 /* eslint-disable prettier/prettier */
 import { Injectable, UnauthorizedException,HttpStatus,HttpException } from '@nestjs/common';
 import { User } from '@prisma/client';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { PrismaService } from 'prisma/prisma.service';
 
 @Injectable()
 export class FriendRequestService {
-    constructor(private readonly prisma: PrismaService ){}
+    constructor(private readonly prisma: PrismaService,  private readonly eventEmitter: EventEmitter2){}
     async allMyFriends(id : string)
     {
         const user = await this.prisma.user.findFirst({where: {id: id}});
@@ -80,7 +81,13 @@ export class FriendRequestService {
                 created_at: new Date()
             }
         });
-
+        this.eventEmitter.emit('request.created', {
+            userId: _friendDisplay_name.id,
+            senderId: user.id,
+            senderDisplayName: user.display_name,
+          });
+    
+   
         return {message: 'Friend request sent successfully'};
     }
 
@@ -95,7 +102,9 @@ export class FriendRequestService {
 
         await this.prisma.friend.update({where: {id: requestId}, data: {status: 'ACCEPTED'}});
         
-
+        this.eventEmitter.emit('requestAccept.created', {
+            AccepteruserId: req.friend_id,
+          });
         
         return {message: 'Friend request accepted'};
     }
@@ -112,6 +121,10 @@ export class FriendRequestService {
         }
     
         await this.prisma.friend.delete({ where: { id: requestId } });
+
+        this.eventEmitter.emit('requestRefuse.created', {
+            RefuseruserId: req.friend_id,
+          });
     
         return { message: 'Friend request refused and deleted from the database' };
     }
