@@ -1,18 +1,18 @@
 "use client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserGroup } from "@fortawesome/free-solid-svg-icons";
-import InviteField from "../../../components/InviteField";
-import PlayerCard from "../../../components/PlayerCard";
-import { ChangeContext } from "../../layout";
+import InviteField from "../../../../components/InviteField";
+import PlayerCard from "../../../../components/PlayerCard";
+import { ChangeContext } from "../../../layout";
 import { useEffect, useContext, useState } from "react";
 import { useRouter } from "next/navigation";
-import { SocketContext } from "../SocketContext";
+import { SocketContext } from "../../SocketContext";
 import { socketContext } from "@/app/utils/context/socketContext";
 
 const sleep = async (ms: number) =>
 	new Promise((resolve) => setTimeout(resolve, ms));
 
-const MatchMaking = () => {
+const MatchMaking = (props: any) => {
 	const { change, setChange } = useContext(ChangeContext);
 	const router = useRouter();
 	const socket = useContext(SocketContext);
@@ -42,6 +42,7 @@ const MatchMaking = () => {
 
 	return (
 		<section className="relative mx-auto h-[100vh] py-4 text-white xl:container">
+			<button onClick={() => console.log(props)}> getQueryParams</button>
 			{/* Match Box */}
 			<div className="mt-[70px] h-[85%] w-full gap-10 lg:flex lg:items-center  lg:justify-evenly   ">
 				<div className="relative m-auto h-full w-full lg:mx-0 lg:w-[70%]">

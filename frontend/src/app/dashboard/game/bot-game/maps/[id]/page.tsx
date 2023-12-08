@@ -1,5 +1,5 @@
 "use client";
-import BotGame from "./BotGame";
+import BotGame from "../../BotGame";
 
 const Game = () => {
 	return (

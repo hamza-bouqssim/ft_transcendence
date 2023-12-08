@@ -9,6 +9,8 @@ import { store } from "../store";
 import { Socket } from "socket.io-client";
 import { usePathname } from "next/navigation";
 import { ConversationTypes, User } from "../utils/types";
+import NextAdapterApp from "next-query-params/app";
+import { QueryParamProvider } from "use-query-params";
 
 export const SideBarContext: any = createContext<any>(null);
 export const ChangeContext: React.Context<any> = createContext(null);
@@ -109,7 +111,9 @@ export default function RootLayout({
 					</div> */}
 
 						<ChangeContext.Provider value={changeValues}>
-							<div className="h-full w-full">{children}</div>
+							<QueryParamProvider adapter={NextAdapterApp}>
+								<div className="h-full w-full">{children}</div>
+							</QueryParamProvider>
 						</ChangeContext.Provider>
 					</AppWithProviders>
 				</div>

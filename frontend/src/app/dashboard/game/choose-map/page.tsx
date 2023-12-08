@@ -9,8 +9,10 @@ import { useRouter } from "next/navigation";
 import { useAtomValue, useSetAtom } from "jotai";
 import { gameData } from "../page";
 import { SocketContext } from "../SocketContext";
+import { NumberParam, useQueryParam, withDefault } from "use-query-params";
 
 const ChooseMap = () => {
+	// const [mapIndex, setMapIndex] = useQueryParam("mapIndex", withDefault(NumberParam, 0));
 	const socket = useContext(SocketContext);
 	const gameDataValues = useAtomValue(gameData);
 	const setGameData = useSetAtom(gameData);
@@ -22,13 +24,16 @@ const ChooseMap = () => {
 			...prevGameData,
 			chosenMapIndex: swiperRef.current.swiper.realIndex,
 		}));
+		// setMapIndex(swiperRef.current.swiper.realIndex);
+
+		const mapIndex = swiperRef.current.swiper.realIndex;
 
 		if (gameDataValues.chosenGameMode === "Online Game") {
 			socket.emit("joinGame", {
-				mapIndex: swiperRef.current.swiper.realIndex,
+				mapIndex: mapIndex,
 			});
-			router.push("./match-making");
-		} else router.push("./bot-game");
+			router.push(`./match-making`);
+		} else router.push(`./bot-game/maps/${mapIndex}`);
 	};
 
 	return (

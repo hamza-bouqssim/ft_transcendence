@@ -3,7 +3,7 @@ import { useEffect, useRef, useState, useContext } from "react";
 import PlayerScore from "@/app/components/PlayerScore";
 import PongGame from "../classes/PongGame";
 import Swal from "sweetalert2";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import {
 	LoserPlayerPopUp,
 	WinnerPlayerPopUp,
@@ -13,6 +13,7 @@ import { gameData } from "../page";
 import { socketContext } from "@/app/utils/context/socketContext";
 
 const BotGame = () => {
+	const params = useParams();
 	const gameDataValues = useAtomValue(gameData);
 	const router = useRouter();
 	const parentCanvasRef = useRef<HTMLDivElement>(null);
@@ -26,6 +27,7 @@ const BotGame = () => {
 	});
 	const [startGame, setStartGame] = useState<boolean>(false);
 	const { Userdata } = useContext<any>(socketContext);
+	console.log("props:", params);
 
 	useEffect(() => {
 		if (score.botScore === 8 || score.playerScore === 8) {
