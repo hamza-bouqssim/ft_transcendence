@@ -1,8 +1,11 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCoverflow, Pagination } from "swiper/modules";
-import { forwardRef } from "react";
+import { useRef } from "react";
+import Link from "next/link";
 
-const ChoseMap = forwardRef(({ onClick }: any, ref: any) => {
+const ChoseMap = () => {
+	const swiperRef = useRef<any>(null);
+
 	return (
 		<div className="relative h-[100vh] min-h-[600px] w-full select-none">
 			<div className="glassmorphism absolute left-[50%] top-[50%] m-auto flex w-full max-w-[800px] -translate-x-[50%] -translate-y-[50%] flex-col gap-6 p-6">
@@ -11,7 +14,7 @@ const ChoseMap = forwardRef(({ onClick }: any, ref: any) => {
 				</h1>
 				<div>
 					<Swiper
-						ref={ref}
+						ref={swiperRef}
 						effect={"coverflow"}
 						grabCursor={true}
 						centeredSlides={true}
@@ -53,15 +56,16 @@ const ChoseMap = forwardRef(({ onClick }: any, ref: any) => {
 						</SwiperSlide>
 					</Swiper>
 				</div>
-				<button
+				<Link
+					// href={`./online-game/maps/${swiperRef.current.swiper.realIndex}`}
+					href={`./online-game/match-making`}
 					className="glassmorphism m-auto w-fit px-7 py-2 font-['Whitney_Semibold'] duration-150 ease-in-out hover:bg-[--purple-color]"
-					onClick={onClick}
 				>
 					Choose
-				</button>
+				</Link>
 			</div>
 		</div>
 	);
-});
+};
 
 export default ChoseMap;

@@ -3,18 +3,14 @@ import { useEffect, useRef, useState, useContext } from "react";
 import PlayerScore from "@/app/components/PlayerScore";
 import PongGame from "../classes/PongGame";
 import Swal from "sweetalert2";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
 	LoserPlayerPopUp,
 	WinnerPlayerPopUp,
 } from "@/app/components/GamePopUp";
-import { useAtomValue } from "jotai";
-import { gameData } from "../page";
 import { socketContext } from "@/app/utils/context/socketContext";
 
-const BotGame = () => {
-	const params = useParams();
-	const gameDataValues = useAtomValue(gameData);
+const BotGame = ({ mapIndex }: any) => {
 	const router = useRouter();
 	const parentCanvasRef = useRef<HTMLDivElement>(null);
 	const pongRef = useRef<any>();
@@ -27,7 +23,7 @@ const BotGame = () => {
 	});
 	const [startGame, setStartGame] = useState<boolean>(false);
 	const { Userdata } = useContext<any>(socketContext);
-	console.log("props:", params);
+	console.log("map index:", mapIndex);
 
 	useEffect(() => {
 		if (score.botScore === 8 || score.playerScore === 8) {
@@ -71,10 +67,7 @@ const BotGame = () => {
 				},
 			}).then(() => {
 				setStartGame((prev: any) => !prev);
-				pongRef.current = new PongGame(
-					parentCanvasRef.current!,
-					gameDataValues.chosenMapIndex,
-				);
+				pongRef.current = new PongGame(parentCanvasRef.current!, mapIndex);
 				setScore({
 					...score,
 					playerScore: pongRef.current.playerScore,
@@ -95,10 +88,6 @@ const BotGame = () => {
 				startGame={startGame}
 				score={score.botScore}
 			/>
-			{/* <div
-				className="h-[500px] w-full max-w-[340px] shadow-[0_0_50px_2px_var(--blue-color)] md:h-[590px] md:max-w-[380px] xl:h-[700px] xl:max-w-[420px] min-[1750px]:h-[836px] min-[1750px]:max-w-[560px]"
-				ref={parentCanvasRef}
-			></div> */}
 			<div
 				className={`h-[500px] w-full max-w-[340px] shadow-[0_0_50px_2px_var(--blue-color)] md:h-[590px] md:max-w-[380px] xl:h-[700px] xl:max-w-[420px] min-[1750px]:h-[836px] min-[1750px]:max-w-[560px]`}
 				ref={parentCanvasRef}

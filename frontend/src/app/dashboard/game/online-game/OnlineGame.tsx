@@ -1,17 +1,17 @@
-import { forwardRef, useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import PlayerScore from "@/app/components/PlayerScore";
-import PongGame from "../../classes/PongGame";
+import PongGame from "../classes/PongGame";
 import Swal from "sweetalert2";
-import { SocketContext } from "../../SocketContext";
+import { SocketContext } from "../SocketContext";
 import { LoserPlayerPopUp } from "@/app/components/GamePopUp";
-import { gameData } from "../../page";
-import { useAtomValue } from "jotai";
-import { io } from "socket.io-client";
+// import { gameData } from "../../page";
+// import { useAtomValue } from "jotai";
+// import { io } from "socket.io-client";
 import { socketContext } from "@/app/utils/context/socketContext";
 
-const OnlineGame = () => {
-	const gameDataValues = useAtomValue(gameData);
+const OnlineGame = ({ mapIndex }: any) => {
+	// const gameDataValues = useAtomValue(gameData);
 	const router = useRouter();
 	const socket = useContext<any>(SocketContext);
 	const parentCanvasRef = useRef<HTMLDivElement>(null);
@@ -52,7 +52,7 @@ const OnlineGame = () => {
 			setStartGame((prev: any) => !prev);
 			pongRef.current = new PongGame(
 				parentCanvasRef.current!,
-				gameDataValues.chosenMapIndex,
+				mapIndex,
 				Userdata?.display_name,
 				socket,
 			);
@@ -90,7 +90,7 @@ const OnlineGame = () => {
 			},
 		}).then(() => {
 			socket.emit("launchGameRequest", {
-				mapIndex: gameDataValues.chosenGameMode,
+				mapIndex: mapIndex,
 				width: parentCanvasRef.current!.getBoundingClientRect().width,
 				height: parentCanvasRef.current!.getBoundingClientRect().height,
 			});

@@ -8,11 +8,14 @@ import { useEffect, useContext, useState } from "react";
 import { useRouter } from "next/navigation";
 import { SocketContext } from "../../SocketContext";
 import { socketContext } from "@/app/utils/context/socketContext";
+import { useSearchParams } from "next/navigation";
 
 const sleep = async (ms: number) =>
 	new Promise((resolve) => setTimeout(resolve, ms));
 
-const MatchMaking = (props: any) => {
+const MatchMaking = () => {
+	const searchParams = useSearchParams();
+	const mapIndex: number = searchParams.get("mapIndex") as any;
 	const { change, setChange } = useContext(ChangeContext);
 	const router = useRouter();
 	const socket = useContext(SocketContext);
@@ -31,7 +34,7 @@ const MatchMaking = (props: any) => {
 		const listener = (payload: any) => {
 			setOpponentPlayer(payload.opponent);
 			sleep(3000);
-			router.push(`./online-game/${payload.idGame}`);
+			router.push(`./online-game/maps/${mapIndex}/${payload.idGame}`);
 		};
 
 		socket.on("startGame", listener);
@@ -42,7 +45,6 @@ const MatchMaking = (props: any) => {
 
 	return (
 		<section className="relative mx-auto h-[100vh] py-4 text-white xl:container">
-			<button onClick={() => console.log(props)}> getQueryParams</button>
 			{/* Match Box */}
 			<div className="mt-[70px] h-[85%] w-full gap-10 lg:flex lg:items-center  lg:justify-evenly   ">
 				<div className="relative m-auto h-full w-full lg:mx-0 lg:w-[70%]">

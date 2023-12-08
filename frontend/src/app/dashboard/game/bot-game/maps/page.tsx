@@ -1,38 +1,17 @@
 "use client";
-import { useRef, useEffect, useContext } from "react";
+import { useRef } from "react";
+import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCoverflow, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
-import { useRouter } from "next/navigation";
-import { useAtomValue, useSetAtom } from "jotai";
-import { gameData } from "../page";
-import { SocketContext } from "../SocketContext";
-import { NumberParam, useQueryParam, withDefault } from "use-query-params";
+// import { useRouter } from "next/navigation";
+// import { gameData } from "../page";
+// import { SocketContext } from "../SocketContext";
 
 const ChooseMap = () => {
-	const socket = useContext(SocketContext);
-	const gameDataValues = useAtomValue(gameData);
-	const setGameData = useSetAtom(gameData);
-	const router = useRouter();
 	const swiperRef = useRef<any>(null);
-
-	const handleClick = (): void => {
-		setGameData((prevGameData) => ({
-			...prevGameData,
-			chosenMapIndex: swiperRef.current.swiper.realIndex,
-		}));
-
-		const mapIndex = swiperRef.current.swiper.realIndex;
-
-		if (gameDataValues.chosenGameMode === "Online Game") {
-			socket.emit("joinGame", {
-				mapIndex: mapIndex,
-			});
-			router.push(`./match-making`);
-		};
-	};
 
 	return (
 		<div className="relative h-[100vh] min-h-[600px] w-full select-none">
@@ -54,14 +33,6 @@ const ChooseMap = () => {
 							modifier: 1,
 							slideShadows: true,
 						}}
-						// pagination={{
-						// 	el: pag.current!,
-						// 	enabled: true,
-						// 	clickable: true,
-						// 	renderBullet: (index, className) => {
-						// 		return `<span class="${className}" style='background-color: #6a67f3 !important'></span>`;
-						// 	},
-						// }}
 						modules={[EffectCoverflow]}
 					>
 						<SwiperSlide style={{ height: "400px", width: "270px" }}>
@@ -84,12 +55,12 @@ const ChooseMap = () => {
 						</SwiperSlide>
 					</Swiper>
 				</div>
-				<button
+				<Link
+					href={`./bot-game/maps/${swiperRef.current.swiper.realIndex}`}
 					className="glassmorphism m-auto w-fit px-7 py-2 font-['Whitney_Semibold'] duration-150 ease-in-out hover:bg-[--purple-color]"
-					onClick={handleClick}
 				>
 					Choose
-				</button>
+				</Link>
 			</div>
 		</div>
 	);
