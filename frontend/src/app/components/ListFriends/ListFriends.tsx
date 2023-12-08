@@ -3,13 +3,11 @@ import { createConversationThunk } from "@/app/store/conversationSlice";
 import { getAllFriends } from "@/app/utils/api";
 import { Conversation, ConversationSideBarContainer, ConversationSideBarItem } from "@/app/utils/styles";
 import { CreateConversationParams, FriendsTypes } from "@/app/utils/types";
-
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { MenuButton, MenuButton2 } from "../Buttons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-// import { faBars } from "@fortawesome/free-solid-svg-icons";
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import { faChevronDown, faEllipsis} from "@fortawesome/free-solid-svg-icons";
 import RightBarUsers from "../RightBarUsers";
