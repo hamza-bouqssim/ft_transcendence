@@ -46,24 +46,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		width: 560,
 		height: 836,
 	};
-	private currentCanvasSizes: any = {
-		width: this.defaultCanvasSizes.width,
-		height: this.defaultCanvasSizes.height,
-	};
 	private paddleSizes: any = {
 		width: 170,
 		height: 15,
 	};
-	private currentBallSpeed: any = {
+	private ballSpeed: any = {
 		x: 4,
 		y: 4,
-	};
-	private map = (
-		inputSize: number,
-		defaultCanvasSize: number,
-		currentCanvasSize: number,
-	): number => {
-		return (inputSize * currentCanvasSize) / defaultCanvasSize;
 	};
 	private ball: any;
 	private topPaddle: any;
@@ -335,39 +324,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@SubscribeMessage('launchGameRequest')
 	async handleLaunchGameRequest(@MessageBody() gameData: any) {
 		if (!this.game || gameData.user === this.user1.display_name) return;
+		// if (!this.game) return;
 		this.mapIndex = 0;
-
-		// Update Canvas. Paddles && ball Size With New Mapped Values:
-		this.currentCanvasSizes = {
-			width: gameData.width,
-			height: gameData.height,
-		};
-
-		this.paddleSizes = {
-			width: this.map(
-				this.paddleSizes.width,
-				this.defaultCanvasSizes.width,
-				this.currentCanvasSizes.width,
-			),
-			height: this.map(
-				this.paddleSizes.height,
-				this.defaultCanvasSizes.height,
-				this.currentCanvasSizes.height,
-			),
-		};
-
-		this.currentBallSpeed = {
-			x: this.map(
-				this.currentBallSpeed.x,
-				this.defaultCanvasSizes.width,
-				this.currentCanvasSizes.width,
-			),
-			y: this.map(
-				this.currentBallSpeed.y,
-				this.defaultCanvasSizes.height,
-				this.currentCanvasSizes.height,
-			),
-		};
 
 		// console.log('map Index:', this.mapIndex);
 		// This Function Will Run In All Maps:
@@ -402,13 +360,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	handleDefaultGameMap() {
 		// Create Ball:
 		this.ball = Bodies.circle(
-			this.currentCanvasSizes.width / 2,
-			this.currentCanvasSizes.height / 2,
-			this.map(
-				15,
-				this.defaultCanvasSizes.width,
-				this.currentCanvasSizes.width,
-			),
+			this.defaultCanvasSizes.width / 2,
+			this.defaultCanvasSizes.height / 2,
+			15,
 			{
 				label: 'ball',
 				render: {
@@ -422,19 +376,16 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		);
 
 		Body.setVelocity(this.ball, {
-			x: this.currentBallSpeed.x,
-			y: this.currentBallSpeed.y,
+			x: this.ballSpeed.x,
+			y: this.ballSpeed.y,
 		});
+
 		this.emitToGame(this.userId, this.ball.velocity, 'setBallVelocity');
 
 		// Create Two Paddles:
 		this.topPaddle = Bodies.rectangle(
-			this.currentCanvasSizes.width / 2,
-			this.map(
-				30,
-				this.defaultCanvasSizes.height,
-				this.currentCanvasSizes.height,
-			),
+			this.defaultCanvasSizes.width / 2,
+			30,
 			this.paddleSizes.width,
 			this.paddleSizes.height,
 			{
@@ -448,13 +399,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		);
 
 		this.bottomPaddle = Bodies.rectangle(
-			this.currentCanvasSizes.width / 2,
-			this.currentCanvasSizes.height -
-				this.map(
-					30,
-					this.defaultCanvasSizes.height,
-					this.currentCanvasSizes.height,
-				),
+			this.defaultCanvasSizes.width / 2,
+			this.defaultCanvasSizes.height - 30,
 			this.paddleSizes.width,
 			this.paddleSizes.height,
 			{
@@ -496,14 +442,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 		// Create Two Boundies:
 		this.rightRect = Bodies.rectangle(
-			this.currentCanvasSizes.width,
-			this.currentCanvasSizes.height / 2,
-			this.map(
-				20,
-				this.defaultCanvasSizes.width,
-				this.currentCanvasSizes.width,
-			),
-			this.currentCanvasSizes.height,
+			this.defaultCanvasSizes.width,
+			this.defaultCanvasSizes.height / 2,
+			20,
+			this.defaultCanvasSizes.height,
 			{
 				label: 'rightRect',
 				render: {
@@ -515,13 +457,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 		this.leftRect = Bodies.rectangle(
 			0,
-			this.currentCanvasSizes.height / 2,
-			this.map(
-				20,
-				this.defaultCanvasSizes.width,
-				this.currentCanvasSizes.width,
-			),
-			this.currentCanvasSizes.height,
+			this.defaultCanvasSizes.height / 2,
+			20,
+			this.defaultCanvasSizes.height,
 			{
 				label: 'leftRect',
 				render: {
@@ -532,14 +470,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		);
 
 		const separator = Bodies.rectangle(
-			this.currentCanvasSizes.width / 2,
-			this.currentCanvasSizes.height / 2,
-			this.currentCanvasSizes.width,
-			this.map(
-				8,
-				this.defaultCanvasSizes.height,
-				this.currentCanvasSizes.height,
-			),
+			this.defaultCanvasSizes.width / 2,
+			this.defaultCanvasSizes.height / 2,
+			this.defaultCanvasSizes.width,
+			8,
 			{
 				isSensor: true,
 				render: {
@@ -549,15 +483,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		);
 
 		const centerCirle = Bodies.circle(
-			this.currentCanvasSizes.width / 2,
-			this.currentCanvasSizes.height / 2,
-			this.map(8, this.defaultCanvasSizes.width, this.currentCanvasSizes.width),
-			{
-				isSensor: true,
-				render: {
-					fillStyle: '#CFF4FF',
-				},
-			},
+			this.defaultCanvasSizes.width / 2,
+			this.defaultCanvasSizes.height / 2,
+			8,
 		);
 
 		Composite.add(engine.world, [
@@ -575,13 +503,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	handleGameCircleObstacles() {
 		const topLeftObstacle = Bodies.circle(
-			this.currentCanvasSizes.width / 4,
-			this.currentCanvasSizes.height / 4,
-			this.map(
-				50,
-				this.defaultCanvasSizes.width,
-				this.currentCanvasSizes.width,
-			),
+			this.defaultCanvasSizes.width / 4,
+			this.defaultCanvasSizes.height / 4,
+			50,
 			{
 				isStatic: true,
 				render: {
@@ -591,13 +515,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		);
 
 		const topRightObstacle = Bodies.circle(
-			(3 * this.currentCanvasSizes.width) / 4,
-			this.currentCanvasSizes.height / 4,
-			this.map(
-				40,
-				this.defaultCanvasSizes.width,
-				this.currentCanvasSizes.width,
-			),
+			(3 * this.defaultCanvasSizes.width) / 4,
+			this.defaultCanvasSizes.height / 4,
+			40,
 			{
 				isStatic: true,
 				render: {
@@ -607,13 +527,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		);
 
 		const bottomRightObstacle = Bodies.circle(
-			(3 * this.currentCanvasSizes.width) / 4,
-			(3 * this.currentCanvasSizes.height) / 4,
-			this.map(
-				50,
-				this.defaultCanvasSizes.width,
-				this.currentCanvasSizes.width,
-			),
+			(3 * this.defaultCanvasSizes.width) / 4,
+			(3 * this.defaultCanvasSizes.height) / 4,
+			50,
 			{
 				isStatic: true,
 				render: {
@@ -623,13 +539,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		);
 
 		const bottomLeftObstacle = Bodies.circle(
-			this.currentCanvasSizes.width / 4,
-			(3 * this.currentCanvasSizes.height) / 4,
-			this.map(
-				40,
-				this.defaultCanvasSizes.width,
-				this.currentCanvasSizes.width,
-			),
+			this.defaultCanvasSizes.width / 4,
+			(3 * this.defaultCanvasSizes.height) / 4,
+			40,
 			{
 				isStatic: true,
 				render: {
@@ -648,23 +560,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	handleVerticalObstacles() {
 		const verticalObstacle1 = Bodies.rectangle(
-			this.currentCanvasSizes.width -
-				this.map(
-					65,
-					this.defaultCanvasSizes.width,
-					this.currentCanvasSizes.width,
-				),
-			this.currentCanvasSizes.height / 5,
-			this.map(
-				15,
-				this.defaultCanvasSizes.width,
-				this.currentCanvasSizes.width,
-			),
-			this.map(
-				170,
-				this.defaultCanvasSizes.height,
-				this.currentCanvasSizes.height,
-			),
+			this.defaultCanvasSizes.width - 65,
+			this.defaultCanvasSizes.height / 5,
+			15,
+			170,
 			{
 				render: {
 					fillStyle: 'white',
@@ -674,18 +573,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		);
 
 		const verticalObstacle2 = Bodies.rectangle(
-			this.currentCanvasSizes.width / 2,
-			this.currentCanvasSizes.height / 3,
-			this.map(
-				15,
-				this.defaultCanvasSizes.width,
-				this.currentCanvasSizes.width,
-			),
-			this.map(
-				100,
-				this.defaultCanvasSizes.height,
-				this.currentCanvasSizes.height,
-			),
+			this.defaultCanvasSizes.width / 2,
+			this.defaultCanvasSizes.height / 3,
+			15,
+			100,
 			{
 				render: {
 					fillStyle: 'white',
@@ -695,22 +586,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		);
 
 		const verticalObstacle3 = Bodies.rectangle(
-			this.map(
-				65,
-				this.defaultCanvasSizes.width,
-				this.currentCanvasSizes.width,
-			),
-			(2 * this.currentCanvasSizes.height) / 3,
-			this.map(
-				15,
-				this.defaultCanvasSizes.width,
-				this.currentCanvasSizes.width,
-			),
-			this.map(
-				170,
-				this.defaultCanvasSizes.height,
-				this.currentCanvasSizes.height,
-			),
+			65,
+			(2 * this.defaultCanvasSizes.height) / 3,
+			15,
+			170,
 			{
 				render: {
 					fillStyle: 'white',
@@ -720,23 +599,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		);
 
 		const verticalObstacle4 = Bodies.rectangle(
-			this.currentCanvasSizes.width -
-				this.map(
-					65,
-					this.defaultCanvasSizes.width,
-					this.currentCanvasSizes.width,
-				),
-			(4 * this.currentCanvasSizes.height) / 5,
-			this.map(
-				15,
-				this.defaultCanvasSizes.width,
-				this.currentCanvasSizes.width,
-			),
-			this.map(
-				170,
-				this.defaultCanvasSizes.height,
-				this.currentCanvasSizes.height,
-			),
+			this.defaultCanvasSizes.width - 65,
+			(4 * this.defaultCanvasSizes.height) / 5,
+			15,
+			170,
 			{
 				render: {
 					fillStyle: 'white',
@@ -779,35 +645,35 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		}
 	}
 
-	applyMove(movesUser: any, posPaddle: number, paddle: any, isButtom: boolean) {
-		let stepX = 0;
+	// applyMove(movesUser: any, posPaddle: number, paddle: any, isButtom: boolean) {
+	// 	let stepX = 0;
 
-		if (movesUser.movingLeft) {
-			stepX = posPaddle - 11;
-			if (stepX <= this.paddleSizes.width / 2)
-				stepX = this.paddleSizes.width / 2;
-		} else if (movesUser.movingRight) {
-			stepX = posPaddle + 11;
-			if (stepX >= this.currentCanvasSizes.width - this.paddleSizes.width / 2)
-				stepX = this.currentCanvasSizes.width - this.paddleSizes.width / 2;
-		}
-		if (stepX != 0) {
-			posPaddle = stepX;
-			Body.setPosition(paddle, {
-				x: stepX,
-				y: paddle.position.y,
-			});
-			this.emitToGame(
-				this.userId,
-				{
-					xPosition: stepX,
-				},
-				'updatePaddlePosition',
-			);
-		}
-		if (isButtom) this.posBottomPaddleX = posPaddle;
-		else this.posTopPaddleX = posPaddle;
-	}
+	// 	if (movesUser.movingLeft) {
+	// 		stepX = posPaddle - 11;
+	// 		if (stepX <= this.paddleSizes.width / 2)
+	// 			stepX = this.paddleSizes.width / 2;
+	// 	} else if (movesUser.movingRight) {
+	// 		stepX = posPaddle + 11;
+	// 		if (stepX >= this.defaultCanvasSizes.width - this.paddleSizes.width / 2)
+	// 			stepX = this.defaultCanvasSizes.width - this.paddleSizes.width / 2;
+	// 	}
+	// 	if (stepX != 0) {
+	// 		posPaddle = stepX;
+	// 		Body.setPosition(paddle, {
+	// 			x: stepX,
+	// 			y: paddle.position.y,
+	// 		});
+	// 		this.emitToGame(
+	// 			this.userId,
+	// 			{
+	// 				xPosition: stepX,
+	// 			},
+	// 			'updatePaddlePosition',
+	// 		);
+	// 	}
+	// 	if (isButtom) this.posBottomPaddleX = posPaddle;
+	// 	else this.posTopPaddleX = posPaddle;
+	// }
 
 	handlePaddleMove() {
 		this.movePaddleInterval = setInterval(() => {
@@ -825,9 +691,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				stepX1 = this.posBottomPaddleX + 11;
 				if (
 					stepX1 >=
-					this.currentCanvasSizes.width - this.paddleSizes.width / 2
+					this.defaultCanvasSizes.width - this.paddleSizes.width / 2
 				)
-					stepX1 = this.currentCanvasSizes.width - this.paddleSizes.width / 2;
+					stepX1 = this.defaultCanvasSizes.width - this.paddleSizes.width / 2;
 			}
 			if (stepX1 != 0) {
 				this.posBottomPaddleX = stepX1;
@@ -855,9 +721,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				stepX2 = this.posTopPaddleX + 11;
 				if (
 					stepX2 >=
-					this.currentCanvasSizes.width - this.paddleSizes.width / 2
+					this.defaultCanvasSizes.width - this.paddleSizes.width / 2
 				)
-					stepX2 = this.currentCanvasSizes.width - this.paddleSizes.width / 2;
+					stepX2 = this.defaultCanvasSizes.width - this.paddleSizes.width / 2;
 			}
 			if (stepX2 != 0) {
 				this.posTopPaddleX = stepX2;
@@ -897,20 +763,14 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	resetToDefaultPosition() {
 		// Reset Ball Position
 		Body.setPosition(this.ball, {
-			x: this.currentCanvasSizes.width / 2,
-			y: this.currentCanvasSizes.height / 2,
+			x: this.defaultCanvasSizes.width / 2,
+			y: this.defaultCanvasSizes.height / 2,
 		});
 
 		// Reset Paddles Position
 		Body.setPosition(this.bottomPaddle, {
-			x: this.currentCanvasSizes.width / 2,
-			y:
-				this.currentCanvasSizes.height -
-				this.map(
-					30,
-					this.defaultCanvasSizes.height,
-					this.currentCanvasSizes.height,
-				),
+			x: this.defaultCanvasSizes.width / 2,
+			y: this.defaultCanvasSizes.height - 30,
 		});
 	}
 

@@ -71,8 +71,8 @@ class PongGame {
 	constructor(
 		private parentDiv: HTMLDivElement,
 		private chosenMapIndex: number,
-		private display_name? : string,
-		private socket?: any
+		private display_name?: string,
+		private socket?: any,
 	) {
 		this.divWidth = this.parentDiv.getBoundingClientRect().width;
 		this.divHeight = this.parentDiv.getBoundingClientRect().height;
@@ -407,14 +407,14 @@ class PongGame {
 	moveOnlineModeBall = (): void => {
 		this.socket.on("setBallVelocity", (data: any) => {
 			Body.setVelocity(this.ball, {
-				x: data.x,
-				y: data.y,
+				x: this.map(data.x, this.defaultCanvasSizes.width, this.divWidth),
+				y: this.map(data.y, this.defaultCanvasSizes.height, this.divHeight),
 			});
 		});
 		this.socket.on("updateBallPosition", (data: any) => {
 			Body.setPosition(this.ball, {
-				x: data.x,
-				y: data.y,
+				x: this.map(data.x, this.defaultCanvasSizes.width, this.divWidth),
+				y: this.map(data.y, this.defaultCanvasSizes.height, this.divHeight),
 			});
 		});
 	};
@@ -455,7 +455,7 @@ class PongGame {
 						key: e.key,
 						state: "keydown",
 					});
-					else if (e.key === "a" || e.key === "ArrowLeft")
+				else if (e.key === "a" || e.key === "ArrowLeft")
 					this.socket.emit("keyevent", {
 						display_name: this.display_name,
 						key: e.key,
@@ -479,11 +479,19 @@ class PongGame {
 			});
 			this.socket.on("updatePaddlePosition", (data: any) => {
 				Body.setPosition(this.bottomPaddle, {
-					x: data.xPosition1,
+					x: this.map(
+						data.xPosition1,
+						this.defaultCanvasSizes.width,
+						this.divWidth,
+					),
 					y: this.bottomPaddle.position.y,
 				});
 				Body.setPosition(this.topPaddle, {
-					x: data.xPosition2,
+					x: this.map(
+						data.xPosition2,
+						this.defaultCanvasSizes.width,
+						this.divWidth,
+					),
 					y: this.topPaddle.position.y,
 				});
 			});

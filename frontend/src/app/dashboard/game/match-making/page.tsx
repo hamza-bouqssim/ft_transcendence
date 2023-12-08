@@ -4,41 +4,41 @@ import { faUserGroup } from "@fortawesome/free-solid-svg-icons";
 import InviteField from "../../../components/InviteField";
 import PlayerCard from "../../../components/PlayerCard";
 import { ChangeContext } from "../../layout";
-import { useEffect, useContext, useRef, useState } from "react";
+import { useEffect, useContext, useState } from "react";
 import { useRouter } from "next/navigation";
 import { SocketContext } from "../SocketContext";
 import { socketContext } from "@/app/utils/context/socketContext";
 
-// const sleep = async (ms: number) =>
-// 	new Promise((resolve) => setTimeout(resolve, ms));
+const sleep = async (ms: number) =>
+	new Promise((resolve) => setTimeout(resolve, ms));
 
-const MatchMaking = ({ userData, opponentPlayer }: any) => {
+const MatchMaking = () => {
 	const { change, setChange } = useContext(ChangeContext);
-	// const router = useRouter();
-	// const socket = useContext(SocketContext);
-	// const [opponentPlayer, setOpponentPlayer] = useState<{
-	// 	username: string;
-	// 	display_name: string;
-	// 	avatar_url: string;
-	// }>({
-	// 	username: "",
-	// 	display_name: "",
-	// 	avatar_url: "/assets/unknown.png",
-	// });
-	// const { Userdata } = useContext<any>(socketContext);
+	const router = useRouter();
+	const socket = useContext(SocketContext);
+	const [opponentPlayer, setOpponentPlayer] = useState<{
+		username: string;
+		display_name: string;
+		avatar_url: string;
+	}>({
+		username: "",
+		display_name: "",
+		avatar_url: "/assets/unknown.png",
+	});
+	const { Userdata } = useContext<any>(socketContext);
 
-	// useEffect(() => {
-	// 	const listener = (payload: any) => {
-	// 		setOpponentPlayer(payload.opponent);
-	// 		sleep(3000);
-	// 		router.push(`./online-game/${payload.idGame}`);
-	// 	};
+	useEffect(() => {
+		const listener = (payload: any) => {
+			setOpponentPlayer(payload.opponent);
+			sleep(3000);
+			router.push(`./online-game/${payload.idGame}`);
+		};
 
-	// 	socket.on("startGame", listener);
-	// 	// return () => {
-	// 	// 	socket.off("startGame", listener);
-	// 	// };
-	// }, [socket]);
+		socket.on("startGame", listener);
+		// return () => {
+		// 	socket.off("startGame", listener);
+		// };
+	}, [socket]);
 
 	return (
 		<section className="relative mx-auto h-[100vh] py-4 text-white xl:container">
@@ -47,9 +47,9 @@ const MatchMaking = ({ userData, opponentPlayer }: any) => {
 				<div className="relative m-auto h-full w-full lg:mx-0 lg:w-[70%]">
 					<div className="relative h-[70%] w-full px-2">
 						<PlayerCard
-							username={userData?.username}
-							display_name={userData?.display_name}
-							img={userData?.avatar_url}
+							username={Userdata?.username}
+							display_name={Userdata?.display_name}
+							img={Userdata?.avatar_url}
 							additionalStyle="left-7 top-2"
 						/>
 						<h3 className="absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] font-['Whitney_BlackSc'] text-5xl font-bold sm:text-7xl lg:text-8xl min-[1750px]:text-9xl">

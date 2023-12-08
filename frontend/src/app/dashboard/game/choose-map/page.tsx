@@ -1,5 +1,7 @@
 "use client";
-import { useRef, useContext, useState, useEffect } from "react";
+import { useRef, useEffect, useContext } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { EffectCoverflow, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
@@ -7,16 +9,6 @@ import { useRouter } from "next/navigation";
 import { useAtomValue, useSetAtom } from "jotai";
 import { gameData } from "../page";
 import { SocketContext } from "../SocketContext";
-import ChoseMap from "../choseMap";
-import MatchMaking from "../match-making/page";
-import { socketContext } from "@/app/utils/context/socketContext";
-import OnlineGame from "../online-game/[id]/OnlineGame";
-import Swal from "sweetalert2";
-import { LoserPlayerPopUp } from "@/app/components/GamePopUp";
-import PongGame from "../classes/PongGame";
-
-const sleep = async (ms: number) =>
-	new Promise((resolve) => setTimeout(resolve, ms));
 
 const ChooseMap = () => {
 	const socket = useContext(SocketContext);
@@ -24,28 +16,6 @@ const ChooseMap = () => {
 	const setGameData = useSetAtom(gameData);
 	const router = useRouter();
 	const swiperRef = useRef<any>(null);
-	const [pageLink, setPageLink] = useState<any>("ChooseMap");
-	const { Userdata } = useContext<any>(socketContext);
-	const [opponentPlayer, setOpponentPlayer] = useState<{
-		username: string;
-		display_name: string;
-		avatar_url: string;
-	}>({
-		username: "",
-		display_name: "",
-		avatar_url: "/assets/unknown.png",
-	});
-	const parentCanvasRef = useRef<HTMLDivElement>(null);
-	const [startGame, setStartGame] = useState<boolean>(false);
-	const [score, setScore] = useState<{
-		playerOne: number;
-		playerTwo: number;
-	}>({
-		playerOne: 0,
-		playerTwo: 0,
-	});
-	const pongRef = useRef<any>();
-	const rotateRef = useRef<boolean>(false);
 
 	const handleClick = (): void => {
 		setGameData((prevGameData) => ({
@@ -57,125 +27,68 @@ const ChooseMap = () => {
 			socket.emit("joinGame", {
 				mapIndex: swiperRef.current.swiper.realIndex,
 			});
-			setPageLink("matchMaking");
+			router.push("./match-making");
 		} else router.push("./bot-game");
 	};
 
-	useEffect(() => {
-		const listener = (payload: any) => {
-			setOpponentPlayer(payload.opponent);
-			sleep(3000);
-			setPageLink("onlineGame");
-			// router.push(`./online-game/${payload.idGame}`);
-		};
-
-		socket.on("startGame", listener);
-		// return () => {
-		// 	socket.off("startGame", listener);
-		// };
-	}, [socket]);
-
-	useEffect(() => {
-		if (pageLink === "onlineGame") {
-			socket.on("connect", () => {
-				console.log("A Pong Client Is Connected!");
-			});
-			socket.on("updateScore", (playersScore: any) => {
-				setScore({
-					...score,
-					playerOne: playersScore.playerOneScore,
-					playerTwo: playersScore.playerTwoScore,
-				});
-			});
-		}
-	}, []);
-
-	useEffect(() => {
-		if (pageLink === "onlineGame") {
-			let timerInterval: any;
-
-			const lunchGameListener = (payload: any) => {
-				console.log("start game", payload);
-				// console.log("opponant : ", payload.opponant);
-				// if (opponentPlayer) return;
-				rotateRef.current = payload.rotate;
-				setStartGame((prev: any) => !prev);
-				pongRef.current = new PongGame(
-					parentCanvasRef.current!,
-					gameDataValues.chosenMapIndex,
-					Userdata?.display_name,
-					socket,
-				);
-			};
-
-			const gameIsFinishedListener = () => {
-				// pongRef.current.clear();
-				LoserPlayerPopUp(router);
-			};
-
-			Swal.fire({
-				title: "Game Will Start In",
-				icon: "info",
-				iconColor: "var(--pink-color)",
-				color: "#ffff",
-				html: "<b style='font-size:80px'></b>&emsp;Seconds",
-				timer: 3 * 1000,
-				background: "#2E2F54",
-				customClass: "rounded-[30px] font-['Whitney_BlackSc'] text-sm",
-				timerProgressBar: true,
-				allowOutsideClick: false,
-				didOpen: () => {
-					Swal.showLoading();
-					const timer = Swal.getPopup()!.querySelector("b");
-					timerInterval = setInterval(() => {
-						timer!.textContent = `${(Swal.getTimerLeft()! / 1000).toFixed(0)}`;
-					}, 100);
-					const timerProgressBar = Swal.getPopup()!.querySelector(
-						".swal2-timer-progress-bar",
-					) as HTMLElement;
-					timerProgressBar!.style.backgroundColor = "var(--pink-color)";
-				},
-				willClose: () => {
-					clearInterval(timerInterval);
-				},
-			}).then(() => {
-				console.log("launchhhhhhhhh");
-				socket.emit("launchGameRequest", {
-					mapIndex: gameDataValues.chosenGameMode,
-					width: parentCanvasRef.current!.getBoundingClientRect().width,
-					height: parentCanvasRef.current!.getBoundingClientRect().height,
-					user: Userdata.display_name
-				});
-				socket.on("launchGame", lunchGameListener);
-				socket.on("gameIsFinished", gameIsFinishedListener);
-			});
-
-			// return () => {
-			// 	if (score.playerOne === 10 || score.playerTwo === 10)
-			// 		socket.off("launchGame", lunchGameListener);
-			// 		socket.off("gameIsFinished", gameIsFinishedListener);
-			// }
-		}
-	}, [pageLink]);
-
 	return (
-		<>
-			{pageLink === "ChooseMap" && (
-				<ChoseMap onClick={handleClick} ref={swiperRef} />
-			)}
-			{pageLink === "matchMaking" && (
-				<MatchMaking userData={Userdata} opponentPlayer={opponentPlayer} />
-			)}
-			{pageLink === "onlineGame" && (
-				<OnlineGame
-					startGame={true}
-					score={score}
-					ref={parentCanvasRef}
-					opponentPlayer={opponentPlayer}
-					rotateRef={rotateRef}
-				/>
-			)}
-		</>
+		<div className="relative h-[100vh] min-h-[600px] w-full select-none">
+			<div className="glassmorphism absolute left-[50%] top-[50%] m-auto flex w-full max-w-[800px] -translate-x-[50%] -translate-y-[50%] flex-col gap-6 p-6">
+				<h1 className="text-center font-['Whitney_Bold'] text-sm lg:text-2xl">
+					Select A Map
+				</h1>
+				<div>
+					<Swiper
+						ref={swiperRef}
+						effect={"coverflow"}
+						grabCursor={true}
+						centeredSlides={true}
+						slidesPerView={"auto"}
+						coverflowEffect={{
+							rotate: 50,
+							stretch: 0,
+							depth: 100,
+							modifier: 1,
+							slideShadows: true,
+						}}
+						// pagination={{
+						// 	el: pag.current!,
+						// 	enabled: true,
+						// 	clickable: true,
+						// 	renderBullet: (index, className) => {
+						// 		return `<span class="${className}" style='background-color: #6a67f3 !important'></span>`;
+						// 	},
+						// }}
+						modules={[EffectCoverflow]}
+					>
+						<SwiperSlide style={{ height: "400px", width: "270px" }}>
+							<img
+								src="/assets/game-maps/default-map.gif"
+								style={{ height: "100%", objectFit: "cover" }}
+							/>
+						</SwiperSlide>
+						<SwiperSlide style={{ height: "400px", width: "270px" }}>
+							<img
+								src="/assets/game-maps/map2-with-obstacles.gif"
+								style={{ height: "100%", objectFit: "cover" }}
+							/>
+						</SwiperSlide>
+						<SwiperSlide style={{ height: "400px", width: "270px" }}>
+							<img
+								src="/assets/game-maps/map3-with-obstacles.gif"
+								style={{ height: "100%", objectFit: "cover" }}
+							/>
+						</SwiperSlide>
+					</Swiper>
+				</div>
+				<button
+					className="glassmorphism m-auto w-fit px-7 py-2 font-['Whitney_Semibold'] duration-150 ease-in-out hover:bg-[--purple-color]"
+					onClick={handleClick}
+				>
+					Choose
+				</button>
+			</div>
+		</div>
 	);
 };
 

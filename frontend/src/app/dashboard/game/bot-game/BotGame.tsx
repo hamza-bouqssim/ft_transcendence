@@ -93,8 +93,12 @@ const BotGame = () => {
 				startGame={startGame}
 				score={score.botScore}
 			/>
-			<div
+			{/* <div
 				className="h-[500px] w-full max-w-[340px] shadow-[0_0_50px_2px_var(--blue-color)] md:h-[590px] md:max-w-[380px] xl:h-[700px] xl:max-w-[420px] min-[1750px]:h-[836px] min-[1750px]:max-w-[560px]"
+				ref={parentCanvasRef}
+			></div> */}
+			<div
+				className={`h-[500px] w-full max-w-[340px] shadow-[0_0_50px_2px_var(--blue-color)] md:h-[590px] md:max-w-[380px] xl:h-[700px] xl:max-w-[420px] min-[1750px]:h-[836px] min-[1750px]:max-w-[560px]`}
 				ref={parentCanvasRef}
 			></div>
 			<PlayerScore
