@@ -5,6 +5,7 @@ import {
 	WebSocketServer,
 	OnGatewayDisconnect,
 	OnGatewayConnection,
+	ConnectedSocket,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { Bodies, Composite, Engine, Runner, Body, World } from 'matter-js';
@@ -95,7 +96,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		new Promise((resolve) => setTimeout(resolve, ms));
 
 	async handleConnection(socket: AuthenticatedSocket, ...args: any[]) {
-		console.log("connect   ...")
+		console.log('connect1   ...');
+		console.log('socket', socket.user.sub);
 		if (socket.user) {
 			const newStatus = await this.prisma.user.update({
 				where: { id: socket.user.sub },
@@ -120,12 +122,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		// 	const findQueue = this.getStratQueue(this.userId);
 		// 	if (findQueue) this.getStratQueue(this.userId).sockets.push(socket.id);
 		// }
-		console.log('waitting c', this.queueWaiting);
-		console.log('ingame c', this.queueInGame);
+		// console.log('waitting c', this.queueWaiting);
+		// console.log('ingame c', this.queueInGame);
 	}
 
 	async handleDisconnect(socket: AuthenticatedSocket) {
-		console.log('Connection closed');
+		console.log('Connection closed1');
 		// console.log(socket.user);
 		if (socket.user) {
 			const newStatus = await this.prisma.user.update({
@@ -169,7 +171,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			// console.log('queueWaiting: ', this.queueWaiting);
 		}
 	}
- 
+
 	// @SubscribeMessage('joinGame')
 	// async handleJoinGame(client: AuthenticatedSocket, data: any) {
 	// 	console.log('join game');
@@ -326,8 +328,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	// End Queue---------------------------------------
 
 	@SubscribeMessage('launchGameRequest')
-	async handleLaunchGameRequest(@MessageBody() gameData: any) {
-		if (!this.game || gameData.user === this.user1.display_name) return;
+	async handleLaunchGameRequest(
+		@MessageBody() gameData: any,
+		@ConnectedSocket() socket: AuthenticatedSocket,
+	) {
+		console.log(`${socket.user.sub}  ,, ${this.user1.display_name}`);
+		if (!this.game || socket.user.sub === this.game.user1) return;
 		// if (!this.game) return;
 		this.mapIndex = 0;
 

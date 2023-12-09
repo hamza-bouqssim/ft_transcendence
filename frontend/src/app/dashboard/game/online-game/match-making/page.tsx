@@ -6,25 +6,19 @@ import PlayerCard from "../../../../components/PlayerCard";
 import { ChangeContext } from "../../../layout";
 import { useEffect, useContext, useState } from "react";
 import { useRouter } from "next/navigation";
-// import { SocketContext } from "../../SocketContext";
 import { socketContext } from "@/app/utils/context/socketContext";
 import { useSearchParams } from "next/navigation";
-import { io } from "socket.io-client";
-
-export const gameSocket = io("http://localhost:8000/game", {
-	withCredentials: true,
-});
+import { useGameSocket } from "@/app/providers/game-socket-provider";
 
 const sleep = async (ms: number) =>
-new Promise((resolve) => setTimeout(resolve, ms));
+	new Promise((resolve) => setTimeout(resolve, ms));
 
 const MatchMaking = () => {
-	
-	// const socket = useContext(SocketContext);
 	const searchParams = useSearchParams();
 	const mapIndex: number = searchParams.get("mapIndex") as any;
 	const { change, setChange } = useContext(ChangeContext);
 	const router = useRouter();
+	const gameSocket = useGameSocket();
 	const [opponentPlayer, setOpponentPlayer] = useState<{
 		username: string;
 		display_name: string;
@@ -34,39 +28,23 @@ const MatchMaking = () => {
 		display_name: "",
 		avatar_url: "/assets/unknown.png",
 	});
-	useEffect(() => {
-		// Component mounted, handle socket connection
-		gameSocket.on("connect", () => {
-			console.log("Socket connected");
-		});
 
-		// Component will unmount, handle gameSocket disconnection
-		return () => {
-			gameSocket.disconnect();
-			console.log("Socket disconnected");
-		};
-	}, []);
-
-	console.log("socket matchmaking", gameSocket);
 	const { Userdata } = useContext<any>(socketContext);
-	
+
 	useEffect(() => {
 		const listener = (payload: any) => {
 			setOpponentPlayer(payload.opponent);
 			sleep(3000);
 			// router.push(`./maps/${mapIndex}/${payload.idGame}`);
-			router.push(`./maps/${mapIndex}`);
+			router.push(`./match-making/${mapIndex}`);
 		};
-
+		console.log("setup start game event");
 		gameSocket.on("startGame", listener);
-		// return () => {
-		// 	socket.off("startGame", listener);
-		// };
-		// return () => {
-		// 	gameSocket.disconnect();
-		// 	console.log("Socket disconnected");
-		// };
-	}, [gameSocket]);
+		return () => {
+			console.log("remove start game event");
+			gameSocket.off("startGame", listener);
+		};
+	}, []);
 
 	return (
 		<section className="relative mx-auto h-[100vh] py-4 text-white xl:container">

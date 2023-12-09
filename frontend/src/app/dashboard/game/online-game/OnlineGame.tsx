@@ -6,12 +6,12 @@ import PongGame from "../classes/PongGame";
 import Swal from "sweetalert2";
 import { LoserPlayerPopUp } from "@/app/components/GamePopUp";
 import { socketContext } from "@/app/utils/context/socketContext";
-import { gameSocket } from "./match-making/page";
+import { useGameSocket } from "@/app/providers/game-socket-provider";
 
 const OnlineGame = ({ mapIndex }: any) => {
 	const router = useRouter();
 	const parentCanvasRef = useRef<HTMLDivElement>(null);
-	const pongRef = useRef<any>();
+	// const pongRef = useRef<any>();
 	const rotateRef = useRef<boolean>(false);
 	const opponentPlayer = useRef<any>(null);
 	const [startGame, setStartGame] = useState<boolean>(false);
@@ -22,47 +22,35 @@ const OnlineGame = ({ mapIndex }: any) => {
 		playerOne: 0,
 		playerTwo: 0,
 	});
+	const gameSocket = useGameSocket();
 
 	console.log("map index:", mapIndex);
 
 	const { Userdata } = useContext<any>(socketContext);
 
-
-	 useEffect(() => {
-			// Listen for events or perform other socket-related actions
-			gameSocket.on("connect", () => {
-				console.log("gameSocket connected to namespace");
-			});
-
-			return () => {
-				// Clean up when the component is unmounted
-				gameSocket.disconnect();
-				console.log("Socket disconnected from namespace");
-			};
-		}, []);
-	
 	useEffect(() => {
-		// gameSocket.on("connect", () => {
-		// 	console.log("A Pong Client Is Connected!");
-		// });
-		gameSocket.on("updateScore", (playersScore: any) => {
+		console.log("online-game-score-useffect");
+		const updateScoreListener = (playersScore: any) => {
 			setScore({
 				...score,
 				playerOne: playersScore.playerOneScore,
 				playerTwo: playersScore.playerTwoScore,
 			});
-		});
+		};
+		gameSocket.on("updateScore", updateScoreListener);
+		return () => void gameSocket.off("updateScore");
 	}, []);
 
 	useEffect(() => {
+		console.log("online-game-score-useffect2");
 		let timerInterval: any;
 
 		const lunchGameListener = (payload: any) => {
-			if (opponentPlayer.current) return;
+			// if (opponentPlayer.current) return;
 			opponentPlayer.current = payload.opponant;
 			rotateRef.current = payload.rotate;
 			setStartGame((prev: any) => !prev);
-			pongRef.current = new PongGame(
+			const pong = new PongGame(
 				parentCanvasRef.current!,
 				mapIndex,
 				Userdata?.display_name,
@@ -106,15 +94,18 @@ const OnlineGame = ({ mapIndex }: any) => {
 				width: parentCanvasRef.current!.getBoundingClientRect().width,
 				height: parentCanvasRef.current!.getBoundingClientRect().height,
 			});
+			console.log("setup launchGame event!");
+			console.log("setup gameIsFinished event!");
 			gameSocket.on("launchGame", lunchGameListener);
 			gameSocket.on("gameIsFinished", gameIsFinishedListener);
 		});
 
-		// return () => {
-		// 	if (score.playerOne === 10 || score.playerTwo === 10)
-		// 		socket.off("launchGame", lunchGameListener);
-		// 		socket.off("gameIsFinished", gameIsFinishedListener);
-		// }
+		return () => {
+			console.log("remove launchGame event!");
+			console.log("remove gameIsFinished event!");
+			gameSocket.off("launchGame", lunchGameListener);
+			gameSocket.off("gameIsFinished", gameIsFinishedListener);
+		};
 	}, []);
 
 	return (
