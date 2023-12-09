@@ -10,6 +10,7 @@ import { PrismaService } from 'prisma/prisma.service';
 import { CreateMessageRoom, RoomId } from 'src/Rooms/dto/rooms.dto';
 import { RoomsService } from 'src/Rooms/rooms.service';
 import { ConversationsService } from 'src/conversations/conversations.service';
+import { UserService } from 'src/user/user.service';
 
 @WebSocketGateway({
     cors:{
@@ -22,7 +23,7 @@ import { ConversationsService } from 'src/conversations/conversations.service';
 export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisconnect {
     constructor(@Inject(Services.GATEWAY_SESSION_MANAGER)private readonly sessions : IGateWaySession,  private readonly eventEmitter: EventEmitter2,
     private readonly prisma :PrismaService,
-    private readonly roomsService:RoomsService,private  conversationService : ConversationsService ){}
+    private readonly roomsService:RoomsService,private  conversationService : ConversationsService, private readonly userService : UserService ){}
     @WebSocketServer() 
     server: Server;
     
@@ -111,13 +112,16 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         }
 
         @OnEvent("order.created")
-        onNotification(data:any) {
-            console.log(data)
+         async onNotification(data:any) {
              const userAdmin = data.members.find((userAdmin) => userAdmin.isAdmin)
             data.members.map((member) => {
                 if(!member.isAdmin)
-                    this.server.to(member.user_id).emit('notification', `${userAdmin.user.display_name } Join ${member.user.display_name} to ${data.name}`);
-                          
+                {
+                    const message = `${userAdmin.user.display_name } Join you to ${data.name}`;
+                    this.server.to(member.user_id).emit('notification', message);
+                    this.userService.createNotification( userAdmin.user,member.user, message);
+
+                }             
             })
         }
         @OnEvent("request.created")

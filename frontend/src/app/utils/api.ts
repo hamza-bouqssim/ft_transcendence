@@ -38,7 +38,7 @@ export const getRequest = () =>
   return response;
 }
 
-
+export const getNotification = () => axios.get(`http://localhost:8000/user/notification`, config);
 export const getBloques = () => axios.get(`http://localhost:8000/user/blocked-friends`, config);
 
 export const DebloqueUser = async (id : string) => axios.post(`http://localhost:8000/friend-request/unblock-friend`, {friendIdToUnblock : id}, config);

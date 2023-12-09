@@ -71,6 +71,7 @@ export type FriendsTypes = {
     username : string;
     avatar_url : string;
     friend : User;
+    status : string;
 }
 
 export type BloquesTypes = {
@@ -89,6 +90,12 @@ export type MessageType = {
     createdAt: string;
     sender: User;
   };
+export type NotificationTypes = {
+    id : string;
+    content : string;
+    image_content : String;
+
+}
 
 export type ConversationMessage = {
     id: number;

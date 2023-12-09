@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { User } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
 import { findUserParams } from 'src/utils/types';
 
@@ -264,5 +265,43 @@ export class UserService {
 
 
       }
-  
+      // create notification
+
+      async createNotification(userAdmin: User, member: User, message: string) {
+        const notification = await this.prisma.notificationGlobal.create({
+            data: {
+                Sender: { connect: { id: userAdmin.id } },
+                recipient: { connect: { id: member.id } },
+                content: message,
+                image_content: userAdmin.avatar_url,
+            },
+        });
+    
+        return notification;
+    }
+    async notificationCreate(user : User){
+
+        await this.prisma.notificationGlobal.updateMany({
+            where: {
+                recipient_id: user.id,
+            },
+            data: {
+                vue: true,
+            },
+        });
+        const notifications = await this.prisma.notificationGlobal.findMany({
+            where: {
+                recipient_id: user.id,
+            },
+            include: {
+                Sender: true, // Corrected syntax: remove the semicolon and use a comma
+            },
+        });
+
+        
+        
+
+        return notifications;
+    }
 }
+

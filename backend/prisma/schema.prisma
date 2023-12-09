@@ -203,7 +203,6 @@ model NotificationGlobal {
   id String @id @default(uuid())
   Sender_id String
   recipient_id String
-  type String
   content String
   vue Boolean @default(false)
   created_at   DateTime        @default(now())
