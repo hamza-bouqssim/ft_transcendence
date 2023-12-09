@@ -30,7 +30,7 @@ export const getAllRooms = createAsyncThunk('rooms/getAllRooms', async (_,{rejec
   try {
     const response = await getAllRoomsApi();
     return response.data; 
-  } catch (error) {
+  } catch (error : any) {
     if (error.response && error.response.data && error.response.data.message) {
       return rejectWithValue(error.response.data.message);
     } else {

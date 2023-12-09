@@ -38,10 +38,10 @@ model User {
   friends Friend[] @relation("Friend")
   senderOfChatParticipents ChatParticipents[] @relation("sender")
   recipientOfChatParticipents ChatParticipents[] @relation("recipient")
-  senderOfmessage Message[] @relation("senderMessage")
-  sender NotificationGlobal[] @relation("sender")
-  recepient NotificationGlobal[] @relation("recipient")
+  senderNotif NotificationGlobal[] @relation("sender")
+  recipientNotif NotificationGlobal[] @relation("recipient")
   senderNotifMessage NotificationMessage[] @relation("senderMessage")
+  senderOfmessage Message[] @relation("senderMessage")
   player1 Pong_match[]  @relation("player1")
   player2 Pong_match[]  @relation("player2")
   Member  Member[]
@@ -196,6 +196,8 @@ model Queue {
   user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
 }
+
+
 model NotificationGlobal {
   id String @id @default(uuid())
   Sender_id String
@@ -212,6 +214,6 @@ model NotificationGlobal {
 model NotificationMessage{
   id String @id @default(uuid())
   recipient_id String
-  recipient User @relation("senderMessage",fields: [recipient_id], references: [id])
+  Sender User @relation("senderMessage",fields: [recipient_id], references: [id])
   vue Boolean @default(true)
 }

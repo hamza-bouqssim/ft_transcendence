@@ -3,13 +3,15 @@ import { Body, Controller, Get, Param, Post, UseGuards, Req, Res } from '@nestjs
 import { ConversationsService } from './conversations.service';
 import { Request } from 'src/user/interfaces/request.interface';
 import { AuthGuard } from '@nestjs/passport';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { createMessageDto } from './dtos/CreateMessage.dto';
 
 
 
 @Controller('chat')
 @UseGuards(AuthGuard('jwt'))
 export class ConversationsController {
-constructor(private  conversationService : ConversationsService ,)
+constructor(private  conversationService : ConversationsService , private eventEmitter : EventEmitter2)
 {}
 
 

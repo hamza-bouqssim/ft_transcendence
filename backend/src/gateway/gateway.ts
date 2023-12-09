@@ -1,16 +1,16 @@
 /* eslint-disable prettier/prettier */
-import { SubscribeMessage, MessageBody,WebSocketGateway,WebSocketServer,OnGatewayDisconnect, OnGatewayConnection } from '@nestjs/websockets';
-import { PrismaModule } from 'prisma/prisma.module';
+import { SubscribeMessage,WebSocketGateway,WebSocketServer,OnGatewayDisconnect, OnGatewayConnection } from '@nestjs/websockets';
 import { Server ,Socket} from 'socket.io';
 import { AuthenticatedSocket } from "src/utils/interfaces";
 import { IGateWaySession } from './gateway.session';
 import { Services } from 'src/utils/constants';
 import {Inject} from '@nestjs/common'
-import {OnEvent} from  '@nestjs/event-emitter';
+import {EventEmitter2, OnEvent} from  '@nestjs/event-emitter';
 import { PrismaService } from 'prisma/prisma.service';
-import { CreateMessageRoom, RoomId ,CreateChatRoom} from 'src/Rooms/dto/rooms.dto';
+import { CreateMessageRoom, RoomId } from 'src/Rooms/dto/rooms.dto';
 import { RoomsService } from 'src/Rooms/rooms.service';
 import { ConversationsService } from 'src/conversations/conversations.service';
+
 @WebSocketGateway({
     cors:{
         origin:['http://localhost:3000'],
@@ -20,7 +20,7 @@ import { ConversationsService } from 'src/conversations/conversations.service';
 } )
 
 export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisconnect {
-    constructor(@Inject(Services.GATEWAY_SESSION_MANAGER)private readonly sessions : IGateWaySession,
+    constructor(@Inject(Services.GATEWAY_SESSION_MANAGER)private readonly sessions : IGateWaySession,  private readonly eventEmitter: EventEmitter2,
     private readonly prisma :PrismaService,
     private readonly roomsService:RoomsService,private  conversationService : ConversationsService ){}
     @WebSocketServer() 
@@ -34,19 +34,21 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         const userId = socket.user.sub;
         if(socket.user)
         {
+            
             if (!this.NsessionOfuser.has(userId)) {
+                
                 this.NsessionOfuser.set(userId, 1);
                 const newStatus = await this.prisma.user.update({
                     where: { id: userId},
                     data: { status: "online"},
-    
+                    
                 });
-              } else {
+            } else {
                 const sessionNumber = this.NsessionOfuser.get(userId) + 1;
                 this.NsessionOfuser.set(userId, sessionNumber);
-              }          
+            }          
+            this.eventEmitter.emit('online.created', { userId });
         }  
-        console.log("join Notification-->", socket.user.sub);
         socket.join(socket.user.sub.toString());     
     }
     @SubscribeMessage("message.create")
@@ -65,29 +67,7 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         client.leave (roomId.id);
     }
 
-    @OnEvent("order.created")
-    onCreate(data:any) {
-        const userAdmin = data.members.find((userAdmin) => userAdmin.isAdmin)
-        data.members.map((member) => {
-            if(!member.isAdmin)
-            {
-                 ,
-
-                this.server.to(member.user_id).emit('notification', `${userAdmin.user.display_name } Join ${member.user.display_name} to ${data.name}`);
-            }
-                      
-        })
-    }
-    @OnEvent("order.update")
-    onUpdate(data:any) {
-        const userAdmin = data.members.find((userAdmin) => userAdmin.isAdmin)
-        data.members.map((member) => {
-            if(!member.isAdmin)
-                this.server.to(member.user_id).emit('notification', `${userAdmin.user.display_name } Join ${member.user.display_name} to ${data.name}`);
-                      
-        })
-    }
-
+ 
 
     @SubscribeMessage('messageRome')
     async handleMessage(client: Socket, createMessageRoom: CreateMessageRoom){
@@ -100,42 +80,6 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
     }
 
 
-    // id: 'c7ba970b-986f-44a1-9052-6d3c67eb1926',
-    // name: 'ksjdlkbf gcOUCVuvc',
-    // Privacy: 'Public',
-    // password: null,
-    // picture: 'https://images.squarespace-cdn.com/content/v1/5f60d7057b9b7d7609ef628f/1603219780222-V253F1WLHBH8HNHXIFUX/group.png',
-    // createdAt: 2023-12-07T16:23:29.570Z,
-    // updatedAt: 2023-12-07T16:23:29.570Z,
-    // members: [
-    //   {
-    //     id: '6d769743-6796-4564-b158-09ad876dc17c',
-    //     user_id: '6a171716-6e2a-45c8-a9c6-66f3d3fd1908',
-    //     chatRoomId: 'c7ba970b-986f-44a1-9052-6d3c67eb1926',
-    //     isAdmin: false,
-    //     user: [Object]
-    //   },
-    //   {
-    //     id: '9354e02c-b556-4d24-bb1b-38f39ba634df',
-    //     user_id: '33366b70-335f-4df4-9180-aafe95c6fbbf',
-    //     chatRoomId: 'c7ba970b-986f-44a1-9052-6d3c67eb1926',
-    //     isAdmin: true,
-    //     user: [Object]
-    //   }
-    // ]
-    //  }
-    //  {
-    // id: '33366b70-335f-4df4-9180-aafe95c6fbbf',
-    // username: 'mohamed jalloul',
-    // status: 'online',
-    // email: 'medjalal1998@gmail.com',
-    // password: '',
-    // display_name: 'medjalal1998',
-    // avatar_url: 'https://lh3.googleusercontent.com/a/ACg8ocIwCklBFlWssSoKHjf77t2vHRNQFP3X_kMXwGCRMwC8=s96-c',
-    // two_factor_auth: '',
-    // two_factor_secret_key: ''
-    //  }
-    
     
     @SubscribeMessage('leaveTyping')
     handleLeaveTyoing (client: Socket, roomId: RoomId) {
@@ -151,18 +95,66 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
                 if (sessionNumber > 0) {
                     this.NsessionOfuser.set(userId, sessionNumber);
                 } else {
+                    
                     this.NsessionOfuser.delete(userId);
                     const newStatus = await this.prisma.user.update({
                         where: { id: socket.user.sub},
                         data: { status: "offline"},
                         
                     });
+                    this.eventEmitter.emit('offline.created', { userId });
                 }
             }
-            console.log("leave Notification-->", socket.user.sub)
+            // console.log("leave Notification-->", socket.user.sub)
             socket.leave(socket.user.sub);
             
         }
+
+        @OnEvent("order.created")
+        onNotification(data:any) {
+            console.log(data)
+             const userAdmin = data.members.find((userAdmin) => userAdmin.isAdmin)
+            data.members.map((member) => {
+                if(!member.isAdmin)
+                    this.server.to(member.user_id).emit('notification', `${userAdmin.user.display_name } Join ${member.user.display_name} to ${data.name}`);
+                          
+            })
+        }
+        @OnEvent("request.created")
+        sendFriendRequestNotification(userId: string, data: any) {
+            console.log("user here-->", userId);
+            this.server.emit('newFriendRequest', data);
+        }
+
+        @OnEvent('requestAccept.created')
+        AcceptFriendRequestNotification(AccepteruserId : string){
+            this.server.emit('AcceptNotification', `${AccepteruserId} Accept your request`);
+
+        }
+        @OnEvent('requestRefuse.created')
+        RefuserFriendRequestNotification(RefuseruserId : string){
+            this.server.emit('RefuseNotification', `${RefuseruserId} refuse your request`);
+
+        }
+        @OnEvent('requestBlock.created')
+        blockListNotification(data : string){
+            
+            this.server.emit('blockNotification', data);
+        }
+        @OnEvent('requestDebloque.created')
+        debloqueNotification(data: string){
+            this.server.emit('debloqueNotification', data);
+        }
+        @OnEvent('online.created')
+        handleOnlineEvent(payload: { userId: string }) {
+          this.server.emit('online', `This user ${payload} is online`);
+        }
+        @OnEvent('offline.created')
+        handleOfflineEvent(payload: { userId: string }) {
+            this.server.emit('offline', `This user ${payload} is offline`);
+        }
+
+    
         
         
         

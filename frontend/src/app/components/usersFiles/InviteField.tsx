@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import { FriendsTypes } from "@/app/utils/types";
-import { fetchGetAllFriends } from "@/app/store/requestSlice";
 import { AppDispatch } from "@/app/store";
 import { useDispatch } from "react-redux";
 import { fetchUserInfo, fetchUserTable, fetchUsersThunk } from "@/app/store/usersSlice";

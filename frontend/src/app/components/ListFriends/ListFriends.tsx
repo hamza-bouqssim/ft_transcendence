@@ -3,21 +3,32 @@ import { createConversationThunk } from "@/app/store/conversationSlice";
 import { getAllFriends } from "@/app/utils/api";
 import { Conversation, ConversationSideBarContainer, ConversationSideBarItem } from "@/app/utils/styles";
 import { CreateConversationParams, FriendsTypes } from "@/app/utils/types";
-
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { MenuButton, MenuButton2 } from "../Buttons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-// import { faBars } from "@fortawesome/free-solid-svg-icons";
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import { faChevronDown, faEllipsis} from "@fortawesome/free-solid-svg-icons";
 import RightBarUsers from "../RightBarUsers";
 import Image from "next/image";
-import { fetchBlockFriendThunk, fetchGetAllFriends } from "@/app/store/requestSlice";
+import { fetchBlockFriendThunk } from "@/app/store/blockSlice";
+import { fetchGetAllFriendsThunk } from "@/app/store/friendsSlice";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const ListFriends = () => {
+  const ToastFunction = (message : any) => {
+		toast.error(message, {
+		  position: toast.POSITION.TOP_RIGHT,
+		  autoClose: 5000, // You can customize the duration
+		  hideProgressBar: false,
+		  closeOnClick: true,
+		  pauseOnHover: true,
+		  draggable: true,
+		});
+	  };
 
 
     const [Friends, setFriends] = useState<FriendsTypes[]>([]);
@@ -35,16 +46,13 @@ const ListFriends = () => {
 
 
   
-      useEffect (() => {
-        dispatch(fetchGetAllFriends())
-        .unwrap()
-        .then(({data}) => {
-          setFriends(data);
-        }).catch((err)=>{
-          console.log(err);
-        }
-        );
-      },)
+   
+   
+      const { friends, status, error } = useSelector((state:any) => state.friends);
+    
+      useEffect(() => {
+        dispatch(fetchGetAllFriendsThunk());
+      }, [dispatch]);
 
       const router = useRouter();
        const handleFunction = (friends : FriendsTypes) =>{
@@ -63,19 +71,21 @@ const ListFriends = () => {
       
         try {
           await dispatch(fetchBlockFriendThunk(id));
-            alert("You have blocked this friend successfully");
+            ToastFunction("You have blocked this friend successfully");
+
         } catch (error) {
-          console.error("Error blocking friend:", error);
-            alert("Failed to block the friend. Please try again."); // Show an alert for error handling
+          ToastFunction("Failed to block the friend. Please try again");
+
         }
+
       };
       
      
     return (
         <Conversation>
-
+          <ToastContainer />
 				<ConversationSideBarContainer>
-					{Friends.map(function(elem){
+					{friends.map(function(elem : FriendsTypes){
 						return(
 							<ConversationSideBarItem key={elem.id}>
                 <Image src={elem.avatar_url} className="h-14 w-14 rounded-[50%] bg-black " alt="Description of the image" width={60}   height={60} />

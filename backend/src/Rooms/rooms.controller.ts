@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Controller, Get,Body, Res,UseGuards ,Post,Req} from '@nestjs/common';
 import { RoomsService } from './rooms.service';
-import { CreateChatRoom,UpdateChatRoom ,DeleteChatRoom,RoomId} from './dto/rooms.dto';
+import { DeleteChatRoom} from './dto/rooms.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { WebSocketChatGateway } from 'src/gateway/gateway';

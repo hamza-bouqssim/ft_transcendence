@@ -2,22 +2,35 @@
 
 import { AppDispatch } from "@/app/store";
 import { Conversation, ConversationSideBarContainer, ConversationSideBarItem, HeaderOnlineUsers, OflineStyling, OnlineStyling } from "@/app/utils/styles";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {useContext, useEffect, useState} from "react"
-import { UsersTypes } from "@/app/utils/types";
+import { FriendsTypes, UsersTypes } from "@/app/utils/types";
 import { fetchUsersThunk } from "@/app/store/usersSlice";
 import {  socketContext } from "@/app/utils/context/socketContext";
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import { MenuButton, MenuButton2 } from "../Buttons";
-import { fetchBlockFriendThunk, fetchGetAllFriends } from "@/app/store/requestSlice";
+import { fetchBlockFriendThunk } from "@/app/store/blockSlice";
 import { useRouter } from "next/navigation";
+import { fetchGetAllFriendsThunk } from "@/app/store/friendsSlice";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const OnlineFriends = () =>{
+  const ToastFunction = (message : any) => {
+		toast.error(message, {
+		  position: toast.POSITION.TOP_RIGHT,
+		  autoClose: 5000, // You can customize the duration
+		  hideProgressBar: false,
+		  closeOnClick: true,
+		  pauseOnHover: true,
+		  draggable: true,
+		});
+	  };
+
   const router = useRouter();
-    const [users, setUsers] = useState<UsersTypes[]>([]);
-    const [friends, setFriends] = useState<UsersTypes[]>([]);
+    // const [users, setUsers] = useState<UsersTypes[]>([]);
     const [online, setOnlineFriends] = useState<UsersTypes[]>([]);
     const dispatch = useDispatch<AppDispatch>();
     const [openMenuId, setOpenMenuId] = useState<string | null>(null);
@@ -25,53 +38,42 @@ const OnlineFriends = () =>{
       const handleMenuClick = (friendId: string) => {
         setOpenMenuId(openMenuId === friendId ? null : friendId);
     };
-
-    useEffect (() => {
-      dispatch(fetchUsersThunk())
-      .unwrap()
-      .then(({data}) => {
-        setUsers(data);
-      }).catch((err)=>{
-        console.log(err);
-      }
-      );
-    },);
-
-    useEffect (() => {
-      dispatch(fetchGetAllFriends())
-      .unwrap()
-      .then(({data}) => {
-        setFriends(data);
-      }).catch((err)=>{
-        console.log(err);
-      }
-      );
-    },);
+    const { users, Userstatus, Usererror } = useSelector((state:any) => state.users);
+    const { friends, status, error } = useSelector((state:any) => state.friends);
+    console.log(users,friends);
+    useEffect(() => {
+      dispatch(fetchUsersThunk());
+      dispatch(fetchGetAllFriendsThunk());
+    }, [dispatch]);
 
     const handlleBloque = async (id: string) => {
       
       try {
         await dispatch(fetchBlockFriendThunk(id));
-          alert("You have blocked this friend successfully");
+          ToastFunction("You have blocked this friend successfully");
+
       } catch (error) {
-        console.error("Error blocking friend:", error);
-          alert("Failed to block the friend. Please try again."); // Show an alert for error handling
+          
+          ToastFunction("Failed to block the friend. Please try again.");
+
       }
     };
 
-
    
-    const isUserOnline = (friend: UsersTypes) => {
-      const user = users.find(user => user.id === friend.id);
+    const isUserOnline = (friend: FriendsTypes) => {
+      const user = users.find((user : any) => user.id === friend.id);
     
       return user && user.status === 'online';
     };
+
+
     return (
         <div className="text-black  my-10 h-[calc(100%-200px)] overflow-auto ">
+         <ToastContainer />
         <Conversation>
 
 				<ConversationSideBarContainer>
-					{friends.map(function(elem){
+					{friends.map(function(elem : FriendsTypes){
             function handleClick()
 						{
 							router.push(`/dashboard/${elem.id}`)

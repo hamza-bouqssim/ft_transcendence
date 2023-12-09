@@ -1,52 +1,56 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { AcceptRequest, DebloqueUser, SendRequest, bloqueFriend, getAllFriends, getBloques, getConversationMessage, getRequest, refuseRequest} from '../utils/api';
-import { AcceptRequestParams, ConversationMessage, CreateRequestParams, FriendsTypes, UsersTypes, messageTypes } from '../utils/types';
+import { AcceptRequestParams, ConversationMessage, CreateRequestParams, FriendsTypes, RequestTypes, UsersTypes, messageTypes } from '../utils/types';
 
 export interface requestState {
-  request: FriendsTypes[];
-  loading: boolean;
-}
+  request: RequestTypes[];
+  status: 'success' | 'failed' | 'idle' | 'loading'; // Add 'idle' status
+  error: string | null;
+  }
 
-const initialState: requestState = {
-  request: [],
-  loading: false,
-};
+  const initialState: requestState = {
+    request: [],
+    status: 'idle', // Initial status is 'idle'
+    error: null,
+  };
 
-export const fetchGetRequestThunk = createAsyncThunk('request/fetch', async () => {
-  const response = await getRequest();
-  return response;
+export const fetchGetRequestThunk = createAsyncThunk('request/fetchGetRequestThunk', async (_,{rejectWithValue} ) => {
+  try{
+    const response = await getRequest();
+    return response.data.data;
+  }catch(error : any){
+    if (error.response && error.response.data && error.response.data.message) {
+      return rejectWithValue(error.response.data.message);
+
+    }else {
+      return rejectWithValue('Failed to fetch requests');
+
+    }
+
+
+  }
+  
 
 });
-// export const fetchRequestThunk = createAsyncThunk('request/create', async(data : CreateRequestParams)=>{
-//     const response = await SendRequest(data);
-//     console.log("rx",response)
-//     return response;
-//   });
 
-export const fetchRequestThunk = createAsyncThunk('request/create', async(data : CreateRequestParams, { rejectWithValue }) => {
+export const fetchRequestThunk = createAsyncThunk('request/create', async (data: CreateRequestParams, { rejectWithValue }) => {
   try {
-      const response = await SendRequest(data);
-
-      if (!response.data.success) {
-          throw new Error(response.data.error);
-      }
-
-      return response;
-    } catch (err: any) {
-      console.error("Error", err);
-  
-      if (err.response && err.response.data) {
-        return rejectWithValue(err.response.data); // Return the entire error object
-      } else {
-        throw new Error("Request failed with an unknown error");
-      }
+    const response = await SendRequest(data);
+    if (!response.data.success) {
+      throw new Error(response.data.error);
     }
-   
+    return response.data; // Assuming the structure of your fulfilled payload
+  } catch (err: any) {
+    if (err.response && err.response.data) {
+      return rejectWithValue(err.response.data); // Return the entire error object
+    } else {
+      throw new Error("create conversation failed with an unknown error");
+    }
+  }
 });
 
 export const fetchAcceptFriendRequestThunk = createAsyncThunk('request/accept', async(id : string) =>{
   const response = await AcceptRequest(id);
-  console.log("response here -->", response);
   return response;
 })
 
@@ -57,28 +61,10 @@ export const fetchREfuseFriendRquestThunk = createAsyncThunk('request/refuse', a
 })
 
 
-export const fetchBlockFriendThunk = createAsyncThunk('request/block', async(id : string) => {
-  const response = await bloqueFriend(id);
-  return response;
-})
 
-export const fetchBlocksThunk = createAsyncThunk('block/fetch', async () => {
-  const response = await getBloques();
-  return response; // Assuming your API response has a 'data' property
 
-});
 
-export const fetchDebloqueUserThunk = createAsyncThunk('Debloque/fetch', async(id : string)=>{
-  const response = await DebloqueUser(id);
-  return response;
-})
 
-//get all friends
-
-export const fetchGetAllFriends = createAsyncThunk('Get/friends', async () =>{
-  const response = await getAllFriends();
-  return response;
-})
 
 export const requestSlice = createSlice({
   name: 'request',
@@ -88,23 +74,31 @@ export const requestSlice = createSlice({
     
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchRequestThunk.rejected, (state, action) => {
-      console.error("Rejected with error:", action.payload);
-      // Handle the error state in your Redux store if needed
-  }).addCase(fetchGetRequestThunk.pending, (state, action) =>{
-      state.loading = true;
-  }).addCase(fetchAcceptFriendRequestThunk.fulfilled, (state, action)=>{
-      state.loading = true;
-  }).addCase(fetchREfuseFriendRquestThunk.fulfilled, (state, action)=>{
+    builder
+      .addCase(fetchRequestThunk.pending, (state) => {
+       state.status = 'loading';
+      }).addCase(fetchRequestThunk.fulfilled, (state, action) =>{
+        state.status = 'success';
+      }).addCase(fetchRequestThunk.rejected, (state, action) =>{
+          state.status = 'failed';
+          
+      })
+      
+      .addCase(fetchGetRequestThunk.pending, (state: any) =>{
+        state.status = 'loading';
+      })
+      .addCase(fetchGetRequestThunk.fulfilled, (state, action) => {
+        state.status = 'success';
+        state.request = action.payload;
+      }).addCase(fetchGetRequestThunk.rejected, (state: any, action )=>{
+        state.status = 'failed';
+        state.error = action.payload;
 
-  }).addCase(fetchBlockFriendThunk.fulfilled, (state, action)=>{
-
-  }).addCase(fetchDebloqueUserThunk.fulfilled, (state, action) =>{
-
-  }).addCase(fetchGetAllFriends.pending, (state, action)=>{
-    
-  })
-  }
+      })
+      .addCase(fetchAcceptFriendRequestThunk.fulfilled, (state, action) => {
+      })
+     
+  },
 });
 
 export const { addRequest } = requestSlice.actions;
