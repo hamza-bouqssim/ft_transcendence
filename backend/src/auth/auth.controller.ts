@@ -1,17 +1,22 @@
 /* eslint-disable prettier/prettier */
-import { Body, Controller, Get, Post, Req,    Res,  UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Post, Req,    Res,  UnauthorizedException,  UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthDto } from './dto/local.auth.dto';
 import { Request,  Response } from 'express';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
 import { SignAuthDto } from './dto/signIn.dto';
+import { TwoFactorAuthenticationService } from 'src/two-factor-authentication/two-factor-authentication.service';
+import { ftAndGoogleTfaDto } from './dto/twoFactor42andGoogle.dto';
 
 
 @Controller('auth')
 export class AuthController {
-    constructor (private authService: AuthService,
-                 private jwtService: JwtService){}
+    constructor (
+        private authService: AuthService,
+        private jwtService: JwtService,
+        private readonly twofactorAuth:TwoFactorAuthenticationService
+        ){}
 
     @Post('signin')
     async signIn(@Body() dto: SignAuthDto, @Req() req: Request, @Res() res: Response)
@@ -36,9 +41,17 @@ export class AuthController {
 
     @Get('google/redirect')
     @UseGuards(AuthGuard('google'))
-    googleRedirect(@Res() res: Response, @Req() req){
+    googleRedirect(@Res() res: Response, @Req() req , dto: ftAndGoogleTfaDto){
         const user = req.user;
+        if(user.tfa_enabled)
+        {
+            const isValid =  this.twofactorAuth.verifyCode(dto.code, user.two_factor_secret_key);
+            if(!isValid)
+                throw new UnauthorizedException("Invalid 2fa Code");
+
+        }
         const payload = {sub: user.id, email: user.email};
+        
         const token = this.jwtService.sign(payload)
         res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
         return res.redirect("http://localhost:3000/dashboard")
@@ -46,16 +59,25 @@ export class AuthController {
 
     @Get('42/login')
     @UseGuards(AuthGuard('42'))
-    ftLogin(@Res() res: Response, @Req() req){ 
-
+    ftLogin(@Res() res: Response, @Req() req){
     }
 
 
     @Get('42/redirect')
     @UseGuards(AuthGuard('42'))
-    ftRedirect(@Res() res: Response, @Req() req)
+    ftRedirect(@Res() res: Response, @Req() req, @Body() dto:ftAndGoogleTfaDto)
     {
         const user = req.user;
+
+        if(user.tfa_enabled)
+        {
+            if(!dto || !dto.code)
+                throw new BadRequestException("You must enter the OTP CODE !!!");
+            const isValid =  this.twofactorAuth.verifyCode(dto.code, user.two_factor_secret_key);
+            if(!isValid)
+                throw new UnauthorizedException("Invalid 2fa Code");
+
+        }
         const payload = { sub: user.id, email: user.email };
         const token = this.jwtService.sign(payload);
         res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
