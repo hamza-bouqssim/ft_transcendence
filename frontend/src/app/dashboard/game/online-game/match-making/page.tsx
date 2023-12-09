@@ -16,9 +16,10 @@ export const gameSocket = io("http://localhost:8000/game", {
 });
 
 const sleep = async (ms: number) =>
-	new Promise((resolve) => setTimeout(resolve, ms));
+new Promise((resolve) => setTimeout(resolve, ms));
 
 const MatchMaking = () => {
+	
 	// const socket = useContext(SocketContext);
 	const searchParams = useSearchParams();
 	const mapIndex: number = searchParams.get("mapIndex") as any;
@@ -33,19 +34,37 @@ const MatchMaking = () => {
 		display_name: "",
 		avatar_url: "/assets/unknown.png",
 	});
+	useEffect(() => {
+		// Component mounted, handle socket connection
+		gameSocket.on("connect", () => {
+			console.log("Socket connected");
+		});
+
+		// Component will unmount, handle gameSocket disconnection
+		return () => {
+			gameSocket.disconnect();
+			console.log("Socket disconnected");
+		};
+	}, []);
+
 	console.log("socket matchmaking", gameSocket);
 	const { Userdata } = useContext<any>(socketContext);
-
+	
 	useEffect(() => {
 		const listener = (payload: any) => {
 			setOpponentPlayer(payload.opponent);
 			sleep(3000);
-			router.push(`./online-game/maps/${mapIndex}/${payload.idGame}`);
+			// router.push(`./maps/${mapIndex}/${payload.idGame}`);
+			router.push(`./maps/${mapIndex}`);
 		};
 
 		gameSocket.on("startGame", listener);
 		// return () => {
 		// 	socket.off("startGame", listener);
+		// };
+		// return () => {
+		// 	gameSocket.disconnect();
+		// 	console.log("Socket disconnected");
 		// };
 	}, [gameSocket]);
 

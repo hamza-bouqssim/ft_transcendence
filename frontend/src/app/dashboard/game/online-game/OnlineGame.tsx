@@ -1,3 +1,4 @@
+"use client";
 import { useContext, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import PlayerScore from "@/app/components/PlayerScore";
@@ -26,10 +27,24 @@ const OnlineGame = ({ mapIndex }: any) => {
 
 	const { Userdata } = useContext<any>(socketContext);
 
+
+	 useEffect(() => {
+			// Listen for events or perform other socket-related actions
+			gameSocket.on("connect", () => {
+				console.log("gameSocket connected to namespace");
+			});
+
+			return () => {
+				// Clean up when the component is unmounted
+				gameSocket.disconnect();
+				console.log("Socket disconnected from namespace");
+			};
+		}, []);
+	
 	useEffect(() => {
-		gameSocket.on("connect", () => {
-			console.log("A Pong Client Is Connected!");
-		});
+		// gameSocket.on("connect", () => {
+		// 	console.log("A Pong Client Is Connected!");
+		// });
 		gameSocket.on("updateScore", (playersScore: any) => {
 			setScore({
 				...score,
