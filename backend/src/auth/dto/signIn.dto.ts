@@ -15,5 +15,5 @@ export class SignAuthDto {
     @IsAlphanumeric()
     @IsNotEmpty()
     @IsOptional()
-    tfaCode?: string
+    code?: string
 }

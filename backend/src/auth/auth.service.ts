@@ -35,11 +35,11 @@ export class AuthService {
       
       if(user.tfa_enabled)
       {
-        console.log("tfaCode =====>  : " +dto.tfaCode + "\n  and tfa is :  " + user.tfa_enabled);
+        console.log("tfaCode =====>  : " +dto.code + "\n  and tfa is :  " + user.tfa_enabled);
         console.log("two factor key :  " +  user.two_factor_secret_key)
         
         console.log("hello");
-        const isValid = await this.twofactorAuth.verifyCode(dto.tfaCode ,user.two_factor_secret_key);
+        const isValid = await this.twofactorAuth.verifyCode(dto.code ,user.two_factor_secret_key);
         if (!isValid)
           throw new UnauthorizedException("Invalid 2fa Code");
       }

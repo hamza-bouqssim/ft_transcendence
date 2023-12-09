@@ -6,12 +6,13 @@ import { PrismaService } from 'prisma/prisma.service';
 export class TwoFactorAuthenticationService {
     constructor(private readonly prisma:PrismaService){}
 
-    async generateOtp(email: string)
+    async generateOtp(_email: string)
     {
         const secret = authenticator.generateSecret();
+        await this.prisma.user.update({where: {email: _email}, data: {two_factor_secret_key:secret}});
         console.log("generated secret:  " + secret);
         // const appName = this.configService.getOrThrow('TFA_APP_NAME');
-        const uri = authenticator.keyuri('APP', email, secret);
+        const uri = authenticator.keyuri('APP', _email, secret);
         console.log("uri:       " + uri);
         return{uri, secret};
     }
@@ -24,10 +25,15 @@ export class TwoFactorAuthenticationService {
             });
     }
     
-    async enableTwoFactor(_email: string, secret: string)
+    async enableTwoFactor(_email: string)
     {
         
         const id = this.prisma.user.findUnique({where: {email: _email}});
-        await this.prisma.user.update({where: {email: _email}, data: {two_factor_secret_key: secret, tfa_enabled: true}});
+        await this.prisma.user.update({where: {email: _email}, data: {tfa_enabled: true}});
+    }
+
+    async disable2fa(email: string)
+    {
+        await this.prisma.user.update({where: {email: email}, data: {tfa_enabled:false}});
     }
 }
