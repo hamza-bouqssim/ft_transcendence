@@ -74,7 +74,7 @@ import {socketContext } from "@/app/utils/context/socketContext";
     }
 
     return (
-      <div className="text-black  pb-2 pt-5 h-[calc(100%-160px)] overflow-auto  no-scrollbar">
+      <div className="text-black  pb-2 pt-5 h-[calc(100%-100px)] overflow-auto  no-scrollbar">
         {rooms && [...rooms].sort(compareRooms)?.map((data: Room) => (
           <div key={data.id} onClick={() =>{updateChannel(data)}}  className="cursor-pointer rounded-lg hover:bg-[#F2F3FD] flex items-center justify-between px-2 py-3">
             <div className="flex items-center justify-start">

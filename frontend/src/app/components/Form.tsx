@@ -7,7 +7,7 @@ import { AppDispatch } from "../store";
 import { useDispatch } from "react-redux";
 import {  fetchUpdateAvatar, fetchUpdateDisplayName, fetchUpdateUserName } from "../store/usersSlice";
 import Image from "next/image";
-import { ToastContainer, toast } from 'react-toastify';
+// import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { socketContext } from "../utils/context/socketContext";
 import { getAuthUser } from "../utils/api";
@@ -90,7 +90,7 @@ const Form = () => {
 
 	return (
 		<div>
-			<ToastContainer />
+			{/* <ToastContainer /> */}
 			<form
 				className="mt-11 text-[15px] text-black md:text-[18px] lg:text-[21px]"
 				onSubmit={handleSubmit(onSubmit)}

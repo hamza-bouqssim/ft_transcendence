@@ -28,11 +28,11 @@ export class AuthController {
         return this.authService.signUp(dto); 
     }
 
-    // @Get('google/login')
-    // @UseGuards(AuthGuard('google'))
-    // async googleLogin(@Res() res: Response, @Req() req)
-    // {   
-    // }
+    @Get('google/login')
+    @UseGuards(AuthGuard('google'))
+    async googleLogin(@Res() res: Response, @Req() req)
+    {   
+    }
 
     @Get('google/redirect')
     @UseGuards(AuthGuard('google'))
@@ -44,11 +44,11 @@ export class AuthController {
         return res.redirect("http://localhost:3000/dashboard")
     }
 
-    // @Get('42/login')
-    // @UseGuards(AuthGuard('42'))
-    // ftLogin(@Res() res: Response, @Req() req){ 
+    @Get('42/login')
+    @UseGuards(AuthGuard('42'))
+    ftLogin(@Res() res: Response, @Req() req){ 
 
-    // }
+    }
 
 
     @Get('42/redirect')

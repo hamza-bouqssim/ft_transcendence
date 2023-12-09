@@ -16,7 +16,7 @@ import SignInForm from "./SignInForm";
 import { createUserParams } from "../utils/types";
 import { postRegisterUser } from "../utils/api";
 import { useRouter } from "next/navigation";
-import { ToastContainer, toast } from 'react-toastify';
+// import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const SignUpForm = forwardRef((_props: any, ref: any) => {
@@ -69,7 +69,7 @@ const SignUpForm = forwardRef((_props: any, ref: any) => {
 
 	return (
 		<div ref={ref} className="">
-			<ToastContainer />
+			{/* <ToastContainer /> */}
 			<form
 				action=""
 				className="relative flex h-full w-full flex-col items-center justify-center gap-3 sm:gap-4"

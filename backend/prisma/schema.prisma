@@ -39,7 +39,9 @@ model User {
   senderOfChatParticipents ChatParticipents[] @relation("sender")
   recipientOfChatParticipents ChatParticipents[] @relation("recipient")
   senderOfmessage Message[] @relation("senderMessage")
-  notifications Notification[]
+  sender NotificationGlobal[] @relation("sender")
+  recepient NotificationGlobal[] @relation("recipient")
+  senderNotifMessage NotificationMessage[] @relation("senderMessage")
   player1 Pong_match[]  @relation("player1")
   player2 Pong_match[]  @relation("player2")
   Member  Member[]
@@ -100,12 +102,6 @@ model Message {
   sender User @relation("senderMessage", fields: [senderId], references: [id])
 }
 
-model Notification {
-  id String @id @default(uuid())
-  user_id String
-  content String
-  user User @relation(fields: [user_id], references: [id])
-}
 
 model ChatRoom {
   id        String @id @default(uuid())
@@ -199,4 +195,23 @@ model Queue {
   userId    String   @unique
   user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
+}
+model NotificationGlobal {
+  id String @id @default(uuid())
+  Sender_id String
+  recipient_id String
+  type String
+  content String
+  vue Boolean @default(false)
+  created_at   DateTime        @default(now())
+  image_content String
+  Sender User @relation("sender",fields: [Sender_id], references: [id])
+  recipient User @relation("recipient",fields: [recipient_id], references: [id])
+
+}
+model NotificationMessage{
+  id String @id @default(uuid())
+  recipient_id String
+  recipient User @relation("senderMessage",fields: [recipient_id], references: [id])
+  vue Boolean @default(true)
 }

@@ -66,10 +66,21 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
     }
 
     @OnEvent("order.created")
-    onNotification(data:any) {
-        console.log(data)
-         const userAdmin = data.members.find((userAdmin) => userAdmin.isAdmin)
-         console.log("-------------------------------------------------------------",userAdmin)
+    onCreate(data:any) {
+        const userAdmin = data.members.find((userAdmin) => userAdmin.isAdmin)
+        data.members.map((member) => {
+            if(!member.isAdmin)
+            {
+                 ,
+
+                this.server.to(member.user_id).emit('notification', `${userAdmin.user.display_name } Join ${member.user.display_name} to ${data.name}`);
+            }
+                      
+        })
+    }
+    @OnEvent("order.update")
+    onUpdate(data:any) {
+        const userAdmin = data.members.find((userAdmin) => userAdmin.isAdmin)
         data.members.map((member) => {
             if(!member.isAdmin)
                 this.server.to(member.user_id).emit('notification', `${userAdmin.user.display_name } Join ${member.user.display_name} to ${data.name}`);
