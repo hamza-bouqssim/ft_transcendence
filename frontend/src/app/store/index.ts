@@ -12,10 +12,10 @@ export const store = configureStore({
     conversation: conversationReducer,
     messages: messageReducer,
     request : requestReducer,
-    users : UsersReducer,
     room: roomReducer,
     friends : friendsReducer,
     friendsBlock : friendsBlockReducer,
+    users : UsersReducer,
 
   },
   middleware: (getDefaultMiddleware) =>

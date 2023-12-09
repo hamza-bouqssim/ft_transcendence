@@ -5,7 +5,7 @@ import { BloquesTypes, FriendsTypes } from '../utils/types';
 
 interface BlockState {
   friendsBlock: BloquesTypes[];
-  status: 'idle' | 'loading' | 'succeeded' | 'failed';
+  status: 'idle' | 'loading' | 'success' | 'failed';
   error: string | null;
 }
 

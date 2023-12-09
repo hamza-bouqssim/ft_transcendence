@@ -24,7 +24,7 @@ export const fetchGetAllFriendsThunk = createAsyncThunk('friends/fetchGetAllFrie
       return rejectWithValue(error.response.data.message);
 
     }else {
-      return rejectWithValue('Failed to fetch requests');
+      return rejectWithValue('Failed to fetch friends');
 
     }
   } 
@@ -50,7 +50,6 @@ const friendsSlice = createSlice({
       .addCase(fetchGetAllFriendsThunk.rejected, (state: any, action : any) => {;
         state.status = 'failed';
         state.error = action.payload;
-        
       })
      
   },

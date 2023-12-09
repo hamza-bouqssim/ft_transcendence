@@ -5,12 +5,11 @@ import { AuthenticatedSocket } from "src/utils/interfaces";
 import { IGateWaySession } from './gateway.session';
 import { Services } from 'src/utils/constants';
 import {Inject} from '@nestjs/common'
-import {OnEvent} from  '@nestjs/event-emitter';
+import {EventEmitter2, OnEvent} from  '@nestjs/event-emitter';
 import { PrismaService } from 'prisma/prisma.service';
 import { CreateMessageRoom, RoomId } from 'src/Rooms/dto/rooms.dto';
 import { RoomsService } from 'src/Rooms/rooms.service';
 import { ConversationsService } from 'src/conversations/conversations.service';
-import { User } from '@prisma/client';
 
 @WebSocketGateway({
     cors:{
@@ -21,7 +20,7 @@ import { User } from '@prisma/client';
 } )
 
 export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisconnect {
-    constructor(@Inject(Services.GATEWAY_SESSION_MANAGER)private readonly sessions : IGateWaySession,
+    constructor(@Inject(Services.GATEWAY_SESSION_MANAGER)private readonly sessions : IGateWaySession,  private readonly eventEmitter: EventEmitter2,
     private readonly prisma :PrismaService,
     private readonly roomsService:RoomsService,private  conversationService : ConversationsService ){}
     @WebSocketServer() 
@@ -35,17 +34,20 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         const userId = socket.user.sub;
         if(socket.user)
         {
+            
             if (!this.NsessionOfuser.has(userId)) {
+                
                 this.NsessionOfuser.set(userId, 1);
                 const newStatus = await this.prisma.user.update({
                     where: { id: userId},
                     data: { status: "online"},
-    
+                    
                 });
-              } else {
+            } else {
                 const sessionNumber = this.NsessionOfuser.get(userId) + 1;
                 this.NsessionOfuser.set(userId, sessionNumber);
-              }          
+            }          
+            this.eventEmitter.emit('online.created', { userId });
         }  
         socket.join(socket.user.sub.toString());     
     }
@@ -93,12 +95,14 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
                 if (sessionNumber > 0) {
                     this.NsessionOfuser.set(userId, sessionNumber);
                 } else {
+                    
                     this.NsessionOfuser.delete(userId);
                     const newStatus = await this.prisma.user.update({
                         where: { id: socket.user.sub},
                         data: { status: "offline"},
                         
                     });
+                    this.eventEmitter.emit('offline.created', { userId });
                 }
             }
             // console.log("leave Notification-->", socket.user.sub)
@@ -139,6 +143,14 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         @OnEvent('requestDebloque.created')
         debloqueNotification(data: string){
             this.server.emit('debloqueNotification', data);
+        }
+        @OnEvent('online.created')
+        handleOnlineEvent(payload: { userId: string }) {
+          this.server.emit('online', `This user ${payload} is online`);
+        }
+        @OnEvent('offline.created')
+        handleOfflineEvent(payload: { userId: string }) {
+            this.server.emit('offline', `This user ${payload} is offline`);
         }
 
     

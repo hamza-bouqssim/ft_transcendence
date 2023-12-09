@@ -30,7 +30,7 @@ const OnlineFriends = () =>{
 	  };
 
   const router = useRouter();
-    const [users, setUsers] = useState<UsersTypes[]>([]);
+    // const [users, setUsers] = useState<UsersTypes[]>([]);
     const [online, setOnlineFriends] = useState<UsersTypes[]>([]);
     const dispatch = useDispatch<AppDispatch>();
     const [openMenuId, setOpenMenuId] = useState<string | null>(null);
@@ -38,24 +38,13 @@ const OnlineFriends = () =>{
       const handleMenuClick = (friendId: string) => {
         setOpenMenuId(openMenuId === friendId ? null : friendId);
     };
-
-    useEffect (() => {
-      dispatch(fetchUsersThunk())
-      .unwrap()
-      .then(({data}) => {
-        setUsers(data);
-      }).catch((err)=>{
-        console.log(err);
-      }
-      );
-    },[]);
-
-  
+    const { users, Userstatus, Usererror } = useSelector((state:any) => state.users);
     const { friends, status, error } = useSelector((state:any) => state.friends);
-    
-     useEffect(() => {
-       dispatch(fetchGetAllFriendsThunk())
-     }, [dispatch]);
+    console.log(users,friends);
+    useEffect(() => {
+      dispatch(fetchUsersThunk());
+      dispatch(fetchGetAllFriendsThunk());
+    }, [dispatch]);
 
     const handlleBloque = async (id: string) => {
       
@@ -71,11 +60,13 @@ const OnlineFriends = () =>{
     };
 
    
-    const isUserOnline = (friend: UsersTypes) => {
-      const user = users.find(user => user.id === friend.id);
+    const isUserOnline = (friend: FriendsTypes) => {
+      const user = users.find((user : any) => user.id === friend.id);
     
       return user && user.status === 'online';
     };
+
+
     return (
         <div className="text-black  my-10 h-[calc(100%-200px)] overflow-auto ">
          <ToastContainer />

@@ -5,28 +5,40 @@ import axios from 'axios';
 
 export interface UsersState {
   users: UsersTypes[];
-  loading: boolean;
+  status: 'idle' | 'loading' | 'success' | 'failed';
+  error : string | null;
 }
 
 const initialState: UsersState = {
   users: [],
-  loading: false,
+  status: 'idle' ,
+  error : null,
 };
 
 
-export const fetchUsersThunk = createAsyncThunk('users/fetch', async () => {
-    const response = await getAllUsers();
-    return response;
+export const fetchUsersThunk = createAsyncThunk('users/fetchUsersThunk', async (_,{rejectWithValue} ) => {
+    try{
+      const response = await getAllUsers();
+      console.log("response here-->", response.data);
+      return response.data;
+
+    }catch(error : any){
+      if (error.response && error.response.data && error.response.data.message) {
+        return rejectWithValue(error.response.data.message);
+  
+      }else {
+        return rejectWithValue('Failed to fetch users');
+  
+      }
+    }
+    
   })
 
   export const fetchUpdateDisplayName = createAsyncThunk('users/updateDisplay', async (display_name: string, { rejectWithValue }) => {
     try {
       const response = await changeDisplayedName(display_name);
-      console.log("response whithout data-->", response);
-      console.log("response  data here-->", response.data);
       return response.data;
     } catch (error : any) {
-      console.log("enter here sure"); 
       return rejectWithValue(error.response.data);
     }
   });
@@ -49,10 +61,7 @@ export const fetchUsersThunk = createAsyncThunk('users/fetch', async () => {
     return response;
   })
 
-// export const fetchUpdateAvatarUrl = createAsyncThunk('users/updateAvatarUrl', async(avatarUrl : string) =>{
-//   const response = await changeAvatar(avatarUrl);
-//   return response;
-// })
+
 
 export const fetchUpdateAvatar = createAsyncThunk(
   'users/updateAvatar',
@@ -67,16 +76,26 @@ export const fetchUpdateAvatar = createAsyncThunk(
 );
 
 export const UsersSlice = createSlice({
-  name: 'Users',
+  name: 'users',
   initialState,
   reducers: {
-    addMessage: (state) => {},
+    addUsers: (state) => {},
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchUsersThunk.fulfilled, (state, action) => {
+    builder.addCase(fetchUsersThunk.pending, (state, action) => {
+          state.status = 'loading';
+    }).addCase(fetchUsersThunk.fulfilled, (state : any, action : any) => {
+          state.status = 'success';
+          state.users = action.payload;
+    }).addCase(fetchUsersThunk.rejected, (state : any, action) => {
    
-    }).addCase( fetchUpdateDisplayName.fulfilled, (state, action) =>{
-      state.loading = true;
+      state.status = 'failed';
+      state.error = action.payload;
+
+    })
+  
+  
+  .addCase( fetchUpdateDisplayName.fulfilled, (state, action) =>{
   }).addCase(fetchUpdateUserName.fulfilled, (state, action) =>{
 
   }).addCase(fetchUpdateAvatar.fulfilled, (state, action) =>{
@@ -89,6 +108,6 @@ export const UsersSlice = createSlice({
   }
 });
 
-export const { addMessage } = UsersSlice.actions;
+export const { addUsers } = UsersSlice.actions;
 
 export default UsersSlice.reducer;

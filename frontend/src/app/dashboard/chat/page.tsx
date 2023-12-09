@@ -9,6 +9,7 @@ import { AppDispatch } from "@/app/store"
 import { fetchGetRequestThunk } from "@/app/store/requestSlice";
 import { fetchGetAllFriendsThunk } from "@/app/store/friendsSlice";
 import { fetchBlocksThunk } from "@/app/store/blockSlice";
+import { fetchUsersThunk } from "@/app/store/usersSlice";
 
 
 
@@ -46,6 +47,21 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchGetAllFriendsThunk());
 
     })
+    socket.on('online', (data : any)=>{
+      console.log("online socket");
+      dispatch(fetchUsersThunk())
+      dispatch(fetchGetAllFriendsThunk());
+
+
+    })
+    socket.on('offline', (data : any)=>{
+      console.log("offline socket");
+      dispatch(fetchUsersThunk())
+
+      dispatch(fetchGetAllFriendsThunk());
+
+
+    });
 		  
       return () => {
         socket.off('AcceptNotification');
@@ -53,6 +69,8 @@ const ConversationChannelPagechat = () => {
         socket.off('RefuseNotification');
         socket.off('blockNotification');
         socket.off('debloqueNotification');
+        socket.off('online');
+        socket.off('offline');
       };
 		
 	  }, [socket, dispatch]);
