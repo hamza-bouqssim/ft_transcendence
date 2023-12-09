@@ -27,9 +27,8 @@ export const fetchGetAllFriendsThunk = createAsyncThunk('friends/fetchGetAllFrie
       return rejectWithValue('Failed to fetch friends');
 
     }
-  } 
-  
-  })
+}
+})
 
 
 const friendsSlice = createSlice({

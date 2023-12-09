@@ -138,6 +138,7 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         }
         @OnEvent('requestBlock.created')
         blockListNotification(data : string){
+            
             this.server.emit('blockNotification', data);
         }
         @OnEvent('requestDebloque.created')
