@@ -103,7 +103,6 @@ model Message {
 }
 
 
-
 model ChatRoom {
   id        String @id @default(uuid())
   name      String    @unique

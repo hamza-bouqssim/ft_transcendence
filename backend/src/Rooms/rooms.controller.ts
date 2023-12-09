@@ -56,6 +56,10 @@ export class RoomsController {
     try {
       const {id}=req.user
       const update = await this.roomsService.updateRooms(data.data,id);
+      console.log(update)
+      this.eventEmitter.emit(
+        'order.update',
+      );
       return res.status(200).json({data: update });
     } catch (error) {
       return res.status(500).json({ error: error});
@@ -70,6 +74,9 @@ export class RoomsController {
     try {
       const {id}=req.user
       const deleteRome = await this.roomsService.deleteRooms(deleteChatRoom,id);
+      this.eventEmitter.emit(
+        'order.delete',
+      );
       return res.status(200).json({data: deleteRome });
     } catch (error) {
       return res.status(500).json({ error: error});
