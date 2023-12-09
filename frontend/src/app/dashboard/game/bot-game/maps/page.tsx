@@ -1,17 +1,17 @@
 "use client";
-import { useRef } from "react";
-import Link from "next/link";
+import { useRef, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCoverflow, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
+import Link from "next/link";
 // import { useRouter } from "next/navigation";
-// import { gameData } from "../page";
 // import { SocketContext } from "../SocketContext";
 
-const ChooseMap = () => {
+const ChooseMapBot = () => {
 	const swiperRef = useRef<any>(null);
+	const [mapIndex, setMapIndex] = useState<number>(0);
 
 	return (
 		<div className="relative h-[100vh] min-h-[600px] w-full select-none">
@@ -33,6 +33,9 @@ const ChooseMap = () => {
 							modifier: 1,
 							slideShadows: true,
 						}}
+						onSlideChange={() =>
+							setMapIndex(swiperRef.current?.swiper.realIndex)
+						}
 						modules={[EffectCoverflow]}
 					>
 						<SwiperSlide style={{ height: "400px", width: "270px" }}>
@@ -56,7 +59,7 @@ const ChooseMap = () => {
 					</Swiper>
 				</div>
 				<Link
-					href={`./bot-game/maps/${swiperRef.current.swiper.realIndex}`}
+					href={`./maps/${mapIndex}`}
 					className="glassmorphism m-auto w-fit px-7 py-2 font-['Whitney_Semibold'] duration-150 ease-in-out hover:bg-[--purple-color]"
 				>
 					Choose
@@ -66,4 +69,4 @@ const ChooseMap = () => {
 	);
 };
 
-export default ChooseMap;
+export default ChooseMapBot;

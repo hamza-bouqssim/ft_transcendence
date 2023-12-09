@@ -14,6 +14,7 @@ const BotGame = ({ mapIndex }: any) => {
 	const router = useRouter();
 	const parentCanvasRef = useRef<HTMLDivElement>(null);
 	const pongRef = useRef<any>();
+	const [startGame, setStartGame] = useState<boolean>(false);
 	const [score, setScore] = useState<{
 		playerScore: number;
 		botScore: number;
@@ -21,9 +22,7 @@ const BotGame = ({ mapIndex }: any) => {
 		playerScore: 0,
 		botScore: 0,
 	});
-	const [startGame, setStartGame] = useState<boolean>(false);
 	const { Userdata } = useContext<any>(socketContext);
-	console.log("map index:", mapIndex);
 
 	useEffect(() => {
 		if (score.botScore === 8 || score.playerScore === 8) {

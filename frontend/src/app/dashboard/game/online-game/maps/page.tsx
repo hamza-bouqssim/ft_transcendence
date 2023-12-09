@@ -1,10 +1,15 @@
+"use client";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { EffectCoverflow, Pagination } from "swiper/modules";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
+import { EffectCoverflow, Pagination } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/effect-coverflow";
+import "swiper/css/pagination";
 
-const ChoseMap = () => {
+const ChoseMapOnline = () => {
 	const swiperRef = useRef<any>(null);
+	const [mapIndex, setMapIndex] = useState<number>(0);
 
 	return (
 		<div className="relative h-[100vh] min-h-[600px] w-full select-none">
@@ -26,14 +31,9 @@ const ChoseMap = () => {
 							modifier: 1,
 							slideShadows: true,
 						}}
-						// pagination={{
-						// 	el: pag.current!,
-						// 	enabled: true,
-						// 	clickable: true,
-						// 	renderBullet: (index, className) => {
-						// 		return `<span class="${className}" style='background-color: #6a67f3 !important'></span>`;
-						// 	},
-						// }}
+						onSlideChange={() =>
+							setMapIndex(swiperRef.current?.swiper.realIndex)
+						}
 						modules={[EffectCoverflow]}
 					>
 						<SwiperSlide style={{ height: "400px", width: "270px" }}>
@@ -56,16 +56,20 @@ const ChoseMap = () => {
 						</SwiperSlide>
 					</Swiper>
 				</div>
-				<Link
-					// href={`./online-game/maps/${swiperRef.current.swiper.realIndex}`}
-					href={`./online-game/match-making`}
-					className="glassmorphism m-auto w-fit px-7 py-2 font-['Whitney_Semibold'] duration-150 ease-in-out hover:bg-[--purple-color]"
-				>
-					Choose
-				</Link>
+				{/* <SocketContext.Provider value={socket}> */}
+					<Link
+						href={{
+							pathname: "./match-making",
+							query: { mapIndex },
+						}}
+						className="glassmorphism m-auto w-fit px-7 py-2 font-['Whitney_Semibold'] duration-150 ease-in-out hover:bg-[--purple-color]"
+					>
+						Choose
+					</Link>
+				{/* </SocketContext.Provider> */}
 			</div>
 		</div>
 	);
 };
 
-export default ChoseMap;
+export default ChoseMapOnline;

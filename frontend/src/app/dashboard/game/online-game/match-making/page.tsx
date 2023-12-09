@@ -6,19 +6,24 @@ import PlayerCard from "../../../../components/PlayerCard";
 import { ChangeContext } from "../../../layout";
 import { useEffect, useContext, useState } from "react";
 import { useRouter } from "next/navigation";
-import { SocketContext } from "../../SocketContext";
+// import { SocketContext } from "../../SocketContext";
 import { socketContext } from "@/app/utils/context/socketContext";
 import { useSearchParams } from "next/navigation";
+import { io } from "socket.io-client";
+
+export const gameSocket = io("http://localhost:8000/game", {
+	withCredentials: true,
+});
 
 const sleep = async (ms: number) =>
 	new Promise((resolve) => setTimeout(resolve, ms));
 
 const MatchMaking = () => {
+	// const socket = useContext(SocketContext);
 	const searchParams = useSearchParams();
 	const mapIndex: number = searchParams.get("mapIndex") as any;
 	const { change, setChange } = useContext(ChangeContext);
 	const router = useRouter();
-	const socket = useContext(SocketContext);
 	const [opponentPlayer, setOpponentPlayer] = useState<{
 		username: string;
 		display_name: string;
@@ -28,6 +33,7 @@ const MatchMaking = () => {
 		display_name: "",
 		avatar_url: "/assets/unknown.png",
 	});
+	console.log("socket matchmaking", gameSocket);
 	const { Userdata } = useContext<any>(socketContext);
 
 	useEffect(() => {
@@ -37,11 +43,11 @@ const MatchMaking = () => {
 			router.push(`./online-game/maps/${mapIndex}/${payload.idGame}`);
 		};
 
-		socket.on("startGame", listener);
+		gameSocket.on("startGame", listener);
 		// return () => {
 		// 	socket.off("startGame", listener);
 		// };
-	}, [socket]);
+	}, [gameSocket]);
 
 	return (
 		<section className="relative mx-auto h-[100vh] py-4 text-white xl:container">

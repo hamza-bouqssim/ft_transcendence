@@ -95,6 +95,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		new Promise((resolve) => setTimeout(resolve, ms));
 
 	async handleConnection(socket: AuthenticatedSocket, ...args: any[]) {
+		console.log('Connection +++++++++++++++');
+
 		if (socket.user) {
 			const newStatus = await this.prisma.user.update({
 				where: { id: socket.user.sub },

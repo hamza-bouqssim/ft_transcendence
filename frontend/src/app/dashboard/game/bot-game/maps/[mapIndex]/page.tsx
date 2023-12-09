@@ -1,4 +1,3 @@
-// "use client";
 import BotGame from "../../BotGame";
 
 const Game = ({
@@ -10,7 +9,7 @@ const Game = ({
 }) => {
 	return (
 		<section className="relative h-screen min-h-[653px] text-white md:min-h-[900px] xl:min-h-[800px]">
-			<BotGame mapIndex={params} />
+			<BotGame mapIndex={Number(params.mapIndex)} />
 		</section>
 	);
 };

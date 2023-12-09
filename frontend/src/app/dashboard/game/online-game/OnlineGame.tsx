@@ -3,17 +3,12 @@ import { useRouter } from "next/navigation";
 import PlayerScore from "@/app/components/PlayerScore";
 import PongGame from "../classes/PongGame";
 import Swal from "sweetalert2";
-import { SocketContext } from "../SocketContext";
 import { LoserPlayerPopUp } from "@/app/components/GamePopUp";
-// import { gameData } from "../../page";
-// import { useAtomValue } from "jotai";
-// import { io } from "socket.io-client";
 import { socketContext } from "@/app/utils/context/socketContext";
+import { gameSocket } from "./match-making/page";
 
 const OnlineGame = ({ mapIndex }: any) => {
-	// const gameDataValues = useAtomValue(gameData);
 	const router = useRouter();
-	const socket = useContext<any>(SocketContext);
 	const parentCanvasRef = useRef<HTMLDivElement>(null);
 	const pongRef = useRef<any>();
 	const rotateRef = useRef<boolean>(false);
@@ -27,13 +22,15 @@ const OnlineGame = ({ mapIndex }: any) => {
 		playerTwo: 0,
 	});
 
+	console.log("map index:", mapIndex);
+
 	const { Userdata } = useContext<any>(socketContext);
 
 	useEffect(() => {
-		socket.on("connect", () => {
+		gameSocket.on("connect", () => {
 			console.log("A Pong Client Is Connected!");
 		});
-		socket.on("updateScore", (playersScore: any) => {
+		gameSocket.on("updateScore", (playersScore: any) => {
 			setScore({
 				...score,
 				playerOne: playersScore.playerOneScore,
@@ -54,7 +51,7 @@ const OnlineGame = ({ mapIndex }: any) => {
 				parentCanvasRef.current!,
 				mapIndex,
 				Userdata?.display_name,
-				socket,
+				gameSocket,
 			);
 		};
 
@@ -89,13 +86,13 @@ const OnlineGame = ({ mapIndex }: any) => {
 				clearInterval(timerInterval);
 			},
 		}).then(() => {
-			socket.emit("launchGameRequest", {
+			gameSocket.emit("launchGameRequest", {
 				mapIndex: mapIndex,
 				width: parentCanvasRef.current!.getBoundingClientRect().width,
 				height: parentCanvasRef.current!.getBoundingClientRect().height,
 			});
-			socket.on("launchGame", lunchGameListener);
-			socket.on("gameIsFinished", gameIsFinishedListener);
+			gameSocket.on("launchGame", lunchGameListener);
+			gameSocket.on("gameIsFinished", gameIsFinishedListener);
 		});
 
 		// return () => {
