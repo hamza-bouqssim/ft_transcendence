@@ -1,17 +1,24 @@
-import { useState } from "react";
+import { useState ,useContext} from "react";
 import PopUp from "./popUp";
 import Swal from "sweetalert2";
+import { socketContext } from "../utils/context/socketContext";
+import { Qrcodeform } from "./Qrcodeform";
 
 type FormProps = {
 	img: string;
 };
 
 const Form = ({ img }: FormProps) => {
+	const {Userdata} = useContext(socketContext)
+
+
+
+	console.log(Userdata)
 	const [name, setName] = useState<string>("");
 	const [login, setLogin] = useState<string>("");
 	const [pass, setPass] = useState<string>("");
 	const [confirm, setConfirm] = useState<string>("");
-
+	const [display2fa,setDisplay2fa] = useState(false)
 	const [show, setShow] = useState<boolean>(false);
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -28,6 +35,7 @@ const Form = ({ img }: FormProps) => {
 		}
 	};
 	return (
+		<>
 		<div>
 			<form
 				className="mt-11 text-[15px] text-black md:text-[18px] lg:text-[21px]"
@@ -79,11 +87,16 @@ const Form = ({ img }: FormProps) => {
 				<div className="flex flex-col items-center  justify-center border-t border-[#9f9f9f4a] md:flex-row md:justify-evenly">
 					<h1 className="p-4 text-black ">Two-factor authentication</h1>
 					<div className="my-3">
-						<input
+						{Userdata?.tfa_enabled ?<input
 							type="button"
-							className="rounded-[20px] bg-[#5B8CD4] px-8 py-3 text-white"
-							value="Enable"
-						/>
+							className="rounded-[20px] bg-[#EA7F87] px-8 py-3 text-white"
+							value="Desibeld"
+						/> :<input onClick={() => {setDisplay2fa(true)}}
+						type="button"
+						className="rounded-[20px] bg-[#5B8CD4] px-8 py-3 text-white"
+						value="Enable"
+					/>  }
+						
 					</div>
 				</div>
 				<div className=" flex items-center  justify-center pt-9 text-white ">
@@ -107,6 +120,14 @@ const Form = ({ img }: FormProps) => {
 				</div>
 			</form>
 		</div>
+		{
+			display2fa && 
+			<>
+				<div className="absolute left-0 z-10 right-0 bottom-0 top-0 bg-[#00000095] backdrop-blur-md opacity-100"></div>
+				<Qrcodeform></Qrcodeform>
+			</>
+		}
+		</>
 	);
 };
 export default Form;

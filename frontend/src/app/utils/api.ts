@@ -85,4 +85,9 @@ export const getAllRoomsApi = () =>{
     return response;  
 }
 
+export const generateQrcode=() =>{
+    const response = API.post("/two-factor-authentication/2fa/generate")
+    return response;
+}
+
 
