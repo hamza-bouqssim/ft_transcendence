@@ -332,7 +332,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		@MessageBody() gameData: any,
 		@ConnectedSocket() socket: AuthenticatedSocket,
 	) {
-		console.log(`${socket.user.sub}  ,, ${this.user1.display_name}`);
 		if (!this.game || socket.user.sub === this.game.user1) return;
 		// if (!this.game) return;
 		this.mapIndex = 0;

@@ -11,8 +11,8 @@ import { useGameSocket } from "@/app/providers/game-socket-provider";
 const OnlineGame = ({ mapIndex }: any) => {
 	const router = useRouter();
 	const parentCanvasRef = useRef<HTMLDivElement>(null);
-	// const pongRef = useRef<any>();
 	const rotateRef = useRef<boolean>(false);
+	const pongRef = useRef<any>(null);
 	const opponentPlayer = useRef<any>(null);
 	const [startGame, setStartGame] = useState<boolean>(false);
 	const [score, setScore] = useState<{
@@ -46,11 +46,10 @@ const OnlineGame = ({ mapIndex }: any) => {
 		let timerInterval: any;
 
 		const lunchGameListener = (payload: any) => {
-			// if (opponentPlayer.current) return;
 			opponentPlayer.current = payload.opponant;
 			rotateRef.current = payload.rotate;
 			setStartGame((prev: any) => !prev);
-			const pong = new PongGame(
+			pongRef.current = new PongGame(
 				parentCanvasRef.current!,
 				mapIndex,
 				Userdata?.display_name,
@@ -59,7 +58,7 @@ const OnlineGame = ({ mapIndex }: any) => {
 		};
 
 		const gameIsFinishedListener = () => {
-			// pongRef.current.clear();
+			pongRef.current?.clear();
 			LoserPlayerPopUp(router);
 		};
 
