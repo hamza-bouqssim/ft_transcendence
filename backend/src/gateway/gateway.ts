@@ -72,7 +72,7 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
     @SubscribeMessage('messageRome')
     async handleMessage(client: Socket, createMessageRoom: CreateMessageRoom){
         const messageRome = await this.roomsService.createMessage(createMessageRoom,"123123");
-        this.server.to(createMessageRoom.chatRoomId.toString()).emit ('messageRome', messageRome);
+        this.server.to(createMessageRoom.chatRoomId.toString()).emit ('messageRome', messageRome);1k
     }
     @SubscribeMessage('Typing')
     handleTyping(client: Socket, roomId: RoomId){

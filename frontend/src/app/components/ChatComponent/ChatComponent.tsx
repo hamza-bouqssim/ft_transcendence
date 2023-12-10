@@ -28,24 +28,24 @@ const ChatComponnent  = () =>{
 	const [conversation , setConversation] = useState<ConversationTypes[]>([]);
 	const dispatch = useDispatch<AppDispatch>();
 
-	useEffect (() => {
-        dispatch(fetchConversationThunk())
-        .unwrap()
-        .then(({data}) => {
-          setConversation(data);
-        }).catch((err)=>{
+	// useEffect (() => {
+    //     dispatch(fetchConversationThunk())
+    //     .unwrap()
+    //     .then(({data}) => {
+    //       setConversation(data);
+    //     }).catch((err)=>{
 			
-        }
-        );
-      },[conversation]);
+    //     }
+    //     );
+    //   },[conversation]);
 
 
-    useEffect(() => {
-        getAuthUser().then(({data}) => {
-            setUser(data);
-        })
-        .catch((err)=> {console.log(err);});
-    }, [user])
+    // useEffect(() => {
+    //     getAuthUser().then(({data}) => {
+    //         setUser(data);
+    //     })
+    //     .catch((err)=> {console.log(err);});
+    // }, [])
 
 
     const getDisplayUser = (conversation : ConversationTypes) => {
@@ -75,6 +75,7 @@ const ChatComponnent  = () =>{
 			return lastMessage.content;
 		
 	}
+	console.log("medddd")
 
     return (
         <div className="text-black  my-10 h-[calc(100%-200px)] overflow-auto ">

@@ -8,7 +8,7 @@ const ConversationSearch = () => {
   
 
 	const [show, setShow] = useState<any>(false);
-
+    
     return (
         <div className={`search-container ${styles.searchContainer}`}>
             {show &&  <CreateSearchModal   setShow={setShow} />   }
