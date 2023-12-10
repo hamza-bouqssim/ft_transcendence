@@ -41,15 +41,15 @@ export class AuthController {
 
     @Get('google/redirect')
     @UseGuards(AuthGuard('google'))
-    googleRedirect(@Res() res: Response, @Req() req , dto: ftAndGoogleTfaDto){
+    googleRedirect(@Res() res: Response, @Req() req){
         const user = req.user;
-        if(user.tfa_enabled)
-        {
-            const isValid =  this.twofactorAuth.verifyCode(dto.code, user.two_factor_secret_key);
-            if(!isValid)
-                throw new UnauthorizedException("Invalid 2fa Code");
+        // if(user.tfa_enabled)
+        // {
+        //     const isValid =  this.twofactorAuth.verifyCode(dto.code, user.two_factor_secret_key);
+        //     if(!isValid)
+        //         throw new UnauthorizedException("Invalid 2fa Code");
 
-        }
+        // }
         const payload = {sub: user.id, email: user.email};
         
         const token = this.jwtService.sign(payload)
@@ -65,19 +65,19 @@ export class AuthController {
 
     @Get('42/redirect')
     @UseGuards(AuthGuard('42'))
-    ftRedirect(@Res() res: Response, @Req() req, @Body() dto:ftAndGoogleTfaDto)
+    ftRedirect(@Res() res: Response, @Req() req)
     {
         const user = req.user;
 
-        if(user.tfa_enabled)
-        {
-            if(!dto || !dto.code)
-                throw new BadRequestException("You must enter the OTP CODE !!!");
-            const isValid =  this.twofactorAuth.verifyCode(dto.code, user.two_factor_secret_key);
-            if(!isValid)
-                throw new UnauthorizedException("Invalid 2fa Code");
+        // if(user.tfa_enabled)
+        // {
+        //     if(!dto || !dto.code)
+        //         throw new BadRequestException("You must enter the OTP CODE !!!");
+        //     const isValid =  this.twofactorAuth.verifyCode(dto.code, user.two_factor_secret_key);
+        //     if(!isValid)
+        //         throw new UnauthorizedException("Invalid 2fa Code");
 
-        }
+        // }
         const payload = { sub: user.id, email: user.email };
         const token = this.jwtService.sign(payload);
         res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });

@@ -19,12 +19,14 @@ export class UserController {
     async grabMyInfos(@Req() req) {
       
      const user = req.user
+     console.log(user)
 
       return {
         username: user.username,
         email : user.email,
         display_name: user.display_name,
         avatar_url: user.avatar_url,
+        tfa_enabled:user.tfa_enabled
       };
     }
 

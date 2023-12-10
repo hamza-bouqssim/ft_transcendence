@@ -36,4 +36,11 @@ export class TwoFactorAuthenticationService {
     {
         await this.prisma.user.update({where: {email: email}, data: {tfa_enabled:false}});
     }
+
+    // async isEnable(_email: string)
+    // {
+    //     const isEnable = await this.prisma.user.findUnique({
+    //         where: {email: _email},
+    //          data:{tfa_enabed: true}})
+    // }
 }

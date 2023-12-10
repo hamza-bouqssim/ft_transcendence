@@ -34,4 +34,11 @@ export class TwoFactorAuthenticationController {
     {
         await this.tfaService.disable2fa(req.user.email);
     }
+
+    // @Post('2fa/isEnable')
+    // @UseGuards(AuthGuard('jwt'))
+    // async isEnable(@Req() req)
+    // {
+    //     return this.isEnable();
+    // }
 }
