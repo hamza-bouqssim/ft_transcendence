@@ -2,7 +2,7 @@ import { useState ,useContext} from "react";
 import PopUp from "./popUp";
 import Swal from "sweetalert2";
 import { socketContext } from "../utils/context/socketContext";
-import { Qrcodeform } from "./Qrcodeform";
+import { Qrcodeform } from "./Qrcodefom";
 
 type FormProps = {
 	img: string;
