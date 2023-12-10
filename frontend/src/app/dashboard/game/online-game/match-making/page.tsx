@@ -10,8 +10,8 @@ import { socketContext } from "@/app/utils/context/socketContext";
 import { useSearchParams } from "next/navigation";
 import { useGameSocket } from "@/app/providers/game-socket-provider";
 
-const sleep = async (ms: number) =>
-	new Promise((resolve) => setTimeout(resolve, ms));
+// const sleep = async (ms: number) =>
+// 	new Promise((resolve) => setTimeout(resolve, ms));
 
 const MatchMaking = () => {
 	const searchParams = useSearchParams();
@@ -32,17 +32,20 @@ const MatchMaking = () => {
 	const { Userdata } = useContext<any>(socketContext);
 
 	useEffect(() => {
-		const listener = (payload: any) => {
-			setOpponentPlayer(payload.opponent);
-			sleep(3000);
-			// router.push(`./maps/${mapIndex}/${payload.idGame}`);
+		const startGamelistener = (payload: { idGame: string }) => {
 			router.push(`./match-making/${mapIndex}`);
 		};
+		const knowOpponentListener = (payload: any) => {
+			setOpponentPlayer(payload.opponent);
+			// router.push(`./maps/${mapIndex}/${payload.idGame}`);
+		};
 		console.log("setup start game event");
-		gameSocket.on("startGame", listener);
+		gameSocket.on("startGame", startGamelistener);
+		gameSocket.on("knowOpponent", knowOpponentListener);
 		return () => {
 			console.log("remove start game event");
-			gameSocket.off("startGame", listener);
+			gameSocket.off("startGame", startGamelistener);
+			gameSocket.off("knowOpponent", knowOpponentListener);
 		};
 	}, []);
 

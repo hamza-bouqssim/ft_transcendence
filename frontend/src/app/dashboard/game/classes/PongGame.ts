@@ -25,6 +25,8 @@ class PongGame {
 	private bottomPaddle: any;
 	private rightRect: any;
 	private leftRect: any;
+	private centerCirle: any;
+	private separator: any;
 	private divWidth: number;
 	private divHeight: number;
 	private maxBallSpeed: number = 10;
@@ -48,6 +50,18 @@ class PongGame {
 		currentCanvasSize: number,
 	): number => {
 		return (inputSize * currentCanvasSize) / defaultCanvasSize;
+	};
+	private setVelocityListener = (data: any) => {
+		Body.setVelocity(this.ball, {
+			x: this.map(data.x, this.defaultCanvasSizes.width, this.divWidth),
+			y: this.map(data.y, this.defaultCanvasSizes.height, this.divHeight),
+		});
+	};
+	private setPositionListener = (data: any) => {
+		Body.setPosition(this.ball, {
+			x: this.map(data.x, this.defaultCanvasSizes.width, this.divWidth),
+			y: this.map(data.y, this.defaultCanvasSizes.height, this.divHeight),
+		});
 	};
 	private render: any;
 	playerScore: number = 0;
@@ -239,7 +253,7 @@ class PongGame {
 			},
 		);
 
-		const separator = Bodies.rectangle(
+		this.separator = Bodies.rectangle(
 			this.divWidth / 2,
 			this.divHeight / 2,
 			this.divWidth,
@@ -252,7 +266,7 @@ class PongGame {
 			},
 		);
 
-		const centerCirle = Bodies.circle(
+		this.centerCirle = Bodies.circle(
 			this.divWidth / 2,
 			this.divHeight / 2,
 			this.map(8, this.defaultCanvasSizes.width, this.divWidth),
@@ -267,8 +281,8 @@ class PongGame {
 		Composite.add(engine.world, [
 			this.topPaddle,
 			this.bottomPaddle,
-			separator,
-			centerCirle,
+			this.separator,
+			this.centerCirle,
 			this.ball,
 			this.rightRect,
 			this.leftRect,
@@ -398,25 +412,28 @@ class PongGame {
 	};
 
 	startGame = (): void => {
-		this.lunchGameInterval = setTimeout((): void => {
+		// this.lunchGameInterval = setTimeout((): void => {
 			// run the engine
 			Runner.run(runner, engine);
-		}, 1000);
+		// }, 1000);
 	};
 
 	moveOnlineModeBall = (): void => {
-		this.socket.on("setBallVelocity", (data: any) => {
-			Body.setVelocity(this.ball, {
-				x: this.map(data.x, this.defaultCanvasSizes.width, this.divWidth),
-				y: this.map(data.y, this.defaultCanvasSizes.height, this.divHeight),
-			});
-		});
-		this.socket.on("updateBallPosition", (data: any) => {
-			Body.setPosition(this.ball, {
-				x: this.map(data.x, this.defaultCanvasSizes.width, this.divWidth),
-				y: this.map(data.y, this.defaultCanvasSizes.height, this.divHeight),
-			});
-		});
+		//  this.socket.on("setBallVelocity", (data: any) => {
+		// 	Body.setVelocity(this.ball, {
+		// 		x: this.map(data.x, this.defaultCanvasSizes.width, this.divWidth),
+		// 		y: this.map(data.y, this.defaultCanvasSizes.height, this.divHeight),
+		// 	});
+		// });
+		// this.socket.on("updateBallPosition", (data: any) => {
+		// 	Body.setPosition(this.ball, {
+		// 		x: this.map(data.x, this.defaultCanvasSizes.width, this.divWidth),
+		// 		y: this.map(data.y, this.defaultCanvasSizes.height, this.divHeight),
+		// 	});
+		// });
+
+		this.socket.on("setBallVelocity", this.setVelocityListener);
+		this.socket.on("updateBallPosition", this.setPositionListener);
 	};
 
 	setBotModeBall = (): void => {
@@ -627,12 +644,14 @@ class PongGame {
 		};
 
 		displayBodies("before");
-		for (let body of engine.world.bodies) Composite.remove(engine.world, body);
-		// Composite.remove(engine.world, [
-		// 	this.bottomPaddle,
-		// 	this.ball,
-		// 	this.rightRect,
-		// ]);
+		Composite.remove(engine.world, this.topPaddle);
+		Composite.remove(engine.world, this.bottomPaddle);
+		Composite.remove(engine.world, this.rightRect);
+		Composite.remove(engine.world, this.leftRect);
+		Composite.remove(engine.world, this.ball);
+		Composite.remove(engine.world, this.centerCirle);
+		Composite.remove(engine.world, this.separator);
+
 		displayBodies("after");
 
 		// Remove Events:
@@ -663,6 +682,8 @@ class PongGame {
 
 		// Close Socket!
 		if (this.socket) {
+			this.socket.off("setBallVelocity", this.setVelocityListener);
+			this.socket.off("updateBallPosition", this.setPositionListener);
 			clearInterval(this.moveInterval);
 			this.socket.disconnect();
 		}

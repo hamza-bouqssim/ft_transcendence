@@ -30,7 +30,7 @@ export const WinnerPlayerPopUp = (router: any) => {
 		confirmButtonText: "OK",
 		allowOutsideClick: false,
 	}).then(() => {
-		router.back();
+		router.push("/dashboard");
 	});
 };
 

@@ -4,7 +4,10 @@ import { useRouter } from "next/navigation";
 import PlayerScore from "@/app/components/PlayerScore";
 import PongGame from "../classes/PongGame";
 import Swal from "sweetalert2";
-import { LoserPlayerPopUp } from "@/app/components/GamePopUp";
+import {
+	LoserPlayerPopUp,
+	WinnerPlayerPopUp,
+} from "@/app/components/GamePopUp";
 import { socketContext } from "@/app/utils/context/socketContext";
 import { useGameSocket } from "@/app/providers/game-socket-provider";
 
@@ -33,8 +36,8 @@ const OnlineGame = ({ mapIndex }: any) => {
 		const updateScoreListener = (playersScore: any) => {
 			setScore({
 				...score,
-				playerOne: playersScore.playerOneScore,
-				playerTwo: playersScore.playerTwoScore,
+				playerOne: playersScore.yourScore,
+				playerTwo: playersScore.opponantScore,
 			});
 		};
 		gameSocket.on("updateScore", updateScoreListener);
@@ -45,10 +48,11 @@ const OnlineGame = ({ mapIndex }: any) => {
 		console.log("online-game-score-useffect2");
 		let timerInterval: any;
 
-		const lunchGameListener = (payload: any) => {
+		const launchGameListener = (payload: any) => {
+			console.log("from lauch game listern!!!!!!!!!!!!!!!!!!")
 			opponentPlayer.current = payload.opponant;
 			rotateRef.current = payload.rotate;
-			setStartGame((prev: any) => !prev);
+			// setStartGame((prev: any) => !prev);
 			pongRef.current = new PongGame(
 				parentCanvasRef.current!,
 				mapIndex,
@@ -57,52 +61,25 @@ const OnlineGame = ({ mapIndex }: any) => {
 			);
 		};
 
-		const gameIsFinishedListener = () => {
+		const gameIsFinishedListener = (payload: { status: string }) => {
+			if (payload.status === "winner") WinnerPlayerPopUp(router);
+			else LoserPlayerPopUp(router);
 			pongRef.current?.clear();
-			LoserPlayerPopUp(router);
 		};
-
-		Swal.fire({
-			title: "Game Will Start In",
-			icon: "info",
-			iconColor: "var(--pink-color)",
-			color: "#ffff",
-			html: "<b style='font-size:80px'></b>&emsp;Seconds",
-			timer: 3 * 1000,
-			background: "#2E2F54",
-			customClass: "rounded-[30px] font-['Whitney_BlackSc'] text-sm",
-			timerProgressBar: true,
-			allowOutsideClick: false,
-			didOpen: () => {
-				Swal.showLoading();
-				const timer = Swal.getPopup()!.querySelector("b");
-				timerInterval = setInterval(() => {
-					timer!.textContent = `${(Swal.getTimerLeft()! / 1000).toFixed(0)}`;
-				}, 100);
-				const timerProgressBar = Swal.getPopup()!.querySelector(
-					".swal2-timer-progress-bar",
-				) as HTMLElement;
-				timerProgressBar!.style.backgroundColor = "var(--pink-color)";
-			},
-			willClose: () => {
-				clearInterval(timerInterval);
-			},
-		}).then(() => {
-			gameSocket.emit("launchGameRequest", {
-				mapIndex: mapIndex,
-				width: parentCanvasRef.current!.getBoundingClientRect().width,
-				height: parentCanvasRef.current!.getBoundingClientRect().height,
-			});
-			console.log("setup launchGame event!");
-			console.log("setup gameIsFinished event!");
-			gameSocket.on("launchGame", lunchGameListener);
-			gameSocket.on("gameIsFinished", gameIsFinishedListener);
+		gameSocket.emit("launchGameRequest", {
+			mapIndex: mapIndex,
+			width: parentCanvasRef.current!.getBoundingClientRect().width,
+			height: parentCanvasRef.current!.getBoundingClientRect().height,
 		});
+		console.log("setup launchGame event!");
+		console.log("setup gameIsFinished event!");
+		gameSocket.on("launchGame", launchGameListener);
+		gameSocket.on("gameIsFinished", gameIsFinishedListener);
 
 		return () => {
 			console.log("remove launchGame event!");
 			console.log("remove gameIsFinished event!");
-			gameSocket.off("launchGame", lunchGameListener);
+			gameSocket.off("launchGame", launchGameListener);
 			gameSocket.off("gameIsFinished", gameIsFinishedListener);
 		};
 	}, []);
@@ -113,10 +90,10 @@ const OnlineGame = ({ mapIndex }: any) => {
 				flag="top"
 				userName={opponentPlayer.current?.username}
 				displayName={opponentPlayer.current?.display_name}
-				score={score.playerOne}
+				score={score.playerTwo}
 				color={"#4FD6FF"}
 				profileImage={opponentPlayer.current?.avatar_url}
-				startGame={startGame}
+				startGame={true}
 			/>
 			<div
 				className={`${
@@ -128,10 +105,10 @@ const OnlineGame = ({ mapIndex }: any) => {
 				flag="bottom"
 				userName={Userdata?.username}
 				displayName={Userdata?.display_name}
-				score={score.playerTwo}
+				score={score.playerOne}
 				color={"#FF5269"}
 				profileImage={Userdata?.avatar_url}
-				startGame={startGame}
+				startGame={true}
 			/>
 		</div>
 	);
