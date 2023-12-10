@@ -10,7 +10,7 @@ import NotificationReducer from './notificationSlice';
 
 export const store = configureStore({
   reducer: {
-    conversation: conversationReducer,
+    conversations: conversationReducer,
     messages: messageReducer,
     request : requestReducer,
     room: roomReducer,

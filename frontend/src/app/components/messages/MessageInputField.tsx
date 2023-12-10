@@ -11,7 +11,7 @@ import { MessageType, messageTypes } from "@/app/utils/types";
 
 type props = {
     Message : messageTypes[];
-    setMessage :Dispatch<React.SetStateAction<messageTypes>>
+    setMessage :Dispatch<React.SetStateAction<messageTypes[]>>
 }
 
 const MessageInputField: FC<props> = ({setMessage, Message}) => {
@@ -20,13 +20,19 @@ const MessageInputField: FC<props> = ({setMessage, Message}) => {
     const {channel, updateChannel} = useContext(socketContext)
     const [content,setContent] = useState("");
     
-useEffect(() => {
-    socket.on("onMessage", (message: any) => {
-        setMessage((prevMessages: messageTypes[]) => [...prevMessages, message]);
-        console.log("Received message:", message);
-    });
-
-}, [channel.id]);
+    useEffect(() => {
+        const handleNewMessage = (message: messageTypes) => {
+            setMessage((prevMessages: messageTypes[]) => [...prevMessages, message]);
+            console.log("Received message:", message);
+        };
+    
+        socket.on("onMessage", handleNewMessage);
+    
+        return () => {
+            // Remove the event listener when the component unmounts or when the channel changes
+            socket.off("onMessage", handleNewMessage);
+        };
+    }, [channel.id]);
 
 const sendMessage = async () => {
     socket.emit("message.create", { participentsId: channel.id, content: content });

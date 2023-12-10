@@ -48,6 +48,8 @@ export type   ConversationTypes= {
     sender : User;
     recipient : User;
     createdAt : string;
+    recipientId : string;
+    senderId : string;
     lastMessage: MessageType;
 }
 

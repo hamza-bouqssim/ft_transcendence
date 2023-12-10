@@ -10,6 +10,7 @@ import { fetchGetRequestThunk } from "@/app/store/requestSlice";
 import { fetchGetAllFriendsThunk } from "@/app/store/friendsSlice";
 import { fetchBlocksThunk } from "@/app/store/blockSlice";
 import { fetchUsersThunk } from "@/app/store/usersSlice";
+import { fetchConversationThunk } from "@/app/store/conversationSlice";
 
 
 
@@ -48,21 +49,21 @@ const ConversationChannelPagechat = () => {
 
     })
     socket.on('online', (data : any)=>{
-      console.log("online socket");
       dispatch(fetchUsersThunk())
       dispatch(fetchGetAllFriendsThunk());
 
 
     })
     socket.on('offline', (data : any)=>{
-      console.log("offline socket");
       dispatch(fetchUsersThunk())
-
       dispatch(fetchGetAllFriendsThunk());
 
 
     });
-		  
+		socket.on('createConversation', (data : any)=>{
+      dispatch(fetchConversationThunk());
+
+    })
       return () => {
         socket.off('AcceptNotification');
         socket.off('newFriendRequest');
@@ -71,6 +72,7 @@ const ConversationChannelPagechat = () => {
         socket.off('debloqueNotification');
         socket.off('online');
         socket.off('offline');
+        socket.off('createConversation');
       };
 		
 	  }, [socket, dispatch]);

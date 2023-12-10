@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Injectable,HttpStatus,HttpException } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
-import { RoomId ,DeleteChatRoom,UpdateChatRoom,CreateChatRoom,getAllRooms ,CreateMessageRoom} from "src/Rooms/dto/rooms.dto";
+import { RoomId ,DeleteChatRoom,UpdateChatRoom,CreateChatRoom,CreateMessageRoom} from "src/Rooms/dto/rooms.dto";
 import * as bcrypt from 'bcrypt';
 
 
@@ -313,6 +313,7 @@ export class RoomsService {
         content : createMessageRoom.content,
         chatRoomId : createMessageRoom.chatRoomId,
         senderId: id,
+
       },
     });
     if (!message) {

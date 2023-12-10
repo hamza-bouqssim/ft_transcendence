@@ -4,18 +4,18 @@ import { PrismaService } from 'prisma/prisma.service';
 import {  User } from '@prisma/client';
 import { UserService } from 'src/user/user.service';
 import { CreateMessageParams } from 'src/utils/types';
-// import { IConversationService } from './conversation';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class ConversationsService  {
 
-    constructor(private prisma : PrismaService, private userService : UserService)
+    constructor(private prisma : PrismaService, private userService : UserService, private readonly eventEmitter: EventEmitter2)
     {
 
     }
 
     async createConversations(user : User  ,display_name : string) {
-     
+     let conversation;
       const recipient = await this.userService.findByDisplayName(display_name)
       if(!recipient)
             throw new HttpException('User not found so cannot create Conversation' , HttpStatus.BAD_REQUEST)
@@ -23,13 +23,15 @@ export class ConversationsService  {
       const Participent = await this.findParticipent(display_name, user);
       if(!Participent)
       {
-         this.CreateParticipent(display_name, user);
+         conversation = await this.CreateParticipent(display_name, user);
 
       }else{
         throw new HttpException('This conversation alrighdy exist' , HttpStatus.BAD_REQUEST)
 
       }
-
+      this.eventEmitter.emit('createConversation.created', {
+        conversation
+      });
       return {message : 'Conversation create succefully'}
 
   }
@@ -113,11 +115,15 @@ export class ConversationsService  {
 
 
 async createMessags(user : any, params: CreateMessageParams) {
-   
+   console.log("creating message*****");
     const chat = await this.prisma.chatParticipents.findUnique({
         where: {
           id: params.participentsId,
         },
+        include: {
+          sender: true,
+          recipient: true,
+        }
       });
     if(!chat)
         throw new HttpException('Conversation not found', HttpStatus.BAD_REQUEST)
@@ -127,7 +133,14 @@ async createMessags(user : any, params: CreateMessageParams) {
     {
         throw new HttpException('Cannot create message in this conversation', HttpStatus.BAD_REQUEST)
     }
-
+    if(user.sub === chat.recipient.id)
+    {
+      console.log("enter here yes");
+        await  this.prisma.chatParticipents.update({
+              where: { id: chat.id},
+              data: { senderId: user.sub, recipientId: chat.sender.id },
+            });
+      }
     const messageCreate = await this.prisma.message.create({
       data: {
         content:params.content,
@@ -140,6 +153,7 @@ async createMessags(user : any, params: CreateMessageParams) {
       },
       include: {
         sender: true,
+        participents : true,
        
       },
       

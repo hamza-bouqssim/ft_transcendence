@@ -9,12 +9,6 @@ import { AppDispatch } from "@/app/store"
 import { createConversation } from "@/app/utils/api"
 import { Dispatch, FC } from "react"
 
-// type Props = {
-  
-//     setShow : Dispatch<React.SetStateAction<Boolean>>;
-
-
-// }
 
 export const CreateConversationForm = () => {
         const {register, handleSubmit, formState: { errors }} = useForm<CreateConversationParams>();
@@ -23,11 +17,9 @@ export const CreateConversationForm = () => {
         const onSubmit = async  (data : CreateConversationParams) => {
           try{
             const res = await dispatch(createConversationThunk(data.display_name));
-            console.log("response-->");
               if (res.payload && typeof res.payload === 'object') {
                 const responseData = res.payload as { data?: { response?: { message?: string } } };
                 const message = responseData.data?.response?.message;
-    
                 if (message) {
                     alert(message);
                 }else {

@@ -5,12 +5,14 @@ import { createConversation, findConversationUsers, getConversation, getConversa
 
 export interface ConversationsState {
   conversations: ConversationTypes[];
-  loading: boolean;
+  status: 'success' | 'failed' | 'idle' | 'loading';
+  error: string | null;
 }
 
 const initialState: ConversationsState = {
   conversations: [],
-  loading: false,
+  status: 'idle',
+  error : null,
 };
 
 // for create the conversation
@@ -39,14 +41,10 @@ export const createConversationThunk = createAsyncThunk('conversations/create', 
 
 export const fetchConversationThunk = createAsyncThunk('conversations/fetch', async () => {
   const response = await getConversation();
-  return response; // Assuming your API response has a 'data' property
+  return response.data; // Assuming your API response has a 'data' property
 
 });
 
-// export const fetchMessagesThunk = createAsyncThunk('messages/fetch', async (id : string) => {
-//   const response = await getConversationMessage(id);
-//   return response;
-// })
 
 
 export const fetchConversationUserThunk = createAsyncThunk('conversation/fetch',async(display_name : string) =>{
@@ -58,26 +56,36 @@ export const conversationsSlice = createSlice({
   name: 'conversations',
   initialState,
   reducers: {
-    addConversation: (state, action: PayloadAction<ConversationTypes>) => {
-      console.log('addConversation');
-      // state.conversations.push(action.payload);
-    },
- 
+    addConversation: (state) =>{
+
+    }
+   
   },
 
   extraReducers: (builder) => {
     builder
-    .addCase(fetchConversationThunk.fulfilled, (state, action) => {
-        // state.conversations = action.payload.data;
-
-        // state.conversations.set(action.payload.data[0].id.toString(), action.payload.data[0])
-        state.conversations = action.payload.data;
-    }).addCase(fetchConversationThunk.pending, (state, action) =>{
+    .addCase(fetchConversationThunk.pending, (state, action) => {
+       state.status = 'loading';
+    }).addCase(fetchConversationThunk.fulfilled, (state, action) =>{
+      state.status = 'success';
+      state.conversations = action.payload;
+    }).addCase(fetchConversationThunk.rejected, (state, action) =>{
+      state.status = 'failed';
     })
-    .addCase(createConversationThunk.fulfilled, (state, action) =>{
-        state.conversations.unshift(action.payload.data);
+    .addCase(createConversationThunk.pending, (state, action) =>{
+        state.status = 'loading';
+    }).addCase(createConversationThunk.fulfilled, (state, action) =>{
+        state.status = 'success';
+    }).addCase(createConversationThunk.rejected, (state, action) =>{
+        state.status = 'failed';
+    })
+    
+    .addCase(fetchConversationUserThunk.pending, (state, action) =>{
+        state.status = 'loading';
     }).addCase(fetchConversationUserThunk.fulfilled, (state, action) =>{
-
+        state.status = 'success';
+    }).addCase(fetchConversationUserThunk.rejected, (state, action) =>{
+        state.status = 'failed';
     });
   }
 })

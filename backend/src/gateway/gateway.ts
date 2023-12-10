@@ -39,7 +39,7 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
             if (!this.NsessionOfuser.has(userId)) {
                 
                 this.NsessionOfuser.set(userId, 1);
-                const newStatus = await this.prisma.user.update({
+                await this.prisma.user.update({
                     where: { id: userId},
                     data: { status: "online"},
                     
@@ -55,7 +55,10 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
     @SubscribeMessage("message.create")
     async handleMessageCreateEvent(socket : AuthenticatedSocket,payload : any){
         const messages = await this.conversationService.createMessags(socket.user, payload);
-        this.server.to(payload.participentsId.toString()).emit ('onMessage', messages);
+        console.log("here participents-->", payload.participentsId);
+        this.server.to(payload.participentsId.toString()).emit('onMessage', messages);
+        this.userService.notificationMessage( messages.participents.senderId, messages.participents.recipientId);
+
     }
     
     @SubscribeMessage('joinToRoom')
@@ -98,7 +101,7 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
                 } else {
                     
                     this.NsessionOfuser.delete(userId);
-                    const newStatus = await this.prisma.user.update({
+                    await this.prisma.user.update({
                         where: { id: socket.user.sub},
                         data: { status: "offline"},
                         
@@ -125,14 +128,22 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
             })
         }
         @OnEvent("request.created")
-        sendFriendRequestNotification(userId: string, data: any) {
-            console.log("user here-->", userId);
-            this.server.emit('newFriendRequest', data);
+        sendFriendRequestNotification(data : any) {
+            const message = `${data.friendData.user.display_name} send you request to be friends`;
+            this.server.to(data.friendData.friends.id).emit('newFriendRequest', data);
+            this.userService.createNotification( data.friendData.user,data.friendData.friends, message);
+
+            
         }
 
         @OnEvent('requestAccept.created')
-        AcceptFriendRequestNotification(AccepteruserId : string){
-            this.server.emit('AcceptNotification', `${AccepteruserId} Accept your request`);
+        AcceptFriendRequestNotification(data : any){
+            console.log("friends here-->", data.req.friends);
+            console.log("users here-->", data.req.user);
+            const message = `${data.req.friends.display_name} accept your request`;
+            this.server.emit('AcceptNotification', data);
+            this.userService.createNotification( data.req.friends,data.req.user, message);
+
 
         }
         @OnEvent('requestRefuse.created')
@@ -158,6 +169,11 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
             this.server.emit('offline', `This user ${payload} is offline`);
         }
 
+        @OnEvent('createConversation.created')
+        createConversation(data : any)
+        {            
+            this.server.emit('createConversation', data);
+        }
     
         
         

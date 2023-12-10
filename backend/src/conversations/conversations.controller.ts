@@ -4,7 +4,6 @@ import { ConversationsService } from './conversations.service';
 import { Request } from 'src/user/interfaces/request.interface';
 import { AuthGuard } from '@nestjs/passport';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { createMessageDto } from './dtos/CreateMessage.dto';
 
 
 
@@ -49,14 +48,7 @@ async getconversationById(@Param('id') id: string){
     // console.log(conversation)
     return conversation;
 }
-// @Post('create_messages')
-// async createConversation(@Req() req: Request , @Body() dto : createMessageDto)
-// {    
-//     const user =req.user
-//     const messages = await this.conversationService.createMessags(user, dto);
-//     return this.eventEmitter.emit('message.create', messages);
-    
-// }
+
 
 @Get('messages/:conversationId')
 async getMessagesFromConversatin(@Param('conversationId') conversationId : string){

@@ -4,18 +4,20 @@ import { ConversationMessage, messageTypes } from '../utils/types';
 
 export interface MessagesState {
   messages: messageTypes[];
-  loading: boolean;
+  status: 'success' | 'failed' | 'idle' | 'loading'
+  error : string | null;
 }
 
 const initialState: MessagesState = {
   messages: [],
-  loading: false,
+  status : 'idle',
+  error: null,
 };
 
 
 export const fetchMessagesThunk = createAsyncThunk('messages/fetch', async (id : string) => {
     const response = await getConversationMessage(id);
-    return response;
+    return response.data;
   })
 
 export const messagesSlice = createSlice({
@@ -25,15 +27,14 @@ export const messagesSlice = createSlice({
     addMessage: (state) => {},
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchMessagesThunk.fulfilled, (state, action) => {
-      //  const { id, messages } = action.payload.data;
-      //  const index : any = state.messages.findIndex((cm) => cm.id === id);
-      //  const exists = state.messages.find((cm) => cm.id === id);
-      //  if (exists) {
-      //    state.messages[index] = action.payload.data;
-      //  } else {
-      //    state.messages.push(action.payload.data);
-      //  }
+    builder.addCase(fetchMessagesThunk.pending, (state, action) => {
+      state.status = 'loading';
+    }).addCase(fetchMessagesThunk.fulfilled, (state : any, action) => {
+      state.status = 'success';
+      state.messages = action.payload;
+    }).addCase(fetchMessagesThunk.rejected, (state : any, action) => {
+      state.status = 'failed';
+      state.error = action.payload;
     });
   }
 });

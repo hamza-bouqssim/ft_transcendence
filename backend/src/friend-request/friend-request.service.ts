@@ -73,18 +73,22 @@ export class FriendRequestService {
         }
         
 
-         await this.prisma.friend.create({
+         const friendData = await this.prisma.friend.create({
             data: {
                 user_id: user.id,
                 friend_id: _friendDisplay_name.id,
                 status: 'PENDING',
                 created_at: new Date()
+            },
+            include :{
+                user : true,
+                friends : true,
             }
+        
         });
+
         this.eventEmitter.emit('request.created', {
-            userId: _friendDisplay_name.id,
-            senderId: user.id,
-            senderDisplayName: user.display_name,
+            friendData
           });
     
    
@@ -92,7 +96,17 @@ export class FriendRequestService {
     }
 
     async acceptFriendRequest(requestId: string, user : User){
-        const req = await this.prisma.friend.findUnique({where: {id: requestId}})
+        const req = await this.prisma.friend.findUnique({
+            where: {
+                id: requestId
+            },
+            include :{
+                user : true,
+                friends : true,
+            }
+
+        
+        })
         if(!req)
             throw new UnauthorizedException ("the request doesn't exist");
 
@@ -103,7 +117,7 @@ export class FriendRequestService {
         await this.prisma.friend.update({where: {id: requestId}, data: {status: 'ACCEPTED'}});
         
         this.eventEmitter.emit('requestAccept.created', {
-            AccepteruserId: req.friend_id,
+           req
           });
         
         return {message: 'Friend request accepted'};

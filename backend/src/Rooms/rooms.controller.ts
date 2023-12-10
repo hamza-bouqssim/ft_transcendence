@@ -4,7 +4,6 @@ import { RoomsService } from './rooms.service';
 import { DeleteChatRoom} from './dto/rooms.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { WebSocketChatGateway } from 'src/gateway/gateway';
 
 
 

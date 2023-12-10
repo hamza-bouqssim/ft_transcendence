@@ -41,6 +41,7 @@ model User {
   senderNotif NotificationGlobal[] @relation("sender")
   recipientNotif NotificationGlobal[] @relation("recipient")
   senderNotifMessage NotificationMessage[] @relation("senderMessage")
+  recipientNotifMessage NotificationMessage[] @relation("recipientMessage")
   senderOfmessage Message[] @relation("senderMessage")
   player1 Pong_match[]  @relation("player1")
   player2 Pong_match[]  @relation("player2")
@@ -93,12 +94,10 @@ model Message {
   id String @id @default(uuid())
   content String?
   senderId String
-  // recipientId String
   participentsId String
   createdAt DateTime @default(now())
   lastMessageFor ChatParticipents[] @relation("lastMessageSent")
   participents ChatParticipents @relation("participentsMessages", fields: [participentsId], references: [id])
-  // recipient User @relation("recipientMessage", fields: [recipientId], references: [id])
   sender User @relation("senderMessage", fields: [senderId], references: [id])
 }
 
@@ -212,7 +211,9 @@ model NotificationGlobal {
 }
 model NotificationMessage{
   id String @id @default(uuid())
+  sender_id String
   recipient_id String
-  Sender User @relation("senderMessage",fields: [recipient_id], references: [id])
-  vue Boolean @default(true)
+  sender User @relation("senderMessage",fields: [sender_id], references: [id])
+  recipient User @relation("recipientMessage", fields: [recipient_id], references: [id])
+  vue Boolean @default(false)
 }
