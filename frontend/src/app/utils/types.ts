@@ -66,6 +66,15 @@ export type UsersTypes = {
     status : string;
 }
 
+export type UsersType = {
+    sub: string;
+    email : string;
+    username : string;
+    display_name : string;
+    avatar_url : string;
+    status : string;
+}
+
 
 export type FriendsTypes = {
     id : string;

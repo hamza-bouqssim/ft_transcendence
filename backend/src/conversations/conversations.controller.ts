@@ -56,4 +56,17 @@ async getMessagesFromConversatin(@Param('conversationId') conversationId : strin
    return getMessages;
 }
 
+@Get(':id/mark-as-read')
+async markConversationAsRead(@Param('id') id: string) {
+  await this.conversationService.markConversationAsRead(id);
+}
+
+@Get('unread-messages')
+async getUnreadMessages(@Body() request: {conversationId : string}) {
+  const unreadMessages = await this.conversationService.findUnreadMessages(request.conversationId);
+  return unreadMessages;
+}
+
+
+
 }

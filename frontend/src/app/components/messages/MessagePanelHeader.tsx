@@ -15,7 +15,6 @@ interface MessagePanelHeaderProps {
 const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({ setUpdateRome, updateRome }) => {
     const pathname = usePathname()
     const { updateChannel,channel} = useContext(socketContext);
-    console.log(channel)
     const goBack =() =>
     {
         updateChannel("")
@@ -24,7 +23,6 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({ setUpdateRome, update
     useEffect(() => {
         setUpdateRome(false)
     }, [channel])
-    console.log(channel)
     
     return (<div className="flex items-center justify-between p-5 rounded-full text-black  bg-[#F2F3FD]">
             <div className="flex items-center">

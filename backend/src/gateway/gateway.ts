@@ -55,8 +55,7 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
     @SubscribeMessage("message.create")
     async handleMessageCreateEvent(socket : AuthenticatedSocket,payload : any){
         const messages = await this.conversationService.createMessags(socket.user, payload);
-        console.log("here participents-->", payload.participentsId);
-        this.server.to(payload.participentsId.toString()).emit('onMessage', messages);
+        this.server.to(messages.participents.recipient.id).to(messages.participents.sender.id).emit('onMessage', messages, socket.user);
         this.userService.notificationMessage( messages.participents.senderId, messages.participents.recipientId);
 
     }

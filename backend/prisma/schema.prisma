@@ -81,6 +81,7 @@ model ChatParticipents {
   id          String      @id @default(uuid())
   senderId    String
   recipientId String
+  vue Boolean  @default(false)
   lastMessageId String?
   createdAt DateTime @default(now())
   recipient   User     @relation("recipient", fields: [recipientId], references: [id])
@@ -92,6 +93,7 @@ model ChatParticipents {
 
 model Message {
   id String @id @default(uuid())
+  vue Boolean  @default(false)
   content String?
   senderId String
   participentsId String

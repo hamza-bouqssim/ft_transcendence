@@ -1,6 +1,6 @@
 "use client"
 import { Conversation, ConversationSideBarContainer, ConversationSideBarItem } from "@/app/utils/styles"
-import { ConversationTypes, User } from "@/app/utils/types";
+import { ConversationTypes, User, UsersType, UsersTypes } from "@/app/utils/types";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
@@ -15,6 +15,7 @@ import {IoMdAdd} from 'react-icons/io'
 import CreateConversationModal  from "../modals/CreateConversationModal";
 import {socketContext } from "@/app/utils/context/socketContext";
 import { fetchMessagesThunk } from "@/app/store/messageSlice";
+import { fetchAuthUser } from "@/app/store/AuthSlice";
 
 
 
@@ -22,32 +23,46 @@ const ChatComponnent  = () =>{
 	const socket = useContext(socketContext).socket
     const router = useRouter();
 	const [show, setShow] = useState<any>(false);
+	const [ user, setUser] = useState<User | undefined>();
     const { updateChannel, channel } = useContext(socketContext);
 	const [oldId,setOldId] = useState(null); 
 	const dispatch = useDispatch<AppDispatch>();
 	const [unreadConversations, setUnreadConversations] = useState<Set<string>>(new Set());
 	const { conversations, status, error } = useSelector((state:any) => state.conversations);
-	console.log("conversation -->", conversations);
+	const { UsersAuth, statusUsers, errorUsers } = useSelector((state:any) => state.UsersAuth);
+
+	
     useEffect(() => {
       dispatch(fetchConversationThunk());
-    }, [dispatch]);
-	
-	const {Userdata} = useContext(socketContext);
-	console.log("userdata here-->", Userdata);
+	  dispatch(fetchAuthUser())
+	//   console.log("the user here-->", UsersAuth);
+    }, [UsersAuth]);
 
 	useEffect(()=>{
+		
+		// console.log("userAuth here outside-->", UsersAuth?.display_name);
+
 		socket.on('onMessage', (messages : any)=>{
+
 			dispatch(fetchConversationThunk());
-			setUnreadConversations((prevUnread) => new Set(prevUnread.add(`${messages.participentsId}_${messages.participents.recipientId}`)));		})
+			dispatch(fetchAuthUser())
+
+			// console.log("socket onMessage");
+			const isRecipient = messages.participents.recipient.display_name === UsersAuth.display_name;
+			if (isRecipient) {
+				setUnreadConversations((prevUnread) => new Set(prevUnread.add(messages.participentsId)));
+			}
+			
+		})
 
 		return () =>{
 			socket.off('onMessage');
 		}
-	},[socket, dispatch])
+	},[UsersAuth])
 
     const getDisplayUser = (conversation : ConversationTypes) => {
 		let test; 
-			const userId = Userdata?.display_name;
+			const userId = UsersAuth?.display_name;
 			
 			if(conversation.sender.display_name !== userId)
 			{
@@ -73,24 +88,17 @@ const ChatComponnent  = () =>{
 		
 	}
 	
-	// const isUnread = (conversationId: string, recipient: User) => {
-	// 	// Check if the logged-in user is the recipient
-
-	// 	const isRecipient = Userdata?.display_name === recipient.display_name;
-	// 	console.log("is recipient here-->", isRecipient);
-	// 	// Check if the conversation is unread and the user is the recipient
-	// 	return unreadConversations.has(`${conversationId}_${recipient.id}`);
-	//   };
-	const isUnread = (conversationId: string, recipient: User) => {
-		return unreadConversations.has(`${conversationId}_${recipient.id}`);
-	  };
+	const isUnread = (conversationId: string) => {
+		return unreadConversations.has(`${conversationId}`)
+	}
 	
-	  const markConversationAsRead = (conversationId: string, recipient: User) => {
+
+	const markConversationAsRead = (conversationId: string) => {
 		const updatedUnreadConversations = new Set(unreadConversations);
-		updatedUnreadConversations.delete(`${conversationId}_${recipient.id}`);
+		updatedUnreadConversations.delete(`${conversationId}`);
 		setUnreadConversations(updatedUnreadConversations);
 	  };
-	
+
     return (
         <div className="text-black  my-10 h-[calc(100%-200px)] overflow-auto ">
 			{show &&  <CreateConversationModal   setShow={setShow} />   }
@@ -104,12 +112,12 @@ const ChatComponnent  = () =>{
 						function handleClick()
 						{
 							updateChannel(elem)
-							markConversationAsRead(elem.id, elem.recipient);
+							markConversationAsRead(elem.id);
 
 						}
 						return(
 							<div onClick={handleClick}  key={elem.id}  className={`cursor-pointer rounded-lg hover:bg-[#F2F3FD] ${
-								isUnread(elem.id, elem.recipient ) ? 'bg-yellow-200' : ''
+								isUnread(elem.id) ? 'bg-rose-300' : ''
 							  } flex items-start justify-between px-2 py-3`}>
 								<div className="flex items-center justify-start" key={elem.id}>
 								<Image src={getDisplayUser(elem)?.avatar_url} className="h-10 w-10 rounded-[50%] bg-black min-[1750px]:h-12 min-[1750px]:w-12" alt="Description of the image" width={60}   height={50} />

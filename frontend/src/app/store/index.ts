@@ -7,6 +7,8 @@ import roomReducer from './roomsSlice';
 import friendsReducer from './friendsSlice';
 import friendsBlockReducer from './blockSlice';
 import NotificationReducer from './notificationSlice';
+import UsersAuthReducer from './AuthSlice';
+import messagesUnreadReducer from './UnreadMessages';
 
 export const store = configureStore({
   reducer: {
@@ -18,6 +20,8 @@ export const store = configureStore({
     friendsBlock : friendsBlockReducer,
     users : UsersReducer,
     notification : NotificationReducer,
+    UsersAuth : UsersAuthReducer,
+    messagesUnread : messagesUnreadReducer,
 
   },
   middleware: (getDefaultMiddleware) =>

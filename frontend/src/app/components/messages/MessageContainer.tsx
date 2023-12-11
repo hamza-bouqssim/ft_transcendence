@@ -15,18 +15,14 @@ const MessageContainer = () => {
     const [setLoadloadinging] = useState<boolean>(false);
     const [Message,setMessage] = useState<messageTypes[]>([]);
     const controller = new AbortController();
-    const [user,setUser] = useState(null)
     const { channel } = useContext(socketContext);
     const { oldId,setOldId } = useContext(socketContext);
     const socket  = useContext(socketContext).socket;
+    const {Userdata} = useContext(socketContext);
 
 
-    useEffect(() => {
-        getAuthUser().then(({data}) => {  
-            setUser(data);
-            })
-        .catch((err)=> {console.log(err);});
-    }, [channel.id])
+
+  
 
 
     const joinRoom =(id:string) =>{
@@ -36,7 +32,6 @@ const MessageContainer = () => {
         setOldId(id);
 	}
 
-    // room and chat
     useEffect(() => {
         const id = channel.id;
         getConversationMessage(id)
@@ -49,31 +44,33 @@ const MessageContainer = () => {
     
     return (
 
-        <>
+       <>
         <div className="h-[calc(100%-135px)]   overflow-auto py-3">
-        <MessageContainerStyle>
-             {Message && Message?.map((m:messageTypes) =>(
+            <MessageContainerStyle>
+                {Message.map((m) =>(
+                    <MessageItemContainer key={m.id}>
+                        <Image src={m.sender?.avatar_url} className="h-10 w-10 rounded-[50%] bg-black " alt="Description of the image" width={60}   height={60} />
 
-                <MessageItemContainer key={m.id}>
-                    <Image src={m.sender?.avatar_url} className="h-10 w-10 rounded-[50%] bg-black " alt="Description of the image" width={60}   height={60} />
                         <MessageItemDetails>
-                            <MessageItemHeader key={m.id}>
-                                <span className="senderName" style={{color : user?.id === m.sender.id ? '#8982a6' : '#778ba5'}}>
-                                    {m.sender?.username}
-                                </span>
-                                <span className="time">
-                                    {formatRelative(new Date(m.createdAt), new Date())}
-                                </span>
-                            </MessageItemHeader>
-                        <MessageItemContent>{m.content}</MessageItemContent>
-                    </MessageItemDetails>
-                </MessageItemContainer> 
-            ))}
-        </MessageContainerStyle>
+                                <MessageItemHeader key={m.id}>
+                                    <span className="senderName" style={{color : Userdata?.id === m.sender.id ? '#8982a6' : '#778ba5'}}>
+                                        {m.sender.username}
+                                    </span>
+                                    <span className="time">
+                                        {formatRelative(new Date(m.createdAt), new Date())}
+                                    </span>
+                                    </MessageItemHeader>
+                                    <MessageItemContent>{m.content}</MessageItemContent>
+                        </MessageItemDetails>
+
+            </MessageItemContainer>
+            ) )}
+            </MessageContainerStyle>
+
         </div>
             <MessageInputField Message={Message} setMessage={setMessage} />
         </>
-    )
+        )
 }
 
 export default MessageContainer; 

@@ -14,6 +14,9 @@ const initialState: MessagesState = {
   error: null,
 };
 
+//fetch unread messages-->
+
+
 
 export const fetchMessagesThunk = createAsyncThunk('messages/fetch', async (id : string) => {
     const response = await getConversationMessage(id);

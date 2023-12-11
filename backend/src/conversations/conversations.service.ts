@@ -123,6 +123,7 @@ async createMessags(user : any, params: CreateMessageParams) {
         include: {
           sender: true,
           recipient: true,
+          
         }
       });
     if(!chat)
@@ -135,7 +136,6 @@ async createMessags(user : any, params: CreateMessageParams) {
     }
     if(user.sub === chat.recipient.id)
     {
-      console.log("enter here yes");
         await  this.prisma.chatParticipents.update({
               where: { id: chat.id},
               data: { senderId: user.sub, recipientId: chat.sender.id },
@@ -153,7 +153,12 @@ async createMessags(user : any, params: CreateMessageParams) {
       },
       include: {
         sender: true,
-        participents : true,
+        participents: {
+          include: {
+              sender: true,
+              recipient: true,
+          },
+      },
        
       },
       
@@ -197,6 +202,46 @@ async getMessageByConversationId(conversationId : string){
   });
 
   return chatParticipents.messages;
+}
+
+
+async markConversationAsRead(conversationId: string) {
+  const conversation = await this.prisma.chatParticipents.findUnique({
+    where : {
+      id : conversationId
+    }
+
+  });
+  if (!conversation) {
+    throw new HttpException('Conversation not found', HttpStatus.BAD_REQUEST)
+
+  }
+
+  // Update the vue property for messages in this conversation
+
+
+ 
+  await this.prisma.message.updateMany({
+    where: {
+      participentsId: conversationId,
+      // Add additional conditions if necessary
+    },
+    data: {
+      vue: true,
+    },
+  });
+  
+}
+
+
+async findUnreadMessages(conversationId: string) {
+ 
+  return this.prisma.message.findMany({
+    where: {
+      participentsId: conversationId,
+      vue: false,
+    },
+  });
 }
 
 
