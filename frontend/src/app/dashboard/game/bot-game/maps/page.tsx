@@ -6,6 +6,7 @@ import "swiper/css";
 import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
 import Link from "next/link";
+import Image from "next/image";
 // import { useRouter } from "next/navigation";
 // import { SocketContext } from "../SocketContext";
 
@@ -43,6 +44,13 @@ const ChooseMapBot = () => {
 								src="/assets/game-maps/default-map.gif"
 								style={{ height: "100%", objectFit: "cover" }}
 							/>
+							{/* <Image
+								style={{ height: "100%", objectFit: "cover" }}
+								src={"/assets/game-maps/default-map.gif"}
+								width={72}
+								height={51}
+								alt=""
+							/> */}
 						</SwiperSlide>
 						<SwiperSlide style={{ height: "400px", width: "270px" }}>
 							<img

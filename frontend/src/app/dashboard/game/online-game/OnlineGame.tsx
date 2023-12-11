@@ -1,6 +1,6 @@
 "use client";
 import { useContext, useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import PlayerScore from "@/app/components/PlayerScore";
 import PongGame from "../classes/PongGame";
 import Swal from "sweetalert2";
@@ -49,28 +49,34 @@ const OnlineGame = ({ mapIndex }: any) => {
 		let timerInterval: any;
 
 		const launchGameListener = (payload: any) => {
-			console.log("from lauch game listern!!!!!!!!!!!!!!!!!!")
+			console.log("from lauch game listern!!!!!!!!!!!!!!!!!!");
 			opponentPlayer.current = payload.opponant;
 			rotateRef.current = payload.rotate;
 			// setStartGame((prev: any) => !prev);
-			pongRef.current = new PongGame(
-				parentCanvasRef.current!,
-				mapIndex,
-				Userdata?.display_name,
-				gameSocket,
-			);
+			if (!pongRef.current) {
+				console.log("Create game!");
+				pongRef.current = new PongGame(
+					parentCanvasRef.current!,
+					mapIndex,
+					Userdata?.display_name,
+					gameSocket,
+				);
+			}
+			console.log("from lauch game listern");
 		};
 
 		const gameIsFinishedListener = (payload: { status: string }) => {
 			if (payload.status === "winner") WinnerPlayerPopUp(router);
 			else LoserPlayerPopUp(router);
-			pongRef.current?.clear();
+			// pongRef.current?.clear();
 		};
-		gameSocket.emit("launchGameRequest", {
-			mapIndex: mapIndex,
-			width: parentCanvasRef.current!.getBoundingClientRect().width,
-			height: parentCanvasRef.current!.getBoundingClientRect().height,
-		});
+		// setTimeout(() => {
+			gameSocket.emit("launchGameRequest", {
+				mapIndex: mapIndex,
+				width: parentCanvasRef.current!.getBoundingClientRect().width,
+				height: parentCanvasRef.current!.getBoundingClientRect().height,
+			});
+		// }, 3000);
 		console.log("setup launchGame event!");
 		console.log("setup gameIsFinished event!");
 		gameSocket.on("launchGame", launchGameListener);
@@ -81,6 +87,7 @@ const OnlineGame = ({ mapIndex }: any) => {
 			console.log("remove gameIsFinished event!");
 			gameSocket.off("launchGame", launchGameListener);
 			gameSocket.off("gameIsFinished", gameIsFinishedListener);
+			pongRef.current?.clear();
 		};
 	}, []);
 

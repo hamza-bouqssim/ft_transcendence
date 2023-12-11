@@ -217,25 +217,27 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 	emitToUser1InGame(userId: string, payload: any, event: string) {
-		if (!this.game) return;
+		if (!this.game) return 1337;
 		// const socketIds = this.game.socket1;
 
 		// socketIds.forEach((socketId) => {
 		// 	this.server.to(socketId).emit(event, payload);
 		// });
-		this.server.to(`@${this.user1.id}`).emit(event, payload);
-	}
-
-	emitToUser2InGame(userId: string, payload: any, event: string) {
-		if (!this.game) return;
-		// const socketIds = this.game.socket2;
-
-		// socketIds.forEach((socketId) => {
+			this.server.to(`@${this.user1.id}`).emit(event, payload);
+			return 1;
+		}
+		
+		emitToUser2InGame(userId: string, payload: any, event: string) {
+			if (!this.game) return 1338;
+			// const socketIds = this.game.socket2;
+			
+			// socketIds.forEach((socketId) => {
 		// 	this.server.to(socketId).emit(event, payload);
 		// });
 		this.server.to(`@${this.user2.id}`).emit(event, payload);
+		return 2;
 	}
-
+	
 	//get map that readu to play in it-------------------------
 	mapReadyToPlay() {
 		const map = this.queueWaiting.filter((queue) => queue.indexMap === 0);
@@ -411,22 +413,17 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				this.handleVerticalObstacles();
 				break;
 		}
-		this.emitToUser1InGame(
+		console.log( this.emitToUser1InGame(
 			this.userId,
 			{ rotate: false, opponant: this.user2 },
 			'launchGame',
-		);
-		this.emitToUser2InGame(
+		));
+		console.log(this.emitToUser2InGame(
 			this.userId,
 			{ rotate: true, opponant: this.user1 },
 			'launchGame',
-		);
-		console.log(
-			`luanchgame ${this.user1.display_name} : ${this.game.socket1[0]}`,
-		);
-		console.log(
-			`luanchgame ${this.user2.display_name} : ${this.game.socket2[0]}`,
-		);
+		));
+	
 		this.handlePaddleMove();
 		this.startGame();
 	}
