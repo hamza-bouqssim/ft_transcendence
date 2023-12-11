@@ -9,7 +9,7 @@ type FormProps = {
 };
 
 const Form = ({ img }: FormProps) => {
-	const {Userdata} = useContext(socketContext)
+	const {Userdata} = useContext(socketContext);
 
 
 
@@ -124,7 +124,7 @@ const Form = ({ img }: FormProps) => {
 			display2fa && 
 			<>
 				<div className="absolute left-0 z-10 right-0 bottom-0 top-0 bg-[#00000095] backdrop-blur-md opacity-100"></div>
-				<Qrcodeform></Qrcodeform>
+					<Qrcodeform />
 			</>
 		}
 		</>

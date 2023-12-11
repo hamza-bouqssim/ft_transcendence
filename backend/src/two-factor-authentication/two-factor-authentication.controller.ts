@@ -1,20 +1,24 @@
-import { Body, Controller, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { TwoFactorAuthenticationService } from './two-factor-authentication.service';
-import { toFileStream } from 'qrcode';
+import  * as qrcode from 'qrcode'
 
 @Controller('two-factor-authentication')
 export class TwoFactorAuthenticationController {
     constructor(private readonly tfaService:TwoFactorAuthenticationService){}
     
-    @Post('2fa/generate')
+    @Get('2fa/generate')
     @UseGuards(AuthGuard('jwt'))
-    async generateQrCode(@Req() req, @Res() res)
+    async generateQrCode(@Req() req)
     {
         const {uri, secret} = await this.tfaService.generateOtp(req.user.email);
-        console.log(req.user.email);
-        res.contentType('image/png'); 
-        return toFileStream(res, uri);
+        try {
+            const qrcodeDataUrl = await qrcode.toDataURL(uri);
+            return { qrcode: qrcodeDataUrl };
+        } catch (error) {
+            console.error('Error generating QR code:', error);
+            throw new Error('Failed to generate QR code');
+        }
     }
     
     @Post('2fa/verify')
@@ -34,11 +38,4 @@ export class TwoFactorAuthenticationController {
     {
         await this.tfaService.disable2fa(req.user.email);
     }
-
-    // @Post('2fa/isEnable')
-    // @UseGuards(AuthGuard('jwt'))
-    // async isEnable(@Req() req)
-    // {
-    //     return this.isEnable();
-    // }
 }
