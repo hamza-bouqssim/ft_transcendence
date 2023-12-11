@@ -1,103 +1,129 @@
 /* eslint-disable prettier/prettier */
-import { SubscribeMessage, MessageBody,WebSocketGateway,WebSocketServer,OnGatewayDisconnect, OnGatewayConnection } from '@nestjs/websockets';
+import {
+	SubscribeMessage,
+	MessageBody,
+	WebSocketGateway,
+	WebSocketServer,
+	OnGatewayDisconnect,
+	OnGatewayConnection,
+} from '@nestjs/websockets';
 import { PrismaModule } from 'prisma/prisma.module';
-import { Server ,Socket} from 'socket.io';
-import { AuthenticatedSocket } from "src/utils/interfaces";
+import { Server, Socket } from 'socket.io';
+import { AuthenticatedSocket } from 'src/utils/interfaces';
 import { IGateWaySession } from './gateway.session';
 import { Services } from 'src/utils/constants';
-import {Inject} from '@nestjs/common'
+import { Inject } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { CreateMessageRoom, RoomId } from 'src/Rooms/dto/rooms.dto';
 import { RoomsService } from 'src/Rooms/rooms.service';
 import { ConversationsService } from 'src/conversations/conversations.service';
 
 @WebSocketGateway({
-    cors:{
-        origin:['http://localhost:3000'],
-        credentials : true,
-    },
-    namespace: '/chat',
-} )
-export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisconnect {
-    constructor(@Inject(Services.GATEWAY_SESSION_MANAGER)private readonly sessions : IGateWaySession,
-    private readonly prisma :PrismaService,
-    private readonly roomsService:RoomsService,private  conversationService : ConversationsService ){}
-    @WebSocketServer() 
-    server: Server;
-    
-    private NsessionOfuser: Map<string, number> = new Map();
+	cors: {
+		origin: ['http://localhost:3000'],
+		credentials: true,
+	},
+	namespace: '/chat',
+})
+export class WebSocketChatGateway
+	implements OnGatewayConnection, OnGatewayDisconnect
+{
+	constructor(
+		@Inject(Services.GATEWAY_SESSION_MANAGER)
+		private readonly sessions: IGateWaySession,
+		private readonly prisma: PrismaService,
+		private readonly roomsService: RoomsService,
+		private conversationService: ConversationsService,
+	) {}
+	@WebSocketServer()
+	server: Server;
 
-    async handleConnection(socket : AuthenticatedSocket, ...args: any[]) {
-        const userId = socket.user.sub;
-        if(socket.user)
-        {
-            if (!this.NsessionOfuser.has(userId)) {
-                this.NsessionOfuser.set(userId, 1);
-                const newStatus = await this.prisma.user.update({
-                    where: { id: userId},
-                    data: { status: "online"},
-    
-                });
-              } else {
-                const sessionNumber = this.NsessionOfuser.get(userId) + 1;
-                this.NsessionOfuser.set(userId, sessionNumber);
-              }
-          
-        }       
-    }
-    @SubscribeMessage("message.create")
-    async handleMessageCreateEvent(socket : AuthenticatedSocket,payload : any){
-        // const { senderId, recipientId } = payload;
-        console.log("payload",socket)
-        const messages = await this.conversationService.createMessags(socket.user, payload);
-        // console.log(messages)
-        this.server.to(payload.participentsId.toString()).emit ('onMessage', messages);
+	private NsessionOfuser: Map<string, number> = new Map();
 
-    
-    }
-    @SubscribeMessage('joinToRoom')
-    handleJoinRome(client: Socket, roomId: RoomId){
-        console.log("join room-->", roomId.id);
-         client.join(roomId.id.toString());
-    }
+	async handleConnection(socket: AuthenticatedSocket, ...args: any[]) {
+		const userId = socket.user.sub;
+		if (socket.user) {
+			if (!this.NsessionOfuser.has(userId)) {
+				this.NsessionOfuser.set(userId, 1);
+				const newStatus = await this.prisma.user.update({
+					where: {
+						id: userId, // or use email or display_name based on your requirements
+					},
+					data: {
+						status: 'online',
+					},
+				}) as any
+    ;
+				// const newStatus = await this.prisma.user.update({
+				//     where: { id: userId},
+				//     data: { status: "online"},
 
-    @SubscribeMessage('leaveToRoom')
-    handleLeaveRome (client: Socket, roomId: RoomId) {
-        console.log("leaveToRoom-->", roomId.id)
-        client.leave (roomId.id);
-    }
+				// });
+			} else {
+				const sessionNumber = this.NsessionOfuser.get(userId) + 1;
+				this.NsessionOfuser.set(userId, sessionNumber);
+			}
+		}
+	}
+	@SubscribeMessage('message.create')
+	async handleMessageCreateEvent(socket: AuthenticatedSocket, payload: any) {
+		// const { senderId, recipientId } = payload;
+		console.log('payload', socket);
+		const messages = await this.conversationService.createMessags(
+			socket.user,
+			payload,
+		);
+		// console.log(messages)
+		this.server
+			.to(payload.participentsId.toString())
+			.emit('onMessage', messages);
+	}
+	@SubscribeMessage('joinToRoom')
+	handleJoinRome(client: Socket, roomId: RoomId) {
+		console.log('join room-->', roomId.id);
+		client.join(roomId.id.toString());
+	}
 
-    @SubscribeMessage('messageRome')
-    async handleMessage(client: Socket, createMessageRoom: CreateMessageRoom){
-        const messageRome = await this.roomsService.createMessage(createMessageRoom,"123123");
-        this.server.to(createMessageRoom.chatRoomId.toString()).emit ('messageRome', messageRome);
-    }
-    @SubscribeMessage('Typing')
-    handleTyping(client: Socket, roomId: RoomId){
-        this.server.to(roomId.id.toString()).emit ('Typing', true);
-    }
+	@SubscribeMessage('leaveToRoom')
+	handleLeaveRome(client: Socket, roomId: RoomId) {
+		console.log('leaveToRoom-->', roomId.id);
+		client.leave(roomId.id);
+	}
 
-    @SubscribeMessage('leaveTyping')
-    handleLeaveTyoing (client: Socket, roomId: RoomId) {
-        this.server.to(roomId.id.toString()).emit ('Typing', false);
-    }
+	@SubscribeMessage('messageRome')
+	async handleMessage(client: Socket, createMessageRoom: CreateMessageRoom) {
+		const messageRome = await this.roomsService.createMessage(
+			createMessageRoom,
+			'123123',
+		);
+		this.server
+			.to(createMessageRoom.chatRoomId.toString())
+			.emit('messageRome', messageRome);
+	}
+	@SubscribeMessage('Typing')
+	handleTyping(client: Socket, roomId: RoomId) {
+		this.server.to(roomId.id.toString()).emit('Typing', true);
+	}
 
-    async handleDisconnect(socket: AuthenticatedSocket) {
-        const userId = socket.user.sub;
-        if (this.NsessionOfuser.has(userId)) {
-          const sessionNumber = this.NsessionOfuser.get(userId) - 1;
-    
-          if (sessionNumber > 0) {
-            this.NsessionOfuser.set(userId, sessionNumber);
-          } else {
-            this.NsessionOfuser.delete(userId);
-            const newStatus = await this.prisma.user.update({
-                where: { id: socket.user.sub},
-                data: { status: "offline"},
+	@SubscribeMessage('leaveTyping')
+	handleLeaveTyoing(client: Socket, roomId: RoomId) {
+		this.server.to(roomId.id.toString()).emit('Typing', false);
+	}
 
-            });
-          }
-        }
-    }
+	async handleDisconnect(socket: AuthenticatedSocket) {
+		const userId = socket.user.sub;
+		if (this.NsessionOfuser.has(userId)) {
+			const sessionNumber = this.NsessionOfuser.get(userId) - 1;
 
+			if (sessionNumber > 0) {
+				this.NsessionOfuser.set(userId, sessionNumber);
+			} else {
+				this.NsessionOfuser.delete(userId);
+				const newStatus = await this.prisma.user.update({
+					where: { id: socket.user.sub },
+					data: { status: 'offline' },
+				});
+			}
+		}
+	}
 }

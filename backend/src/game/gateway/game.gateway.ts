@@ -345,7 +345,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		});
 	}
 
-	endGame() {
+	async endGame() {
 		const game = this.game;
 		if (game) {
 			const { user1, user2, duration } = game;
@@ -376,6 +376,20 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			this.handleClearGame();
 			// this.closeAllSockets([...game.socket1 , ...game.socket2]);
 			// this.endGame(this.game);
+			await this.gameservice.createMatchHistory(
+				user1,
+				user2,
+				this.playerOneScore,
+				this.playerTwoScore,
+				duration,
+			);
+			await this.gameservice.createMatchHistory(
+				user2,
+				user1,
+				this.playerTwoScore,
+				this.playerOneScore,
+				duration,
+			);
 			this.game = null;
 			console.log(this.playerOneScore, this.playerTwoScore);
 			this.user1 = '';
@@ -384,6 +398,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			this.playerTwoScore = 0;
 			this.queueInGame = this.queueInGame.filter((game) => game.user1 != user1);
 		}
+		
 		// const history1 = this.gameService.createMatchHistory(user1, user2, score1, score2, duration);
 		// const history2 = this.gameService.createMatchHistory(user2, user1, score2, score1, duration);
 		// const stateGame = this.gameService.calStateGame(score1, score2);

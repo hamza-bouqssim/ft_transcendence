@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
+import { Result } from '@prisma/client';
 
 enum EventType {
 	UNPROCESSED,
@@ -10,30 +11,6 @@ enum EventType {
 export class GameService {
 	constructor(private readonly prisma: PrismaService) {}
 
-	//part of queue
-	async readyToPlay() {
-		const queueCount = await this.prisma.queue.count();
-		if (queueCount >= 2) {
-			const room = await this.prisma.queue.findMany({
-				orderBy: {
-					createdAt: 'asc',
-				},
-				take: 2,
-				include: {
-					user: true,
-				},
-			});
-			const [userIdOne, userIdTwo] = [room[0].user.id, room[1].user.id];
-			await this.leaveQueue(userIdOne);
-			await this.leaveQueue(userIdTwo);
-			//Pong_match(userIdOne, userIdTwo)
-			console.log('ready to play');
-			return await this.prisma.queue.count();
-		}
-		console.log('not enough players');
-		return queueCount;
-	}
-
 	async findUserById(id: string) {
 		const user = await this.prisma.user.findUnique({
 			where: {
@@ -43,122 +20,7 @@ export class GameService {
 		return user;
 	}
 
-	async joinQueue(userId: string) {
-		const join = await this.prisma.queue.create({
-			data: {
-				user: { connect: { id: userId } },
-			},
-		});
-		console.log(join);
-		// this.readyToPlay();
-		return join;
-	}
-
-	async leaveQueue(id: string) {
-		const leave = await this.prisma.queue.delete({
-			where: {
-				userId: id,
-			},
-		});
-		return leave;
-	}
-
-	async getQueue() {
-		const rooms = await this.prisma.queue.findMany({
-			include: {
-				user: true,
-			},
-		});
-
-		console.log('get rooms : ');
-		console.log(rooms);
-		return rooms;
-	}
-
-	// part of pong_match
-
-	async createPongMatch(userIdOne: string, userIdTwo: string) {
-		const match = await this.prisma.pong_match.create({
-			data: {
-				playerOne: { connect: { id: userIdOne } },
-				playerTwo: { connect: { id: userIdTwo } },
-			},
-		});
-		console.log(match);
-		return match;
-	}
-
-	async getPongMatch(id: string) {
-		const match = await this.prisma.pong_match.findUnique({
-			where: {
-				id: id,
-			},
-		});
-		return match;
-	}
-
-	async deletePongMatch(playerId: string) {
-		const match = await this.prisma.pong_match.deleteMany({
-			where: {
-				OR: [{ player1_id: playerId }, { player2_id: playerId }],
-			},
-		});
-		return match;
-	}
-
-	async endPongMatch(id: string) {
-		const match = await this.prisma.pong_match.update({
-			where: {
-				id: id,
-			},
-			data: {
-				updated_at: new Date(),
-				// envent : FINAL,
-			},
-		});
-		return match;
-	}
-
-	// part of match_history
-	async createMatchHistory(
-		userIdOne: string,
-		userIdTwo: string,
-		playerOne_score: number,
-		playerTwo_score: number,
-		matchId: string,
-	) {
-		const match = await this.prisma.match_History.create({
-			data: {
-				playerone: { connect: { id: userIdOne } },
-				playertwo: { connect: { id: userIdTwo } },
-				playerOne_score: playerOne_score,
-				playerTwo_score: playerTwo_score,
-				match: { connect: { id: matchId } },
-			},
-		});
-		console.log(match);
-		return match;
-	}
-	async deleteMatchHistory(playerId: string) {
-		const deleteMatch = await this.prisma.match_History.deleteMany({
-			where: {
-				OR: [{ playerOne: playerId }, { playerTwo: playerId }],
-			},
-		});
-		this.deletePongMatch(playerId);
-		return deleteMatch;
-	}
-
-	async getMatchHistory(userId: string) {
-		const matchHistory = await this.prisma.match_History.findMany({
-			where: {
-				OR: [{ playerOne: userId }, { playerTwo: userId }],
-			},
-		});
-		return matchHistory;
-	}
-
-	// part of StateGame
+	// level and rating
 	level(win: number): number {
 		const currentLevel = win * (100 * 0.05) - win * 0.05;
 		// const increas = (100 - currentLevel) * 0.05;
@@ -166,7 +28,7 @@ export class GameService {
 		return currentLevel;
 	}
 
-	async rank(level: number, userId: string) {
+	async rating(level: number, userId: string) {
 		const users = await this.prisma.stateGame.findMany({
 			select: {
 				level: true,
@@ -180,10 +42,11 @@ export class GameService {
 		// Find the index of the user with the specified userId
 		const userIndex = sortedUsers.findIndex((user) => user.user_id === userId);
 
-		// Return the rank (1-based) or 0 if the user is not found
+		// Return the rating (1-based) or 0 if the user is not found
 		return userIndex !== -1 ? userIndex + 1 : 0;
 	}
 
+	//stateGame
 	async updateStateGame(
 		win: number,
 		lose: number,
@@ -191,7 +54,7 @@ export class GameService {
 		userId: string,
 	) {
 		const level = this.level(win);
-		const rank = await this.rank(level, userId);
+		const rating = await this.rating(level, userId);
 		const state = await this.prisma.stateGame.update({
 			where: {
 				user_id: userId,
@@ -201,23 +64,19 @@ export class GameService {
 				lose,
 				numberOfMatch,
 				level: level,
-				rank: rank,
-				user: { connect: { id: userId } },
+				rating: rating,
 			},
 		});
+		return state;
 	}
 
 	async createStateGame(userId: string) {
 		const state = await this.prisma.stateGame.create({
 			data: {
-				win: 0,
-				lose: 0,
-				numberOfMatch: 0,
-				level: 0,
-				rank: 0,
 				user: { connect: { id: userId } },
 			},
 		});
+		return state;
 	}
 
 	async deleteStateGame(userId: string) {
@@ -230,62 +89,194 @@ export class GameService {
 	}
 
 	async getStateGame(userId: string) {
-		const state = await this.prisma.stateGame.findMany({
+		const state = await this.prisma.stateGame.findUnique({
 			where: {
 				user_id: userId,
 			},
 		});
 		return state;
 	}
-	// part of Achievement
-	async getAchievement(userId: string) {
-		const achievements = await this.prisma.achievement.findMany({
+
+	history
+	async createMatchHistory(
+		userIdOne: string,
+		userIdTwo: string,
+		resultOne: number,
+		resultTwo: number,
+		duration: number,
+	) {
+		const state = await this.getStateGame(userIdOne);
+		const { win, lose, numberOfMatch } = state;
+		if (resultOne > resultTwo)
+			await this.updateStateGame(win + 1, lose, numberOfMatch + 1, userIdOne);
+		else
+			await this.updateStateGame(win, lose + 1, numberOfMatch + 1, userIdOne);
+		console.log('result');
+
+		const result = resultOne > resultTwo ? Result.WIN : Result.LOSS;
+		try {
+			// model Match_History {
+			// 	id            String   @id @default(uuid())
+			// 	playerOne     String
+			// 	playerTwo     String
+			// 	resultOne     Int
+			// 	resultTwo     Int
+			// 	result        Result   @default(UNPROCESSED)
+			// 	createdAt     DateTime @default(now())
+			// 	numberOfMatch Int      @default(0)
+			// 	duration      Int
+			// 	playerone     User     @relation("playerOne", fields: [playerOne], references: [id])
+			// 	playertwo     User     @relation("playerTow", fields: [playerTwo], references: [id])
+			//   }
+
+			console.log(
+				`userIdOne: ${userIdOne}, userIdTwo:${userIdTwo},\n resultOne:${resultOne}, resultTwo:${resultTwo}, duration,${duration} result:${result}`,
+			);
+			const match = await this.prisma.match_History.create({
+				data: {
+					playerOne: userIdOne,
+					playerTwo: userIdTwo,
+					resultOne: resultOne,
+					resultTwo: resultTwo,
+					result: result,
+					duration: duration,
+					numberOfMatch: 1,
+					// ... other fields ...
+				},
+			});
+
+			console.log(match);
+			return match;
+		} catch (error) {
+			console.log(error);
+		}
+		return {};
+	}
+	async deleteMatchHistory(playerId: string) {
+		await this.deleteStateGame(playerId);
+		const deleteMatch = await this.prisma.match_History.deleteMany({
+			where: {
+				OR: [{ playerOne: playerId }, { playerTwo: playerId }],
+			},
+		});
+		return deleteMatch;
+	}
+
+	async getMatchHistory(userId: string) {
+		const matchHistory = await this.prisma.match_History.findMany({
+			where: {
+				playerOne: userId,
+			},
+			orderBy: {
+				createdAt: 'desc',
+			},
+		});
+		return matchHistory;
+	}
+
+	// endpoints of hamza
+	getResult(userId: string) {
+		const result = this.prisma.stateGame.findUnique({
 			where: {
 				user_id: userId,
 			},
-		});
-		return achievements;
-	}
-
-	async createAchievement(userId: string) {
-		const achievement = await this.prisma.achievement.create({
-			data: {
-				user: { connect: { id: userId } },
-				content: 'Welcome to Pong Game',
-				type: 'Welcome',
-				picture: '',
-				win: 0,
-				lose: 0,
-				level: 0,
+			select: {
+				win: true,
+				lose: true,
+				rating: true,
 			},
 		});
+		return result;
 	}
 
-	async deleteAchievements(userId: string) {
-		const deleteAchievement = await this.prisma.achievement.deleteMany({
+	async getRanks() {
+		const rating = await this.prisma.stateGame.findMany({
+			orderBy: {
+				rating: 'asc',
+			},
+			select: {
+				rating: true,
+				user: {
+					select: {
+						username: true,
+						avatar_url: true,
+					},
+				},
+			},
+		});
+		const modifiedRank = rating.map((entry) => ({
+			rank: entry.rating,
+			// exclude the 'user' property from the entry
+			username: entry.user.username,
+			picture: entry.user.avatar_url, // Rename 'avatar_url' to 'picture'
+		}));
+		return modifiedRank;
+	}
+
+	async getRanking(userId: string) {
+		const rate = await this.prisma.stateGame.findUnique({
 			where: {
 				user_id: userId,
 			},
+			select: {
+				rating: true,
+				user: {
+					select: {
+						username: true,
+						avatar_url: true,
+					},
+				},
+			},
 		});
-		return deleteAchievement;
+		const modifiedRanking = {
+			rank: rate.rating,
+			username: rate.user.username,
+			picture: rate.user.avatar_url,
+		};
+		return modifiedRanking;
 	}
 
-	// async updateAchievement(
-	// 	win: number,
-	// 	lose: number,
-	// 	level: number,
-	// 	userId: string,
-	// ) {
-	// 	const achievement = await this.prisma.achievement.update({
-	// 		where: {
-	// 			user_id: userId,
-	// 		},
-	// 		data: {
-	// 			win,
-	// 			lose,
-	// 			level,
-	// 			user: { connect: { id: userId } },
-	// 		},
-	// 	});
-	// }
+	async history_matches(userId: string) {
+		const history = await this.prisma.match_History.findMany({
+			where: {
+				playerOne: userId,
+			},
+			orderBy: {
+				createdAt: 'desc',
+			},
+			select: {
+				playerone: {
+					select: {
+						avatar_url: true,
+					},
+				},
+				playertwo: {
+					select: {
+						avatar_url: true,
+					},
+				},
+				resultOne: true,
+				resultTwo: true,
+				createdAt: true,
+				duration: true,
+				numberOfMatch: true,
+			},
+		});
+		const modifiedHistory = history.map((entry) => ({
+			playerOne: entry.playerone.avatar_url,
+			playerTwo: entry.playertwo.avatar_url,
+			resultOne: entry.resultOne,
+			resultTwo: entry.resultTwo,
+			date: entry.createdAt.toISOString().split('T')[0],
+			// duration: this.convertDuration(entry.duration),
+			// numberOfMatch:entry.numberOfMatch,
+		}));
+		return modifiedHistory;
+	}
+
+	convertDuration(date: number) {
+		const seconds = date % 60;
+		const minutes = date / 60;
+		return `${minutes}m ${seconds}s`;
+	}
 }
