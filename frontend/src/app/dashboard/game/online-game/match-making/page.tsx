@@ -4,7 +4,7 @@ import { faUserGroup } from "@fortawesome/free-solid-svg-icons";
 import InviteField from "../../../../components/InviteField";
 import PlayerCard from "../../../../components/PlayerCard";
 import { ChangeContext } from "../../../layout";
-import { useEffect, useContext, useState } from "react";
+import { useEffect, useContext, useState, createContext } from "react";
 import { useRouter } from "next/navigation";
 import { socketContext } from "@/app/utils/context/socketContext";
 import { useSearchParams } from "next/navigation";
@@ -32,20 +32,21 @@ const MatchMaking = () => {
 	const { Userdata } = useContext<any>(socketContext);
 
 	useEffect(() => {
-		const startGamelistener = (payload: { idGame: string }) => {
+		const handleStartGame = (payload: { idGame: string }) => {
 			router.push(`./match-making/${mapIndex}`);
 		};
-		const knowOpponentListener = (payload: any) => {
+		const handleKnowOpponent = (payload: any) => {
 			setOpponentPlayer(payload.opponent);
+
 			// router.push(`./maps/${mapIndex}/${payload.idGame}`);
 		};
 		console.log("setup start game event");
-		gameSocket.on("startGame", startGamelistener);
-		gameSocket.on("knowOpponent", knowOpponentListener);
+		gameSocket.on("startGame", handleStartGame);
+		gameSocket.on("knowOpponent", handleKnowOpponent);
 		return () => {
 			console.log("remove start game event");
-			gameSocket.off("startGame", startGamelistener);
-			gameSocket.off("knowOpponent", knowOpponentListener);
+			gameSocket.off("startGame", handleStartGame);
+			gameSocket.off("knowOpponent", handleKnowOpponent);
 		};
 	}, []);
 

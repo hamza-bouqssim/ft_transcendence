@@ -223,21 +223,21 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		// socketIds.forEach((socketId) => {
 		// 	this.server.to(socketId).emit(event, payload);
 		// });
-			this.server.to(`@${this.user1.id}`).emit(event, payload);
-			return 1;
-		}
-		
-		emitToUser2InGame(userId: string, payload: any, event: string) {
-			if (!this.game) return 1338;
-			// const socketIds = this.game.socket2;
-			
-			// socketIds.forEach((socketId) => {
+		this.server.to(`@${this.user1.id}`).emit(event, payload);
+		return 1;
+	}
+
+	emitToUser2InGame(userId: string, payload: any, event: string) {
+		if (!this.game) return 1338;
+		// const socketIds = this.game.socket2;
+
+		// socketIds.forEach((socketId) => {
 		// 	this.server.to(socketId).emit(event, payload);
 		// });
 		this.server.to(`@${this.user2.id}`).emit(event, payload);
 		return 2;
 	}
-	
+
 	//get map that readu to play in it-------------------------
 	mapReadyToPlay() {
 		const map = this.queueWaiting.filter((queue) => queue.indexMap === 0);
@@ -280,12 +280,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			// eveeeeeeent
 			this.emitToUser2InGame(
 				userIdTwo,
-				{ opponent: this.user1, idGame },
+				{ opponent: this.user1, rotate: true, idGame },
 				'knowOpponent',
 			);
 			this.emitToUser1InGame(
 				userIdTwo,
-				{ opponent: this.user2, idGame },
+				{ opponent: this.user2, rotate: false, idGame },
 				'knowOpponent',
 			);
 			// await this.sleep(3000);
@@ -413,17 +413,21 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				this.handleVerticalObstacles();
 				break;
 		}
-		console.log( this.emitToUser1InGame(
-			this.userId,
-			{ rotate: false, opponant: this.user2 },
-			'launchGame',
-		));
-		console.log(this.emitToUser2InGame(
-			this.userId,
-			{ rotate: true, opponant: this.user1 },
-			'launchGame',
-		));
-	
+		console.log(
+			this.emitToUser1InGame(
+				this.userId,
+				{ rotate: false, opponant: this.user2 },
+				'launchGame',
+			),
+		);
+		console.log(
+			this.emitToUser2InGame(
+				this.userId,
+				{ rotate: true, opponant: this.user1 },
+				'launchGame',
+			),
+		);
+
 		this.handlePaddleMove();
 		this.startGame();
 	}

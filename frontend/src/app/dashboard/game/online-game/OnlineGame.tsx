@@ -5,16 +5,18 @@ import PlayerScore from "@/app/components/PlayerScore";
 import PongGame from "../classes/PongGame";
 import Swal from "sweetalert2";
 import {
+	ReloadPage,
 	LoserPlayerPopUp,
 	WinnerPlayerPopUp,
 } from "@/app/components/GamePopUp";
-import { socketContext } from "@/app/utils/context/socketContext";
+import { socket, socketContext } from "@/app/utils/context/socketContext";
 import { useGameSocket } from "@/app/providers/game-socket-provider";
 
 const OnlineGame = ({ mapIndex }: any) => {
+	const [unsavedChanges, setUnsavedChanges] = useState<boolean>(false);
 	const router = useRouter();
 	const parentCanvasRef = useRef<HTMLDivElement>(null);
-	const rotateRef = useRef<boolean>(false);
+	const isRotate = useRef<boolean>(false);
 	const pongRef = useRef<any>(null);
 	const opponentPlayer = useRef<any>(null);
 	const [startGame, setStartGame] = useState<boolean>(false);
@@ -44,15 +46,24 @@ const OnlineGame = ({ mapIndex }: any) => {
 		return () => void gameSocket.off("updateScore");
 	}, []);
 
+	// useEffect(() => {
+	// 	const handleUnload = (event) => {
+	// 		event.preventDefault();
+	// 		router.push("/dashboard");
+	// 	};
+
+	// 	window.addEventListener("beforeunload", handleUnload);
+
+	// 	return () => window.removeEventListener("beforeunload", handleUnload);
+	// }, []);
+
 	useEffect(() => {
 		console.log("online-game-score-useffect2");
-		let timerInterval: any;
 
-		const launchGameListener = (payload: any) => {
+		const handleLaunchGame = (payload: any) => {
 			console.log("from lauch game listern!!!!!!!!!!!!!!!!!!");
 			opponentPlayer.current = payload.opponant;
-			rotateRef.current = payload.rotate;
-			// setStartGame((prev: any) => !prev);
+			isRotate.current = payload.rotate;
 			if (!pongRef.current) {
 				console.log("Create game!");
 				pongRef.current = new PongGame(
@@ -65,28 +76,29 @@ const OnlineGame = ({ mapIndex }: any) => {
 			console.log("from lauch game listern");
 		};
 
-		const gameIsFinishedListener = (payload: { status: string }) => {
+		const handleGameIsFinished = (payload: { status: string }) => {
 			if (payload.status === "winner") WinnerPlayerPopUp(router);
 			else LoserPlayerPopUp(router);
 			// pongRef.current?.clear();
 		};
-		// setTimeout(() => {
+		setTimeout(() => {
 			gameSocket.emit("launchGameRequest", {
 				mapIndex: mapIndex,
-				width: parentCanvasRef.current!.getBoundingClientRect().width,
-				height: parentCanvasRef.current!.getBoundingClientRect().height,
+				width: parentCanvasRef.current?.getBoundingClientRect().width,
+				height: parentCanvasRef.current?.getBoundingClientRect().height,
 			});
-		// }, 3000);
+			setStartGame((prev: any) => !prev);
+		}, 3000);
 		console.log("setup launchGame event!");
 		console.log("setup gameIsFinished event!");
-		gameSocket.on("launchGame", launchGameListener);
-		gameSocket.on("gameIsFinished", gameIsFinishedListener);
+		gameSocket.on("launchGame", handleLaunchGame);
+		gameSocket.on("gameIsFinished", handleGameIsFinished);
 
 		return () => {
 			console.log("remove launchGame event!");
 			console.log("remove gameIsFinished event!");
-			gameSocket.off("launchGame", launchGameListener);
-			gameSocket.off("gameIsFinished", gameIsFinishedListener);
+			gameSocket.off("launchGame", handleLaunchGame);
+			gameSocket.off("gameIsFinished", handleGameIsFinished);
 			pongRef.current?.clear();
 		};
 	}, []);
@@ -98,13 +110,13 @@ const OnlineGame = ({ mapIndex }: any) => {
 				userName={opponentPlayer.current?.username}
 				displayName={opponentPlayer.current?.display_name}
 				score={score.playerTwo}
-				color={"#4FD6FF"}
+				color={isRotate.current ? "#FF5269" : "#4FD6FF"}
 				profileImage={opponentPlayer.current?.avatar_url}
-				startGame={true}
+				startGame={startGame}
 			/>
 			<div
 				className={`${
-					rotateRef.current ? "rotate-180" : ""
+					isRotate.current ? "rotate-180" : ""
 				} h-[500px] w-full max-w-[340px] shadow-[0_0_50px_2px_var(--blue-color)] md:h-[590px] md:max-w-[380px] xl:h-[700px] xl:max-w-[420px] min-[1750px]:h-[836px] min-[1750px]:max-w-[560px]`}
 				ref={parentCanvasRef}
 			></div>
@@ -113,9 +125,9 @@ const OnlineGame = ({ mapIndex }: any) => {
 				userName={Userdata?.username}
 				displayName={Userdata?.display_name}
 				score={score.playerOne}
-				color={"#FF5269"}
+				color={isRotate.current ? "#4FD6FF" : "#FF5269"}
 				profileImage={Userdata?.avatar_url}
-				startGame={true}
+				startGame={startGame}
 			/>
 		</div>
 	);

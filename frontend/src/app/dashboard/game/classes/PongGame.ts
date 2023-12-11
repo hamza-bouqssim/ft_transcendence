@@ -36,6 +36,18 @@ class PongGame {
 	private handleKeyUp = (e: KeyboardEvent): void => {};
 	private handleCollisionStart = (): void => {};
 	private handleBeforeUpdate = (): void => {};
+	private handleSetVelocity = (data: any) => {
+		Body.setVelocity(this.ball, {
+			x: this.map(data.x, this.defaultCanvasSizes.width, this.divWidth),
+			y: this.map(data.y, this.defaultCanvasSizes.height, this.divHeight),
+		});
+	};
+	private handleSetPosition = (data: any) => {
+		Body.setPosition(this.ball, {
+			x: this.map(data.x, this.defaultCanvasSizes.width, this.divWidth),
+			y: this.map(data.y, this.defaultCanvasSizes.height, this.divHeight),
+		});
+	};
 	private defaultCanvasSizes: any = {
 		width: 560,
 		height: 836,
@@ -50,18 +62,6 @@ class PongGame {
 		currentCanvasSize: number,
 	): number => {
 		return (inputSize * currentCanvasSize) / defaultCanvasSize;
-	};
-	private setVelocityListener = (data: any) => {
-		Body.setVelocity(this.ball, {
-			x: this.map(data.x, this.defaultCanvasSizes.width, this.divWidth),
-			y: this.map(data.y, this.defaultCanvasSizes.height, this.divHeight),
-		});
-	};
-	private setPositionListener = (data: any) => {
-		Body.setPosition(this.ball, {
-			x: this.map(data.x, this.defaultCanvasSizes.width, this.divWidth),
-			y: this.map(data.y, this.defaultCanvasSizes.height, this.divHeight),
-		});
 	};
 	private render: any;
 	playerScore: number = 0;
@@ -413,8 +413,8 @@ class PongGame {
 
 	startGame = (): void => {
 		// this.lunchGameInterval = setTimeout((): void => {
-			// run the engine
-			Runner.run(runner, engine);
+		// run the engine
+		Runner.run(runner, engine);
 		// }, 1000);
 	};
 
@@ -432,8 +432,8 @@ class PongGame {
 		// 	});
 		// });
 
-		this.socket.on("setBallVelocity", this.setVelocityListener);
-		this.socket.on("updateBallPosition", this.setPositionListener);
+		this.socket.on("setBallVelocity", this.handleSetVelocity);
+		this.socket.on("updateBallPosition", this.handleSetPosition);
 	};
 
 	setBotModeBall = (): void => {
@@ -664,7 +664,7 @@ class PongGame {
 		// Stop The Runner:
 		Runner.stop(runner);
 
-		this.render.canvas.remove();
+		this.render.canvas?.remove();
 		this.render.canvas = null;
 		this.render.context = null;
 		this.render.textures = {};
@@ -682,8 +682,8 @@ class PongGame {
 
 		// Close Socket!
 		if (this.socket) {
-			this.socket.off("setBallVelocity", this.setVelocityListener);
-			this.socket.off("updateBallPosition", this.setPositionListener);
+			this.socket.off("setBallVelocity", this.handleSetVelocity);
+			this.socket.off("updateBallPosition", this.handleSetPosition);
 			clearInterval(this.moveInterval);
 			this.socket.disconnect();
 		}
