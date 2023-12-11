@@ -10,7 +10,7 @@ import { GatewayModule } from './gateway/gateway.module';;
 import { UserModule } from './user/user.module';
 import { FriendRequestModule } from './friend-request/friend-request.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
-import { ConfigModule } from '@nestjs/config';
+
 
 @Module({
 	imports: [
@@ -23,7 +23,7 @@ import { ConfigModule } from '@nestjs/config';
 		UserModule,
     FriendRequestModule,
 		// GameModule,
-		EventEmitterModule.forRoot(), ConfigModule.forRoot({ isGlobal : true})
+		EventEmitterModule.forRoot()
 	],
 	controllers: [AppController],
 	providers: [AppService],

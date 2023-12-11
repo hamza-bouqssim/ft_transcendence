@@ -47,7 +47,7 @@ export const MemberUser: React.FC<MemberUserProps> = ({ idUserAdd, setIdUserAdd 
                   <input className="rounded-full mb-1 w-full text-black focus:outline-none   bg-[#D9D9D9] bg-opacity-20  p-3" placeholder="Search Friend"></input>
         </div>
         <div className=" no-scrollbar ">
-          {Friends.map((user) => (
+          {Friends?.map((user) => (
             <div key={user.id} className="flex items-center justify-between my-2">
               <div className="flex items-center justify-center ">
                 <div className="relative">

@@ -6,6 +6,7 @@ import { CiImageOn } from "react-icons/ci";
 import { socketContext } from "@/app/utils/context/socketContext";
 import {useContext, useEffect,useState}  from "react"
 import { MessageType, messageTypes } from "@/app/utils/types";
+import {useRouter,usePathname} from 'next/navigation'
 
 
 
@@ -15,21 +16,40 @@ type props = {
 }
 
 const MessageInputField: FC<props> = ({setMessage, Message}) => {
+    const pathname = usePathname()
 
     const socket = useContext(socketContext).socket
     const {channel, updateChannel} = useContext(socketContext)
     const [content,setContent] = useState("");
     
 useEffect(() => {
-    socket.on("onMessage", (message: any) => {
-        setMessage((prevMessages: messageTypes[]) => [...prevMessages, message]);
-        console.log("Received message:", message);
-    });
+    if(pathname.includes("chat"))
+    {
+        socket.on("onMessage", (message: any) => {
+            setMessage((prevMessages: messageTypes[]) => [...prevMessages, message]);
+            console.log("Received message:", message);
+        });
+    }
+    else
+    {
+        socket.on("messageRome", (message: any) => {
+            setMessage((prevMessages: messageTypes[]) => [...prevMessages, message]);
+            console.log("Received message:", message);
+        });
 
+    }
 }, [channel.id]);
 
 const sendMessage = async () => {
-    socket.emit("message.create", { participentsId: channel.id, content: content });
+    if(pathname.includes("chat"))
+    {
+        socket.emit("message.create", { participentsId: channel.id, content: content });
+    }
+    else
+    {
+        socket.emit("messageRome", { chatRoomId: channel.id, content: content });
+    }
+    
     setContent('');  // Assuming you want to clear the content after sending the message
 };
 
