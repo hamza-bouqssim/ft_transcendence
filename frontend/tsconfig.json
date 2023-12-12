@@ -29,6 +29,7 @@
 		"**/*.tsx",
 		".next/types/**/*.ts",
 		"src/app/dashboard/game/classes/Pong.ts",
-		"src/app/components/cardMemberUser"	],
+		"src/app/components/cardMemberUser"
+	],
 	"exclude": ["node_modules"]
 }

@@ -5,7 +5,6 @@ import LoginForm from "../../../components/forms/LoginForm";
 import styles from "./index.module.scss";
 import SideBar from "../../../components/SideBar";
 import { useState } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const LoginPage = () => {
 	const [change, setChange] = useState<{

@@ -4,7 +4,6 @@ import { Page } from "@/app/utils/styles";
 import styles from "./index.module.scss";
 import SideBar from "../../../components/SideBar";
 import { useState } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const AuthentificationPage = () => {
 	const [change, setChange] = useState<{

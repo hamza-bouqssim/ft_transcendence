@@ -1,18 +1,24 @@
 import Swal from "sweetalert2";
 
-export const GameFinishedPopUp = (router: any) => {
+export const ReloadPage = (router: any, e: BeforeUnloadEvent) => {
+	e.preventDefault();
 	Swal.fire({
-		title: "Game Is Finished!",
-		icon: "info",
+		title: "Are You Sure?",
+		text: "U Wanna Leave Game?",
+		icon: "warning",
 		iconColor: "var(--pink-color)",
 		color: "#ffff",
 		background: "#2E2F54",
 		customClass: "rounded-[30px] font-['Whitney_BlackSc'] text-sm",
+		showCancelButton: true,
+		showConfirmButton: true,
+		cancelButtonText: "Cancel",
+		cancelButtonColor: "var(--pink-color)",
+		confirmButtonText: "Leave",
 		confirmButtonColor: "var(--purple-color)",
-		confirmButtonText: "OK",
 		allowOutsideClick: false,
-	}).then(() => {
-		router.back();
+	}).then((result) => {
+		if (result.isConfirmed) router.push("/dashboard");
 	});
 };
 
@@ -30,7 +36,7 @@ export const WinnerPlayerPopUp = (router: any) => {
 		confirmButtonText: "OK",
 		allowOutsideClick: false,
 	}).then(() => {
-		router.back();
+		router.push("/dashboard");
 	});
 };
 
@@ -48,6 +54,6 @@ export const LoserPlayerPopUp = (router: any) => {
 		confirmButtonText: "OK",
 		allowOutsideClick: false,
 	}).then(() => {
-		router.push("/dashboard/game");
+		router.push("/dashboard");
 	});
 };

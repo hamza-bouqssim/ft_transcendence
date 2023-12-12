@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useContext } from "react";
 import PlayerScore from "@/app/components/PlayerScore";
 import PongGame from "../classes/PongGame";
 import Swal from "sweetalert2";
@@ -8,14 +8,13 @@ import {
 	LoserPlayerPopUp,
 	WinnerPlayerPopUp,
 } from "@/app/components/GamePopUp";
-import { useAtomValue } from "jotai";
-import { gameData } from "../page";
+import { socketContext } from "@/app/utils/context/socketContext";
 
-const BotGame = () => {
-	const gameDataValues = useAtomValue(gameData);
+const BotGame = ({ mapIndex }: any) => {
 	const router = useRouter();
 	const parentCanvasRef = useRef<HTMLDivElement>(null);
 	const pongRef = useRef<any>();
+	const [startGame, setStartGame] = useState<boolean>(false);
 	const [score, setScore] = useState<{
 		playerScore: number;
 		botScore: number;
@@ -23,7 +22,7 @@ const BotGame = () => {
 		playerScore: 0,
 		botScore: 0,
 	});
-	const [startGame, setStartGame] = useState<boolean>(false);
+	const { Userdata } = useContext<any>(socketContext);
 
 	useEffect(() => {
 		if (score.botScore === 8 || score.playerScore === 8) {
@@ -67,10 +66,7 @@ const BotGame = () => {
 				},
 			}).then(() => {
 				setStartGame((prev: any) => !prev);
-				pongRef.current = new PongGame(
-					parentCanvasRef.current!,
-					gameDataValues.chosenMapIndex,
-				);
+				pongRef.current = new PongGame(parentCanvasRef.current!, mapIndex);
 				setScore({
 					...score,
 					playerScore: pongRef.current.playerScore,
@@ -84,25 +80,25 @@ const BotGame = () => {
 		<div className="absolute left-[50%] top-[50%] flex h-[642px] w-[96%] -translate-x-[50%] -translate-y-[50%] flex-col items-center justify-evenly md:h-[900px] md:gap-3 md:px-4 xl:h-[700px] xl:max-w-[1280px] xl:flex-row-reverse xl:px-10 min-[1750px]:h-[900px] min-[1750px]:max-w-[1600px]">
 			<PlayerScore
 				flag="top"
-				name="Mr.BOT"
-				username="@bot"
-				score={score.botScore}
-				playerBgColor={"#4FD6FF"}
-				isBotPlayer={true}
+				userName="Mr.BOT"
+				displayName="bot"
+				color={"#4FD6FF"}
+				profileImage={"/assets/bot.png"}
 				startGame={startGame}
+				score={score.botScore}
 			/>
 			<div
-				className="h-[500px] w-full max-w-[340px] shadow-[0_0_50px_2px_var(--blue-color)] md:h-[590px] md:max-w-[380px] xl:h-[700px] xl:max-w-[420px] min-[1750px]:h-[836px] min-[1750px]:max-w-[560px]"
+				className={`h-[500px] w-full max-w-[340px] shadow-[0_0_50px_2px_var(--blue-color)] md:h-[590px] md:max-w-[380px] xl:h-[700px] xl:max-w-[420px] min-[1750px]:h-[836px] min-[1750px]:max-w-[560px]`}
 				ref={parentCanvasRef}
 			></div>
 			<PlayerScore
 				flag="bottom"
-				name="hamzaBouQssi"
-				username="@hbouqssi"
-				score={score.playerScore}
-				playerBgColor={"#FF5269"}
-				isBotPlayer={false}
+				userName={Userdata?.username}
+				displayName={Userdata?.display_name}
+				color={"#FF5269"}
+				profileImage={Userdata?.avatar_url}
 				startGame={startGame}
+				score={score.playerScore}
 			/>
 		</div>
 	);

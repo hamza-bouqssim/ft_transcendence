@@ -3,7 +3,7 @@
 import { InputField, InputLabel } from "@/app/utils/styles";
 import { InputContainer } from "@/app/utils/styles";
 import { Button } from "@/app/utils/styles";
-import styles from "./index.module.scss";
+// import styles from "./index.module.scss";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { postRegisterUser } from "@/app/utils/api";
@@ -11,72 +11,73 @@ import { createUserParams } from "@/app/utils/types";
 import { useRouter } from "next/navigation";
 
 const RegisterForm = () => {
-	const {
-		register,
-		handleSubmit,
-		formState: { errors },
-	} = useForm<createUserParams>();
-	const router = useRouter();
+	// const {
+	// 	register,
+	// 	handleSubmit,
+	// 	formState: { errors },
+	// } = useForm<createUserParams>();
+	// const router = useRouter();
 
-	const onSubmit = async (data: createUserParams) => {
-		try {
-			await postRegisterUser(data);
-			alert(`Welcome ${data.firstName}`);
-			router.push("/dashboard/AuthenticationPage/LoginPage", { scroll: false });
-		} catch (err) {
-			console.log(err);
-		}
-	};
-	return (
-		<div className="custom-shape absolute transition-all duration-700 ease-in-out sm:left-[40%] md:bg-white md:px-8 md:py-8">
-			<div className="custom-shape flex flex-col items-center gap-4 bg-white px-4 py-7 transition-all duration-700 ease-in-out sm:gap-5 sm:px-9 sm:py-10 md:bg-transparent md:px-6 md:py-4 2xl:py-36">
-				<form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
-					<InputContainer>
-						<InputLabel htmlFor="email">Email </InputLabel>
-						<InputField
-							type="email"
-							id="email"
-							{...register("email", { required: "Email is required" })}
-						/>
-					</InputContainer>
-					<section className={styles.Row}>
-						<InputContainer>
-							<InputLabel htmlFor="firstName">FirstName </InputLabel>
-							<InputField
-								type="text"
-								id="firstName"
-								{...register("firstName", {
-									required: "FirstName is required",
-								})}
-							/>
-						</InputContainer>
-						<InputContainer>
-							<InputLabel htmlFor="lastName">LastName </InputLabel>
-							<InputField
-								type="text"
-								id="lastName"
-								{...register("lastName", { required: "LastName is required" })}
-							/>
-						</InputContainer>
-					</section>
-					<InputContainer>
-						<InputLabel htmlFor="password">Password </InputLabel>
-						<InputField
-							type="password"
-							id="password"
-							{...register("password", { required: "Password is required" })}
-						/>
-					</InputContainer>
+	// const onSubmit = async (data: createUserParams) => {
+	// 	try {
+	// 		await postRegisterUser(data);
+	// 		alert(`Welcome ${data.firstName}`);
+	// 		router.push("/dashboard/AuthenticationPage/LoginPage", { scroll: false });
+	// 	} catch (err) {
+	// 		console.log(err);
+	// 	}
+	// };
+	return <></>;
+	// return (
+	// 	<div className="custom-shape absolute transition-all duration-700 ease-in-out sm:left-[40%] md:bg-white md:px-8 md:py-8">
+	// 		<div className="custom-shape flex flex-col items-center gap-4 bg-white px-4 py-7 transition-all duration-700 ease-in-out sm:gap-5 sm:px-9 sm:py-10 md:bg-transparent md:px-6 md:py-4 2xl:py-36">
+	// 			<form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+	// 				<InputContainer>
+	// 					<InputLabel htmlFor="email">Email </InputLabel>
+	// 					<InputField
+	// 						type="email"
+	// 						id="email"
+	// 						{...register("email", { required: "Email is required" })}
+	// 					/>
+	// 				</InputContainer>
+	// 				<section className={styles.Row}>
+	// 					<InputContainer>
+	// 						<InputLabel htmlFor="firstName">FirstName </InputLabel>
+	// 						<InputField
+	// 							type="text"
+	// 							id="firstName"
+	// 							{...register("firstName", {
+	// 								required: "FirstName is required",
+	// 							})}
+	// 						/>
+	// 					</InputContainer>
+	// 					<InputContainer>
+	// 						<InputLabel htmlFor="lastName">LastName </InputLabel>
+	// 						<InputField
+	// 							type="text"
+	// 							id="lastName"
+	// 							{...register("lastName", { required: "LastName is required" })}
+	// 						/>
+	// 					</InputContainer>
+	// 				</section>
+	// 				<InputContainer>
+	// 					<InputLabel htmlFor="password">Password </InputLabel>
+	// 					<InputField
+	// 						type="password"
+	// 						id="password"
+	// 						{...register("password", { required: "Password is required" })}
+	// 					/>
+	// 				</InputContainer>
 
-					<Button className={styles.btn}>Register</Button>
-					<div className={styles.user}>
-						<span>Already have an account ? </span>
-						<Link href="/dashboard/AuthenticationPage/LoginPage">Login</Link>
-					</div>
-				</form>
-			</div>
-		</div>
-	);
+	// 				<Button className={styles.btn}>Register</Button>
+	// 				<div className={styles.user}>
+	// 					<span>Already have an account ? </span>
+	// 					<Link href="/dashboard/AuthenticationPage/LoginPage">Login</Link>
+	// 				</div>
+	// 			</form>
+	// 		</div>
+	// 	</div>
+	// );
 };
 
 export default RegisterForm;

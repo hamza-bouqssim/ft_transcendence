@@ -25,6 +25,8 @@ class PongGame {
 	private bottomPaddle: any;
 	private rightRect: any;
 	private leftRect: any;
+	private centerCirle: any;
+	private separator: any;
 	private divWidth: number;
 	private divHeight: number;
 	private maxBallSpeed: number = 10;
@@ -34,6 +36,18 @@ class PongGame {
 	private handleKeyUp = (e: KeyboardEvent): void => {};
 	private handleCollisionStart = (): void => {};
 	private handleBeforeUpdate = (): void => {};
+	private handleSetVelocity = (data: any) => {
+		Body.setVelocity(this.ball, {
+			x: this.map(data.x, this.defaultCanvasSizes.width, this.divWidth),
+			y: this.map(data.y, this.defaultCanvasSizes.height, this.divHeight),
+		});
+	};
+	private handleSetPosition = (data: any) => {
+		Body.setPosition(this.ball, {
+			x: this.map(data.x, this.defaultCanvasSizes.width, this.divWidth),
+			y: this.map(data.y, this.defaultCanvasSizes.height, this.divHeight),
+		});
+	};
 	private defaultCanvasSizes: any = {
 		width: 560,
 		height: 836,
@@ -71,6 +85,7 @@ class PongGame {
 	constructor(
 		private parentDiv: HTMLDivElement,
 		private chosenMapIndex: number,
+		private display_name?: string,
 		private socket?: any,
 	) {
 		this.divWidth = this.parentDiv.getBoundingClientRect().width;
@@ -238,7 +253,7 @@ class PongGame {
 			},
 		);
 
-		const separator = Bodies.rectangle(
+		this.separator = Bodies.rectangle(
 			this.divWidth / 2,
 			this.divHeight / 2,
 			this.divWidth,
@@ -251,7 +266,7 @@ class PongGame {
 			},
 		);
 
-		const centerCirle = Bodies.circle(
+		this.centerCirle = Bodies.circle(
 			this.divWidth / 2,
 			this.divHeight / 2,
 			this.map(8, this.defaultCanvasSizes.width, this.divWidth),
@@ -266,8 +281,8 @@ class PongGame {
 		Composite.add(engine.world, [
 			this.topPaddle,
 			this.bottomPaddle,
-			separator,
-			centerCirle,
+			this.separator,
+			this.centerCirle,
 			this.ball,
 			this.rightRect,
 			this.leftRect,
@@ -397,25 +412,28 @@ class PongGame {
 	};
 
 	startGame = (): void => {
-		this.lunchGameInterval = setTimeout((): void => {
-			// run the engine
-			Runner.run(runner, engine);
-		}, 1000);
+		// this.lunchGameInterval = setTimeout((): void => {
+		// run the engine
+		Runner.run(runner, engine);
+		// }, 1000);
 	};
 
 	moveOnlineModeBall = (): void => {
-		this.socket.on("setBallVelocity", (data: any) => {
-			Body.setVelocity(this.ball, {
-				x: data.x,
-				y: data.y,
-			});
-		});
-		this.socket.on("updateBallPosition", (data: any) => {
-			Body.setPosition(this.ball, {
-				x: data.x,
-				y: data.y,
-			});
-		});
+		//  this.socket.on("setBallVelocity", (data: any) => {
+		// 	Body.setVelocity(this.ball, {
+		// 		x: this.map(data.x, this.defaultCanvasSizes.width, this.divWidth),
+		// 		y: this.map(data.y, this.defaultCanvasSizes.height, this.divHeight),
+		// 	});
+		// });
+		// this.socket.on("updateBallPosition", (data: any) => {
+		// 	Body.setPosition(this.ball, {
+		// 		x: this.map(data.x, this.defaultCanvasSizes.width, this.divWidth),
+		// 		y: this.map(data.y, this.defaultCanvasSizes.height, this.divHeight),
+		// 	});
+		// });
+
+		this.socket.on("setBallVelocity", this.handleSetVelocity);
+		this.socket.on("updateBallPosition", this.handleSetPosition);
 	};
 
 	setBotModeBall = (): void => {
@@ -450,11 +468,13 @@ class PongGame {
 			document.addEventListener("keydown", (e) => {
 				if (e.key === "d" || e.key === "ArrowRight")
 					this.socket.emit("keyevent", {
+						display_name: this.display_name,
 						key: e.key,
 						state: "keydown",
 					});
 				else if (e.key === "a" || e.key === "ArrowLeft")
 					this.socket.emit("keyevent", {
+						display_name: this.display_name,
 						key: e.key,
 						state: "keydown",
 					});
@@ -463,19 +483,33 @@ class PongGame {
 			document.addEventListener("keyup", (e) => {
 				if (e.key === "d" || e.key === "ArrowRight")
 					this.socket.emit("keyevent", {
+						display_name: this.display_name,
 						key: e.key,
 						state: "keyup",
 					});
 				else if (e.key === "a" || e.key === "ArrowLeft")
 					this.socket.emit("keyevent", {
+						display_name: this.display_name,
 						key: e.key,
 						state: "keyup",
 					});
 			});
 			this.socket.on("updatePaddlePosition", (data: any) => {
 				Body.setPosition(this.bottomPaddle, {
-					x: data.xPosition,
+					x: this.map(
+						data.xPosition1,
+						this.defaultCanvasSizes.width,
+						this.divWidth,
+					),
 					y: this.bottomPaddle.position.y,
+				});
+				Body.setPosition(this.topPaddle, {
+					x: this.map(
+						data.xPosition2,
+						this.defaultCanvasSizes.width,
+						this.divWidth,
+					),
+					y: this.topPaddle.position.y,
 				});
 			});
 		} else {
@@ -483,10 +517,8 @@ class PongGame {
 			let movingLeft = false;
 
 			this.handleKeyDown = (e: KeyboardEvent): void => {
-				if (e.key === "d" || e.key === "ArrowRight") {
-					console.log("event!");
-					movingRight = true;
-				} else if (e.key === "a" || e.key === "ArrowLeft") movingLeft = true;
+				if (e.key === "d" || e.key === "ArrowRight") movingRight = true;
+				else if (e.key === "a" || e.key === "ArrowLeft") movingLeft = true;
 			};
 
 			this.handleKeyUp = (e: KeyboardEvent): void => {
@@ -612,12 +644,14 @@ class PongGame {
 		};
 
 		displayBodies("before");
-		for (let body of engine.world.bodies) Composite.remove(engine.world, body);
-		// Composite.remove(engine.world, [
-		// 	this.bottomPaddle,
-		// 	this.ball,
-		// 	this.rightRect,
-		// ]);
+		Composite.remove(engine.world, this.topPaddle);
+		Composite.remove(engine.world, this.bottomPaddle);
+		Composite.remove(engine.world, this.rightRect);
+		Composite.remove(engine.world, this.leftRect);
+		Composite.remove(engine.world, this.ball);
+		Composite.remove(engine.world, this.centerCirle);
+		Composite.remove(engine.world, this.separator);
+
 		displayBodies("after");
 
 		// Remove Events:
@@ -630,7 +664,7 @@ class PongGame {
 		// Stop The Runner:
 		Runner.stop(runner);
 
-		this.render.canvas.remove();
+		this.render.canvas?.remove();
 		this.render.canvas = null;
 		this.render.context = null;
 		this.render.textures = {};
@@ -648,6 +682,8 @@ class PongGame {
 
 		// Close Socket!
 		if (this.socket) {
+			this.socket.off("setBallVelocity", this.handleSetVelocity);
+			this.socket.off("updateBallPosition", this.handleSetPosition);
 			clearInterval(this.moveInterval);
 			this.socket.disconnect();
 		}

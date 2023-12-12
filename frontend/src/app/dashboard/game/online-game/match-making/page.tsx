@@ -1,30 +1,54 @@
 "use client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserGroup } from "@fortawesome/free-solid-svg-icons";
-import InviteField from "../../../components/InviteField";
-import PlayerCard from "../../../components/PlayerCard";
-import { ChangeContext } from "../../layout";
-import { useEffect, useContext } from "react";
+import InviteField from "../../../../components/InviteField";
+import PlayerCard from "../../../../components/PlayerCard";
+import { ChangeContext } from "../../../layout";
+import { useEffect, useContext, useState, createContext } from "react";
 import { useRouter } from "next/navigation";
-import { SocketContext } from "../SocketContext";
+import { socketContext } from "@/app/utils/context/socketContext";
+import { useSearchParams } from "next/navigation";
+import { useGameSocket } from "@/app/providers/game-socket-provider";
 
 // const sleep = async (ms: number) =>
 // 	new Promise((resolve) => setTimeout(resolve, ms));
 
 const MatchMaking = () => {
+	const searchParams = useSearchParams();
+	const mapIndex: number = searchParams.get("mapIndex") as any;
 	const { change, setChange } = useContext(ChangeContext);
 	const router = useRouter();
-	const socket = useContext(SocketContext);
+	const gameSocket = useGameSocket();
+	const [opponentPlayer, setOpponentPlayer] = useState<{
+		username: string;
+		display_name: string;
+		avatar_url: string;
+	}>({
+		username: "",
+		display_name: "",
+		avatar_url: "/assets/unknown.png",
+	});
+
+	const { Userdata } = useContext<any>(socketContext);
 
 	useEffect(() => {
-		const listener = (data: any) => {
-			router.push(`./online-game/${data.idGame}`);
+		const handleStartGame = (payload: { idGame: string }) => {
+			router.push(`./match-making/${mapIndex}`);
 		};
-		socket.on("startGame", listener);
+		const handleKnowOpponent = (payload: any) => {
+			setOpponentPlayer(payload.opponent);
+
+			// router.push(`./maps/${mapIndex}/${payload.idGame}`);
+		};
+		console.log("setup start game event");
+		gameSocket.on("startGame", handleStartGame);
+		gameSocket.on("knowOpponent", handleKnowOpponent);
 		return () => {
-			socket.off("startGame", listener);
+			console.log("remove start game event");
+			gameSocket.off("startGame", handleStartGame);
+			gameSocket.off("knowOpponent", handleKnowOpponent);
 		};
-	}, [socket]);
+	}, []);
 
 	return (
 		<section className="relative mx-auto h-[100vh] py-4 text-white xl:container">
@@ -33,19 +57,21 @@ const MatchMaking = () => {
 				<div className="relative m-auto h-full w-full lg:mx-0 lg:w-[70%]">
 					<div className="relative h-[70%] w-full px-2">
 						<PlayerCard
-							name="Hamza BouQssim"
-							username="@hbouqssi"
-							img="/assets/hamza.png"
+							username={Userdata?.username}
+							display_name={Userdata?.display_name}
+							img={Userdata?.avatar_url}
 							additionalStyle="left-7 top-2"
 						/>
 						<h3 className="absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] font-['Whitney_BlackSc'] text-5xl font-bold sm:text-7xl lg:text-8xl min-[1750px]:text-9xl">
 							Vs
 						</h3>
 						<PlayerCard
-							name=""
-							username=""
-							img="/assets/unknown.png"
-							additionalStyle="right-7 bottom-2 animate-pulse"
+							username={opponentPlayer.username}
+							display_name={opponentPlayer.display_name}
+							img={opponentPlayer.avatar_url}
+							additionalStyle={`right-7 bottom-2 ${
+								opponentPlayer.username === "" ? "animate-pulse" : ""
+							} `}
 						/>
 					</div>
 				</div>
