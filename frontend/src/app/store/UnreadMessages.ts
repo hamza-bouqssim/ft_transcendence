@@ -1,10 +1,10 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { getConversationMessage, getUnreadMessages} from '../utils/api';
-import { ConversationMessage, messageTypes } from '../utils/types';
+import { ConversationMessage, messageTypes, messageUnread } from '../utils/types';
 import { Conversation } from '../utils/styles';
 
 export interface MessagesUnreadState {
-  messagesUnread: messageTypes[];
+  messagesUnread: messageUnread[];
   status: 'success' | 'failed' | 'idle' | 'loading'
   error : string | null;
 }
@@ -18,6 +18,7 @@ const initialState: MessagesUnreadState = {
 
 export const fetchMessagesUnreadThunk = createAsyncThunk('messagesUnread/fetch', async (ConversationId : string) => {
     const response = await getUnreadMessages(ConversationId);
+    console.log("number of count-->", response.data);
     return response.data;
   })
 export const markConversationAsRead = createAsyncThunk('AsReadMessage/fetch', async (id : string) =>{

@@ -117,7 +117,9 @@ export type FetchMessagePayload = {
     id: number;
     messages: MessageType[];
 };
-
+export type messageUnread = {
+    count : number;
+}
 export type messageTypes = {
     id : string;
     content : string;

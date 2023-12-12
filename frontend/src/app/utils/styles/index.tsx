@@ -412,7 +412,7 @@ export const MessageContainerStyle = styled.div `
     box-sizing: border-box;
     padding: 6px 0;
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     overflow-y: scroll;
     &::-webkit-scrollbar {
         width: 8px;

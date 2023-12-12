@@ -81,14 +81,14 @@ model ChatParticipents {
   id          String      @id @default(uuid())
   senderId    String
   recipientId String
-  vue Boolean  @default(false)
+  vue         Boolean     @default(false)
+  unreadMessageCount Int  @default(0)
   lastMessageId String?
-  createdAt DateTime @default(now())
-  recipient   User     @relation("recipient", fields: [recipientId], references: [id])
-  messages    Message[] @relation("participentsMessages")
-  lastMessage Message?   @relation("lastMessageSent", fields: [lastMessageId], references: [id])
-  sender      User     @relation("sender", fields: [senderId], references: [id])
-
+  createdAt   DateTime    @default(now())
+  recipient   User        @relation("recipient", fields: [recipientId], references: [id])
+  messages    Message[]   @relation("participentsMessages")
+  lastMessage Message?    @relation("lastMessageSent", fields: [lastMessageId], references: [id])
+  sender      User        @relation("sender", fields: [senderId], references: [id])
 }
 
 model Message {

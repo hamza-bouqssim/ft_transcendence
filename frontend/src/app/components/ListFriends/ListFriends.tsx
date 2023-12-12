@@ -19,10 +19,21 @@ import 'react-toastify/dist/ReactToastify.css';
 
 
 const ListFriends = () => {
-  const ToastFunction = (message : any) => {
+  const ToastError = (message: any) => {
 		toast.error(message, {
 		  position: toast.POSITION.TOP_RIGHT,
-		  autoClose: 5000, // You can customize the duration
+		  autoClose: 5000,
+		  hideProgressBar: false,
+		  closeOnClick: true,
+		  pauseOnHover: true,
+		  draggable: true,
+		});
+	  };
+	
+	  const ToastSuccess = (message: any) => {
+		toast.success(message, {
+		  position: toast.POSITION.TOP_RIGHT,
+		  autoClose: 5000,
 		  hideProgressBar: false,
 		  closeOnClick: true,
 		  pauseOnHover: true,
@@ -71,10 +82,10 @@ const ListFriends = () => {
       
         try {
           await dispatch(fetchBlockFriendThunk(id));
-            ToastFunction("You have blocked this friend successfully");
+            ToastSuccess("You have blocked this friend successfully");
 
         } catch (error) {
-          ToastFunction("Failed to block the friend. Please try again");
+          ToastError("Failed to block the friend. Please try again");
 
         }
 
@@ -101,7 +112,7 @@ const ListFriends = () => {
 				          />
       
                 {openMenuId === elem.id &&
-                <div className={`absolute  top-10 left-2 h-[120px]  w-[200px] flex-col items-center justify-center gap-1 rounded-[15px] border-2 border-solid border-[#000000] bg-white font-['Whitney_Semibold'] `}>
+                <div className={`absolute  top-[-120px] left-2 h-[120px]  w-[200px] flex-col items-center justify-center gap-1 rounded-[15px] border-2 border-solid border-[#000000] bg-white font-['Whitney_Semibold'] `}>
 					        <button className={`bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`}>see profile</button>
 					        <button className={` bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`}>send message</button>
                   <button className={` bg-[#EA7F87] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} value="Bloque" onClick={()=> handlleBloque(elem.id)}>Bloque</button>

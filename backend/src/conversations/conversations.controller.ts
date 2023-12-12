@@ -61,8 +61,9 @@ async markConversationAsRead(@Param('id') id: string) {
   await this.conversationService.markConversationAsRead(id);
 }
 
-@Get('unread-messages')
+@Post('unread-messages')
 async getUnreadMessages(@Body() request: {conversationId : string}) {
+    console.log("enter here-->");
   const unreadMessages = await this.conversationService.findUnreadMessages(request.conversationId);
   return unreadMessages;
 }
