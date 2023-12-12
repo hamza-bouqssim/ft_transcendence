@@ -20,44 +20,51 @@ const engine = Engine.create({
 const runner: any = Runner.create();
 
 class PongGame {
-	private ball: any;
-	private topPaddle: any;
-	private bottomPaddle: any;
-	private rightRect: any;
-	private leftRect: any;
-	private centerCirle: any;
-	private separator: any;
+	private ball: Body | undefined;
+	private topPaddle: Body | undefined;
+	private bottomPaddle: Body | undefined;
+	private rightRect: Body | undefined;
+	private leftRect: Body | undefined;
+	private centerCirle: Body | undefined;
+	private separator: Body | undefined;
+	private topLeftObstacle: Body | undefined;
+	private topRightObstacle: Body | undefined;
+	private bottomLeftObstacle: Body | undefined;
+	private bottomRightObstacle: Body | undefined;
+	private verticalObstacle1: Body | undefined;
+	private verticalObstacle2: Body | undefined;
+	private verticalObstacle3: Body | undefined;
+	private verticalObstacle4: Body | undefined;
 	private divWidth: number;
 	private divHeight: number;
-	private maxBallSpeed: number = 10;
-	private currentBallSpeed: any = {
+	private currentBallVelocity: {
+		x: number;
+		y: number;
+	} = {
 		x: 0,
 		y: 0,
 	};
-	private moveInterval: any;
+	private lastDirection: string = "top";
+	private moveInterval: NodeJS.Timer | undefined;
 	// private lunchGameInterval: any;
-	private updatePositionInterval: any;
+	private updatePositionInterval: NodeJS.Timer | undefined;
 	private handleKeyDown = (e: KeyboardEvent): void => {};
 	private handleKeyUp = (e: KeyboardEvent): void => {};
 	private handleCollisionStart = (e: any): void => {};
 	private handleBeforeUpdate = (): void => {};
-	private handleSetVelocity = (data: any) => {
-		Body.setVelocity(this.ball, {
-			x: this.map(data.x, this.defaultCanvasSizes.width, this.divWidth),
-			y: this.map(data.y, this.defaultCanvasSizes.height, this.divHeight),
-		});
-	};
-	private handleSetPosition = (data: any) => {
-		Body.setPosition(this.ball, {
-			x: this.map(data.x, this.defaultCanvasSizes.width, this.divWidth),
-			y: this.map(data.y, this.defaultCanvasSizes.height, this.divHeight),
-		});
-	};
-	private defaultCanvasSizes: any = {
+	private handleSetVelocity = (data: any) => {};
+	private handleSetPosition = (data: any) => {};
+	private defaultCanvasSizes: {
+		width: number;
+		height: number;
+	} = {
 		width: 560,
 		height: 836,
 	};
-	private paddleSizes: any = {
+	private paddleSizes: {
+		width: number;
+		height: number;
+	} = {
 		width: 170,
 		height: 15,
 	};
@@ -68,17 +75,21 @@ class PongGame {
 	): number => {
 		return (inputSize * currentCanvasSize) / defaultCanvasSize;
 	};
-	private render: any;
+	private render: Render;
 	playerScore: number = 0;
 	botScore: number = 0;
-	private sound = {
+	private sound: {
+		topPaddleSound: Howl;
+		bottomPaddleSound: Howl;
+		goal: Howl;
+	} = {
 		topPaddleSound: new Howl({
 			src: ["/assets/sounds/leftPaddle.mp3"],
 		}),
 		bottomPaddleSound: new Howl({
 			src: ["/assets/sounds/rightPaddle.mp3"],
 		}),
-		win: new Howl({
+		goal: new Howl({
 			src: ["/assets/sounds/winSound.mp3"],
 		}),
 	};
@@ -106,14 +117,14 @@ class PongGame {
 			),
 		};
 
-		this.currentBallSpeed = {
+		this.currentBallVelocity = {
 			x: this.map(
-				this.currentBallSpeed.x,
+				this.currentBallVelocity.x,
 				this.defaultCanvasSizes.width,
 				this.divWidth,
 			),
 			y: this.map(
-				this.currentBallSpeed.y,
+				this.currentBallVelocity.y,
 				this.defaultCanvasSizes.height,
 				this.divHeight,
 			),
@@ -124,11 +135,11 @@ class PongGame {
 
 		switch (this.chosenMapIndex) {
 			case 1:
-				this.gameWithCircleObstacles();
+				this.gameCircleObstacles();
 				break;
 
 			case 2:
-				this.gameWithVerticalObstacles();
+				this.gameVerticalObstacles();
 				break;
 		}
 
@@ -292,8 +303,8 @@ class PongGame {
 		]);
 	};
 
-	gameWithCircleObstacles = (): void => {
-		const topLeftObstacle = Bodies.circle(
+	gameCircleObstacles = (): void => {
+		this.topLeftObstacle = Bodies.circle(
 			this.divWidth / 4,
 			this.divHeight / 4,
 			this.map(50, this.defaultCanvasSizes.width, this.divWidth),
@@ -305,7 +316,7 @@ class PongGame {
 			},
 		);
 
-		const topRightObstacle = Bodies.circle(
+		this.topRightObstacle = Bodies.circle(
 			(3 * this.divWidth) / 4,
 			this.divHeight / 4,
 			this.map(40, this.defaultCanvasSizes.width, this.divWidth),
@@ -317,7 +328,7 @@ class PongGame {
 			},
 		);
 
-		const bottomRightObstacle = Bodies.circle(
+		this.bottomRightObstacle = Bodies.circle(
 			(3 * this.divWidth) / 4,
 			(3 * this.divHeight) / 4,
 			this.map(50, this.defaultCanvasSizes.width, this.divWidth),
@@ -329,7 +340,7 @@ class PongGame {
 			},
 		);
 
-		const bottomLeftObstacle = Bodies.circle(
+		this.bottomLeftObstacle = Bodies.circle(
 			this.divWidth / 4,
 			(3 * this.divHeight) / 4,
 			this.map(40, this.defaultCanvasSizes.width, this.divWidth),
@@ -342,15 +353,15 @@ class PongGame {
 		);
 
 		Composite.add(engine.world, [
-			topLeftObstacle,
-			topRightObstacle,
-			bottomLeftObstacle,
-			bottomRightObstacle,
+			this.topLeftObstacle,
+			this.topRightObstacle,
+			this.bottomLeftObstacle,
+			this.bottomRightObstacle,
 		]);
 	};
 
-	gameWithVerticalObstacles = (): void => {
-		const verticalObstacle1 = Bodies.rectangle(
+	gameVerticalObstacles = (): void => {
+		this.verticalObstacle1 = Bodies.rectangle(
 			this.divWidth -
 				this.map(65, this.defaultCanvasSizes.width, this.divWidth),
 			this.divHeight / 5,
@@ -364,7 +375,7 @@ class PongGame {
 			},
 		);
 
-		const verticalObstacle2 = Bodies.rectangle(
+		this.verticalObstacle2 = Bodies.rectangle(
 			this.divWidth / 2,
 			this.divHeight / 3,
 			this.map(15, this.defaultCanvasSizes.width, this.divWidth),
@@ -377,7 +388,7 @@ class PongGame {
 			},
 		);
 
-		const verticalObstacle3 = Bodies.rectangle(
+		this.verticalObstacle3 = Bodies.rectangle(
 			this.map(65, this.defaultCanvasSizes.width, this.divWidth),
 			(2 * this.divHeight) / 3,
 			this.map(15, this.defaultCanvasSizes.width, this.divWidth),
@@ -390,7 +401,7 @@ class PongGame {
 			},
 		);
 
-		const verticalObstacle4 = Bodies.rectangle(
+		this.verticalObstacle4 = Bodies.rectangle(
 			this.divWidth -
 				this.map(65, this.defaultCanvasSizes.width, this.divWidth),
 			(4 * this.divHeight) / 5,
@@ -405,10 +416,10 @@ class PongGame {
 		);
 
 		Composite.add(engine.world, [
-			verticalObstacle1,
-			verticalObstacle2,
-			verticalObstacle3,
-			verticalObstacle4,
+			this.verticalObstacle1,
+			this.verticalObstacle2,
+			this.verticalObstacle3,
+			this.verticalObstacle4,
 		]);
 	};
 
@@ -420,32 +431,39 @@ class PongGame {
 	};
 
 	moveOnlineModeBall = (): void => {
-		//  this.socket.on("setBallVelocity", (data: any) => {
-		// 	Body.setVelocity(this.ball, {
-		// 		x: this.map(data.x, this.defaultCanvasSizes.width, this.divWidth),
-		// 		y: this.map(data.y, this.defaultCanvasSizes.height, this.divHeight),
-		// 	});
-		// });
-		// this.socket.on("updateBallPosition", (data: any) => {
-		// 	Body.setPosition(this.ball, {
-		// 		x: this.map(data.x, this.defaultCanvasSizes.width, this.divWidth),
-		// 		y: this.map(data.y, this.defaultCanvasSizes.height, this.divHeight),
-		// 	});
-		// });
+		this.handleSetVelocity = (data: any) => {
+			Body.setVelocity(this.ball!, {
+				x: this.map(data.x, this.defaultCanvasSizes.width, this.divWidth),
+				y: this.map(data.y, this.defaultCanvasSizes.height, this.divHeight),
+			});
+		};
+		this.handleSetPosition = (data: any) => {
+			Body.setPosition(this.ball!, {
+				x: this.map(data.x, this.defaultCanvasSizes.width, this.divWidth),
+				y: this.map(data.y, this.defaultCanvasSizes.height, this.divHeight),
+			});
+		};
 
 		this.socket.on("setBallVelocity", this.handleSetVelocity);
 		this.socket.on("updateBallPosition", this.handleSetPosition);
 	};
 
 	setBotModeBall = (): void => {
-		this.currentBallSpeed = {
-			x: 4,
-			y: 4,
-		};
+		if (this.lastDirection === "top") {
+			this.currentBallVelocity = {
+				x: -4,
+				y: -4,
+			};
+		} else {
+			this.currentBallVelocity = {
+				x: 4,
+				y: 4,
+			};
+		}
 
-		Body.setVelocity(this.ball, {
-			x: this.currentBallSpeed.x,
-			y: this.currentBallSpeed.y,
+		Body.setVelocity(this.ball!, {
+			x: this.currentBallVelocity.x,
+			y: this.currentBallVelocity.y,
 		});
 	};
 
@@ -481,21 +499,21 @@ class PongGame {
 					});
 			});
 			this.socket.on("updatePaddlePosition", (data: any) => {
-				Body.setPosition(this.bottomPaddle, {
+				Body.setPosition(this.bottomPaddle!, {
 					x: this.map(
 						data.xPosition1,
 						this.defaultCanvasSizes.width,
 						this.divWidth,
 					),
-					y: this.bottomPaddle.position.y,
+					y: this.bottomPaddle!.position.y,
 				});
-				Body.setPosition(this.topPaddle, {
+				Body.setPosition(this.topPaddle!, {
 					x: this.map(
 						data.xPosition2,
 						this.defaultCanvasSizes.width,
 						this.divWidth,
 					),
-					y: this.topPaddle.position.y,
+					y: this.topPaddle!.position.y,
 				});
 			});
 		} else {
@@ -521,25 +539,25 @@ class PongGame {
 
 				if (movingLeft) {
 					stepX =
-						this.bottomPaddle.position.x -
+						this.bottomPaddle!.position.x -
 						this.map(11, this.defaultCanvasSizes.width, this.divWidth);
 					if (stepX <= this.paddleSizes.width / 2) {
 						stepX = this.paddleSizes.width / 2;
 					}
-					Body.setPosition(this.bottomPaddle, {
+					Body.setPosition(this.bottomPaddle!, {
 						x: stepX,
-						y: this.bottomPaddle.position.y,
+						y: this.bottomPaddle!.position.y,
 					});
 				} else if (movingRight) {
 					stepX =
-						this.bottomPaddle.position.x +
+						this.bottomPaddle!.position.x +
 						this.map(11, this.defaultCanvasSizes.width, this.divWidth);
 					if (stepX >= this.divWidth - this.paddleSizes.width / 2) {
 						stepX = this.divWidth - this.paddleSizes.width / 2;
 					}
-					Body.setPosition(this.bottomPaddle, {
+					Body.setPosition(this.bottomPaddle!, {
 						x: stepX,
-						y: this.bottomPaddle.position.y,
+						y: this.bottomPaddle!.position.y,
 					});
 				}
 			}, 10);
@@ -548,7 +566,7 @@ class PongGame {
 
 	resetToDefaultPosition() {
 		// Reset Ball Position
-		Body.setPosition(this.ball, {
+		Body.setPosition(this.ball!, {
 			x: this.divWidth / 2,
 			y: this.divHeight / 2,
 		});
@@ -557,7 +575,7 @@ class PongGame {
 		this.setBotModeBall();
 
 		// Reset Paddles Position
-		Body.setPosition(this.bottomPaddle, {
+		Body.setPosition(this.bottomPaddle!, {
 			x: this.divWidth / 2,
 			y:
 				this.divHeight -
@@ -565,49 +583,49 @@ class PongGame {
 		});
 	}
 
-	setBallSpeed = (): void => {
-		// this.currentBallSpeed = {
-		// 	x: (this.currentBallSpeed.x += 0.5),
-		// 	y: (this.currentBallSpeed.y += 0.5),
-		// };
+	setBallVelocity = (): void => {
+		// Limit Velocity Value
 
-		// Body.setVelocity(this.ball, {
-		// 	x: 10,
-		// 	y: 10,
-		// });
+		if (this.currentBallVelocity.y >= 10 || this.currentBallVelocity.y >= -10)
+			return;
+		else if (this.lastDirection === "top") {
+			this.currentBallVelocity.y -= this.map(
+				0.5,
+				this.defaultCanvasSizes.height,
+				this.divHeight,
+			);
+		} else {
+			this.currentBallVelocity.y += this.map(
+				0.5,
+				this.defaultCanvasSizes.height,
+				this.divHeight,
+			);
+		}
 
-		// Limit the ball's speed
-		if (
-			this.currentBallSpeed.x < this.maxBallSpeed &&
-			this.currentBallSpeed.y < this.maxBallSpeed
-		)
-			Body.setVelocity(this.ball, {
-				x: this.ball.velocity.x,
-				y: (this.currentBallSpeed.y += this.map(
-					0.5,
-					this.defaultCanvasSizes.height,
-					this.divHeight,
-				)),
-			});
+		Body.setVelocity(this.ball!, {
+			x: this.ball!.velocity.x,
+			y: this.currentBallVelocity.y,
+		});
 	};
 
 	moveBotPaddle = (): void => {
 		// Update random position after 3 seconds
+
 		this.updatePositionInterval = setInterval(() => {
 			let currentPositionX =
 				Math.floor(
 					Math.random() * (this.divWidth - this.paddleSizes.width) +
 						this.paddleSizes.width / 2,
-				) + this.currentBallSpeed.x;
+				) + this.currentBallVelocity.x;
 
 			if (currentPositionX > this.divWidth - this.paddleSizes.width / 2)
 				currentPositionX = this.divWidth - this.paddleSizes.width / 2;
 			else if (currentPositionX < this.paddleSizes.width / 2)
 				currentPositionX = this.paddleSizes.width / 2;
 
-			Body.setPosition(this.topPaddle, {
+			Body.setPosition(this.topPaddle!, {
 				x: currentPositionX,
-				y: this.topPaddle.position.y,
+				y: this.topPaddle!.position.y,
 			});
 		}, 100);
 
@@ -616,13 +634,13 @@ class PongGame {
 
 			if (pairs.bodyA === this.topPaddle || pairs.bodyB === this.topPaddle) {
 				this.sound.topPaddleSound.play();
-				this.setBallSpeed();
+				this.setBallVelocity();
 			} else if (
 				pairs.bodyA === this.bottomPaddle ||
 				pairs.bodyB === this.bottomPaddle
 			) {
 				this.sound.bottomPaddleSound.play();
-				this.setBallSpeed();
+				this.setBallVelocity();
 			}
 		};
 
@@ -641,13 +659,17 @@ class PongGame {
 	calcScore = (): void => {
 		this.handleBeforeUpdate = () => {
 			if (
-				this.ball.position.y > this.bottomPaddle.position.y ||
-				this.ball.position.y < this.topPaddle.position.y
+				this.ball!.position.y > this.bottomPaddle!.position.y ||
+				this.ball!.position.y < this.topPaddle!.position.y
 			) {
-				this.ball.position.y > this.bottomPaddle.position.y
-					? this.botScore++
-					: this.playerScore++;
-				this.sound.win.play();
+				if (this.ball!.position.y > this.bottomPaddle!.position.y) {
+					this.botScore++;
+					this.lastDirection = "bottom";
+				} else {
+					this.playerScore++;
+					this.lastDirection = "top";
+				}
+				this.sound.goal.play();
 				this.resetToDefaultPosition();
 			}
 		};
@@ -656,22 +678,38 @@ class PongGame {
 	};
 
 	clear = (): void => {
-		// const displayBodies = (str: string) => {
-		// 	console.log(str);
-		// 	for (let body of engine.world.bodies) console.log(body);
-		// };
+		const displayBodies = (str: string) => {
+			console.log(str);
+			for (let body of engine.world.bodies) console.log(body);
+		};
 
-		// displayBodies("before");
+		displayBodies("before");
 
-		Composite.remove(engine.world, this.topPaddle);
-		Composite.remove(engine.world, this.bottomPaddle);
-		Composite.remove(engine.world, this.rightRect);
-		Composite.remove(engine.world, this.leftRect);
-		Composite.remove(engine.world, this.ball);
-		Composite.remove(engine.world, this.centerCirle);
-		Composite.remove(engine.world, this.separator);
+		// Remove Basic Bodies In Default Map
+		Composite.remove(engine.world, this.topPaddle!);
+		Composite.remove(engine.world, this.bottomPaddle!);
+		Composite.remove(engine.world, this.rightRect!);
+		Composite.remove(engine.world, this.leftRect!);
+		Composite.remove(engine.world, this.ball!);
+		Composite.remove(engine.world, this.centerCirle!);
+		Composite.remove(engine.world, this.separator!);
 
-		// displayBodies("after");
+		// Remove Obstacles For Map 2
+		if (this.chosenMapIndex === 1) {
+			console.log("index 1 chosen");
+			Composite.remove(engine.world, this.topLeftObstacle!);
+			Composite.remove(engine.world, this.topRightObstacle!);
+			Composite.remove(engine.world, this.bottomLeftObstacle!);
+			Composite.remove(engine.world, this.bottomRightObstacle!);
+		} else if (this.chosenMapIndex === 2) {
+			console.log("index 1 chosen");
+			Composite.remove(engine.world, this.verticalObstacle1!);
+			Composite.remove(engine.world, this.verticalObstacle2!);
+			Composite.remove(engine.world, this.verticalObstacle3!);
+			Composite.remove(engine.world, this.verticalObstacle4!);
+		}
+
+		displayBodies("after");
 
 		// Remove Events:
 		Events.off(engine, "collisionStart", this.handleCollisionStart);
@@ -685,8 +723,8 @@ class PongGame {
 		Runner.stop(runner);
 
 		this.render.canvas?.remove();
-		this.render.canvas = null;
-		this.render.context = null;
+		this.render.canvas = null!;
+		this.render.context = null!;
 		this.render.textures = {};
 
 		// Stop The Render:
