@@ -31,15 +31,15 @@ class PongGame {
 	private divHeight: number;
 	private maxBallSpeed: number = 10;
 	private currentBallSpeed: any = {
-		x: 4,
-		y: 4,
+		x: 0,
+		y: 0,
 	};
 	private moveInterval: any;
 	// private lunchGameInterval: any;
 	private updatePositionInterval: any;
 	private handleKeyDown = (e: KeyboardEvent): void => {};
 	private handleKeyUp = (e: KeyboardEvent): void => {};
-	private handleCollisionStart = (): void => {};
+	private handleCollisionStart = (e: any): void => {};
 	private handleBeforeUpdate = (): void => {};
 	private handleSetVelocity = (data: any) => {
 		Body.setVelocity(this.ball, {
@@ -438,6 +438,11 @@ class PongGame {
 	};
 
 	setBotModeBall = (): void => {
+		this.currentBallSpeed = {
+			x: 4,
+			y: 4,
+		};
+
 		Body.setVelocity(this.ball, {
 			x: this.currentBallSpeed.x,
 			y: this.currentBallSpeed.y,
@@ -548,6 +553,9 @@ class PongGame {
 			y: this.divHeight / 2,
 		});
 
+		// Reset Ball Speed
+		this.setBotModeBall();
+
 		// Reset Paddles Position
 		Body.setPosition(this.bottomPaddle, {
 			x: this.divWidth / 2,
@@ -558,33 +566,29 @@ class PongGame {
 	}
 
 	setBallSpeed = (): void => {
-		this.currentBallSpeed = {
-			x: (this.currentBallSpeed.x += 0.5),
-			y: (this.currentBallSpeed.y += 0.5),
-		};
+		// this.currentBallSpeed = {
+		// 	x: (this.currentBallSpeed.x += 0.5),
+		// 	y: (this.currentBallSpeed.y += 0.5),
+		// };
 
-		Body.setVelocity(this.ball, {
-			x: 10,
-			y: 10,
-		});
+		// Body.setVelocity(this.ball, {
+		// 	x: 10,
+		// 	y: 10,
+		// });
 
 		// Limit the ball's speed
-		// if (
-		// 	this.currentBallSpeed.x < this.maxBallSpeed &&
-		// 	this.currentBallSpeed.y < this.maxBallSpeed
-		// )
-		// 	Body.setVelocity(this.ball, {
-		// 		x: (this.currentBallSpeed.x += this.map(
-		// 			0.5,
-		// 			this.defaultCanvasSizes.width,
-		// 			this.divWidth,
-		// 		)),
-		// 		y: (this.currentBallSpeed.y += this.map(
-		// 			0.5,
-		// 			this.defaultCanvasSizes.height,
-		// 			this.divHeight,
-		// 		)),
-		// 	});
+		if (
+			this.currentBallSpeed.x < this.maxBallSpeed &&
+			this.currentBallSpeed.y < this.maxBallSpeed
+		)
+			Body.setVelocity(this.ball, {
+				x: this.ball.velocity.x,
+				y: (this.currentBallSpeed.y += this.map(
+					0.5,
+					this.defaultCanvasSizes.height,
+					this.divHeight,
+				)),
+			});
 	};
 
 	moveBotPaddle = (): void => {
@@ -605,24 +609,21 @@ class PongGame {
 				x: currentPositionX,
 				y: this.topPaddle.position.y,
 			});
-		}, 1000);
+		}, 100);
 
-		this.handleCollisionStart = (): void => {
-			console.log("handlecolisionstart");
-			(e: any) => {
-				const pairs = e.pairs[0];
+		this.handleCollisionStart = (e: any): void => {
+			const pairs = e.pairs[0];
 
-				if (pairs.bodyA === this.topPaddle || pairs.bodyB === this.topPaddle) {
-					this.sound.topPaddleSound.play();
-					this.setBallSpeed();
-				} else if (
-					pairs.bodyA === this.bottomPaddle ||
-					pairs.bodyB === this.bottomPaddle
-				) {
-					this.sound.bottomPaddleSound.play();
-					this.setBallSpeed();
-				}
-			};
+			if (pairs.bodyA === this.topPaddle || pairs.bodyB === this.topPaddle) {
+				this.sound.topPaddleSound.play();
+				this.setBallSpeed();
+			} else if (
+				pairs.bodyA === this.bottomPaddle ||
+				pairs.bodyB === this.bottomPaddle
+			) {
+				this.sound.bottomPaddleSound.play();
+				this.setBallSpeed();
+			}
 		};
 
 		Events.on(engine, "collisionStart", this.handleCollisionStart);
@@ -655,12 +656,13 @@ class PongGame {
 	};
 
 	clear = (): void => {
-		const displayBodies = (str: string) => {
-			console.log(str);
-			for (let body of engine.world.bodies) console.log(body);
-		};
+		// const displayBodies = (str: string) => {
+		// 	console.log(str);
+		// 	for (let body of engine.world.bodies) console.log(body);
+		// };
 
-		displayBodies("before");
+		// displayBodies("before");
+
 		Composite.remove(engine.world, this.topPaddle);
 		Composite.remove(engine.world, this.bottomPaddle);
 		Composite.remove(engine.world, this.rightRect);
@@ -669,7 +671,7 @@ class PongGame {
 		Composite.remove(engine.world, this.centerCirle);
 		Composite.remove(engine.world, this.separator);
 
-		displayBodies("after");
+		// displayBodies("after");
 
 		// Remove Events:
 		Events.off(engine, "collisionStart", this.handleCollisionStart);
