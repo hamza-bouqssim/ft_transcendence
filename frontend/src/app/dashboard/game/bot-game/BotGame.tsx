@@ -26,6 +26,7 @@ const BotGame = ({ mapIndex }: any) => {
 
 	useEffect(() => {
 		let timerInterval: any;
+		let scoreInterval: any;
 
 		Swal.fire({
 			title: "Game Will Start In",
@@ -56,7 +57,7 @@ const BotGame = ({ mapIndex }: any) => {
 			setStartGame((prev: any) => !prev);
 			pongRef.current = new PongGame(parentCanvasRef.current!, mapIndex);
 
-			const scoreInterval = setInterval(() => {
+			scoreInterval = setInterval(() => {
 				if (
 					pongRef.current.botScore === 8 ||
 					pongRef.current.playerScore === 8
@@ -76,7 +77,10 @@ const BotGame = ({ mapIndex }: any) => {
 			}, 10);
 		});
 
-		return () => pongRef.current?.clear();
+		return () => {
+			pongRef.current?.clear();
+			clearInterval(scoreInterval);
+		};
 	}, []);
 
 	return (
