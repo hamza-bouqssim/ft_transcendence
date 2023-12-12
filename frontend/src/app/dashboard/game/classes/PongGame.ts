@@ -30,8 +30,13 @@ class PongGame {
 	private divWidth: number;
 	private divHeight: number;
 	private maxBallSpeed: number = 10;
+	private currentBallSpeed: any = {
+		x: 4,
+		y: 4,
+	};
 	private moveInterval: any;
-	private lunchGameInterval: any;
+	// private lunchGameInterval: any;
+	private updatePositionInterval: any;
 	private handleKeyDown = (e: KeyboardEvent): void => {};
 	private handleKeyUp = (e: KeyboardEvent): void => {};
 	private handleCollisionStart = (): void => {};
@@ -76,10 +81,6 @@ class PongGame {
 		win: new Howl({
 			src: ["/assets/sounds/winSound.mp3"],
 		}),
-	};
-	private currentBallSpeed: any = {
-		x: 4,
-		y: 4,
 	};
 
 	constructor(
@@ -443,26 +444,6 @@ class PongGame {
 		});
 	};
 
-	// setBallSpeed = (): void => {
-	// 	// Limit the ball's speed
-	// 	if (
-	// 		this.currentBallSpeed.x < this.maxBallSpeed &&
-	// 		this.currentBallSpeed.y < this.maxBallSpeed
-	// 	)
-	// 		Body.setVelocity(this.ball, {
-	// 			x: (this.currentBallSpeed.x += this.map(
-	// 				0.2,
-	// 				this.defaultCanvasSizes.width,
-	// 				this.divWidth,
-	// 			)),
-	// 			y: (this.currentBallSpeed.y += this.map(
-	// 				0.2,
-	// 				this.defaultCanvasSizes.height,
-	// 				this.divHeight,
-	// 			)),
-	// 		});
-	// };
-
 	movePaddle = (): void => {
 		if (this.socket) {
 			document.addEventListener("keydown", (e) => {
@@ -576,20 +557,70 @@ class PongGame {
 		});
 	}
 
+	setBallSpeed = (): void => {
+		this.currentBallSpeed = {
+			x: (this.currentBallSpeed.x += 0.5),
+			y: (this.currentBallSpeed.y += 0.5),
+		};
+
+		Body.setVelocity(this.ball, {
+			x: 10,
+			y: 10,
+		});
+
+		// Limit the ball's speed
+		// if (
+		// 	this.currentBallSpeed.x < this.maxBallSpeed &&
+		// 	this.currentBallSpeed.y < this.maxBallSpeed
+		// )
+		// 	Body.setVelocity(this.ball, {
+		// 		x: (this.currentBallSpeed.x += this.map(
+		// 			0.5,
+		// 			this.defaultCanvasSizes.width,
+		// 			this.divWidth,
+		// 		)),
+		// 		y: (this.currentBallSpeed.y += this.map(
+		// 			0.5,
+		// 			this.defaultCanvasSizes.height,
+		// 			this.divHeight,
+		// 		)),
+		// 	});
+	};
+
 	moveBotPaddle = (): void => {
+		// Update random position after 3 seconds
+		this.updatePositionInterval = setInterval(() => {
+			let currentPositionX =
+				Math.floor(
+					Math.random() * (this.divWidth - this.paddleSizes.width) +
+						this.paddleSizes.width / 2,
+				) + this.currentBallSpeed.x;
+
+			if (currentPositionX > this.divWidth - this.paddleSizes.width / 2)
+				currentPositionX = this.divWidth - this.paddleSizes.width / 2;
+			else if (currentPositionX < this.paddleSizes.width / 2)
+				currentPositionX = this.paddleSizes.width / 2;
+
+			Body.setPosition(this.topPaddle, {
+				x: currentPositionX,
+				y: this.topPaddle.position.y,
+			});
+		}, 1000);
+
 		this.handleCollisionStart = (): void => {
+			console.log("handlecolisionstart");
 			(e: any) => {
 				const pairs = e.pairs[0];
 
 				if (pairs.bodyA === this.topPaddle || pairs.bodyB === this.topPaddle) {
 					this.sound.topPaddleSound.play();
-					// this.setBallSpeed();
+					this.setBallSpeed();
 				} else if (
 					pairs.bodyA === this.bottomPaddle ||
 					pairs.bodyB === this.bottomPaddle
 				) {
 					this.sound.bottomPaddleSound.play();
-					// this.setBallSpeed();
+					this.setBallSpeed();
 				}
 			};
 		};
@@ -608,30 +639,16 @@ class PongGame {
 
 	calcScore = (): void => {
 		this.handleBeforeUpdate = () => {
-			let currentPositionX = this.ball.position.x;
-
-			if (this.ball.position.y > this.bottomPaddle.position.y) {
-				this.botScore++;
+			if (
+				this.ball.position.y > this.bottomPaddle.position.y ||
+				this.ball.position.y < this.topPaddle.position.y
+			) {
+				this.ball.position.y > this.bottomPaddle.position.y
+					? this.botScore++
+					: this.playerScore++;
 				this.sound.win.play();
 				this.resetToDefaultPosition();
 			}
-
-			if (
-				this.topPaddle.position.x + this.paddleSizes.width / 2 >=
-					this.divWidth &&
-				this.ball.position.x >= this.divWidth - this.paddleSizes.width / 2
-			)
-				currentPositionX = this.divWidth - this.paddleSizes.width / 2;
-			else if (
-				this.topPaddle.position.x - this.paddleSizes.width / 2 <= 0 &&
-				this.ball.position.x <= this.paddleSizes.width / 2
-			)
-				currentPositionX = this.paddleSizes.width / 2;
-
-			Body.setPosition(this.topPaddle, {
-				x: currentPositionX,
-				y: this.topPaddle.position.y,
-			});
 		};
 
 		Events.on(engine, "beforeUpdate", this.handleBeforeUpdate);
@@ -659,7 +676,8 @@ class PongGame {
 		Events.off(engine, "beforeUpdate", this.handleBeforeUpdate);
 
 		// clearTimeout Of Paddle Game Runner:
-		clearTimeout(this.lunchGameInterval);
+		// clearTimeout(this.lunchGameInterval);
+		clearInterval(this.updatePositionInterval);
 
 		// Stop The Runner:
 		Runner.stop(runner);
