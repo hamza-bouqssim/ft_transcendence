@@ -117,19 +117,6 @@ class PongGame {
 			),
 		};
 
-		this.currentBallVelocity = {
-			x: this.map(
-				this.currentBallVelocity.x,
-				this.defaultCanvasSizes.width,
-				this.divWidth,
-			),
-			y: this.map(
-				this.currentBallVelocity.y,
-				this.defaultCanvasSizes.height,
-				this.divHeight,
-			),
-		};
-
 		// This Function Will Run In All Maps:
 		this.defaultGameMap();
 
@@ -451,13 +438,13 @@ class PongGame {
 	setBotModeBall = (): void => {
 		if (this.lastDirection === "top") {
 			this.currentBallVelocity = {
-				x: -4,
-				y: -4,
+				x: this.map(-4, this.defaultCanvasSizes.width, this.divWidth),
+				y: this.map(-4, this.defaultCanvasSizes.height, this.divHeight),
 			};
 		} else {
 			this.currentBallVelocity = {
-				x: 4,
-				y: 4,
+				x: this.map(4, this.defaultCanvasSizes.width, this.divWidth),
+				y: this.map(4, this.defaultCanvasSizes.height, this.divHeight),
 			};
 		}
 
@@ -586,17 +573,18 @@ class PongGame {
 	setBallVelocity = (): void => {
 		// Limit Velocity Value
 
-		if (this.currentBallVelocity.y >= 10 || this.currentBallVelocity.y >= -10)
+		// console.log("update ball velocity:", this.ball?.velocity)
+		if (this.currentBallVelocity.y === 10 || this.currentBallVelocity.y === -10)
 			return;
 		else if (this.lastDirection === "top") {
 			this.currentBallVelocity.y -= this.map(
-				0.5,
+				1,
 				this.defaultCanvasSizes.height,
 				this.divHeight,
 			);
 		} else {
 			this.currentBallVelocity.y += this.map(
-				0.5,
+				1,
 				this.defaultCanvasSizes.height,
 				this.divHeight,
 			);
