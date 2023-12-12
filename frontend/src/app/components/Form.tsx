@@ -11,14 +11,12 @@ type FormProps = {
 const Form = ({ img }: FormProps) => {
 	const {Userdata} = useContext(socketContext);
 
-
-
 	console.log(Userdata)
 	const [name, setName] = useState<string>("");
 	const [login, setLogin] = useState<string>("");
 	const [pass, setPass] = useState<string>("");
 	const [confirm, setConfirm] = useState<string>("");
-	const [display2fa,setDisplay2fa] = useState(false)
+	const [display2fa,setDisplay2fa] = useState(false);
 	const [show, setShow] = useState<boolean>(false);
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -34,6 +32,10 @@ const Form = ({ img }: FormProps) => {
 			alert("Form submitted");
 		}
 	};
+
+	const closeQrForm = () => {
+		setDisplay2fa(false);
+	}
 	return (
 		<>
 		<div>
@@ -90,11 +92,11 @@ const Form = ({ img }: FormProps) => {
 						{Userdata?.tfa_enabled ?<input
 							type="button"
 							className="rounded-[20px] bg-[#EA7F87] px-8 py-3 text-white"
-							value="Desibeld"
+							value="Disable 2FA"
 						/> :<input onClick={() => {setDisplay2fa(true)}}
 						type="button"
-						className="rounded-[20px] bg-[#5B8CD4] px-8 py-3 text-white"
-						value="Enable"
+						className="rounded-[20px] cursor-pointer bg-[--purple-color] px-8 py-3 text-white"
+						value="Enable 2FA"
 					/>  }
 						
 					</div>
@@ -124,7 +126,7 @@ const Form = ({ img }: FormProps) => {
 			display2fa && 
 			<>
 				<div className="absolute left-0 z-10 right-0 bottom-0 top-0 bg-[#00000095] backdrop-blur-md opacity-100"></div>
-					<Qrcodeform />
+					<Qrcodeform closeQrForm={closeQrForm} />
 			</>
 		}
 		</>

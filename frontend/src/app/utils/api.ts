@@ -89,5 +89,14 @@ export const generateQrcode=() =>{
     const response = API.get("/two-factor-authentication/2fa/generate")
     return response;
 }
-    
+
+export const verifyCode = async (code : string) => {
+    const res = API.post("/two-factor-authentication/2fa/verify", {code})
+    return res;
+}
+
+export const confirm = async (code : string) => {
+    const res = API.post("/two-factor-authentication/2fa/confirm", {code})
+    return res;
+}
 
