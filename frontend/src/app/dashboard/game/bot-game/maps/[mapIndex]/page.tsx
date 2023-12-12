@@ -1,8 +1,4 @@
-"use client";
-
-import { useEffect } from "react";
 import BotGame from "../../BotGame";
-import { useRouter } from "next/navigation";
 
 const Game = ({
 	params,
@@ -11,8 +7,6 @@ const Game = ({
 		mapIndex: number;
 	};
 }) => {
-	const router = useRouter();
-
 	const isValidIndex = /^[0-2]$/.test(String(params.mapIndex));
 
 	return (

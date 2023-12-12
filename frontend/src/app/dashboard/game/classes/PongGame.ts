@@ -10,14 +10,14 @@ import {
 	World,
 } from "matter-js";
 
-const engine = Engine.create({
+const engine: Engine = Engine.create({
 	gravity: {
 		x: 0,
 		y: 0,
 	},
 });
 
-const runner: any = Runner.create();
+const runner: Runner = Runner.create();
 
 class PongGame {
 	private ball: Body | undefined;

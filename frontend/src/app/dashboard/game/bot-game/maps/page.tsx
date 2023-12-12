@@ -1,14 +1,31 @@
 "use client";
 import { useRef, useState } from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { EffectCoverflow, Pagination } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/effect-coverflow";
-import "swiper/css/pagination";
 import Link from "next/link";
 import Image from "next/image";
-// import { useRouter } from "next/navigation";
-// import { SocketContext } from "../SocketContext";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { EffectCoverflow } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/effect-coverflow";
+
+const ImagesSlides: string[] = [
+	"/assets/game-maps/default-map.gif",
+	"/assets/game-maps/map2-with-obstacles.gif",
+	"/assets/game-maps/map3-with-obstacles.gif",
+];
+
+export const mappedImagesSlides: JSX.Element[] = ImagesSlides.map(
+	(elem: string, index: number): JSX.Element => (
+		<SwiperSlide key={index} style={{ height: "400px", width: "270px" }}>
+			<Image
+				style={{ height: "100%", objectFit: "cover" }}
+				src={elem}
+				width={500}
+				height={500}
+				alt=""
+			/>
+		</SwiperSlide>
+	),
+);
 
 const ChooseMapBot = () => {
 	const swiperRef = useRef<any>(null);
@@ -39,31 +56,7 @@ const ChooseMapBot = () => {
 						}
 						modules={[EffectCoverflow]}
 					>
-						<SwiperSlide style={{ height: "400px", width: "270px" }}>
-							<img
-								src="/assets/game-maps/default-map.gif"
-								style={{ height: "100%", objectFit: "cover" }}
-							/>
-							{/* <Image
-								style={{ height: "100%", objectFit: "cover" }}
-								src={"/assets/game-maps/default-map.gif"}
-								width={72}
-								height={51}
-								alt=""
-							/> */}
-						</SwiperSlide>
-						<SwiperSlide style={{ height: "400px", width: "270px" }}>
-							<img
-								src="/assets/game-maps/map2-with-obstacles.gif"
-								style={{ height: "100%", objectFit: "cover" }}
-							/>
-						</SwiperSlide>
-						<SwiperSlide style={{ height: "400px", width: "270px" }}>
-							<img
-								src="/assets/game-maps/map3-with-obstacles.gif"
-								style={{ height: "100%", objectFit: "cover" }}
-							/>
-						</SwiperSlide>
+						{mappedImagesSlides}
 					</Swiper>
 				</div>
 				<Link
