@@ -45,9 +45,9 @@ const MatchMaking = () => {
 	const [opponentPlayer, setOpponentPlayer] = useAtom(opponentData);
 
 	useEffect(() => {
-		const handleStartGame = (payload: { idGame: string }) => {
-			router.push(`./match-making/${mapIndex}`);
-		};
+		// const handleStartGame = (payload: { idGame: string }) => {
+
+		// };
 		const handleKnowOpponent = (payload: any) => {
 			// setOpponentPlayer(payload.opponent);
 			setOpponentPlayer((prevData) => ({
@@ -56,14 +56,18 @@ const MatchMaking = () => {
 				isRotate: payload.rotate,
 			}));
 
+			router.push(`./match-making/${mapIndex}`);
+
 			// router.push(`./maps/${mapIndex}/${payload.idGame}`);
 		};
 		console.log("setup start game event");
-		gameSocket.on("startGame", handleStartGame);
+		gameSocket.emit("startGame", {
+			indexMap: mapIndex,
+		});
 		gameSocket.on("knowOpponent", handleKnowOpponent);
 		return () => {
 			console.log("remove start game event");
-			gameSocket.off("startGame", handleStartGame);
+			// gameSocket.off("startGame", handleStartGame);
 			gameSocket.off("knowOpponent", handleKnowOpponent);
 		};
 	}, []);
