@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { socketContext } from "@/app/utils/context/socketContext";
 import { useSearchParams } from "next/navigation";
 import { useGameSocket } from "@/app/providers/game-socket-provider";
+import { atom, useAtom, useAtomValue, useSetAtom } from "jotai";
 
 // const sleep = async (ms: number) =>
 // 	new Promise((resolve) => setTimeout(resolve, ms));
@@ -19,15 +20,15 @@ const MatchMaking = () => {
 	const { change, setChange } = useContext(ChangeContext);
 	const router = useRouter();
 	const gameSocket = useGameSocket();
-	const [opponentPlayer, setOpponentPlayer] = useState<{
-		username: string;
-		display_name: string;
-		avatar_url: string;
-	}>({
-		username: "",
-		display_name: "",
-		avatar_url: "/assets/unknown.png",
-	});
+	// const [opponentPlayer, setOpponentPlayer] = useState<{
+	// 	username: string;
+	// 	display_name: string;
+	// 	avatar_url: string;
+	// }>({
+	// 	username: "",
+	// 	display_name: "",
+	// 	avatar_url: "/assets/unknown.png",
+	// });
 
 	const checkQueryValue = (): boolean => {
 		if (mapIndex) {
@@ -38,13 +39,22 @@ const MatchMaking = () => {
 	};
 
 	const { Userdata } = useContext<any>(socketContext);
+	// const opponentPlayer = useAtomValue(opponentData);
+	// const setOpponent = useSetAtom(opponentData);
+
+	const [opponentPlayer, setOpponentPlayer] = useAtom(opponentData);
 
 	useEffect(() => {
 		const handleStartGame = (payload: { idGame: string }) => {
 			router.push(`./match-making/${mapIndex}`);
 		};
 		const handleKnowOpponent = (payload: any) => {
-			setOpponentPlayer(payload.opponent);
+			// setOpponentPlayer(payload.opponent);
+			setOpponentPlayer((prevData) => ({
+				...prevData,
+				opponent: payload.opponent,
+				isRotate: payload.rotate,
+			}));
 
 			// router.push(`./maps/${mapIndex}/${payload.idGame}`);
 		};
@@ -76,11 +86,13 @@ const MatchMaking = () => {
 									Vs
 								</h3>
 								<PlayerCard
-									username={opponentPlayer.username}
-									display_name={opponentPlayer.display_name}
-									img={opponentPlayer.avatar_url}
+									username={opponentPlayer.opponent.username}
+									display_name={opponentPlayer.opponent.display_name}
+									img={opponentPlayer.opponent.avatar_url}
 									additionalStyle={`right-7 bottom-2 ${
-										opponentPlayer.username === "" ? "animate-pulse" : ""
+										opponentPlayer.opponent.username === ""
+											? "animate-pulse"
+											: ""
 									} `}
 								/>
 							</div>
@@ -130,5 +142,21 @@ const MatchMaking = () => {
 		</>
 	);
 };
+
+export const opponentData = atom<{
+	opponent: {
+		username: string;
+		display_name: string;
+		avatar_url: string;
+	};
+	isRotate: boolean;
+}>({
+	opponent: {
+		username: "",
+		display_name: "",
+		avatar_url: "/assets/unknown.png",
+	},
+	isRotate: false,
+});
 
 export default MatchMaking;

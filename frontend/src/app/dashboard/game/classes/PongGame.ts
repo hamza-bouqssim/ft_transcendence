@@ -145,7 +145,7 @@ class PongGame {
 
 		if (this.socket) this.moveOnlineModeBall();
 		else {
-			this.setBotModeBall();
+			this.setBallVelocity();
 			this.moveBotPaddle();
 		}
 		this.movePaddle();
@@ -435,7 +435,7 @@ class PongGame {
 		this.socket.on("updateBallPosition", this.handleSetPosition);
 	};
 
-	setBotModeBall = (): void => {
+	setBallVelocity = (): void => {
 		// Random Value Between A Range
 		// Math.floor(Math.random() * (max - min + 1)) + min;
 
@@ -515,8 +515,8 @@ class PongGame {
 				});
 			});
 		} else {
-			let movingRight = false;
-			let movingLeft = false;
+			let movingRight: boolean = false;
+			let movingLeft: boolean = false;
 
 			this.handleKeyDown = (e: KeyboardEvent): void => {
 				if (e.key === "d" || e.key === "ArrowRight") movingRight = true;
@@ -570,9 +570,14 @@ class PongGame {
 		});
 
 		// Reset Ball Speed
-		this.setBotModeBall();
+		this.setBallVelocity();
 
 		// Reset Paddles Position
+		Body.setPosition(this.topPaddle!, {
+			x: this.divWidth / 2,
+			y: this.map(30, this.defaultCanvasSizes.height, this.divHeight),
+		});
+
 		Body.setPosition(this.bottomPaddle!, {
 			x: this.divWidth / 2,
 			y:
@@ -581,10 +586,8 @@ class PongGame {
 		});
 	}
 
-	setBallVelocity = (): void => {
+	updateBallVelocity = (): void => {
 		// Limit Velocity Value
-
-		// console.log("update ball velocity:", this.ball?.velocity)
 		if (this.currentBallVelocity.y === 10 || this.currentBallVelocity.y === -10)
 			return;
 		else if (this.lastDirection === "top") {
@@ -633,13 +636,13 @@ class PongGame {
 
 			if (pairs.bodyA === this.topPaddle || pairs.bodyB === this.topPaddle) {
 				this.sound.topPaddleSound.play();
-				this.setBallVelocity();
+				this.updateBallVelocity();
 			} else if (
 				pairs.bodyA === this.bottomPaddle ||
 				pairs.bodyB === this.bottomPaddle
 			) {
 				this.sound.bottomPaddleSound.play();
-				this.setBallVelocity();
+				this.updateBallVelocity();
 			}
 		};
 
@@ -693,7 +696,7 @@ class PongGame {
 		Composite.remove(engine.world, this.centerCirle!);
 		Composite.remove(engine.world, this.separator!);
 
-		// Remove Obstacles For Map 2
+		// Remove Obstacles For Map 1 && 2
 		if (this.chosenMapIndex === 1) {
 			console.log("index 1 chosen");
 			Composite.remove(engine.world, this.topLeftObstacle!);

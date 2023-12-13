@@ -14,14 +14,14 @@ import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'prisma/prisma.service';
 import { AuthenticatedSocket } from 'src/utils/interfaces';
 
-const engine = Engine.create({
+const engine: Engine = Engine.create({
 	gravity: {
 		x: 0,
 		y: 0,
 	},
 });
 
-const runner: any = Runner.create();
+const runner: Runner = Runner.create();
 
 type GameQ = {
 	indexMap: number;
@@ -43,11 +43,39 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@WebSocketServer()
 	server: Server;
 
-	private defaultCanvasSizes: any = {
+	private ball: Body;
+	private topPaddle: Body;
+	private bottomPaddle: Body;
+	private rightRect: Body;
+	private leftRect: Body;
+	private centerCirle: Body;
+	private separator: Body;
+	private topLeftObstacle: Body;
+	private topRightObstacle: Body;
+	private bottomLeftObstacle: Body;
+	private bottomRightObstacle: Body;
+	private verticalObstacle1: Body;
+	private verticalObstacle2: Body;
+	private verticalObstacle3: Body;
+	private verticalObstacle4: Body;
+	private defaultCanvasSizes: {
+		width: number;
+		height: number;
+	} = {
 		width: 560,
 		height: 836,
 	};
-	private paddleSizes: any = {
+	private currentBallVelocity: {
+		x: number;
+		y: number;
+	} = {
+		x: 0,
+		y: 0,
+	};
+	private paddleSizes: {
+		width: number;
+		height: number;
+	} = {
 		width: 170,
 		height: 15,
 	};
@@ -55,17 +83,18 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		x: 2.5,
 		y: 2.5,
 	};
-
-	private ball: any;
-	private topPaddle: any;
-	private bottomPaddle: any;
-	private rightRect: any;
-	private leftRect: any;
-	private movesUser1 = {
+	private lastDirection: string = 'top';
+	private movesUser1: {
+		movingRight: boolean;
+		movingLeft: boolean;
+	} = {
 		movingRight: false,
 		movingLeft: false,
 	};
-	private movesUser2 = {
+	private movesUser2: {
+		movingRight: boolean;
+		movingLeft: boolean;
+	} = {
 		movingRight: false,
 		movingLeft: false,
 	};
@@ -73,9 +102,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	private posBottomPaddleX = this.defaultCanvasSizes.width / 2;
 	private playerOneScore: number = 0;
 	private playerTwoScore: number = 0;
-	private updateBallPosition: any;
-	private movePaddleInterval: any;
-	private mapIndex: any;
+	private updateBallPosition: NodeJS.Timer;
+	private movePaddleInterval: NodeJS.Timer;
+	private mapIndex: number;
 	private userId: any;
 	private user1: any;
 	private user2: any;
@@ -85,7 +114,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		sockets: string[];
 		indexMap: number;
 	}[] = [];
-
 	private queueInGame: GameQ[] = [];
 
 	constructor(
@@ -398,7 +426,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			this.playerTwoScore = 0;
 			this.queueInGame = this.queueInGame.filter((game) => game.user1 != user1);
 		}
-		
+
 		// const history1 = this.gameService.createMatchHistory(user1, user2, score1, score2, duration);
 		// const history2 = this.gameService.createMatchHistory(user2, user1, score2, score1, duration);
 		// const stateGame = this.gameService.calStateGame(score1, score2);
@@ -416,6 +444,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		this.mapIndex = 0;
 
 		// console.log('map Index:', this.mapIndex);
+
 		// This Function Will Run In All Maps:
 		this.handleDefaultGameMap();
 
@@ -465,12 +494,31 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			},
 		);
 
-		Body.setVelocity(this.ball, {
-			x: this.ballSpeed.x,
-			y: this.ballSpeed.y,
-		});
+		// const topRect = Bodies.rectangle(
+		// 	this.canvasWidth / 2,
+		// 	0,
+		// 	this.canvasWidth,
+		// 	20,
+		// 	{
+		// 		render: {
+		// 			fillStyle: 'red',
+		// 		},		delete this.queueWaiting[user1];
 
-		this.emitToGame(this.userId, this.ball.velocity, 'setBallVelocity');
+		// 		isStatic: true,
+		// 	},
+		// );
+		// const bottomRect = Bodies.rectangle(
+		// 	this.canvasWidth / 2,
+		// 	this.canvasHeight,
+		// 	this.canvasWidth,
+		// 	20,
+		// 	{
+		// 		render: {
+		// 			fillStyle: 'yellow',
+		// 		},
+		// 		isStatic: true,
+		// 	},
+		// );
 
 		// Create Two Paddles:
 		this.topPaddle = Bodies.rectangle(
@@ -503,33 +551,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			},
 		);
 
-		// const topRect = Bodies.rectangle(
-		// 	this.canvasWidth / 2,
-		// 	0,
-		// 	this.canvasWidth,
-		// 	20,
-		// 	{
-		// 		render: {
-		// 			fillStyle: 'red',
-		// 		},		delete this.queueWaiting[user1];
-
-		// 		isStatic: true,
-		// 	},
-		// );
-
-		// const bottomRect = Bodies.rectangle(
-		// 	this.canvasWidth / 2,
-		// 	this.canvasHeight,
-		// 	this.canvasWidth,
-		// 	20,
-		// 	{
-		// 		render: {
-		// 			fillStyle: 'yellow',
-		// 		},
-		// 		isStatic: true,
-		// 	},
-		// );
-
 		// Create Two Boundies:
 		this.rightRect = Bodies.rectangle(
 			this.defaultCanvasSizes.width,
@@ -559,7 +580,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			},
 		);
 
-		const separator = Bodies.rectangle(
+		this.separator = Bodies.rectangle(
 			this.defaultCanvasSizes.width / 2,
 			this.defaultCanvasSizes.height / 2,
 			this.defaultCanvasSizes.width,
@@ -572,7 +593,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			},
 		);
 
-		const centerCirle = Bodies.circle(
+		this.centerCirle = Bodies.circle(
 			this.defaultCanvasSizes.width / 2,
 			this.defaultCanvasSizes.height / 2,
 			8,
@@ -581,18 +602,25 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		Composite.add(engine.world, [
 			this.topPaddle,
 			this.bottomPaddle,
-			separator,
-			centerCirle,
+			this.separator,
+			this.centerCirle,
 			this.ball,
 			this.rightRect,
 			this.leftRect,
 			// bottomRect,
 			// topRect,
 		]);
+
+		this.setBallVelocity();
+
+		// Body.setVelocity(this.ball, {
+		// 	x: this.ballSpeed.x,
+		// 	y: this.ballSpeed.y,
+		// });
 	}
 
 	handleGameCircleObstacles() {
-		const topLeftObstacle = Bodies.circle(
+		this.topLeftObstacle = Bodies.circle(
 			this.defaultCanvasSizes.width / 4,
 			this.defaultCanvasSizes.height / 4,
 			50,
@@ -604,7 +632,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			},
 		);
 
-		const topRightObstacle = Bodies.circle(
+		this.topRightObstacle = Bodies.circle(
 			(3 * this.defaultCanvasSizes.width) / 4,
 			this.defaultCanvasSizes.height / 4,
 			40,
@@ -616,7 +644,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			},
 		);
 
-		const bottomRightObstacle = Bodies.circle(
+		this.bottomRightObstacle = Bodies.circle(
 			(3 * this.defaultCanvasSizes.width) / 4,
 			(3 * this.defaultCanvasSizes.height) / 4,
 			50,
@@ -628,7 +656,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			},
 		);
 
-		const bottomLeftObstacle = Bodies.circle(
+		this.bottomLeftObstacle = Bodies.circle(
 			this.defaultCanvasSizes.width / 4,
 			(3 * this.defaultCanvasSizes.height) / 4,
 			40,
@@ -641,15 +669,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		);
 
 		Composite.add(engine.world, [
-			topLeftObstacle,
-			topRightObstacle,
-			bottomLeftObstacle,
-			bottomRightObstacle,
+			this.topLeftObstacle,
+			this.topRightObstacle,
+			this.bottomLeftObstacle,
+			this.bottomRightObstacle,
 		]);
 	}
 
 	handleVerticalObstacles() {
-		const verticalObstacle1 = Bodies.rectangle(
+		this.verticalObstacle1 = Bodies.rectangle(
 			this.defaultCanvasSizes.width - 65,
 			this.defaultCanvasSizes.height / 5,
 			15,
@@ -662,7 +690,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			},
 		);
 
-		const verticalObstacle2 = Bodies.rectangle(
+		this.verticalObstacle2 = Bodies.rectangle(
 			this.defaultCanvasSizes.width / 2,
 			this.defaultCanvasSizes.height / 3,
 			15,
@@ -675,7 +703,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			},
 		);
 
-		const verticalObstacle3 = Bodies.rectangle(
+		this.verticalObstacle3 = Bodies.rectangle(
 			65,
 			(2 * this.defaultCanvasSizes.height) / 3,
 			15,
@@ -688,7 +716,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			},
 		);
 
-		const verticalObstacle4 = Bodies.rectangle(
+		this.verticalObstacle4 = Bodies.rectangle(
 			this.defaultCanvasSizes.width - 65,
 			(4 * this.defaultCanvasSizes.height) / 5,
 			15,
@@ -702,18 +730,19 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		);
 
 		Composite.add(engine.world, [
-			verticalObstacle1,
-			verticalObstacle2,
-			verticalObstacle3,
-			verticalObstacle4,
+			this.verticalObstacle1,
+			this.verticalObstacle2,
+			this.verticalObstacle3,
+			this.verticalObstacle4,
 		]);
 	}
 
 	@SubscribeMessage('keyevent')
 	handleKeyDown(@MessageBody() data: any) {
 		if (!this.game) return;
-		let movingLeft: any;
-		let movingRight: any;
+
+		let movingLeft: boolean;
+		let movingRight: boolean;
 
 		if (data.state === 'keydown') {
 			if (data.key === 'd' || data.key === 'ArrowRight') movingRight = true;
@@ -734,36 +763,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			};
 		}
 	}
-
-	// applyMove(movesUser: any, posPaddle: number, paddle: any, isButtom: boolean) {
-	// 	let stepX = 0;
-
-	// 	if (movesUser.movingLeft) {
-	// 		stepX = posPaddle - 11;
-	// 		if (stepX <= this.paddleSizes.width / 2)
-	// 			stepX = this.paddleSizes.width / 2;
-	// 	} else if (movesUser.movingRight) {
-	// 		stepX = posPaddle + 11;
-	// 		if (stepX >= this.defaultCanvasSizes.width - this.paddleSizes.width / 2)
-	// 			stepX = this.defaultCanvasSizes.width - this.paddleSizes.width / 2;
-	// 	}
-	// 	if (stepX != 0) {
-	// 		posPaddle = stepX;
-	// 		Body.setPosition(paddle, {
-	// 			x: stepX,
-	// 			y: paddle.position.y,
-	// 		});
-	// 		this.emitToGame(
-	// 			this.userId,
-	// 			{
-	// 				xPosition: stepX,
-	// 			},
-	// 			'updatePaddlePosition',
-	// 		);
-	// 	}
-	// 	if (isButtom) this.posBottomPaddleX = posPaddle;
-	// 	else this.posTopPaddleX = posPaddle;
-	// }
 
 	handlePaddleMove() {
 		this.movePaddleInterval = setInterval(() => {
@@ -791,14 +790,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 					x: stepX1,
 					y: this.bottomPaddle.position.y,
 				});
-				// this.emitToGame(
-				// 	this.userId,
-				// 	{
-				// 		xPosition1: stepX1,
-				// 		xPosition2: this.bottomPaddle.position.x,
-				// 	},
-				// 	'updatePaddlePosition',
-				// );
 			}
 
 			let stepX2 = 0;
@@ -831,14 +822,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 					},
 					'updatePaddlePosition',
 				);
-
-			// this.applyMove(this.movesUser1, this.posBottomPaddleX, this.bottomPaddle,true)
-			// this.applyMove(this.movesUser2, this.posTopPaddleX, this.topPaddle,false)
 		}, 15);
 	}
 
 	startGame() {
-		Runner.run(Runner.create(), engine);
+		Runner.run(runner, engine);
 
 		this.updateBallPosition = setInterval(() => {
 			if (!this.game) {
@@ -858,16 +846,62 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		});
 
 		// Reset Paddles Position
+		Body.setPosition(this.topPaddle, {
+			x: this.defaultCanvasSizes.width / 2,
+			y: 30,
+		});
+
 		Body.setPosition(this.bottomPaddle, {
 			x: this.defaultCanvasSizes.width / 2,
 			y: this.defaultCanvasSizes.height - 30,
 		});
 	}
 
+	setBallVelocity() {
+		// Random Value Between A Range
+		// Math.floor(Math.random() * (max - min + 1)) + min;
+
+		if (this.lastDirection === 'top') {
+			this.currentBallVelocity = {
+				x: Math.floor(Math.random() * 11) - 5,
+				y: -4,
+			};
+		} else {
+			this.currentBallVelocity = {
+				x: Math.floor(Math.random() * 11) - 5,
+				y: 4,
+			};
+		}
+
+		Body.setVelocity(this.ball, {
+			x: this.currentBallVelocity.x,
+			y: this.currentBallVelocity.y,
+		});
+
+		this.emitToGame(this.userId, this.ball.velocity, 'setBallVelocity');
+	}
+
+	updateBallVelocity() {
+		// Limit Velocity Value
+		if (this.currentBallVelocity.y === 10 || this.currentBallVelocity.y === -10)
+			return;
+		else if (this.lastDirection === 'top') this.currentBallVelocity.y -= 1;
+		else this.currentBallVelocity.y += 1;
+
+		Body.setVelocity(this.ball, {
+			x: this.ball.velocity.x,
+			y: this.currentBallVelocity.y,
+		});
+	}
+
 	emitScore() {
-		if (this.ball.position.y < this.topPaddle.position.y) this.playerOneScore++;
-		else if (this.ball.position.y > this.bottomPaddle.position.y)
+		if (this.ball.position.y < this.topPaddle.position.y) {
+			this.playerOneScore++;
+			this.lastDirection = 'top';
+		} else if (this.ball.position.y > this.bottomPaddle.position.y) {
 			this.playerTwoScore++;
+			this.lastDirection = 'bottom';
+		}
 		this.emitToUser1InGame(
 			this.userId,
 			{
@@ -884,7 +918,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			},
 			'updateScore',
 		);
-		// this.sound.win.play();
 		this.resetToDefaultPosition();
 	}
 
@@ -908,26 +941,42 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 	handleClearGame() {
+		const displayBodies = (str: string) => {
+			console.log(str);
+			for (let body of engine.world.bodies) console.log(body);
+		};
+
+		displayBodies('before');
+
+		// Remove Basic Bodies In Default Map
+		Composite.remove(engine.world, this.topPaddle);
+		Composite.remove(engine.world, this.bottomPaddle);
+		Composite.remove(engine.world, this.rightRect);
+		Composite.remove(engine.world, this.leftRect);
+		Composite.remove(engine.world, this.ball);
+		Composite.remove(engine.world, this.centerCirle);
+		Composite.remove(engine.world, this.separator);
+
+		// Remove Obstacles For Map 1 && 2
+		if (this.mapIndex === 1) {
+			console.log('index 1 chosen');
+			Composite.remove(engine.world, this.topLeftObstacle);
+			Composite.remove(engine.world, this.topRightObstacle);
+			Composite.remove(engine.world, this.bottomLeftObstacle);
+			Composite.remove(engine.world, this.bottomRightObstacle);
+		} else if (this.mapIndex === 2) {
+			console.log('index 1 chosen');
+			Composite.remove(engine.world, this.verticalObstacle1);
+			Composite.remove(engine.world, this.verticalObstacle2);
+			Composite.remove(engine.world, this.verticalObstacle3);
+			Composite.remove(engine.world, this.verticalObstacle4);
+		}
+
+		displayBodies('after');
+
 		// Clear Intervals:
 		clearInterval(this.movePaddleInterval);
 		clearInterval(this.updateBallPosition);
-
-		// const displayBodies = (str: string) => {
-		// 	console.log(str);
-		// 	for (let body of engine.world.bodies) console.log(body);
-		// };
-		// displayBodies('before');
-		for (let body of engine.world.bodies) Composite.remove(engine.world, body);
-		// Composite.remove(engine.world, [
-		// 	this.bottomPaddle,
-		// 	this.ball,
-		// 	this.rightRect,
-		// ]);
-		// displayBodies('after');
-
-		// Remove Events:
-		// Events.off(engine, 'collisionStart', this.handleCollisionStart);
-		// Events.off(engine, 'beforeUpdate', this.handleBeforeUpdate);
 
 		// clearTimeout Of Paddle Game Runner:
 		// clearTimeout(this.lunchGameInterval);
