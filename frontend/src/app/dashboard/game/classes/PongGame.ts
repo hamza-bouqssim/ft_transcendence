@@ -436,14 +436,25 @@ class PongGame {
 	};
 
 	setBotModeBall = (): void => {
+		// Random Value Between A Range
+		// Math.floor(Math.random() * (max - min + 1)) + min;
+
 		if (this.lastDirection === "top") {
 			this.currentBallVelocity = {
-				x: this.map(-4, this.defaultCanvasSizes.width, this.divWidth),
+				x: this.map(
+					Math.floor(Math.random() * 11) - 5,
+					this.defaultCanvasSizes.width,
+					this.divWidth,
+				),
 				y: this.map(-4, this.defaultCanvasSizes.height, this.divHeight),
 			};
 		} else {
 			this.currentBallVelocity = {
-				x: this.map(4, this.defaultCanvasSizes.width, this.divWidth),
+				x: this.map(
+					Math.floor(Math.random() * 11) - 5,
+					this.defaultCanvasSizes.width,
+					this.divWidth,
+				),
 				y: this.map(4, this.defaultCanvasSizes.height, this.divHeight),
 			};
 		}
