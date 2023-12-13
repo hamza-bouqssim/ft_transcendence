@@ -75,8 +75,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	private playerTwoScore: number = 0;
 	private updateBallPosition: any;
 	private movePaddleInterval: any;
-	private mapIndex: any;
-	private userId: any;
+	private mapIndex: number;
+	private userId: string;
 	private user1: any;
 	private user2: any;
 	private game: GameQ;
@@ -86,7 +86,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		indexMap: number;
 	}[] = [];
 
-	private queueInGame: GameQ[] = [];
+	private queueGame: GameQ[] = [];
 
 	constructor(
 		private readonly gameservice: GameService,
@@ -107,30 +107,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			});
 		}
 		this.userId = socket.user.sub;
-		this.pushSocketToQueue(this.userId, socket.id, 0);
+		this.pushSocket(this.userId, socket.id, 0);
 		if (this.queueWaiting.length >= 2) await this.checkQueue();
-		// if (this.queueInGame.length > 0) {
-		// 	const findGame = this.getInGameQueue(this.userId);
-		// 	if (findGame) {
-		// 		if (findGame.user1 === this.userId) {
-		// 			console.log('pushSocketToQueue1', this.queueInGame);
-		// 			findGame.socket1.push(socket.id);
-		// 		} else {
-		// 			console.log('pushSocketToQueue2', this.queueInGame);
-		// 			findGame.socket2.push(socket.id);
-		// 		}
-		// 	}
-		// } else {
-		// 	const findQueue = this.getStratQueue(this.userId);
-		// 	if (findQueue) this.getStratQueue(this.userId).sockets.push(socket.id);
-		// }
-		// console.log('waitting c', this.queueWaiting);
-		// console.log('ingame c', this.queueInGame);
 	}
 
 	async handleDisconnect(socket: AuthenticatedSocket) {
 		console.log('Connection closed1');
-		// console.log(socket.user);
 		socket.leave(`@${socket.user.sub}`);
 		if (socket.user) {
 			const newStatus = await this.prisma.user.update({
@@ -140,102 +122,129 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		}
 
 		this.userId = socket.user.sub;
-		const queue = this.getStratQueue(this.userId);
+		const queue = this.getQueueWaiting(this.userId);
 		if (queue) {
 			if (queue.sockets.length === 1)
 				this.queueWaiting = this.queueWaiting.filter(
 					(queue) => queue.userId !== this.userId,
 				);
 			else queue.sockets = queue.sockets.filter((id) => id !== socket.id);
-			// console.log('queueWaitingt: ', this.queueWaiting);
 		} else {
-			const findGame = this.getInGameQueue(this.userId);
+			const findGame = this.getQueueGame(this.userId);
 			if (findGame) {
-				let isUser1 = null;
 				if (findGame.user1 === this.userId) {
 					findGame.socket1 = findGame.socket1.filter((id) => id !== socket.id);
 					if (findGame.socket1.length === 0 && findGame.status === 'playing') {
 						console.log('user1 leave game');
-						isUser1 = 'user1';
 					}
 				} else {
 					findGame.socket2 = findGame.socket2.filter((id) => id !== socket.id);
 					if (findGame.socket2.length === 0 && findGame.status === 'playing') {
 						console.log('user2 leave game');
-						isUser1 = 'user2';
 					}
 				}
-				if (findGame.socket1.length === 0 || findGame.socket2.length === 0) {
-					// this.emitToGame(this.userId, {}, '');
-					// await this.sleep(2000);
-					// if ((findGame.socket1.length === 0 || findGame.socket2.length === 0) && isUser1) {
-					// console.log('he is really leave');
-					// this.queueInGame = this.queueInGame.filter(
-					// 	(queue) =>
-					// 		this.userId !== queue.user1 && this.userId !== queue.user2,
-					// );
-					if (isUser1 === 'user1') {
+				if ((findGame.socket1.length === 0 || findGame.socket2.length === 0)) {
+
+					if (findGame.socket1.length === 0 && this.game) {
 						this.playerOneScore = 0;
 						this.playerTwoScore = 7;
 					} else {
 						this.playerOneScore = 7;
 						this.playerTwoScore = 0;
 					}
-					this.endGame();
-					// return;
-					// }
-					// console.log('he is back???');
+					console.log('end game1');
+					await this.endGame();
+
 				}
 			}
-			// console.log('queueInGame: ', this.queueInGame);
-			// console.log('queueWaiting: ', this.queueWaiting);
 		}
 	}
+
+	// async handleDisconnect(socket: AuthenticatedSocket) {
+	// 	console.log('Connection closed1');
+	// 	socket.leave(`@${socket.user.sub}`);
+	// 	if (socket.user) {
+	// 		const newStatus = await this.prisma.user.update({
+	// 			where: { id: socket.user.sub },
+	// 			data: { status: 'online' },
+	// 		});
+	// 	}
+
+	// 	this.userId = socket.user.sub;
+	// 	const queue = this.getQueueWaiting(this.userId);
+	// 	if (queue) {
+	// 		if (queue.sockets.length === 1)
+	// 			this.queueWaiting = this.queueWaiting.filter(
+	// 				(queue) => queue.userId !== this.userId,
+	// 			);
+	// 		else queue.sockets = queue.sockets.filter((id) => id !== socket.id);
+	// 	} else {
+	// 		const findGame = this.getQueueGame(this.userId);
+	// 		if (findGame) {
+	// 			if (findGame.user1 === this.userId) {
+	// 				findGame.socket1 = findGame.socket1.filter((id) => id !== socket.id);
+	// 				if (findGame.socket1.length === 0 && findGame.status === 'playing') {
+
+	// 					// start timer
+	// 					console.log('user1 leave game');
+	// 					this.emitToGame(this.userId, {}, 'stopGame');
+	// 					await this.sleep(10000);
+	// 					if(findGame.socket1.length === 0 && this.game)
+	// 					{
+	// 						this.playerOneScore = 0;
+	// 						this.playerTwoScore = 7;
+	// 						this.endGame();
+	// 						return;
+	// 					}
+	// 					// end timer
+	// 				}
+	// 			} else {
+	// 				findGame.socket2 = findGame.socket2.filter((id) => id !== socket.id);
+	// 				if (findGame.socket2.length === 0 && findGame.status === 'playing') {
+	// 					// start timer
+	// 					console.log('user2 leave game');
+	// 					this.emitToGame(this.userId, {}, 'stopGame');
+	// 					await this.sleep(10000);
+	// 					if(findGame.socket2.length === 0 && this.game)
+	// 					{
+	// 						this.playerOneScore = 7;
+	// 						this.playerTwoScore = 0;
+	// 						this.endGame();
+	// 						return;
+	// 					}
+	// 					// end timer
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+	// }
+
 
 	// @SubscribeMessage('joinGame')
 	// async handleJoinGame(client: AuthenticatedSocket, data: any) {
 	// 	console.log('join game');
 	// 	this.mapIndex = 0;
 	// 	// console.log("index:", this.mapIndex)
-	// 	this.pushSocketToQueue(client.user.sub, client.id, 0);
+	// 	this.pushSocket(client.user.sub, client.id, 0);
 	// 	if (this.queueWaiting.length >= 2) await this.checkQueue();
 	// 	console.log('waitting: ', this.queueWaiting);
-	// 	console.log('inGame: ', this.queueInGame);
+	// 	console.log('inGame: ', this.queueGame);
 	// }
 
 	//emit to user a message in an event---------------------------------------
 	emitToGame(userId: string, payload: any, event: string) {
-		// if (!this.game) return;
-		// const socketIds = [...this.game.socket1, ...this.game.socket2];
-
-		// socketIds.forEach((socketId) => {
-		// 	this.server.to(socketId).emit(event, payload);
-		// });
 		this.server.to(`@${this.user1.id}`).emit(event, payload);
-		//emit to room @this.user2
 		this.server.to(`@${this.user2.id}`).emit(event, payload);
 	}
 
 	emitToUser1InGame(userId: string, payload: any, event: string) {
-		if (!this.game) return 1337;
-		// const socketIds = this.game.socket1;
-
-		// socketIds.forEach((socketId) => {
-		// 	this.server.to(socketId).emit(event, payload);
-		// });
+		if (!this.game) return;
 		this.server.to(`@${this.user1.id}`).emit(event, payload);
-		return 1;
 	}
 
 	emitToUser2InGame(userId: string, payload: any, event: string) {
-		if (!this.game) return 1338;
-		// const socketIds = this.game.socket2;
-
-		// socketIds.forEach((socketId) => {
-		// 	this.server.to(socketId).emit(event, payload);
-		// });
+		if (!this.game) return;
 		this.server.to(`@${this.user2.id}`).emit(event, payload);
-		return 2;
 	}
 
 	//get map that readu to play in it-------------------------
@@ -260,7 +269,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			this.queueWaiting = this.queueWaiting.filter(
 				(queue) => queue.userId !== userIdOne && queue.userId !== userIdTwo,
 			);
-			this.queueInGame.push({
+			this.queueGame.push({
 				user1: userIdOne,
 				user2: userIdTwo,
 				status: 'pending',
@@ -274,10 +283,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				(queue) => queue.userId !== userIdOne && queue.userId !== userIdTwo,
 			);
 
-			this.game = this.getInGameQueue(userIdOne);
+			this.game = this.getQueueGame(userIdOne);
 			const idGame = userIdOne;
 
-			// eveeeeeeent
 			this.emitToUser2InGame(
 				userIdTwo,
 				{ opponent: this.user1, rotate: true, idGame },
@@ -288,15 +296,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				{ opponent: this.user2, rotate: false, idGame },
 				'knowOpponent',
 			);
-			// await this.sleep(3000);
 			if (!this.game) return;
 			console.log('test startgame +++++++++++++++');
 			this.emitToUser1InGame(userIdTwo, { idGame }, 'startGame');
 
 			this.emitToUser2InGame(userIdTwo, { idGame }, 'startGame');
-
-			// this.emitToUser1InGame(userIdTwo, { opponentId: userIdTwo }, 'startGame');
-			// this.emitToUser2InGame(userIdOne, { opponentId: userIdOne }, "startGame");
 
 			this.game.status = 'playing';
 		}
@@ -304,30 +308,38 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 	// Queue---------------------------------------
 
-	getStratQueue(userId: string) {
+	getQueueWaiting(userId: string) {
 		return this.queueWaiting.find((queue) => queue.userId === userId);
 	}
 
-	getInGameQueue(userId: string) {
-		return this.queueInGame.find(
+	getQueueGame(userId: string) {
+		return this.queueGame.find(
 			(queue) => queue.user1 === userId || queue.user2 === userId,
 		);
 	}
 
-	pushSocketToQueue(userId: string, socketId: string, indexMap?: number) {
-		if (this.queueInGame.length > 0) {
-			const findGame = this.getInGameQueue(userId);
+	pushSocket(userId: string, socketId: string, indexMap?: number) {
+		if (this.queueGame.length > 0) {
+			const findGame = this.getQueueGame(userId);
 			if (findGame) {
 				if (findGame.user1 === userId && !findGame.socket1.includes(socketId)) {
+					// if (findGame.socket1.length === 0)
+						// emit he is back
+					// else
+						// emit anthor socket join
 					findGame.socket1.push(socketId);
-					console.log('pushSocketToQueue1', this.queueInGame);
+					console.log('pushSocket1', this.queueGame);
 				} else if (!findGame.socket2.includes(socketId)) {
+					// if (findGame.socket2.length === 0)
+						// emit he is back
+					// else
+						// emit anthor socket join
 					findGame.socket2.push(socketId);
-					console.log('pushSocketToQueue2', this.queueInGame);
+					console.log('pushSocket2', this.queueGame);
 				}
 			}
 		} else {
-			const findQueue = this.getStratQueue(userId);
+			const findQueue = this.getQueueWaiting(userId);
 			if (findQueue && !findQueue.sockets.includes(socketId))
 				findQueue.sockets.push(socketId);
 			else
@@ -374,8 +386,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			}
 			// Clear Game
 			this.handleClearGame();
-			// this.closeAllSockets([...game.socket1 , ...game.socket2]);
-			// this.endGame(this.game);
 			await this.gameservice.createTwoMatchHistory(
 				user2,
 				user1,
@@ -389,14 +399,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			this.user2 = '';
 			this.playerOneScore = 0;
 			this.playerTwoScore = 0;
-			this.queueInGame = this.queueInGame.filter((game) => game.user1 != user1);
+			this.queueGame = this.queueGame.filter((game) => game.user1 != user1);
 		}
 
-		// const history1 = this.gameService.createMatchHistory(user1, user2, score1, score2, duration);
-		// const history2 = this.gameService.createMatchHistory(user2, user1, score2, score1, duration);
-		// const stateGame = this.gameService.calStateGame(score1, score2);
-		// this.emitToUser1InGame(user1, { history1 }, "endGame");
-		// this.emitToUser2InGame(user2, { history2 }, "endGame")
 	}
 	// End Queue---------------------------------------
 	@SubscribeMessage('launchGameRequest')
@@ -404,12 +409,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		@MessageBody() gameData: any,
 		@ConnectedSocket() socket: AuthenticatedSocket,
 	) {
-		if (!this.game || socket.user.sub === this.game.user1) return;
-		// if (!this.game) return;
+		if (!this.game || socket.user.sub !== this.game.user2) return;
 		this.mapIndex = 0;
-
-		// console.log('map Index:', this.mapIndex);
-		// This Function Will Run In All Maps:
 		this.handleDefaultGameMap();
 
 		switch (this.mapIndex) {
@@ -421,19 +422,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				this.handleVerticalObstacles();
 				break;
 		}
-		console.log(
-			this.emitToUser1InGame(
-				this.userId,
-				{ rotate: false, opponant: this.user2 },
-				'launchGame',
-			),
+		this.emitToUser1InGame(
+			this.userId,
+			{ rotate: false, opponant: this.user2 },
+			'launchGame',
 		);
-		console.log(
-			this.emitToUser2InGame(
-				this.userId,
-				{ rotate: true, opponant: this.user1 },
-				'launchGame',
-			),
+		this.emitToUser2InGame(
+			this.userId,
+			{ rotate: true, opponant: this.user1 },
+			'launchGame',
 		);
 		this.handlePaddleMove();
 		this.game.duration = Date.now();
@@ -880,14 +877,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		// this.sound.win.play();
 		this.resetToDefaultPosition();
 	}
- 
-	getScore() {
-		const game = this.getInGameQueue(this.userId);
-		if (game) {
-			// if (this.userId === game.user1)
-			// else if (this.userId === game.user2)
-		}
-	}
+
 
 	calcScore() {
 		if (

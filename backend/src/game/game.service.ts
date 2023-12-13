@@ -1,12 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { Result } from '@prisma/client';
-import { en } from '@faker-js/faker';
 
-enum EventType {
-	UNPROCESSED,
-	FINAL,
-}
 
 @Injectable()
 export class GameService {
@@ -17,20 +12,25 @@ export class GameService {
 			where: {
 				id: id,
 			},
+			// select: {
+			// 	id: true,
+			// 	username: true,
+			// 	avatar_url: true,
+			// },
 		});
 		return user;
 	}
 
 	// level and rating
 	level(win: number): number {
-		const currentLevel = win * (100 * 0.05) - win * 0.05;
-		// const increas = (100 - currentLevel) * 0.05;
-		// const updateLevel : number  = currentLevel + increas;
-		return currentLevel;
+		const newLevel = Math.sqrt(win);
+		return (Math.round(newLevel * 100) / 100);
 	}
 
 
-	rating(playerRank, opponentRank, outcome) {
+
+
+	rating(playerRank : number, opponentRank : number, outcome : number) {
 		let k : number;
 		if(playerRank > 2400)
 			k = 16;
@@ -102,19 +102,25 @@ export class GameService {
 		resultTwo: number,
 		date: number,
 	) {
-		const duration = this.convertDuration(Date.now() - date);
-		const state = await this.getStateGame(userIdOne);
-		const state2 = await this.getStateGame(userIdTwo);
-		const result1 = resultOne > resultTwo ? 1 : 0;
-		const result2 = resultTwo > resultOne ? 1 : 0;
+		try	{
 
-		const rating = this.rating(state.rating,state2.rating,result1);
-		const rating2 = this.rating(state2.rating,state.rating,result2);
-		console.log("rating",rating);
-		console.log("rating",rating2);
-		await this.updateStateGame(state.win + result1, state.lose + result2, state.totalMatch + 1, userIdOne,rating);
-		await this.updateStateGame(state2.win + result2, state2.lose + result1, state2.totalMatch + 1, userIdTwo,rating2);
-		await this.createMatchHistory(userIdOne, userIdTwo, resultOne, resultTwo ,duration);
+			const duration = this.convertDuration(Date.now() - date);
+			const state = await this.getStateGame(userIdOne);
+			const state2 = await this.getStateGame(userIdTwo);
+			const result1 = resultOne > resultTwo ? 1 : 0;
+			const result2 = resultTwo > resultOne ? 1 : 0;
+			
+			const rating = this.rating(state.rating,state2.rating,result1);
+			const rating2 = this.rating(state2.rating,state.rating,result2);
+			await this.updateStateGame(state.win + result1, state.lose + result2, state.totalMatch + 1, userIdOne,rating);
+			await this.updateStateGame(state2.win + result2, state2.lose + result1, state2.totalMatch + 1, userIdTwo,rating2);
+			const history = await this.createMatchHistory(userIdOne, userIdTwo, resultOne, resultTwo ,duration);
+			return history;
+		}
+		catch(error)
+		{
+			console.log(error);
+		}
 	}
 
 	async createMatchHistory(
@@ -125,10 +131,6 @@ export class GameService {
 		duration : string,
 	) {
 		const result = resultOne > resultTwo ? Result.WIN : Result.LOSS;
-		try {
-			console.log(
-				`userIdOne: ${userIdOne}, userIdTwo:${userIdTwo},\n resultOne:${resultOne}, resultTwo:${resultTwo}, duration,${duration} result:${result}`,
-			);
 			const match = await this.prisma.match_History.create({
 				data: {
 					playerOne: userIdOne,
@@ -139,11 +141,7 @@ export class GameService {
 					duration,
 				},
 			});
-			return match;
-		} catch (error) {
-			console.log(error);
-		}
-		return {};
+		return match;
 	}
 
 	async deleteMatchHistory(playerId: string) {
@@ -169,8 +167,8 @@ export class GameService {
 	// }
 
 	// endpoints of hamza
-	getResult(userId: string) {
-		const result = this.prisma.stateGame.findUnique({
+	async getResult(userId: string) {
+		const result = await this.prisma.stateGame.findUnique({
 			where: {
 				user_id: userId,
 			},
@@ -258,7 +256,10 @@ export class GameService {
 	{
 		const totalMatch = await this.prisma.match_History.count({
 			where: {
-				AND :[{ playerOne: user1 }, { playerTwo: user2 } || { playerOne: user2 }, { playerTwo: user1 }]
+				OR: [
+					{ AND: [{ playerOne: user1 }, { playerTwo: user2 }] },
+					{ AND: [{ playerOne: user2 }, { playerTwo: user1 }] },
+				  ],
 			},
 		});
 		return totalMatch;
@@ -268,6 +269,7 @@ export class GameService {
 		const seconds = Math.floor(date / 1000);
 		const minutes = Math.floor(seconds / 60);
 		const hours = Math.floor(minutes / 60);
+		// return ??:??:??
 		return `${hours}:${minutes % 60}:${seconds % 60}`
 
 	}

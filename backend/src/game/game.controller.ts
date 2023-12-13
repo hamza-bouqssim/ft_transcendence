@@ -1,7 +1,5 @@
 import { Controller, Post, Get, Delete, Body } from '@nestjs/common';
 import { GameService } from './game.service';
-import { UserService } from 'src/user/user.service';
-import { en, tr } from '@faker-js/faker';
 
 @Controller('game')
 export class GameController {
@@ -42,15 +40,14 @@ export class GameController {
 		return {};
 		}
 	}
-	
-	
 
 	@Get('ranking')
 	async getAllRanking() {
 		try {
 			const rating = await this.gameService.getRanks();
 			const modifiedRank = rating.map((entry, index) => ({
-				rank:entry.rating,
+				rank:index + 1,
+				rating: entry.rating,
 				username: entry.user.username,
 				picture: entry.user.avatar_url, // Rename 'avatar_url' to 'picture'
 			}));
@@ -65,6 +62,18 @@ export class GameController {
 	async getMyState(@Body('userId') userId: string) {
 		try{
 			return await this.gameService.getResult(userId);
+		}
+		catch(error){
+			console.log(error);
+			return {};
+		}
+	}
+
+	@Post('test')
+	async test(@Body() body : any){
+		try{
+			const state = await this.gameService.getStateGame(body.userId);
+			return await this.gameService.updateStateGame(state.win,state.lose,state.totalMatch,body.userId,body.rating)
 		}
 		catch(error){
 			console.log(error);

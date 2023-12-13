@@ -220,7 +220,7 @@ model StateGame {
   totalMatch Int    @default(0)
   win        Int    @default(0)
   lose       Int    @default(0)
-  level      Float  @default(0.0)
+  level      Float  @default(0.00)
   rating     Int    @default(1200)
   user       User   @relation(fields: [user_id], references: [id])
 }
