@@ -2,10 +2,13 @@ import { Body, Controller, Get, Post, Req, Res, UnauthorizedException, UseGuards
 import { AuthGuard } from '@nestjs/passport';
 import { TwoFactorAuthenticationService } from './two-factor-authentication.service';
 import  * as qrcode from 'qrcode'
+import { JwtService } from '@nestjs/jwt';
+
 
 @Controller('two-factor-authentication')
 export class TwoFactorAuthenticationController {
-    constructor(private readonly tfaService:TwoFactorAuthenticationService){}
+    constructor(private readonly tfaService:TwoFactorAuthenticationService,
+        private jwtService: JwtService,){}
     
     @Get('2fa/generate')
     @UseGuards(AuthGuard('jwt'))
@@ -38,6 +41,9 @@ export class TwoFactorAuthenticationController {
         const isValid = await this.tfaService.verifyCode(request.code, req.user.two_factor_secret_key);
         if(!isValid)
             return res.redirect("http://localhost:3000");
+        const payload = { sub: req.user.id, email: req.user.email };
+        const token = this.jwtService.sign(payload);
+        res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
         return res.redirect("http://localhost:3000/dashboard");
     }
 

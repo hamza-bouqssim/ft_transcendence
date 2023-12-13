@@ -33,22 +33,7 @@ export class AuthService {
         throw new UnauthorizedException('Incorrect Password!');
       }
       
-      if(user.tfa_enabled)
-      {
-        console.log("tfaCode =====>  : " +dto.code + "\n  and tfa is :  " + user.tfa_enabled);
-        console.log("two factor key :  " +  user.two_factor_secret_key)
-        
-        console.log("hello");
-        const isValid = await this.twofactorAuth.verifyCode(dto.code ,user.two_factor_secret_key);
-        if (!isValid)
-          throw new UnauthorizedException("Invalid 2fa Code");
-      }
-      const payload = {sub: user.id, email: user.email};
-      const token = this.jwtService.sign(payload)
-    if (!token) {
-      throw new ForbiddenException();
-    }
-    return token;
+      return user;
  
   }        
    

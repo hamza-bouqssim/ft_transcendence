@@ -21,7 +21,12 @@ export class AuthController {
     @Post('signin')
     async signIn(@Body() dto: SignAuthDto, @Req() req: Request, @Res() res: Response)
     {
-        const token= await this.authService.signIn(dto);
+        const user = await this.authService.signIn(dto);
+        // if(user.tfa_enabed)
+        //     return res.redirect("http://localhost:3000/verify-two-factor")
+
+        const payload = {sub: user.id, email: user.email};
+        const token = this.jwtService.sign(payload)
         res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
 
         return res.status(200).json("signIn succefully")
@@ -43,15 +48,10 @@ export class AuthController {
     @UseGuards(AuthGuard('google'))
     googleRedirect(@Res() res: Response, @Req() req){
         const user = req.user;
-        // if(user.tfa_enabled)
-        // {
-        //     const isValid =  this.twofactorAuth.verifyCode(dto.code, user.two_factor_secret_key);
-        //     if(!isValid)
-        //         throw new UnauthorizedException("Invalid 2fa Code");
-
-        // }
-        const payload = {sub: user.id, email: user.email};
+        // if(user.tfa_enabed)
+        //     return res.redirect("http://localhost:3000/verify-two-factor")
         
+        const payload = {sub: user.id, email: user.email};
         const token = this.jwtService.sign(payload)
         res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
         return res.redirect("http://localhost:3000/dashboard")
@@ -68,16 +68,9 @@ export class AuthController {
     ftRedirect(@Res() res: Response, @Req() req)
     {
         const user = req.user;
+         // if(user.tfa_enabed)
+        //     return res.redirect("http://localhost:3000/verify-two-factor");
 
-        // if(user.tfa_enabled)
-        // {
-        //     if(!dto || !dto.code)
-        //         throw new BadRequestException("You must enter the OTP CODE !!!");
-        //     const isValid =  this.twofactorAuth.verifyCode(dto.code, user.two_factor_secret_key);
-        //     if(!isValid)
-        //         throw new UnauthorizedException("Invalid 2fa Code");
-
-        // }
         const payload = { sub: user.id, email: user.email };
         const token = this.jwtService.sign(payload);
         res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
