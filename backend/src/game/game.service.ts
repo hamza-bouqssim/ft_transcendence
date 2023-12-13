@@ -1,11 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
-import { Result } from '@prisma/client';
-
-enum EventType {
-	UNPROCESSED,
-	FINAL,
-}
 
 @Injectable()
 export class GameService {
@@ -16,45 +10,41 @@ export class GameService {
 			where: {
 				id: id,
 			},
+			// select: {
+			// 	id: true,
+			// 	username: true,
+			// 	avatar_url: true,
+			// },
 		});
 		return user;
 	}
 
 	// level and rating
 	level(win: number): number {
-		const currentLevel = win * (100 * 0.05) - win * 0.05;
-		// const increas = (100 - currentLevel) * 0.05;
-		// const updateLevel : number  = currentLevel + increas;
-		return currentLevel;
+		const newLevel = Math.sqrt(win);
+		return Math.round(newLevel * 100) / 100;
 	}
 
-	async rating(level: number, userId: string) {
-		const users = await this.prisma.stateGame.findMany({
-			select: {
-				level: true,
-				user_id: true,
-			},
-		});
-
-		// Sort users by level in descending order
-		const sortedUsers = users.sort((a, b) => b.level - a.level);
-
-		// Find the index of the user with the specified userId
-		const userIndex = sortedUsers.findIndex((user) => user.user_id === userId);
-
-		// Return the rating (1-based) or 0 if the user is not found
-		return userIndex !== -1 ? userIndex + 1 : 0;
+	rating(playerRank: number, opponentRank: number, outcome: number) {
+		let k: number;
+		if (playerRank > 2400) k = 16;
+		else if (playerRank > 2100 && playerRank <= 2400) k = 24;
+		else k = 32;
+		const expectedScore =
+			1 / (1 + Math.pow(10, (opponentRank - playerRank) / 400));
+		const newRank = playerRank + k * (outcome - expectedScore);
+		return newRank;
 	}
 
 	//stateGame
 	async updateStateGame(
 		win: number,
 		lose: number,
-		numberOfMatch: number,
+		totalMatch: number,
 		userId: string,
+		rating: number,
 	) {
 		const level = this.level(win);
-		const rating = await this.rating(level, userId);
 		const state = await this.prisma.stateGame.update({
 			where: {
 				user_id: userId,
@@ -62,7 +52,7 @@ export class GameService {
 			data: {
 				win,
 				lose,
-				numberOfMatch,
+				totalMatch,
 				level: level,
 				rating: rating,
 			},
@@ -97,61 +87,69 @@ export class GameService {
 		return state;
 	}
 
-	history
+	//history
+	async createTwoMatchHistory(
+		userIdOne: string,
+		userIdTwo: string,
+		resultOne: number,
+		resultTwo: number,
+		date: number,
+	) {
+		try {
+			const duration = this.convertDuration(Date.now() - date);
+			const state = await this.getStateGame(userIdOne);
+			const state2 = await this.getStateGame(userIdTwo);
+			const result1 = resultOne > resultTwo ? 1 : 0;
+			const result2 = resultTwo > resultOne ? 1 : 0;
+
+			const rating = this.rating(state.rating, state2.rating, result1);
+			const rating2 = this.rating(state2.rating, state.rating, result2);
+			await this.updateStateGame(
+				state.win + result1,
+				state.lose + result2,
+				state.totalMatch + 1,
+				userIdOne,
+				rating,
+			);
+			await this.updateStateGame(
+				state2.win + result2,
+				state2.lose + result1,
+				state2.totalMatch + 1,
+				userIdTwo,
+				rating2,
+			);
+			const history = await this.createMatchHistory(
+				userIdOne,
+				userIdTwo,
+				resultOne,
+				resultTwo,
+				duration,
+			);
+			return history;
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
 	async createMatchHistory(
 		userIdOne: string,
 		userIdTwo: string,
 		resultOne: number,
 		resultTwo: number,
-		duration: number,
+		duration: string,
 	) {
-		const state = await this.getStateGame(userIdOne);
-		const { win, lose, numberOfMatch } = state;
-		if (resultOne > resultTwo)
-			await this.updateStateGame(win + 1, lose, numberOfMatch + 1, userIdOne);
-		else
-			await this.updateStateGame(win, lose + 1, numberOfMatch + 1, userIdOne);
-		console.log('result');
-
-		const result = resultOne > resultTwo ? Result.WIN : Result.LOSS;
-		try {
-			// model Match_History {
-			// 	id            String   @id @default(uuid())
-			// 	playerOne     String
-			// 	playerTwo     String
-			// 	resultOne     Int
-			// 	resultTwo     Int
-			// 	result        Result   @default(UNPROCESSED)
-			// 	createdAt     DateTime @default(now())
-			// 	numberOfMatch Int      @default(0)
-			// 	duration      Int
-			// 	playerone     User     @relation("playerOne", fields: [playerOne], references: [id])
-			// 	playertwo     User     @relation("playerTow", fields: [playerTwo], references: [id])
-			//   }
-
-			console.log(
-				`userIdOne: ${userIdOne}, userIdTwo:${userIdTwo},\n resultOne:${resultOne}, resultTwo:${resultTwo}, duration,${duration} result:${result}`,
-			);
-			const match = await this.prisma.match_History.create({
-				data: {
-					playerOne: userIdOne,
-					playerTwo: userIdTwo,
-					resultOne: resultOne,
-					resultTwo: resultTwo,
-					result: result,
-					duration: duration,
-					numberOfMatch: 1,
-					// ... other fields ...
-				},
-			});
-
-			console.log(match);
-			return match;
-		} catch (error) {
-			console.log(error);
-		}
-		return {};
+		const match = await this.prisma.match_History.create({
+			data: {
+				playerOne: userIdOne,
+				playerTwo: userIdTwo,
+				resultOne: resultOne,
+				resultTwo: resultTwo,
+				duration,
+			},
+		});
+		return match;
 	}
+
 	async deleteMatchHistory(playerId: string) {
 		await this.deleteStateGame(playerId);
 		const deleteMatch = await this.prisma.match_History.deleteMany({
@@ -162,28 +160,28 @@ export class GameService {
 		return deleteMatch;
 	}
 
-	async getMatchHistory(userId: string) {
-		const matchHistory = await this.prisma.match_History.findMany({
-			where: {
-				playerOne: userId,
-			},
-			orderBy: {
-				createdAt: 'desc',
-			},
-		});
-		return matchHistory;
-	}
+	// async getMatchHistory(userId: string) {
+	// 	const matchHistory = await this.prisma.match_History.findMany({
+	// 		where: {
+	// 			playerOne: userId,
+	// 		},
+	// 		orderBy: {
+	// 			createdAt: 'desc',
+	// 		},
+	// 	});
+	// 	return matchHistory;
+	// }
 
 	// endpoints of hamza
-	getResult(userId: string) {
-		const result = this.prisma.stateGame.findUnique({
+	async getResult(userId: string) {
+		const result = await this.prisma.stateGame.findUnique({
 			where: {
 				user_id: userId,
 			},
 			select: {
 				win: true,
 				lose: true,
-				rating: true,
+				level: true,
 			},
 		});
 		return result;
@@ -192,7 +190,7 @@ export class GameService {
 	async getRanks() {
 		const rating = await this.prisma.stateGame.findMany({
 			orderBy: {
-				rating: 'asc',
+				rating: 'desc',
 			},
 			select: {
 				rating: true,
@@ -204,42 +202,36 @@ export class GameService {
 				},
 			},
 		});
-		const modifiedRank = rating.map((entry) => ({
-			rank: entry.rating,
-			// exclude the 'user' property from the entry
-			username: entry.user.username,
-			picture: entry.user.avatar_url, // Rename 'avatar_url' to 'picture'
-		}));
-		return modifiedRank;
+		return rating;
 	}
 
-	async getRanking(userId: string) {
-		const rate = await this.prisma.stateGame.findUnique({
-			where: {
-				user_id: userId,
-			},
-			select: {
-				rating: true,
-				user: {
-					select: {
-						username: true,
-						avatar_url: true,
-					},
-				},
-			},
-		});
-		const modifiedRanking = {
-			rank: rate.rating,
-			username: rate.user.username,
-			picture: rate.user.avatar_url,
-		};
-		return modifiedRanking;
-	}
+	// async getRanking(userId: string) {
+	// 	const rate = await this.prisma.stateGame.findUnique({
+	// 		where: {
+	// 			user_id: userId,
+	// 		},
+	// 		select: {
+	// 			rating: true,
+	// 			user: {
+	// 				select: {
+	// 					username: true,
+	// 					avatar_url: true,
+	// 				},
+	// 			},
+	// 		},
+	// 	});
+	// 	const modifiedRanking = {
+	// 		rank: rate.rating,
+	// 		username: rate.user.username,
+	// 		picture: rate.user.avatar_url,
+	// 	};
+	// 	return modifiedRanking;
+	// }
 
 	async history_matches(userId: string) {
 		const history = await this.prisma.match_History.findMany({
 			where: {
-				playerOne: userId,
+				OR: [{ playerOne: userId }, { playerTwo: userId }],
 			},
 			orderBy: {
 				createdAt: 'desc',
@@ -255,28 +247,34 @@ export class GameService {
 						avatar_url: true,
 					},
 				},
+				playerOne: true,
+				playerTwo: true,
 				resultOne: true,
 				resultTwo: true,
 				createdAt: true,
 				duration: true,
-				numberOfMatch: true,
 			},
 		});
-		const modifiedHistory = history.map((entry) => ({
-			playerOne: entry.playerone.avatar_url,
-			playerTwo: entry.playertwo.avatar_url,
-			resultOne: entry.resultOne,
-			resultTwo: entry.resultTwo,
-			date: entry.createdAt.toISOString().split('T')[0],
-			// duration: this.convertDuration(entry.duration),
-			// numberOfMatch:entry.numberOfMatch,
-		}));
-		return modifiedHistory;
+		return history;
+	}
+
+	async totalMatch(user1: string, user2: string) {
+		const totalMatch = await this.prisma.match_History.count({
+			where: {
+				OR: [
+					{ AND: [{ playerOne: user1 }, { playerTwo: user2 }] },
+					{ AND: [{ playerOne: user2 }, { playerTwo: user1 }] },
+				],
+			},
+		});
+		return totalMatch;
 	}
 
 	convertDuration(date: number) {
-		const seconds = date % 60;
-		const minutes = date / 60;
-		return `${minutes}m ${seconds}s`;
+		const seconds = Math.floor(date / 1000);
+		const minutes = Math.floor(seconds / 60);
+		const hours = Math.floor(minutes / 60);
+		// return ??:??:??
+		return `${hours}:${minutes % 60}:${seconds % 60}`;
 	}
 }

@@ -51,6 +51,10 @@ const OnlineGame = ({ mapIndex }: any) => {
 
 	useEffect(() => {
 		console.log("online-game-score-useffect");
+		if (opponentPlayer.opponent.username === "") {
+			router.push("/dashboard");
+			return;
+		}
 		const updateScoreListener = (playersScore: any) => {
 			setScore({
 				...score,

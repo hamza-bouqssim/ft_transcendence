@@ -404,20 +404,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			this.handleClearGame();
 			// this.closeAllSockets([...game.socket1 , ...game.socket2]);
 			// this.endGame(this.game);
-			await this.gameservice.createMatchHistory(
+			await this.gameservice.createTwoMatchHistory(
 				user1,
 				user2,
 				this.playerOneScore,
 				this.playerTwoScore,
-				duration,
-			);
-			await this.gameservice.createMatchHistory(
-				user2,
-				user1,
-				this.playerTwoScore,
-				this.playerOneScore,
-				duration,
-			);
+				duration
+			)
 			this.game = null;
 			console.log(this.playerOneScore, this.playerTwoScore);
 			this.user1 = '';
