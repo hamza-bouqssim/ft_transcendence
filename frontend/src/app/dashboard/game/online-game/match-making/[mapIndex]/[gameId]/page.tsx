@@ -1,4 +1,4 @@
-import OnlineGame from "../../OnlineGame";
+import OnlineGame from "../../../OnlineGame";
 
 const Game = ({
 	params,

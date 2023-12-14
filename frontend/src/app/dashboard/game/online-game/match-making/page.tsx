@@ -56,9 +56,8 @@ const MatchMaking = () => {
 				isRotate: payload.rotate,
 			}));
 
-			router.push(`./match-making/${mapIndex}`);
-
-			// router.push(`./maps/${mapIndex}/${payload.idGame}`);
+			// router.push(`./match-making/${mapIndex}`);
+			router.push(`./match-making/${mapIndex}/${payload.idGame}`);
 		};
 		console.log("setup start game event");
 		gameSocket.emit("startGame", {
