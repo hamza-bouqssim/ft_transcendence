@@ -773,16 +773,29 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			y: this.defaultCanvasSizes.height / 2,
 		});
 
-		// Reset Paddles Position
-		Body.setPosition(this.topPaddle, {
-			x: this.defaultCanvasSizes.width / 2,
-			y: 30,
-		});
+		// Reset Ball Speed
+		this.setBallVelocity();
 
-		Body.setPosition(this.bottomPaddle, {
-			x: this.defaultCanvasSizes.width / 2,
-			y: this.defaultCanvasSizes.height - 30,
-		});
+		// Reset Paddles Position
+		// Body.setPosition(this.topPaddle, {
+		// 	x: this.defaultCanvasSizes.width / 2,
+		// 	y: 30,
+		// });
+
+		// Body.setPosition(this.bottomPaddle, {
+		// 	x: this.defaultCanvasSizes.width / 2,
+		// 	y: this.defaultCanvasSizes.height - 30,
+		// });
+
+		this.emitToGame(
+			this.userId,
+			{
+				ballPosition: this.ball.position,
+				topPaddlePosition: this.topPaddle.position,
+				bottomPaddlePosition: this.bottomPaddle.position,
+			},
+			'resetDefaultPosition',
+		);
 	}
 
 	setBallVelocity() {
@@ -813,13 +826,17 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		// Limit Velocity Value
 		if (this.currentBallVelocity.y === 10 || this.currentBallVelocity.y === -10)
 			return;
-		else if (this.lastDirection === 'top') this.currentBallVelocity.y -= 0.5;
-		else this.currentBallVelocity.y += 0.5;
+		else {
+			if (this.lastDirection === 'top') this.currentBallVelocity.y -= 1;
+			else this.currentBallVelocity.y += 1;
 
-		Body.setVelocity(this.ball, {
-			x: this.ball.velocity.x,
-			y: this.currentBallVelocity.y,
-		});
+			Body.setVelocity(this.ball, {
+				x: this.ball.velocity.x,
+				y: this.currentBallVelocity.y,
+			});
+
+			this.emitToGame(this.userId, this.ball.velocity, 'setBallVelocity');
+		}
 	}
 
 	emitScore() {
@@ -868,7 +885,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				// this.sound.bottomPaddleSound.play();
 				this.updateBallVelocity();
 			}
-			this.emitToGame(this.userId, this.ball.velocity, 'setBallVelocity');
 		};
 
 		Events.on(engine, 'collisionStart', this.handleCollisionStart);
@@ -893,7 +909,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			for (let body of engine.world.bodies) console.log(body);
 		};
 
-		displayBodies('before');
+		// displayBodies('before');
 
 		// Remove Basic Bodies In Default Map
 		Composite.remove(engine.world, this.topPaddle);
@@ -919,7 +935,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			Composite.remove(engine.world, this.verticalObstacle4);
 		}
 
-		displayBodies('after');
+		// displayBodies('after');
+
+		Events.off(engine, 'collisionStart', this.handleCollisionStart);
 
 		// Clear Intervals:
 		clearInterval(this.movePaddleInterval);

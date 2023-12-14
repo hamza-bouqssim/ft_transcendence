@@ -419,10 +419,7 @@ class PongGame {
 
 	moveOnlineModeBall = (): void => {
 		this.handleSetVelocity = (data: any) => {
-			Body.setVelocity(this.ball!, {
-				x: this.map(data.x, this.defaultCanvasSizes.width, this.divWidth),
-				y: this.map(data.y, this.defaultCanvasSizes.height, this.divHeight),
-			});
+			this.setBallVelocity();
 		};
 		this.handleSetPosition = (data: any) => {
 			Body.setPosition(this.ball!, {
@@ -433,6 +430,53 @@ class PongGame {
 
 		this.socket.on("setBallVelocity", this.handleSetVelocity);
 		this.socket.on("updateBallPosition", this.handleSetPosition);
+
+		// this.socket.on("updateBallVelocity", (data: any) => {
+		// 	Body.setVelocity(this.ball!, {
+		// 		x: this.map(data.x, this.defaultCanvasSizes.width, this.divWidth),
+		// 		y: this.map(data.y, this.defaultCanvasSizes.height, this.divHeight),
+		// 	});
+		// });
+
+		this.socket.on("resetDefaultPosition", (data: any) => {
+			// Body.setPosition(this.ball!, {
+			// 	x: this.map(
+			// 		data.ballPosition.x,
+			// 		this.defaultCanvasSizes.width,
+			// 		this.divWidth,
+			// 	),
+			// 	y: this.map(
+			// 		data.ballPosition.y,
+			// 		this.defaultCanvasSizes.height,
+			// 		this.divHeight,
+			// 	),
+			// });
+			// Body.setPosition(this.topPaddle!, {
+			// 	x: this.map(
+			// 		data.topPaddlePosition.x,
+			// 		this.defaultCanvasSizes.width,
+			// 		this.divWidth,
+			// 	),
+			// 	y: this.map(
+			// 		data.topPaddlePosition.y,
+			// 		this.defaultCanvasSizes.height,
+			// 		this.divHeight,
+			// 	),
+			// });
+			// Body.setPosition(this.bottomPaddle!, {
+			// 	x: this.map(
+			// 		data.bottomPaddlePosition.x,
+			// 		this.defaultCanvasSizes.width,
+			// 		this.divWidth,
+			// 	),
+			// 	y: this.map(
+			// 		data.bottomPaddlePosition.y,
+			// 		this.defaultCanvasSizes.height,
+			// 		this.divHeight,
+			// 	),
+			// });
+			this.resetToDefaultPosition();
+		});
 	};
 
 	setBallVelocity = (): void => {
@@ -573,17 +617,17 @@ class PongGame {
 		this.setBallVelocity();
 
 		// Reset Paddles Position
-		Body.setPosition(this.topPaddle!, {
-			x: this.divWidth / 2,
-			y: this.map(30, this.defaultCanvasSizes.height, this.divHeight),
-		});
+		// Body.setPosition(this.topPaddle!, {
+		// 	x: this.divWidth / 2,
+		// 	y: this.map(30, this.defaultCanvasSizes.height, this.divHeight),
+		// });
 
-		Body.setPosition(this.bottomPaddle!, {
-			x: this.divWidth / 2,
-			y:
-				this.divHeight -
-				this.map(30, this.defaultCanvasSizes.height, this.divHeight),
-		});
+		// Body.setPosition(this.bottomPaddle!, {
+		// 	x: this.divWidth / 2,
+		// 	y:
+		// 		this.divHeight -
+		// 		this.map(30, this.defaultCanvasSizes.height, this.divHeight),
+		// });
 	}
 
 	updateBallVelocity = (): void => {
