@@ -9,7 +9,7 @@ import "./style.css"
 import { getAuthUser, getConversation, getUnreadMessages } from "@/app/utils/api";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/app/store";
-import { fetchConversationThunk } from "@/app/store/conversationSlice";
+import { fetchConversationThunk, fetchDeleteConversation } from "@/app/store/conversationSlice";
 import { formatRelative } from "date-fns";
 import {IoMdAdd} from 'react-icons/io'
 import CreateConversationModal  from "../modals/CreateConversationModal";
@@ -50,7 +50,6 @@ const ChatComponnent  = () =>{
 	const socket = useContext(socketContext).socket
     const router = useRouter();
 	const [show, setShow] = useState<any>(false);
-	const [ user, setUser] = useState<User | undefined>();
     const { updateChannel, channel } = useContext(socketContext);
 	const [oldId,setOldId] = useState(null); 
 	const dispatch = useDispatch<AppDispatch>();
@@ -87,6 +86,19 @@ const ChatComponnent  = () =>{
 			socket.off('onMessage');
 		}
 	},[UsersAuth, channel?.id])
+
+	useEffect(()=>{
+		socket.on('deleteConversation', (data : any)=>{
+			console.log(" here socket ooooo");
+			dispatch(fetchConversationThunk());
+			dispatch(fetchMessagesThunk(channel?.id));
+
+		  })
+		  return () =>{
+			socket.off('deleteConversation');
+
+		  }
+	},[channel?.id])
 
     const getDisplayUser = (conversation : ConversationTypes) => {
 		let test; 
@@ -142,7 +154,7 @@ const ChatComponnent  = () =>{
       
 		try {
 		  await dispatch(fetchBlockFriendThunk(id));
-			ToastSuccess("You have blocked this friend successfully");
+			ToastSuccess("You are blocked this friend successfully");
   
 		} catch (error) {
 			
@@ -150,6 +162,17 @@ const ChatComponnent  = () =>{
   
 		}
 	  };
+	  const deleteConversation = async (conversation : ConversationTypes) =>{
+		try {
+			await dispatch(fetchDeleteConversation(conversation.id));
+			ToastSuccess("You are deleting this conversation successfully");
+
+			
+		} catch(error){
+			ToastError("Failed to delete the conversation. Please try again.");
+		}
+
+	  }
   
 
     return (
@@ -175,6 +198,7 @@ const ChatComponnent  = () =>{
 						{
 							router.push(`/dashboard/${elem.recipientId}`)
 						}
+
 						return(
 							<div onClick={handleClick}  key={elem.id}  className={`cursor-pointer rounded-lg hover:bg-[#F2F3FD] ${
 								isUnread(elem.id) ? 'bg-rose-300' : ''
@@ -193,9 +217,10 @@ const ChatComponnent  = () =>{
 				         			 />
       
                 					{openMenuId === elem.id &&
-                						<div className={`absolute  top-[-120px] left-2 h-[120px]  w-[200px] flex-col items-center justify-center gap-1 rounded-[15px] border-2 border-solid border-[#000000] bg-white font-['Whitney_Semibold'] `}>
-					        				<button className={`bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> handleClickUser()}>see profile</button>
-					        				<button className={` bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`}>Delete conversation</button>
+                						<div className={`absolute  top-[-120px] left-2 h-[140px]  w-[200px] flex-col items-center justify-center gap-1 rounded-[15px] border-2 border-solid border-[#000000] bg-white font-['Whitney_Semibold'] `}>
+					        				<button className={`bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> handleClickUser()}>View profile</button>
+											<button className={`bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> handleClickUser()}>Invite to play</button>
+					        				<button className={` bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> deleteConversation(elem)}>Delete Chat</button>
                   							<button className={` bg-[#EA7F87] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} value="Bloque" onClick={()=> handlleBloque(elem.recipientId)}>Bloque</button>
 
 				        			</div>}	

@@ -67,7 +67,14 @@ async getUnreadMessages(@Body() request: {conversationId : string}) {
   const unreadMessages = await this.conversationService.findUnreadMessages(request.conversationId);
   return unreadMessages;
 }
+// delete conversation
 
+@Post('delete-conversation')
+  async deleteConversation(@Body() request: {conversationId : string}) {
+      const deleteConversation = await this.conversationService.deleteConversation(request.conversationId);
+      return deleteConversation;
+     
+  }
 
 
 }

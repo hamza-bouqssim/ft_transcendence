@@ -63,6 +63,10 @@ const ConversationChannelPagechat = () => {
 		socket.on('createConversation', (data : any)=>{
       dispatch(fetchConversationThunk());
 
+    });
+    socket.on('deleteConversation', (data : any)=>{
+      console.log(" here socket");
+      dispatch(fetchConversationThunk());
     })
       return () => {
         socket.off('AcceptNotification');
@@ -73,6 +77,7 @@ const ConversationChannelPagechat = () => {
         socket.off('online');
         socket.off('offline');
         socket.off('createConversation');
+        socket.off('deleteConversation');
       };
 		
 	  }, [socket, dispatch]);

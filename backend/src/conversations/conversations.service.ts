@@ -200,6 +200,9 @@ async getMessageByConversationId(conversationId : string){
       },
     },
   });
+  if (!chatParticipents) {
+    return [];
+  }
 
   return chatParticipents.messages;
 }
@@ -255,7 +258,42 @@ async findUnreadMessages(conversationId: string) {
   return unreadMessageCount;
 }
 
+async deleteConversation(conversationId: string) {
+  const conversation = await this.prisma.chatParticipents.findFirst({
+    where: {
+      id: conversationId,
+    },
+    include: {
+      messages: true, // Include related messages
+    },
+  });
 
+  if (!conversation) {
+    throw new HttpException('Conversation not found', HttpStatus.BAD_REQUEST);
+  }
+
+  // Delete related messages first
+  for (const message of conversation.messages) {
+    await this.prisma.message.delete({
+      where: {
+        id: message.id,
+      },
+    });
+  }
+
+  // Now, you can safely delete the conversation
+  await this.prisma.chatParticipents.delete({
+    where: {
+      id: conversationId,
+    },
+  });
+
+  this.eventEmitter.emit('deleteConversation.created', {
+    conversation,
+  });
+
+  return { message: 'Delete conversation successfully' };
+}
   
 
 

@@ -41,7 +41,6 @@ const OnlineFriends = () =>{
   };
 
   const router = useRouter();
-    // const [users, setUsers] = useState<UsersTypes[]>([]);
     const [online, setOnlineFriends] = useState<UsersTypes[]>([]);
     const dispatch = useDispatch<AppDispatch>();
     const [openMenuId, setOpenMenuId] = useState<string | null>(null);
@@ -76,26 +75,6 @@ const OnlineFriends = () =>{
     
       return user && user.status === 'online';
     };
-              // const handleClickConversation = async () =>
-              // {
-              //   let test;
-              
-
-              //     dispatch(fetchConversationUserThunk(elem.display_name))
-              //       .unwrap()
-              //       .then(({data}) => {
-              //         router.push(`/dashboard/chat/${data.id}`);
-              //         if(!data)
-              //         {
-              //           dispatch(createConversationThunk(elem.display_name));
-              //         }
-                  
-              //       }).catch((err)=>{
-              //         console.log(err);
-              //       }
-              //     );
-
-              // }
 
     return (
         <div className="text-black  my-10 h-[calc(100%-200px)] overflow-auto ">

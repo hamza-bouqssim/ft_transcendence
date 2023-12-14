@@ -32,7 +32,7 @@ const MessageContainer = () => {
         joinRoom(id);
 
       //   console.log("the user here-->", UsersAuth);
-      }, [channel.id]);
+      }, [dispatch, channel.id]);
   
 
 
@@ -59,7 +59,7 @@ const MessageContainer = () => {
        <>
         <div className="h-[calc(100%-135px)]   overflow-auto py-3">
             <MessageContainerStyle>
-                {messages.map((m : messageTypes) =>(
+                {messages && messages.map((m : messageTypes) =>(
                     <MessageItemContainer key={m.id}>
                         <Image src={m.sender?.avatar_url} className="h-10 w-10 rounded-[50%] bg-black " alt="Description of the image" width={60}   height={60} />
 

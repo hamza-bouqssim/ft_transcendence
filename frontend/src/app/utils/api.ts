@@ -67,6 +67,10 @@ export const dataUser = async (id_user: string) => axios.post(`http://localhost:
 
 export const getUnreadMessages = async (conversationId : string) => axios.post(`http://localhost:8000/chat/unread-messages`, {conversationId : conversationId}, config)
 
+
+//delete conversation
+
+export const deleteConversation = async (conversationId : string) => axios.post(`http://localhost:8000/chat/delete-conversation`, {conversationId : conversationId}, config)
 export const changeAvatar = async (avatarFormData: FormData) => {
     const config = {
       headers: {

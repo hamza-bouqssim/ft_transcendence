@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { ConversationTypes, CreateConversationParams } from '../utils/types'
-import { createConversation, findConversationUsers, getConversation, getConversationMessage } from '../utils/api';
+import { createConversation, deleteConversation, findConversationUsers, getConversation, getConversationMessage } from '../utils/api';
 
 export interface ConversationsState {
   conversations: ConversationTypes[];
@@ -52,6 +52,12 @@ export const fetchConversationUserThunk = createAsyncThunk('conversation/fetch',
   return response;
 
 })
+
+
+export const fetchDeleteConversation = createAsyncThunk('deleteConversation/fetch', async(conversationId : string)=>{
+  const response = await deleteConversation(conversationId);
+  return response;
+})
 export const conversationsSlice = createSlice({
   name: 'conversations',
   initialState,
@@ -86,6 +92,12 @@ export const conversationsSlice = createSlice({
         state.status = 'success';
     }).addCase(fetchConversationUserThunk.rejected, (state, action) =>{
         state.status = 'failed';
+    }).addCase(fetchDeleteConversation.pending, (state, action) =>{
+      state.status = 'loading';
+    }).addCase(fetchDeleteConversation.fulfilled, (state, action) =>{
+      state.status = 'success';
+    }).addCase(fetchDeleteConversation.rejected, (state, action) =>{
+      state.status = 'failed';
     });
   }
 })
