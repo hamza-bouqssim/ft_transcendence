@@ -8,7 +8,15 @@ import {
 	ConnectedSocket,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Bodies, Composite, Engine, Runner, Body, World } from 'matter-js';
+import {
+	Bodies,
+	Composite,
+	Engine,
+	Runner,
+	Body,
+	World,
+	Events,
+} from 'matter-js';
 import { GameService } from '../game.service';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'prisma/prisma.service';
@@ -104,6 +112,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	private playerTwoScore: number = 0;
 	private updateBallPosition: NodeJS.Timer;
 	private movePaddleInterval: NodeJS.Timer;
+	private handleCollisionStart = (e: any): void => {};
 	private mapIndex: number;
 	private userId: any;
 	private user1: any;
@@ -136,24 +145,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		}
 		this.userId = socket.user.sub;
 		this.pushSocketToQueue(this.userId, socket.id, -1);
-		// if (this.queueWaiting.length >= 2) await this.checkQueue();
-		// if (this.queueInGame.length > 0) {
-		// 	const findGame = this.getInGameQueue(this.userId);
-		// 	if (findGame) {
-		// 		if (findGame.user1 === this.userId) {
-		// 			console.log('pushSocketToQueue1', this.queueInGame);
-		// 			findGame.socket1.push(socket.id);
-		// 		} else {
-		// 			console.log('pushSocketToQueue2', this.queueInGame);
-		// 			findGame.socket2.push(socket.id);
-		// 		}
-		// 	}
-		// } else {
-		// 	const findQueue = this.getStratQueue(this.userId);
-		// 	if (findQueue) this.getStratQueue(this.userId).sockets.push(socket.id);
-		// }
-		// console.log('waitting c', this.queueWaiting);
-		// console.log('ingame c', this.queueInGame);
 	}
 
 	async handleDisconnect(socket: AuthenticatedSocket) {
@@ -175,7 +166,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 					(queue) => queue.userId !== this.userId,
 				);
 			else queue.sockets = queue.sockets.filter((id) => id !== socket.id);
-			// console.log('queueWaitingt: ', this.queueWaiting);
 		} else {
 			const findGame = this.getInGameQueue(this.userId);
 			if (findGame) {
@@ -194,14 +184,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 					}
 				}
 				if (findGame.socket1.length === 0 || findGame.socket2.length === 0) {
-					// this.emitToGame(this.userId, {}, '');
-					// await this.sleep(2000);
-					// if ((findGame.socket1.length === 0 || findGame.socket2.length === 0) && isUser1) {
-					// console.log('he is really leave');
-					// this.queueInGame = this.queueInGame.filter(
-					// 	(queue) =>
-					// 		this.userId !== queue.user1 && this.userId !== queue.user2,
-					// );
 					if (isUser1 === 'user1') {
 						this.playerOneScore = 0;
 						this.playerTwoScore = 7;
@@ -210,82 +192,37 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 						this.playerTwoScore = 0;
 					}
 					this.endGame();
-					// return;
-					// }
-					// console.log('he is back???');
 				}
 			}
-			// console.log('queueInGame: ', this.queueInGame);
-			// console.log('queueWaiting: ', this.queueWaiting);
 		}
 	}
 
 	@SubscribeMessage('startGame')
 	async handleJoinGame(client: AuthenticatedSocket, data: any) {
-		// const wait = this.getStratQueue(client.user.sub);
-
-		// if (wait) {
-		// 	console.log('data1', data);
-		// 	this.mapIndex = Number(data.indexMap);
-		// 	wait.indexMap = Number(data.indexMap);
-		// 	console.log('waiting1:', this.queueWaiting);
-		// } else {
 		this.queueWaiting.push({
 			indexMap: Number(data.indexMap),
 			sockets: [client.id],
 			userId: client.user.sub,
 		});
-		// console.log('waiting:', this.queueWaiting);
-			this.mapIndex = Number(data.indexMap);
+		this.mapIndex = Number(data.indexMap);
 
-		// }
 		if (this.queueWaiting.length >= 2) await this.checkQueue();
-
-		// this.game. = 0;
 	}
 
-	// @SubscribeMessage('joinGame')
-	// async handleJoinGame(client: AuthenticatedSocket, data: any) {
-	// 	console.log('join game');
-	// 	this.mapIndex = 0;
-	// 	// console.log("index:", this.mapIndex)
-	// 	this.pushSocketToQueue(client.user.sub, client.id, 0);
-	// 	if (this.queueWaiting.length >= 2) await this.checkQueue();
-	// 	console.log('waitting: ', this.queueWaiting);
-	// 	console.log('inGame: ', this.queueInGame);
-	// }
-
-	//emit to user a message in an event---------------------------------------
+	// emit to user a message in an event---------------------------------------
 	emitToGame(userId: string, payload: any, event: string) {
-		// if (!this.game) return;
-		// const socketIds = [...this.game.socket1, ...this.game.socket2];
-
-		// socketIds.forEach((socketId) => {
-		// 	this.server.to(socketId).emit(event, payload);
-		// });
 		this.server.to(`@${this.user1.id}`).emit(event, payload);
-		//emit to room @this.user2
 		this.server.to(`@${this.user2.id}`).emit(event, payload);
 	}
 
 	emitToUser1InGame(userId: string, payload: any, event: string) {
 		if (!this.game) return 1337;
-		// const socketIds = this.game.socket1;
-
-		// socketIds.forEach((socketId) => {
-		// 	this.server.to(socketId).emit(event, payload);
-		// });
 		this.server.to(`@${this.user1.id}`).emit(event, payload);
 		return 1;
 	}
 
 	emitToUser2InGame(userId: string, payload: any, event: string) {
 		if (!this.game) return 1338;
-		// const socketIds = this.game.socket2;
-
-		// socketIds.forEach((socketId) => {
-		// 	this.server.to(socketId).emit(event, payload);
-		// });
 		this.server.to(`@${this.user2.id}`).emit(event, payload);
 		return 2;
 	}
@@ -343,12 +280,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			// await this.sleep(3000);
 			if (!this.game) return;
 			console.log('test startgame +++++++++++++++');
-			// this.emitToUser1InGame(userIdTwo, { idGame }, 'startGame');
-
-			// this.emitToUser2InGame(userIdTwo, { idGame }, 'startGame');
-
-			// this.emitToUser1InGame(userIdTwo, { opponentId: userIdTwo }, 'startGame');
-			// this.emitToUser2InGame(userIdOne, { opponentId: userIdOne }, "startGame");
 
 			this.game.status = 'playing';
 		}
@@ -378,17 +309,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 					console.log('pushSocketToQueue2', this.queueInGame);
 				}
 			}
-		} 
-		else {
+		} else {
 			const findQueue = this.getStratQueue(userId);
 			if (findQueue && !findQueue.sockets.includes(socketId))
 				findQueue.sockets.push(socketId);
-			// else
-			// 	this.queueWaiting.push({
-			// 		userId,
-			// 		sockets: [socketId],
-			// 		indexMap,
-			// 	});
 		}
 	}
 
@@ -444,12 +368,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			this.playerTwoScore = 0;
 			this.queueInGame = this.queueInGame.filter((game) => game.user1 != user1);
 		}
-
-		// const history1 = this.gameService.createMatchHistory(user1, user2, score1, score2, duration);
-		// const history2 = this.gameService.createMatchHistory(user2, user1, score2, score1, duration);
-		// const stateGame = this.gameService.calStateGame(score1, score2);
-		// this.emitToUser1InGame(user1, { history1 }, "endGame");
-		// this.emitToUser2InGame(user2, { history2 }, "endGame")
 	}
 	// End Queue---------------------------------------
 	@SubscribeMessage('launchGameRequest')
@@ -458,10 +376,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		@ConnectedSocket() socket: AuthenticatedSocket,
 	) {
 		if (!this.game || socket.user.sub === this.game.user1) return;
-		// if (!this.game) return;
-		// this.mapIndex = ;
-
-		// console.log('map Index:', this.mapIndex);
 
 		// This Function Will Run In All Maps:
 		this.handleDefaultGameMap();
@@ -630,11 +544,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		]);
 
 		this.setBallVelocity();
-
-		// Body.setVelocity(this.ball, {
-		// 	x: this.ballSpeed.x,
-		// 	y: this.ballSpeed.y,
-		// });
 	}
 
 	handleGameCircleObstacles() {
@@ -852,7 +761,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				return;
 			}
 			this.emitToGame(this.userId, this.ball.position, 'updateBallPosition');
-			this.calcScore();
+			// this.calcScore();
+			this.handleDetectCollision();
 		}, 15);
 	}
 
@@ -903,8 +813,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		// Limit Velocity Value
 		if (this.currentBallVelocity.y === 10 || this.currentBallVelocity.y === -10)
 			return;
-		else if (this.lastDirection === 'top') this.currentBallVelocity.y -= 1;
-		else this.currentBallVelocity.y += 1;
+		else if (this.lastDirection === 'top') this.currentBallVelocity.y -= 0.5;
+		else this.currentBallVelocity.y += 0.5;
 
 		Body.setVelocity(this.ball, {
 			x: this.ball.velocity.x,
@@ -913,38 +823,57 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 	emitScore() {
-		if (this.ball.position.y < this.topPaddle.position.y) {
-			this.playerOneScore++;
-			this.lastDirection = 'top';
-		} else if (this.ball.position.y > this.bottomPaddle.position.y) {
-			this.playerTwoScore++;
-			this.lastDirection = 'bottom';
+		if (
+			this.ball.position.y < this.topPaddle.position.y ||
+			this.ball.position.y > this.bottomPaddle.position.y
+		) {
+			if (this.ball.position.y < this.topPaddle.position.y) {
+				this.playerOneScore++;
+				this.lastDirection = 'top';
+			} else {
+				this.playerTwoScore++;
+				this.lastDirection = 'bottom';
+			}
+			this.emitToUser1InGame(
+				this.userId,
+				{
+					yourScore: this.playerOneScore,
+					opponantScore: this.playerTwoScore,
+				},
+				'updateScore',
+			);
+			this.emitToUser2InGame(
+				this.userId,
+				{
+					yourScore: this.playerTwoScore,
+					opponantScore: this.playerOneScore,
+				},
+				'updateScore',
+			);
+			this.resetToDefaultPosition();
 		}
-		this.emitToUser1InGame(
-			this.userId,
-			{
-				yourScore: this.playerOneScore,
-				opponantScore: this.playerTwoScore,
-			},
-			'updateScore',
-		);
-		this.emitToUser2InGame(
-			this.userId,
-			{
-				yourScore: this.playerTwoScore,
-				opponantScore: this.playerOneScore,
-			},
-			'updateScore',
-		);
-		this.resetToDefaultPosition();
 	}
 
-	getScore() {
-		const game = this.getInGameQueue(this.userId);
-		if (game) {
-			// if (this.userId === game.user1)
-			// else if (this.userId === game.user2)
-		}
+	handleDetectCollision() {
+		this.handleCollisionStart = (e: any): void => {
+			const pairs = e.pairs[0];
+
+			if (pairs.bodyA === this.topPaddle || pairs.bodyB === this.topPaddle) {
+				// this.sound.topPaddleSound.play();
+				this.updateBallVelocity();
+			} else if (
+				pairs.bodyA === this.bottomPaddle ||
+				pairs.bodyB === this.bottomPaddle
+			) {
+				// this.sound.bottomPaddleSound.play();
+				this.updateBallVelocity();
+			}
+			this.emitToGame(this.userId, this.ball.velocity, 'setBallVelocity');
+		};
+
+		Events.on(engine, 'collisionStart', this.handleCollisionStart);
+
+		this.calcScore();
 	}
 
 	calcScore() {
