@@ -182,6 +182,10 @@ async findConversationUsers(user : any, _display_name : string)
         { senderId: user.id, recipient: { display_name: _display_name } },
       ],
     },
+    include: {
+      sender: true,
+      recipient: true,
+    },
   });
   return chat;
 }
@@ -265,6 +269,8 @@ async deleteConversation(conversationId: string) {
     },
     include: {
       messages: true, // Include related messages
+      sender: true,
+      recipient: true,
     },
   });
 

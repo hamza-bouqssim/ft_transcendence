@@ -16,6 +16,8 @@ import { useRouter } from "next/navigation";
 import { fetchGetAllFriendsThunk } from "@/app/store/friendsSlice";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { fetchConversationUserThunk } from "@/app/store/conversationSlice";
+import { fetchMessagesThunk } from "@/app/store/messageSlice";
 
 const OnlineFriends = () =>{
   const ToastError = (message: any) => {
@@ -44,13 +46,14 @@ const OnlineFriends = () =>{
     const [online, setOnlineFriends] = useState<UsersTypes[]>([]);
     const dispatch = useDispatch<AppDispatch>();
     const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+    const { updateChannel, channel } = useContext(socketContext);
+
 
       const handleMenuClick = (friendId: string) => {
         setOpenMenuId(openMenuId === friendId ? null : friendId);
     };
     const { users, Userstatus, Usererror } = useSelector((state:any) => state.users);
     const { friends, status, error } = useSelector((state:any) => state.friends);
-    console.log(users,friends);
     useEffect(() => {
       dispatch(fetchUsersThunk());
       dispatch(fetchGetAllFriendsThunk());
@@ -87,6 +90,21 @@ const OnlineFriends = () =>{
 						{
 							router.push(`/dashboard/${elem.id}`)
 						}
+            const handleSendMessage = async () =>
+            {
+
+                  dispatch(fetchConversationUserThunk(elem.display_name))
+                    .unwrap()
+                    .then(({data}) => {
+                      updateChannel(data);
+                      dispatch(fetchMessagesThunk(data.id));
+
+                  }).catch((err)=>{
+                      console.log(err);
+                  }
+                );
+
+            }
 						return(
 							<ConversationSideBarItem key={elem.id}>
               <div className="flex">
@@ -102,7 +120,7 @@ const OnlineFriends = () =>{
                 {openMenuId === elem.id &&
                 <div className={`absolute  top-[-120px] left-2 h-[120px]  w-[200px] flex-col items-center justify-center gap-1 rounded-[15px] border-2 border-solid border-[#000000] bg-white font-['Whitney_Semibold'] `}>
 					        <button className={`bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> handleClick()}>see profile</button>
-					        <button className={` bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`}>send message</button>
+					        <button className={` bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> handleSendMessage() }>send message</button>
                   <button className={` bg-[#EA7F87] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} value="Bloque" onClick={()=> handlleBloque(elem.id)}>Bloque</button>
 
 				        </div>}

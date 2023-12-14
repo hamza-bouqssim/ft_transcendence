@@ -11,13 +11,15 @@ import { fetchGetAllFriendsThunk } from "@/app/store/friendsSlice";
 import { fetchBlocksThunk } from "@/app/store/blockSlice";
 import { fetchUsersThunk } from "@/app/store/usersSlice";
 import { fetchConversationThunk } from "@/app/store/conversationSlice";
+import { fetchMessagesThunk } from "@/app/store/messageSlice";
+import { ConversationTypes, messageTypes } from "@/app/utils/types";
 
 
 
 
 
 const ConversationChannelPagechat = () => { 
-    const { channel } = useContext(socketContext);
+  const { updateChannel, channel } = useContext(socketContext);
 
    
     const socket = useContext(socketContext).socket
@@ -64,10 +66,20 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchConversationThunk());
 
     });
-    socket.on('deleteConversation', (data : any)=>{
-      console.log(" here socket");
-      dispatch(fetchConversationThunk());
-    })
+    socket.on('deleteConversation', (data : ConversationTypes)=>{
+			updateChannel(data);
+			dispatch(fetchConversationThunk());
+      updateChannel(data);
+			dispatch(fetchMessagesThunk(channel?.id));
+
+		  })
+    socket.on('onMessage', (messages : messageTypes)=>{
+			dispatch(fetchConversationThunk());
+			updateChannel(messages.participents);
+      dispatch(fetchMessagesThunk(channel?.id));
+
+		
+		})
       return () => {
         socket.off('AcceptNotification');
         socket.off('newFriendRequest');
@@ -78,9 +90,11 @@ const ConversationChannelPagechat = () => {
         socket.off('offline');
         socket.off('createConversation');
         socket.off('deleteConversation');
+        socket.off('onMessage');
+
       };
 		
-	  }, [socket, dispatch]);
+	  }, [socket, dispatch, channel?.id]);
     return ( 
         <div className=" flex h-screen  xl:container xl:mx-auto">  
           <div className={`h-full  xl:p-10 xl"pl-5 xl:pr-2 ${!channel ? 'block w-full xl:w-[35%]  ' : 'hidden xl:block  xl:w-[35%] '}`}>

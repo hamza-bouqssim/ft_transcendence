@@ -178,8 +178,8 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         @OnEvent('deleteConversation.created')
 
         deleteConversation(data : any){
-            console.log("enter here socket");
-            this.server.emit('deleteConversation', data);
+            console.log('conversation here-->', data.conversation);
+            this.server.emit('deleteConversation', data.conversation);
 
         }
     

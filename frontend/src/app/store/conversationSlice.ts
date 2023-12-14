@@ -85,7 +85,6 @@ export const conversationsSlice = createSlice({
     }).addCase(createConversationThunk.rejected, (state, action) =>{
         state.status = 'failed';
     })
-    
     .addCase(fetchConversationUserThunk.pending, (state, action) =>{
         state.status = 'loading';
     }).addCase(fetchConversationUserThunk.fulfilled, (state, action) =>{

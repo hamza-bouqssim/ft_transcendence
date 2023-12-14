@@ -122,6 +122,7 @@ export type messageUnread = {
 }
 export type messageTypes = {
     id : string;
+    participents :  ConversationTypes;
     content : string;
     createdAt : string;
     sender : User;

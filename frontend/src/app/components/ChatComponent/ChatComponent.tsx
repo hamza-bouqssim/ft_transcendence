@@ -1,6 +1,6 @@
 "use client"
 import { Conversation, ConversationSideBarContainer, ConversationSideBarItem } from "@/app/utils/styles"
-import { ConversationTypes, User, UsersType, UsersTypes } from "@/app/utils/types";
+import { ConversationTypes, User, UsersType, UsersTypes, messageTypes } from "@/app/utils/types";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
@@ -66,39 +66,10 @@ const ChatComponnent  = () =>{
     useEffect(() => {
       dispatch(fetchConversationThunk());
 	  dispatch(fetchAuthUser())
-    }, [UsersAuth]);
+    }, [dispatch]);
 
-	useEffect(()=>{
-		
-		socket.on('onMessage', (messages : any)=>{
-			dispatch(fetchConversationThunk());
-			dispatch(fetchAuthUser())
-            dispatch(fetchMessagesThunk(channel?.id));
+	
 
-			const isRecipient = messages.participents.recipient.display_name === UsersAuth.display_name;
-			if (isRecipient) {
-				setUnreadConversations((prevUnread) => new Set(prevUnread.add(messages.participentsId)));
-			}
-			
-		})
-
-		return () =>{
-			socket.off('onMessage');
-		}
-	},[UsersAuth, channel?.id])
-
-	useEffect(()=>{
-		socket.on('deleteConversation', (data : any)=>{
-			console.log(" here socket ooooo");
-			dispatch(fetchConversationThunk());
-			dispatch(fetchMessagesThunk(channel?.id));
-
-		  })
-		  return () =>{
-			socket.off('deleteConversation');
-
-		  }
-	},[channel?.id])
 
     const getDisplayUser = (conversation : ConversationTypes) => {
 		let test; 
@@ -111,9 +82,6 @@ const ChatComponnent  = () =>{
 				test = conversation.recipient;
 		return test;
 	}
-
-
-	
 
 
 
