@@ -420,7 +420,12 @@ class PongGame {
 	moveOnlineModeBall = (): void => {
 		this.handleSetVelocity = (data: any) => {
 			this.setBallVelocity();
+			// Body.setVelocity(this.ball!, {
+			// 	x: this.map(data.x, this.defaultCanvasSizes.width, this.divWidth),
+			// 	y: this.map(data.y, this.defaultCanvasSizes.height, this.divHeight),
+			// });
 		};
+
 		this.handleSetPosition = (data: any) => {
 			Body.setPosition(this.ball!, {
 				x: this.map(data.x, this.defaultCanvasSizes.width, this.divWidth),
@@ -438,43 +443,7 @@ class PongGame {
 		// 	});
 		// });
 
-		this.socket.on("resetDefaultPosition", (data: any) => {
-			// Body.setPosition(this.ball!, {
-			// 	x: this.map(
-			// 		data.ballPosition.x,
-			// 		this.defaultCanvasSizes.width,
-			// 		this.divWidth,
-			// 	),
-			// 	y: this.map(
-			// 		data.ballPosition.y,
-			// 		this.defaultCanvasSizes.height,
-			// 		this.divHeight,
-			// 	),
-			// });
-			// Body.setPosition(this.topPaddle!, {
-			// 	x: this.map(
-			// 		data.topPaddlePosition.x,
-			// 		this.defaultCanvasSizes.width,
-			// 		this.divWidth,
-			// 	),
-			// 	y: this.map(
-			// 		data.topPaddlePosition.y,
-			// 		this.defaultCanvasSizes.height,
-			// 		this.divHeight,
-			// 	),
-			// });
-			// Body.setPosition(this.bottomPaddle!, {
-			// 	x: this.map(
-			// 		data.bottomPaddlePosition.x,
-			// 		this.defaultCanvasSizes.width,
-			// 		this.divWidth,
-			// 	),
-			// 	y: this.map(
-			// 		data.bottomPaddlePosition.y,
-			// 		this.defaultCanvasSizes.height,
-			// 		this.divHeight,
-			// 	),
-			// });
+		this.socket.on("resetDefaultPosition", () => {
 			this.resetToDefaultPosition();
 		});
 	};
@@ -761,8 +730,6 @@ class PongGame {
 		Events.off(engine, "collisionStart", this.handleCollisionStart);
 		Events.off(engine, "beforeUpdate", this.handleBeforeUpdate);
 
-		// clearTimeout Of Paddle Game Runner:
-		// clearTimeout(this.lunchGameInterval);
 		clearInterval(this.updatePositionInterval);
 
 		// Stop The Runner:

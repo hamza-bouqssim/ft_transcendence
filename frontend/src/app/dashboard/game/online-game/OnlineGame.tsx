@@ -1,11 +1,9 @@
 "use client";
 import { useContext, useEffect, useRef, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import PlayerScore from "@/app/components/PlayerScore";
 import PongGame from "../classes/PongGame";
-import Swal from "sweetalert2";
 import {
-	ReloadPage,
 	LoserPlayerPopUp,
 	WinnerPlayerPopUp,
 } from "@/app/components/GamePopUp";
@@ -52,7 +50,7 @@ const OnlineGame = ({ mapIndex }: any) => {
 	useEffect(() => {
 		console.log("online-game-score-useffect");
 		if (opponentPlayer.opponent.username === "") {
-			router.push("/dashboard");
+			router.push("/dashboard/game");
 			return;
 		}
 		const updateScoreListener = (playersScore: any) => {
@@ -65,17 +63,6 @@ const OnlineGame = ({ mapIndex }: any) => {
 		gameSocket.on("updateScore", updateScoreListener);
 		return () => void gameSocket.off("updateScore");
 	}, []);
-
-	// useEffect(() => {
-	// 	const handleUnload = (event) => {
-	// 		event.preventDefault();
-	// 		router.push("/dashboard");
-	// 	};
-
-	// 	window.addEventListener("beforeunload", handleUnload);
-
-	// 	return () => window.removeEventListener("beforeunload", handleUnload);
-	// }, []);
 
 	useEffect(() => {
 		console.log("online-game-score-useffect2");
