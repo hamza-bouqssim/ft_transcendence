@@ -724,15 +724,19 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	setBallVelocity() {
 		// Random Value Between A Range
 		// Math.floor(Math.random() * (max - min + 1)) + min;
+		let randomVelocity = Math.floor(Math.random() * 11) - 5;
+
+		if (randomVelocity >= 0 && randomVelocity < 3) randomVelocity = 3;
+		else if (randomVelocity >= -2 && randomVelocity <= 0) randomVelocity = -3;
 
 		if (this.lastDirection === 'top') {
 			this.currentBallVelocity = {
-				x: Math.floor(Math.random() * 11) - 5,
+				x: randomVelocity,
 				y: -4,
 			};
 		} else {
 			this.currentBallVelocity = {
-				x: Math.floor(Math.random() * 11) - 5,
+				x: randomVelocity,
 				y: 4,
 			};
 		}

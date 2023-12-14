@@ -59,8 +59,8 @@ const BotGame = ({ mapIndex }: any) => {
 
 			scoreInterval = setInterval(() => {
 				if (
-					pongRef.current.botScore === 8 ||
-					pongRef.current.playerScore === 8
+					pongRef.current.botScore === 7 ||
+					pongRef.current.playerScore === 7
 				) {
 					pongRef.current.clear();
 					clearInterval(scoreInterval);
