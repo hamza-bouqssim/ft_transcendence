@@ -68,7 +68,18 @@ const ChatComponnent  = () =>{
 	  dispatch(fetchAuthUser())
     }, [dispatch]);
 
-	
+	const handleDebloque = async (conversation : ConversationTypes) => {
+		const user = getDisplayUser(conversation)
+
+        try {
+          await dispatch(fetchDebloqueUserThunk(user.id));
+            ToastSuccess("You have Deblocked this friend successfully");
+
+        } catch (error) {
+          ToastError("Failed to Deblock the friend. Please try again.");
+
+        }
+      };
 	
 
 

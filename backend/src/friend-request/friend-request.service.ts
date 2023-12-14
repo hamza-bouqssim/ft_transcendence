@@ -145,6 +145,24 @@ export class FriendRequestService {
 
     async block(friendId: string, userId: string){
 
+        const checkBlock = await this.prisma.friend.findFirst({
+            where: {
+                OR: [
+                    { user_id: userId, friend_id: friendId, status: 'BLOCKED' },
+                    { user_id: friendId, friend_id: userId, status: 'BLOCKED' },
+                ]
+
+            }
+
+        })
+
+
+        if(checkBlock)
+        {
+            throw new HttpException("Alrighdy blocked", HttpStatus.BAD_REQUEST)
+
+        }
+
         const friendship = await this.prisma.friend.findFirst({
             where: {
                 OR: [
@@ -155,7 +173,8 @@ export class FriendRequestService {
         });
 
         if(!friendship)
-            throw new UnauthorizedException("Friendship doesn't exist");
+            throw new HttpException("Friendship doesn't exist", HttpStatus.BAD_REQUEST)
+
 
             
         await this.prisma.friend.update({where: {id: friendship.id}, data: {
@@ -197,7 +216,7 @@ export class FriendRequestService {
           });
         
 
-        return {message: "Blocked"}
+        return {message: "Blocked succefuly"}
     }
 
     async unblock(friendId: string, userId: string){

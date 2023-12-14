@@ -58,13 +58,7 @@ export class FriendRequestController {
         return this.friendshipService.unblock(request.friendIdToUnblock, user.id);
     }
 
-    // @Get('all-Friends')
-    // async allFriends(@Req() req)
-    // {
-    //     const user = req.user;
-    //   return this.friendshipService.allMyFriends(user.ud);
-
-    // }
+  
 
     
 }
