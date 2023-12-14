@@ -192,18 +192,24 @@ async findConversationUsers(user : any, _display_name : string)
 
 async getMessageByConversationId(conversationId : string){
   const chatParticipents = await this.prisma.chatParticipents.findUnique({
-    where: { id: conversationId},
+    where: { id: conversationId },
     include: {
       messages: {
         include: {
           sender: true,
+          participents: {
+            include: {
+              sender: true,
+              recipient: true, // Include recipient information
+            },
+          },
         },
         orderBy: {
           createdAt: 'desc',
         },
       },
       recipient: true,
-      sender : true,
+      sender: true,
     },
   });
   if (!chatParticipents) {

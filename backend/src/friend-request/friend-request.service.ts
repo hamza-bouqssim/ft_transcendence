@@ -179,7 +179,6 @@ export class FriendRequestService {
                     username: true,
                     display_name: true,
                     avatar_url: true,
-                    // Add other fields as needed
                   },
                 },
                 recipient: {
@@ -188,7 +187,6 @@ export class FriendRequestService {
                     username: true,
                     display_name: true,
                     avatar_url: true,
-                    // Add other fields as needed
                   },
                 },
               },
@@ -222,8 +220,36 @@ export class FriendRequestService {
         }
     
         await this.prisma.friend.update({where: {id: friendship.id}, data: {status: 'ACCEPTED'}});
+
+        const chatParticipents = await this.prisma.chatParticipents.findFirst({
+            where: {
+              OR: [
+                { senderId: userId, recipientId: friendId },
+                { senderId: friendId, recipientId: userId },
+              ],
+            },
+            include: {
+                sender: {
+                  select: {
+                    id: true,
+                    username: true,
+                    display_name: true,
+                    avatar_url: true,
+                  },
+                },
+                recipient: {
+                  select: {
+                    id: true,
+                    username: true,
+                    display_name: true,
+                    avatar_url: true,
+                  },
+                },
+              },
+            });
+         
         this.eventEmitter.emit('requestDebloque.created', {
-            friendship
+            chatParticipents
           });
         
         return {message: "Unblocked"}

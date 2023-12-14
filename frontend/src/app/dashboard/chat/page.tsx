@@ -50,6 +50,9 @@ const ConversationChannelPagechat = () => {
     socket.on('debloqueNotification', (data : any)=>{
       dispatch(fetchBlocksThunk());
       dispatch(fetchGetAllFriendsThunk());
+      updateChannel(data);
+      dispatch(fetchMessagesThunk(channel.id));
+
 
     })
     socket.on('online', (data : any)=>{

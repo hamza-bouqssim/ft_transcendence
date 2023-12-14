@@ -1,5 +1,5 @@
 import {MessageContainerStyle, MessageItemAvatar, MessageItemContainer, MessageItemContent, MessageItemDetails, MessageItemHeader} from "@/app/utils/styles"
-import { User, messageTypes } from "@/app/utils/types";
+import { ConversationTypes, User, messageTypes } from "@/app/utils/types";
 import { FC, useEffect, useState,useContext } from "react";
 import {formatRelative} from 'date-fns'
 import { getAuthUser } from "@/app/utils/api";
@@ -10,11 +10,34 @@ import Image from  'next/image'
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/app/store";
 import { MessagesState, fetchMessagesThunk } from "@/app/store/messageSlice";
-
+import { fetchDebloqueUserThunk } from "@/app/store/blockSlice";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 
 const MessageContainer = () => {
+  const ToastError = (message: any) => {
+		toast.error(message, {
+		  position: toast.POSITION.TOP_RIGHT,
+		  autoClose: 5000,
+		  hideProgressBar: false,
+		  closeOnClick: true,
+		  pauseOnHover: true,
+		  draggable: true,
+		});
+	  };
+	
+	  const ToastSuccess = (message: any) => {
+		toast.success(message, {
+		  position: toast.POSITION.TOP_RIGHT,
+		  autoClose: 5000,
+		  hideProgressBar: false,
+		  closeOnClick: true,
+		  pauseOnHover: true,
+		  draggable: true,
+		});
+	  };
     const [setLoadloadinging] = useState<boolean>(false);
     // const [Message,setMessage] = useState<messageTypes[]>([]);
     const controller = new AbortController();
@@ -24,9 +47,6 @@ const MessageContainer = () => {
     const {Userdata} = useContext(socketContext);
     const dispatch = useDispatch<AppDispatch>();
     const { messages, status, error , isSenderBlocked , isRecipientBlocked} = useSelector((state:any) => state.messages);
-    console.log("messages here-->", messages);
-    console.log("is Blocked-->", isSenderBlocked);
-    console.log("is recipeint blocked", isRecipientBlocked);
     useEffect(() => {
         const id = channel.id;        
         dispatch(fetchMessagesThunk(id));
@@ -40,12 +60,11 @@ const MessageContainer = () => {
 		socket.emit("joinToRoom",{id:id})
         setOldId(id);
 	}
-console.log("authUser-->", Userdata.display_name);
-console.log("sender chanel-->", channel.sender.display_name);
-    
+
     return (
 
        <>
+        <ToastContainer />
         <div className="h-[calc(100%-135px)]   overflow-auto py-3">
             <MessageContainerStyle>
                 {messages && messages.map((m : messageTypes) =>(
@@ -70,7 +89,7 @@ console.log("sender chanel-->", channel.sender.display_name);
 
         </div>
         {(isSenderBlocked && Userdata?.display_name === channel.sender.display_name) || (isRecipientBlocked && Userdata?.display_name === channel.recipient.display_name) ? (
-          <button className="w-full p-4 py-3 bg-[#5B8CD3] px-4 mr-2 rounded-full">
+          <button className="w-full p-4 py-3 bg-[#5B8CD3] px-4 mr-2 rounded-full" >
             Unblock
           </button>
         

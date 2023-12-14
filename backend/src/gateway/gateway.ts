@@ -153,8 +153,8 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
             this.server.emit('blockNotification', data.chatParticipents);
         }
         @OnEvent('requestDebloque.created')
-        debloqueNotification(data: string){
-            this.server.emit('debloqueNotification', data);
+        debloqueNotification(data: any){
+            this.server.emit('debloqueNotification', data.chatParticipents);
         }
         @OnEvent('online.created')
         handleOnlineEvent(payload: { userId: string }) {

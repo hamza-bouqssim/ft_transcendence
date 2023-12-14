@@ -19,7 +19,7 @@ import { fetchAuthUser } from "@/app/store/AuthSlice";
 import { fetchMessagesUnreadThunk } from "@/app/store/UnreadMessages";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faEllipsis } from "@fortawesome/free-solid-svg-icons";
-import { fetchBlockFriendThunk } from "@/app/store/blockSlice";
+import { fetchBlockFriendThunk, fetchDebloqueUserThunk } from "@/app/store/blockSlice";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -68,6 +68,7 @@ const ChatComponnent  = () =>{
 	  dispatch(fetchAuthUser())
     }, [dispatch]);
 
+	
 	
 
 
