@@ -109,7 +109,6 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
                     this.eventEmitter.emit('offline.created', { userId });
                 }
             }
-            // console.log("leave Notification-->", socket.user.sub)
             socket.leave(socket.user.sub);
             
         }
@@ -138,8 +137,6 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
 
         @OnEvent('requestAccept.created')
         AcceptFriendRequestNotification(data : any){
-            console.log("friends here-->", data.req.friends);
-            console.log("users here-->", data.req.user);
             const message = `${data.req.friends.display_name} accept your request`;
             this.server.emit('AcceptNotification', data);
             this.userService.createNotification( data.req.friends,data.req.user, message);
@@ -152,9 +149,8 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
 
         }
         @OnEvent('requestBlock.created')
-        blockListNotification(data : string){
-            
-            this.server.emit('blockNotification', data);
+        blockListNotification(data : any){
+            this.server.emit('blockNotification', data.chatParticipents);
         }
         @OnEvent('requestDebloque.created')
         debloqueNotification(data: string){
@@ -178,7 +174,6 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         @OnEvent('deleteConversation.created')
 
         deleteConversation(data : any){
-            console.log('conversation here-->', data.conversation);
             this.server.emit('deleteConversation', data.conversation);
 
         }

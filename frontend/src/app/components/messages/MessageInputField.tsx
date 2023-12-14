@@ -19,16 +19,10 @@ const MessageInputField=() => {
     const {channel, updateChannel} = useContext(socketContext)
     const [content,setContent] = useState("");
 
-    
-
-   
-
-const sendMessage = async () => {
-    socket.emit("message.create", { participentsId: channel.id, content: content });
-    setContent('');  // Assuming you want to clear the content after sending the message
-};
-
-
+    const sendMessage = async () => {
+        socket.emit("message.create", { participentsId: channel.id, content: content });
+        setContent('');  // Assuming you want to clear the content after sending the message
+    };
 
     return (
         <div className="flex items-center justify-between ">

@@ -157,13 +157,45 @@ export class FriendRequestService {
         if(!friendship)
             throw new UnauthorizedException("Friendship doesn't exist");
 
+            
         await this.prisma.friend.update({where: {id: friendship.id}, data: {
             status: 'BLOCKED',
             user_id : friendId, friend_id: userId
         
         }});
+
+
+        const chatParticipents = await this.prisma.chatParticipents.findFirst({
+            where: {
+              OR: [
+                { senderId: userId, recipientId: friendId },
+                { senderId: friendId, recipientId: userId },
+              ],
+            },
+            include: {
+                sender: {
+                  select: {
+                    id: true,
+                    username: true,
+                    display_name: true,
+                    avatar_url: true,
+                    // Add other fields as needed
+                  },
+                },
+                recipient: {
+                  select: {
+                    id: true,
+                    username: true,
+                    display_name: true,
+                    avatar_url: true,
+                    // Add other fields as needed
+                  },
+                },
+              },
+            });
+         
         this.eventEmitter.emit('requestBlock.created', {
-            friendship
+            chatParticipents
           });
         
 
@@ -195,6 +227,21 @@ export class FriendRequestService {
           });
         
         return {message: "Unblocked"}
+    }
+    
+    async deleteMessagesWithUser(userId : string, blockedUserId : string){
+        await this.prisma.message.deleteMany({
+            where: {
+                  participents: {
+                      OR: [
+                        { senderId: userId, recipientId: blockedUserId },
+                        { senderId: blockedUserId, recipientId: userId },
+                      ],
+                  },
+              
+            },
+          });
+
     }
     
 }

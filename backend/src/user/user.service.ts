@@ -314,9 +314,12 @@ export class UserService {
             
     }
 
-    async getNotificationMessage()
-    {
-
-    }
+    async isBlockedByUser(senderId: string, recipientUser: string): Promise<boolean> {
+        console.log("enter");
+        // Implement logic to check if recipientUser is blocked by userId
+        const BlockedFriends = await this.blockedFriends(senderId);
+        console.log("blocked friend here", BlockedFriends);
+        return BlockedFriends.some((friend) => friend.user.id === recipientUser);
+      }
 }
 

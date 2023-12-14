@@ -42,6 +42,8 @@ const ConversationChannelPagechat = () => {
     socket.on('blockNotification', (data : any) =>{
       dispatch(fetchBlocksThunk());
       dispatch(fetchGetAllFriendsThunk());
+      updateChannel(data);
+      dispatch(fetchMessagesThunk(channel?.id));
 
       
     })

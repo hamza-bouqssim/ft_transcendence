@@ -202,13 +202,16 @@ async getMessageByConversationId(conversationId : string){
           createdAt: 'desc',
         },
       },
+      recipient: true,
+      sender : true,
     },
   });
   if (!chatParticipents) {
     return [];
   }
-
-  return chatParticipents.messages;
+  const isSenderBlocked = await this.userService.isBlockedByUser(chatParticipents.sender.id, chatParticipents.recipient.id);
+  const isRecipientBlocked = await this.userService.isBlockedByUser(chatParticipents.recipient.id, chatParticipents.sender.id);
+  return { messages: chatParticipents.messages, isSenderBlocked, isRecipientBlocked};
 }
 
 

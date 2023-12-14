@@ -23,17 +23,15 @@ const MessageContainer = () => {
     const socket  = useContext(socketContext).socket;
     const {Userdata} = useContext(socketContext);
     const dispatch = useDispatch<AppDispatch>();
-    const { messages, status, error } = useSelector((state:any) => state.messages);
-
+    const { messages, status, error , isSenderBlocked , isRecipientBlocked} = useSelector((state:any) => state.messages);
+    console.log("messages here-->", messages);
+    console.log("is Blocked-->", isSenderBlocked);
+    console.log("is recipeint blocked", isRecipientBlocked);
     useEffect(() => {
-        const id = channel.id;
-
+        const id = channel.id;        
         dispatch(fetchMessagesThunk(id));
         joinRoom(id);
-
-      //   console.log("the user here-->", UsersAuth);
       }, [dispatch, channel.id]);
-  
 
 
     const joinRoom =(id:string) =>{
@@ -42,17 +40,8 @@ const MessageContainer = () => {
 		socket.emit("joinToRoom",{id:id})
         setOldId(id);
 	}
-
-
-    // useEffect(() => {
-    //     const id = channel.id;
-    //     getConversationMessage(id)
-    //       .then(( data :any) => {
-    //         setMessage(data.data);
-    //         joinRoom(id);
-    //       })
-    //       .catch((err:any) => console.log(err));
-    // }, [channel.id]);
+console.log("authUser-->", Userdata.display_name);
+console.log("sender chanel-->", channel.sender.display_name);
     
     return (
 
@@ -80,8 +69,15 @@ const MessageContainer = () => {
             </MessageContainerStyle>
 
         </div>
-            <MessageInputField  />
-        </>
+        {(isSenderBlocked && Userdata?.display_name === channel.sender.display_name) || (isRecipientBlocked && Userdata?.display_name === channel.recipient.display_name) ? (
+          <button className="w-full p-4 py-3 bg-[#5B8CD3] px-4 mr-2 rounded-full">
+            Unblock
+          </button>
+        
+        ) : (!isRecipientBlocked && !isSenderBlocked) ? (
+            <MessageInputField />
+        ) : null}
+          </>
         )
 }
 

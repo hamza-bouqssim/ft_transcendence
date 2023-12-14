@@ -118,10 +118,10 @@ const ChatComponnent  = () =>{
 		updatedUnreadConversations.delete(`${conversationId}`);
 		setUnreadConversations(updatedUnreadConversations);
 	  };
-	  const handlleBloque = async (id: string) => {
-      
+	  const handlleBloque = async (conversation : ConversationTypes) => {
+			const user = getDisplayUser(conversation)
 		try {
-		  await dispatch(fetchBlockFriendThunk(id));
+		  await dispatch(fetchBlockFriendThunk(user.id));
 			ToastSuccess("You are blocked this friend successfully");
   
 		} catch (error) {
@@ -189,7 +189,7 @@ const ChatComponnent  = () =>{
 					        				<button className={`bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> handleClickUser()}>View profile</button>
 											<button className={`bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> handleClickUser()}>Invite to play</button>
 					        				<button className={` bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> deleteConversation(elem)}>Delete Chat</button>
-                  							<button className={` bg-[#EA7F87] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} value="Bloque" onClick={()=> handlleBloque(elem.recipientId)}>Bloque</button>
+                  							<button className={` bg-[#EA7F87] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} value="Bloque" onClick={()=> handlleBloque(elem)}>Bloque</button>
 
 				        			</div>}	
             					</div> 
