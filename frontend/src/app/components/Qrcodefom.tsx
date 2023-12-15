@@ -1,12 +1,14 @@
+"user client"
 import React, { useEffect, useState } from 'react'
 import { generateQrcode, verifyCode } from '../utils/api'
-import { verify } from 'crypto';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDog, faQrcode, faQuran, faShield, faXmark } from '@fortawesome/free-solid-svg-icons';
+import {faXmark } from '@fortawesome/free-solid-svg-icons';
 
+interface Props {
+  closeQrForm :  () => void;
+}
 
-
-export function Qrcodeform({closeQrForm}) {
+export function Qrcodeform({closeQrForm } : Props) {
   const [qrCodeData, setQRCodeData] = useState("");
   const [otp, setOtp] = useState("");
   const [Loading, setLoading] = useState(false);

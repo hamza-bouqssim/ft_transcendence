@@ -38,13 +38,21 @@ export class TwoFactorAuthenticationController {
     @UseGuards(AuthGuard('jwt'))
     async confirm(@Body() request: {code: string}, @Req() req, @Res() res)
     {
+        console.log(req.user);
+        console.log(req.user.two_factor_secret_key);
+        console.log(request.code);
         const isValid = await this.tfaService.verifyCode(request.code, req.user.two_factor_secret_key);
         if(!isValid)
-            return res.redirect("http://localhost:3000");
-        const payload = { sub: req.user.id, email: req.user.email };
-        const token = this.jwtService.sign(payload);
-        res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
-        return res.redirect("http://localhost:3000/dashboard");
+        {
+            console.log("IS NOT VALID");
+            return res.send({success:false, message:"Invalid 2FA Code"});
+            // return res.redirect("http://localhost:3000/dashboard");
+        }
+        console.log("VALID CODE");
+        // const payload = { sub: req.user.id, email: req.user.email };
+        // const token = this.jwtService.sign(payload);
+        // res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
+        return res.send({success:true, message:"successfull"});
     }
 
     @Post('2fa/disable')

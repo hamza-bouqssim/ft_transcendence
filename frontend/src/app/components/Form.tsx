@@ -9,7 +9,7 @@ type FormProps = {
 };
 
 const Form = ({ img }: FormProps) => {
-	const {Userdata} = useContext(socketContext);
+	const {Userdata} : any = useContext(socketContext);
 
 	console.log(Userdata)
 	const [name, setName] = useState<string>("");
@@ -33,7 +33,7 @@ const Form = ({ img }: FormProps) => {
 		}
 	};
 
-	const closeQrForm = () => {
+	const closeQrForm : () => void = () => {
 		setDisplay2fa(false);
 	}
 	return (
