@@ -1,7 +1,7 @@
 "use client"
 import { InputField, MessagePanelStyle, MessagePannelBody, MessagePannelHeaderStyle } from "@/app/utils/styles"
-import MessageContainer from "./MessageContainer";
-import MessageInputField from "./MessageInputField";
+import MessageContainer from "./MessageContainerRoom";
+import MessageInputField from "./MessageInputFieldRoom";
 import { messageTypes } from "@/app/utils/types";
 import { FC, useState } from "react";
 import MessagePanelHeader from "./MessagePanelHeader";
@@ -16,7 +16,7 @@ const MessagePanel = () => {
 
         const [updateRome,setUpdateRome] = useState<boolean>(false)
         
-     
+        console.log("hi")
      
     return (
         <div className="p-2 md:p-6   h-full flex items-center w-full justify-between"> 

@@ -3,7 +3,7 @@ import { AppDispatch } from '@/app/store';
 import {  fetchGetAllFriendsThunk } from '@/app/store/friendsSlice';
 import { FriendsTypes } from '@/app/utils/types';
 import React  , {useEffect,useState} from 'react'
-import {useDispatch} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 
 
 interface Friend {
@@ -20,20 +20,13 @@ interface MemberUserProps {
 }
 
 export const MemberUser: React.FC<MemberUserProps> = ({ idUserAdd, setIdUserAdd }) => {  
-    const [Friends, setFriends] = useState<FriendsTypes[]>([]);
-    const dispatch = useDispatch<AppDispatch>();
-    console.log(Friends)
-    useEffect (() => {
-      dispatch(fetchGetAllFriendsThunk())
-      .unwrap()
-      .then(({data}) => {
-        setFriends(data);
-      }).catch((err)=>{
-        console.log(err);
-      }
-      );
-    },[])
-    
+  const { friends, status, error } = useSelector((state:any) => state.friends);
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    dispatch(fetchGetAllFriendsThunk());
+  }, [dispatch]);
+    console.log(friends)
     const handleAddUser = (userId: string) => {
       setIdUserAdd((prevIds:any) => [...prevIds, userId]);
     };
@@ -47,7 +40,7 @@ export const MemberUser: React.FC<MemberUserProps> = ({ idUserAdd, setIdUserAdd 
                   <input className="rounded-full mb-1 w-full text-black focus:outline-none   bg-[#D9D9D9] bg-opacity-20  p-3" placeholder="Search Friend"></input>
         </div>
         <div className=" no-scrollbar ">
-          {Friends?.map((user) => (
+          {friends?.map((user) => (
             <div key={user.id} className="flex items-center justify-between my-2">
               <div className="flex items-center justify-center ">
                 <div className="relative">

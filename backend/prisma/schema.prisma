@@ -54,6 +54,7 @@ model User {
   MatchHistory2               Match_History[]    @relation("playerTow")
   queue                       Queue[]
 
+
 }
 
 model BlockUser {
@@ -103,37 +104,6 @@ model Message {
 }
 
 
-model ChatRoom {
-  id        String @id @default(uuid())
-  name      String    @unique
-  Privacy   String   
-  password  String?
-  picture   String?   @default("https://images.squarespace-cdn.com/content/v1/5f60d7057b9b7d7609ef628f/1603219780222-V253F1WLHBH8HNHXIFUX/group.png")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  members   Member[]
-  messageRome  MessageRome[]
-}
-
-model Member {
-  id          String @id @default(uuid())
-  user_id     String
-  chatRoomId  String
-  isAdmin     Boolean
-  user        User        @relation(fields: [user_id], references: [id])
-  chatRoom    ChatRoom    @relation(fields: [chatRoomId], references: [id])
-}
-
-model MessageRome{
-  id          String @id @default(uuid())
-  content     String
-  chatRoomId  String
-  senderId    String
-  createdAt   DateTime @default(now())
-  user        User        @relation(fields: [senderId], references: [id])
-  chatRoom    ChatRoom    @relation(fields: [chatRoomId], references: [id])
-
-}
 
 
 model Session {
@@ -202,7 +172,6 @@ model NotificationGlobal {
   id String @id @default(uuid())
   Sender_id String
   recipient_id String
-  type String
   content String
   vue Boolean @default(false)
   created_at   DateTime        @default(now())
@@ -217,3 +186,39 @@ model NotificationMessage{
   Sender User @relation("senderMessage",fields: [recipient_id], references: [id])
   vue Boolean @default(true)
 }
+
+model ChatRoom {
+  id        String @id @default(uuid())
+  name      String    @unique
+  Privacy   String   
+  password  String?
+  picture   String?   @default("https://images.squarespace-cdn.com/content/v1/5f60d7057b9b7d7609ef628f/1603219780222-V253F1WLHBH8HNHXIFUX/group.png")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  members   Member[]
+  messageRome  MessageRome[]
+
+}
+
+model Member {
+  id          String @id @default(uuid())
+  user_id     String
+  chatRoomId  String
+  isAdmin     Boolean
+  Status      String @default("Member") //Ban // Mut
+  user        User        @relation(fields: [user_id], references: [id])
+  chatRoom    ChatRoom    @relation(fields: [chatRoomId], references: [id])
+}
+
+model MessageRome{
+  id          String @id @default(uuid())
+  content     String
+  chatRoomId  String
+  senderId    String
+  createdAt   DateTime @default(now())
+  user        User        @relation(fields: [senderId], references: [id])
+  chatRoom    ChatRoom    @relation(fields: [chatRoomId], references: [id])
+
+}
+
+

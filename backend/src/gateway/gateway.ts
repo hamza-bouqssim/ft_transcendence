@@ -10,6 +10,7 @@ import { PrismaService } from 'prisma/prisma.service';
 import { CreateMessageRoom, RoomId } from 'src/Rooms/dto/rooms.dto';
 import { RoomsService } from 'src/Rooms/rooms.service';
 import { ConversationsService } from 'src/conversations/conversations.service';
+import { UserService } from 'src/user/user.service';
 
 @WebSocketGateway({
     cors:{
@@ -22,7 +23,7 @@ import { ConversationsService } from 'src/conversations/conversations.service';
 export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisconnect {
     constructor(@Inject(Services.GATEWAY_SESSION_MANAGER)private readonly sessions : IGateWaySession,  private readonly eventEmitter: EventEmitter2,
     private readonly prisma :PrismaService,
-    private readonly roomsService:RoomsService,private  conversationService : ConversationsService ){}
+    private readonly roomsService:RoomsService,private  conversationService : ConversationsService, private readonly userService : UserService ){}
     @WebSocketServer() 
     server: Server;
     
@@ -59,11 +60,13 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
     
     @SubscribeMessage('joinToRoom')
     handleJoinRome(client: Socket, roomId: RoomId){
+        console.log("joinToRoom" ,roomId.id )
          client.join(roomId.id.toString());
     }
     
     @SubscribeMessage('leaveToRoom')
     handleLeaveRome (client: Socket, roomId: RoomId) {
+        console.log("leaveToRoom" ,roomId.id )
         client.leave (roomId.id);
     }
 
@@ -75,15 +78,17 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         this.server.to(createMessageRoom.chatRoomId.toString()).emit ('messageRome', messageRome);
     }
     @SubscribeMessage('Typing')
-    handleTyping(client: Socket, roomId: RoomId){
-        this.server.to(roomId.id.toString()).emit ('Typing', true);
+    handleTyping(client: Socket, {id,userId}){
+        console.log("Typing")
+        this.server.to(id.toString()).emit ('Typing', {status: true,userId:userId});
     }
 
 
     
     @SubscribeMessage('leaveTyping')
-    handleLeaveTyoing (client: Socket, roomId: RoomId) {
-        this.server.to(roomId.id.toString()).emit ('Typing', false);
+    handleLeaveTyoing (client: Socket, { id,userId}) {
+        console.log("leaveTyping")
+        this.server.to(id.toString()).emit ('Typing',{status: false,userId:userId});
     }
     
 
@@ -111,13 +116,42 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         }
 
         @OnEvent("order.created")
-        onNotification(data:any) {
-            console.log(data)
+         async onNotificationCreate(data:any) {
              const userAdmin = data.members.find((userAdmin) => userAdmin.isAdmin)
             data.members.map((member) => {
                 if(!member.isAdmin)
-                    this.server.to(member.user_id).emit('notification', `${userAdmin.user.display_name } Join ${member.user.display_name} to ${data.name}`);
-                          
+                {
+                    const message = `${userAdmin.user.display_name } Join you to ${data.name}`;
+                    this.server.to(member.user_id).emit('notification', message);
+                    this.userService.createNotification( userAdmin.user,member.user, message);
+
+                }             
+            })
+        }
+        @OnEvent("order.update")
+         async onNotificationupdate(data:any) {
+            console.log(data)
+            const update = await this.prisma.chatRoom.findUnique({
+                where: { id: data.id },
+                include:{
+                  members:{
+                    include:{
+                      user:true
+                    }
+                  }
+                }
+            })
+            update.members.map((member) => {
+            if(!member.isAdmin)
+            {
+                this.server.to(member.user_id).emit('update', "");
+            }             
+            })
+        }
+        @OnEvent("order.delete")
+         async onNotificationdelete(data:any) {
+            data.members.map((member) => {
+                this.server.to(member.user_id).emit('delete', "");         
             })
         }
         @OnEvent("request.created")

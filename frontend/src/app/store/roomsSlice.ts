@@ -1,17 +1,21 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { getAllRoomsApi, createRoomsApi, updateRoomsApi, deleteRoomsApi } from '../utils/api';
 
+interface Member {
+  user_id: string;
+  isAdmin: boolean;
+}
+
+
+
 interface Room {
   id: string;
   name: string;
   Privacy: string;
   picture: string;
-  password?:string,
-  createdAt: string;
-  updatedAt: string;
-  members: {
-    isAdmin: boolean;
-  };
+  createdAt: Date;
+  updatedAt: Date;
+  members: Member[];
 }
 
 interface RoomState {
@@ -62,10 +66,10 @@ export const updateRooms = createAsyncThunk('rooms/updateRooms', async (data: Ro
   }
 });
 
-export const deleteRooms = createAsyncThunk('rooms/deleteRooms', async (roomId: string) => {
+export const deleteRooms = createAsyncThunk('rooms/deleteRooms', async (id: string) => {
   try
   {
-    const response = await deleteRoomsApi(roomId);
+    const response = await deleteRoomsApi(id);
     return response.data;
   }catch(error)
   {

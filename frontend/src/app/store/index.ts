@@ -5,17 +5,21 @@ import requestReducer from './requestSlice';
 import UsersReducer from './usersSlice';
 import roomReducer from './roomsSlice';
 import friendsReducer from './friendsSlice';
-import friendsBlockReducer from './blockSlice'
+import friendsBlockReducer from './blockSlice';
+import NotificationReducer from './notificationSlice';
+import memberReducer from './memberSlice';
 
 export const store = configureStore({
   reducer: {
     conversation: conversationReducer,
     messages: messageReducer,
     request : requestReducer,
-    room: roomReducer,
     friends : friendsReducer,
     friendsBlock : friendsBlockReducer,
     users : UsersReducer,
+    notification : NotificationReducer,
+    room: roomReducer,
+    member:memberReducer
 
   },
   middleware: (getDefaultMiddleware) =>

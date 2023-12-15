@@ -3,10 +3,14 @@ import { AvatarStyle, MessageItemAvatar, MessagePannelHeaderStyle } from "@/app/
 import { IoMdSettings } from "react-icons/io";
 import {usePathname,useRouter} from 'next/navigation'
 import { IoClose } from "react-icons/io5";
-import {FC} from 'react'
+import {FC,useState} from 'react'
 import { FaArrowLeft } from "react-icons/fa6";
 import { useContext,useEffect } from "react";
 import {socketContext } from "@/app/utils/context/socketContext";
+import { useDispatch, useSelector } from 'react-redux';
+import { getAllMembers } from "@/app/store/memberSlice";
+import { HiOutlineLogout } from "react-icons/hi";
+
 
 interface MessagePanelHeaderProps {
     setUpdateRome: (value: boolean) => void;
@@ -14,28 +18,59 @@ interface MessagePanelHeaderProps {
 }
 const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({ setUpdateRome, updateRome }) => {
     const pathname = usePathname()
+    const { members, status, error } = useSelector((state:any) => state.member);
+    const dispatch = useDispatch();
+    const [isTyping, setIsTyping] = useState(false);
+    const socket = useContext(socketContext).socket
     const { updateChannel,channel} = useContext(socketContext);
-    console.log(channel)
+    const {Userdata} = useContext(socketContext)
+    console.log("hi")
     const goBack =() =>
     {
         updateChannel("")
     }
+    useEffect(() => {
+        const handleTyping = (typing) => {
+            if(typing.userId!==Userdata.id)
+                setIsTyping(typing.status);
+        };
+      
+        socket.on('Typing', handleTyping);
+        socket.on('leaveTyping', handleTyping);
+      
+        return () => {
+          socket.off('Typing', handleTyping);
+          socket.off('leaveTyping', handleTyping);
+        };
+      }, []);
 
     useEffect(() => {
         setUpdateRome(false)
     }, [channel])
-    console.log(channel)
+
+    useEffect(() => {
+        dispatch(getAllMembers(channel.id))
+      }, [dispatch,channel])
+
     
-    return (<div className="flex items-center justify-between p-5 rounded-full text-black  bg-[#F2F3FD]">
+    return (<div className="flex items-center justify-between p-5  rounded-full text-black  bg-[#F2F3FD]">
             <div className="flex items-center">
                     <FaArrowLeft  onClick={goBack} className="mr-4 xl:hidden block" size={26}></FaArrowLeft>
                     {channel.picture && <img src={channel.picture} className="w-[50px] rounded-full" alt="" srcset="" />}
                     {!channel.picture && channel.recipient.avatar_url && <img src={channel.recipient.avatar_url} className="w-[50px] rounded-full" alt="" srcset="" />}
-                    {channel.name && <h1 className="ml-2">{channel.name }</h1>}
+                    {channel.name && 
+                    <div>
+                        <h1 className="ml-2">{channel.name }</h1>
+                        {isTyping ? 
+                            <h1 className="ml-2 text-[12px]">Someone is typing...</h1>
+                            :<h1 className="ml-2 text-[12px]">{members.length} Members</h1>
+                        }
+                    </div>
+                    }
                     {!channel.name && channel.recipient.display_name && <h1 className="ml-2">{channel.recipient.display_name }</h1>}
             </div>
             {
-               channel.members && channel?.members[0].isAdmin ? (
+              channel.members.some(member => member.isAdmin && member.user_id === Userdata.id) ? (
                     pathname.includes('groups') && !updateRome ? (
                     <IoMdSettings
                         size={30}

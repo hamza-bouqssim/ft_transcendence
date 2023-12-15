@@ -21,7 +21,6 @@ export const getConversation = () => axios.get(`http://localhost:8000/chat/findc
 
 export const createConversation = async (display_name : string) => axios.post(`http://localhost:8000/chat/conversation`,{display_name : display_name}, config)
 export const getConversationMessage = (id : string) => axios.get(`http://localhost:8000/chat/messages/${id}`, config)
-
 export const loginGoogle = () => axios.get(`http://localhost:8000/auth/google/login`, config)
 
 export const getlogout = () => axios.get(`http://localhost:8000/auth/logout`, config);
@@ -38,7 +37,7 @@ export const getRequest = () =>
   return response;
 }
 
-
+export const getNotification = () => axios.get(`http://localhost:8000/user/notification`, config);
 export const getBloques = () => axios.get(`http://localhost:8000/user/blocked-friends`, config);
 
 export const DebloqueUser = async (id : string) => axios.post(`http://localhost:8000/friend-request/unblock-friend`, {friendIdToUnblock : id}, config);
@@ -103,4 +102,16 @@ export const getAllRoomsApi = () =>{
     return response;  
 }
 
+
+export const getConversationMessageRoom = (id:string) =>{
+  const response = API.post("/rooms/getConversation",{id})
+  return response;
+}
+
+
+export const getAllMembersApi =(id:string) =>
+{
+  const response = API.post("/rooms/allMember",{id})
+  return response;
+}
 
