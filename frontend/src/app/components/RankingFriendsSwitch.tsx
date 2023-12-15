@@ -3,8 +3,8 @@ import InviteField from './InviteField';
 import { faCheck, faPlus  } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import RankedFriends from './RankedFriends';
-import { socketContext } from '../utils/context/socketContext';
 import Image from 'next/image';
+import { socketContext } from '../utils/context/socketContext';
 
 const RankingFriendsSwitch = () => {
     const [showRank, setShowRank] = useState(false);

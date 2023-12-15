@@ -7,6 +7,7 @@ import {FaCheck} from 'react-icons/fa'
 import { socketContext } from '@/app/utils/context/socketContext'
 import { MemberUser } from '../cardMemberUser/MemberUser';
 import { FriendsTypes } from '@/app/utils/types';
+import Image from 'next/image';
 
 
 
@@ -62,7 +63,7 @@ const CreatGroups: React.FC<CreateGroupsProps> = ({ setNewRooms }) => {
         <div className="p-2 pt-4  h-[calc(100%-150px)]  overflow-auto no-scrollbar ">
             {error && <p  className=" bg-[#EA7F87] rounded-lg p-[10px]  w-full text-center">{error}</p>}
             <label className="mt-5 flex items-center justify-center" htmlFor="imagroupe">
-                <img src="" alt="" srcset="" />
+                <Image src="" alt=""  width={30} height={30}/>
                 <div className="bg-[#EFEFEF] p-10 rounded-full">
                     <BiImageAdd size={30} className="text-[#949494]"></BiImageAdd>
                 </div>

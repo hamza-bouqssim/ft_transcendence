@@ -32,7 +32,7 @@ const SignIn = () => {
 					</div>
 					<Link href={"/signUp"}>
 						<h2 className="font-['Whitney_SemiBold'] text-xs text-[--purple-color] lg:text-lg xl:text-xl">
-							Don't Have An Account?
+							Don`t Have An Account?
 							<span className="text-xs text-[--pink-color] underline lg:text-xl xl:text-2xl">
 								{" "}
 								Register

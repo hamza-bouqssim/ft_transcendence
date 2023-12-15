@@ -6,10 +6,10 @@ import { useEffect, useState ,useContext} from "react";
 import { getAuthUser, getlogout } from "../utils/api";
 import { useRouter } from "next/navigation";
 import { deleteCookie } from "cookies-next";
-import { socketContext } from "../utils/context/socketContext";
 import NotificationComponent from "./NotificationComponent";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { socketContext } from "../utils/context/socketContext";
 
 type Change = {
 	menu: boolean;
@@ -38,12 +38,17 @@ const TopRightBar = (props: Change) => {
 		  draggable: true,
 		});
 	  };
-	const {Userdata,setUserdata} = useContext(socketContext)
+	const {Userdata , setUserdata} = useContext(socketContext)
     useEffect(() => {
-        getAuthUser().then(({data}) => {
-			setUserdata(data);
-        }).catch((err)=> {console.log(err);});
-    }, [])
+		getAuthUser().then(({ data }) => {
+			setUserdata(prevData => ({
+				...prevData,
+				...data,
+			}));
+		}).catch((err) => {
+			console.log(err);
+		});
+	}, [setUserdata]);
 	const router = useRouter();
 	const [notfication , setNotefication] = useState(false)
 	const logout = () => {

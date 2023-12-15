@@ -10,6 +10,7 @@ import {socketContext } from "@/app/utils/context/socketContext";
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllMembers } from "@/app/store/memberSlice";
 import { HiOutlineLogout } from "react-icons/hi";
+import Image from "next/image";
 
 
 interface MessagePanelHeaderProps {
@@ -56,8 +57,8 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({ setUpdateRome, update
     return (<div className="flex items-center justify-between p-5  rounded-full text-black  bg-[#F2F3FD]">
             <div className="flex items-center">
                     <FaArrowLeft  onClick={goBack} className="mr-4 xl:hidden block" size={26}></FaArrowLeft>
-                    {channel.picture && <img src={channel.picture} className="w-[50px] rounded-full" alt="" srcset="" />}
-                    {!channel.picture && channel.recipient.avatar_url && <img src={channel.recipient.avatar_url} className="w-[50px] rounded-full" alt="" srcset="" />}
+                    {channel.picture && <Image src={channel.picture} className="w-[50px] rounded-full" alt=""  width={30} height={30} />}
+                    {!channel.picture && channel.recipient.avatar_url && <Image src={channel.recipient.avatar_url} className="w-[50px] rounded-full" alt="" width={30} height={30} />}
                     {channel.name && 
                     <div>
                         <h1 className="ml-2">{channel.name }</h1>

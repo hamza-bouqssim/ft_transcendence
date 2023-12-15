@@ -10,6 +10,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { gameData } from "../page";
 import { getAuthUser } from "@/app/utils/api";
 import { SocketContext } from "../SocketContext";
+import Image from "next/image";
 
 const ChooseMap = () => {
 	const socket = useContext(SocketContext);
@@ -93,20 +94,20 @@ const ChooseMap = () => {
 						modules={[EffectCoverflow]}
 					>
 						<SwiperSlide style={{ height: "400px", width: "270px" }}>
-							<img
-								src="/assets/game-maps/default-map.gif"
+							<Image
+								src="/assets/game-maps/default-map.gif" alt ="" height={30} width={30}
+								style={{ height: "100%", objectFit: "cover" } } 
+							/>
+						</SwiperSlide>
+						<SwiperSlide style={{ height: "400px", width: "270px" }}>
+							<Image
+								src="/assets/game-maps/map2-with-obstacles.gif" alt=""  height={30} width={30}
 								style={{ height: "100%", objectFit: "cover" }}
 							/>
 						</SwiperSlide>
 						<SwiperSlide style={{ height: "400px", width: "270px" }}>
-							<img
-								src="/assets/game-maps/map2-with-obstacles.gif"
-								style={{ height: "100%", objectFit: "cover" }}
-							/>
-						</SwiperSlide>
-						<SwiperSlide style={{ height: "400px", width: "270px" }}>
-							<img
-								src="/assets/game-maps/map3-with-obstacles.gif"
+							<Image
+								src="/assets/game-maps/map3-with-obstacles.gif" alt="" height={30} width={30}
 								style={{ height: "100%", objectFit: "cover" }}
 							/>
 						</SwiperSlide>

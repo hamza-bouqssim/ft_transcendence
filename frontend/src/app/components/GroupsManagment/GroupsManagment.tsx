@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {useEffect,useContext} from 'react'
 import {getAllRooms} from '@/app/store/roomsSlice'
 import {socketContext } from "@/app/utils/context/socketContext";
+import Image from "next/image";
 
 interface Member {
   user_id: string;
@@ -79,7 +80,7 @@ interface Room {
         {rooms && [...rooms].sort(compareRooms)?.map((data: Room) => (
           <div key={data.id} onClick={() =>{updateChannel(data) ; }}  className="cursor-pointer rounded-lg hover:bg-[#F2F3FD] flex items-center justify-between px-2 py-3">
             <div className="flex items-center justify-start">
-                <img className="w-16 h-16  bg-cover rounded-full" src={data.picture} alt="" />
+                <Image className="w-16 h-16  bg-cover rounded-full" src={data.picture} alt="" height={30} width={30}/>
                 <div className="ml-4">
                 <h1>{data.name}</h1>
                 {data.lastMessage ? <h1 className="text-[12px] text-gray-400 ">{data.lastMessage}</h1>:<h1 className="text-[12px] text-gray-400 ">new room</h1>}

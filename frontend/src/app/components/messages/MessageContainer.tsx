@@ -60,7 +60,6 @@ const MessageContainer = () => {
 		socket.emit("joinToRoom",{id:id})
         setOldId(id);
 	}
-
     return (
 
        <>

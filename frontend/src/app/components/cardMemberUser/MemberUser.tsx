@@ -1,7 +1,8 @@
 "use client"
 import { AppDispatch } from '@/app/store';
 import {  fetchGetAllFriendsThunk } from '@/app/store/friendsSlice';
-import { FriendsTypes } from '@/app/utils/types';
+import { FriendsTypes, UsersTypes } from '@/app/utils/types';
+import Image from 'next/image';
 import React  , {useEffect,useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 
@@ -15,8 +16,8 @@ interface Friend {
 
 
 interface MemberUserProps {
-  idUserAdd: string; // Assuming idUserAdd is of type string, adjust as needed
-  setIdUserAdd: React.Dispatch<React.SetStateAction<string>>; // Adjust the type based on your use case
+  idUserAdd: string[]; // Assuming idUserAdd is of type string, adjust as needed
+  setIdUserAdd: React.Dispatch<React.SetStateAction<string[]>>; // Adjust the type based on your use case
 }
 
 export const MemberUser: React.FC<MemberUserProps> = ({ idUserAdd, setIdUserAdd }) => {  
@@ -40,11 +41,11 @@ export const MemberUser: React.FC<MemberUserProps> = ({ idUserAdd, setIdUserAdd 
                   <input className="rounded-full mb-1 w-full text-black focus:outline-none   bg-[#D9D9D9] bg-opacity-20  p-3" placeholder="Search Friend"></input>
         </div>
         <div className=" no-scrollbar ">
-          {friends?.map((user) => (
+          {friends?.map((user : FriendsTypes) => (
             <div key={user.id} className="flex items-center justify-between my-2">
               <div className="flex items-center justify-center ">
                 <div className="relative">
-                  <img className="w-14 rounded-full" src={user.avatar_url} alt={user.displayname} />
+                  <Image className="w-14 rounded-full" src={user.avatar_url} alt={user.display_name} height={30} width={30}/>
                   {
                     user.status === "offline" 
                     ? <div className="w-3 h-3 bg-red-400   absolute bottom-1 right-0 rounded-full"></div> 

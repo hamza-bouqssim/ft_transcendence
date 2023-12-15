@@ -3,6 +3,7 @@ import { socketContext } from '@/app/utils/context/socketContext';
 import React ,{useContext,useEffect} from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { CiMenuKebab } from "react-icons/ci";
+import Image from 'next/image';
 
 export const Mut = () => {
   const { members, status, error } = useSelector((state:any) => state.member);
@@ -34,7 +35,7 @@ export const Mut = () => {
           <div key={user.id} className="flex items-center justify-between relative">
             <div className="flex items-center my-1">
               <div>
-                <img src={user.user.avatar_url} alt="" className="w-10 rounded-full" />
+                <Image src={user.user.avatar_url} alt="" className="w-10 rounded-full"  height={30} width={30}/>
               </div>
               <div className="text-[13px] flex flex-col justify-center ml-2">
                 <h1>{user.user.username}</h1>

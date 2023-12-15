@@ -8,6 +8,7 @@ export const socket = io("http://localhost:8000/chat", {
 
 export const socketContext = createContext(socket);
 
+
 // import { createContext, useContext } from "react";
 // import { io, Socket } from "socket.io-client";
 

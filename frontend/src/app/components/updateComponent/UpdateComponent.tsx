@@ -11,6 +11,7 @@ import { IoClose } from "react-icons/io5";
 import {socketContext } from "@/app/utils/context/socketContext";
 import { deleteRooms, updateRooms } from  '@/app/store/roomsSlice' // Update with the correct path
 import { RestFriend } from '../RestFriend/RestFriend';
+import Image from 'next/image';
 interface Room {
   id: string;
   name: string;
@@ -56,7 +57,7 @@ const handleUpdate = () => {
     <div className=" h-[calc(100%-90px)] mt-5 overflow-auto no-scrollbar  relative">
         <div className="flex items-center justify-center mt-7 ">
           <div className="bg-[#F2F3FD] p-4 rounded-full  w-auto mx-auto flex items-center justify-center">
-            <img className="bg-cover w-20 h-20  rounded-full" src={olddata?.picture} alt="" srcset="" />
+            <Image className="bg-cover w-20 h-20  rounded-full" src={olddata?.picture} alt="" height={30} width={30} />
             <div className="mx-2 flex items-center justify-center ">
             <EdiText
               saveButtonContent={<FaCheck />}

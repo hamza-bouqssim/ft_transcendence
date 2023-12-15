@@ -9,6 +9,7 @@ import "./page.css"
 import Boxes from "@/app/components/Boxes";
 import RankingFriendsSwitch from "@/app/components/usersFiles/RankingFriendsSwitch";
 import HistoryMatches from "@/app/components/HistoryMatches";
+import Image from "next/image";
 
 
 const ProfileUsers= () => {
@@ -57,7 +58,7 @@ const ProfileUsers= () => {
 
 					<div className="col-1">
 						<div className="play relative rounded-[54px]">
-							<img src="/assets/hand.png" className="thehand absolute  -top-[41px] -right-[9px] rounded-r-full w-[490px] animate-bounce " alt="" />
+							<Image src="/assets/hand.png" className="thehand absolute  -top-[41px] -right-[9px] rounded-r-full w-[490px] animate-bounce " alt="" width={30} height={30} />
 							<button type="button" className="play-button ease-in duration-100 hover:scale-105">Play Now!</button>
 						</div>
 						<div className="boxes">

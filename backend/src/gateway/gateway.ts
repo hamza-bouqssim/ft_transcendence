@@ -30,8 +30,6 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
     private NsessionOfuser: Map<string, number> = new Map();
 
     async handleConnection(socket : AuthenticatedSocket) {
-        console.log("new Incoming connection");
-        console.log(socket.user.sub);
         const userId = socket.user.sub;
         if(socket.user)
         {
@@ -55,7 +53,6 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
     @SubscribeMessage("message.create")
     async handleMessageCreateEvent(socket : AuthenticatedSocket,payload : any){
         const messages = await this.conversationService.createMessags(socket.user, payload);
-        console.log("participent id -->", messages.participentsId)
         this.server.to(messages.participents.recipient.id).to(messages.participents.sender.id).to(messages.participentsId.toString()).emit('onMessage', messages, socket.user);
         this.userService.notificationMessage( messages.participents.senderId, messages.participents.recipientId);
 
@@ -63,13 +60,11 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
     
     @SubscribeMessage('joinToRoom')
     handleJoinRome(client: Socket, roomId: RoomId){
-        console.log("joinToRoom" ,roomId.id )
          client.join(roomId.id.toString());
     }
     
     @SubscribeMessage('leaveToRoom')
     handleLeaveRome (client: Socket, roomId: RoomId) {
-        console.log("leaveToRoom" ,roomId.id )
         client.leave (roomId.id);
     }
 
@@ -82,7 +77,6 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
     }
     @SubscribeMessage('Typing')
     handleTyping(client: Socket, {id,userId}){
-        console.log("Typing")
         this.server.to(id.toString()).emit ('Typing', {status: true,userId:userId});
     }
 
@@ -90,7 +84,6 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
     
     @SubscribeMessage('leaveTyping')
     handleLeaveTyoing (client: Socket, { id,userId}) {
-        console.log("leaveTyping")
         this.server.to(id.toString()).emit ('Typing',{status: false,userId:userId});
     }
     
