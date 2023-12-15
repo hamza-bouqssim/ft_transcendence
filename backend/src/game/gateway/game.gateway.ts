@@ -54,7 +54,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@WebSocketServer()
 	server: Server;
 
-	private pong: PongGame;
+	// private pong: PongGame;
 	private mapPong: Map<string, PongGame> = new Map();
 
 	// private ball: Body;
@@ -298,9 +298,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				// delete this.mapPong[game.user1.id];
 			console.log(this.mapPong[game.user1.id].playerOneScore, this.mapPong[game.user1.id].playerTwoScore);
 			// this.mapPong[game.user1.id].playerOneScore = 0;
-			// this.mapPong[game.user1.id].playerOneScore = 0;
 			// this.mapPong[game.user1.id].playerTwoScore = 0;
-			// this.mapPong[game.user1.id].handleClearGame();
+			this.mapPong[game.user1.id].handleClearGame();
 			delete this.mapPong[game.user1.id];
 			this.queueInGame = this.queueInGame.filter((game) => game.socket1.user.sub  != user1);
 		}

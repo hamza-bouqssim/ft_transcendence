@@ -11,15 +11,15 @@ import {
 } from 'matter-js';
 import { GameQ } from '../gateway/game.gateway';
 
-const engine: Engine = Engine.create({
-	gravity: {
-		x: 0,
-		y: 0,
-	},
-});
+// const engine: Engine = Engine.create({
+// 	gravity: {
+// 		x: 0,
+// 		y: 0,
+// 	},
+// });
 
 
-const runner: Runner = Runner.create();
+// const runner: Runner = Runner.create();
 
 export class PongGame {
 	private ball: Body;
@@ -82,13 +82,25 @@ export class PongGame {
 
 	private user1: string;
 	private user2: string;
+	private engine: Engine;
+	private runner: Runner;
 	private handleCollisionStart = (e: any): void => {};
 	private mapIndex: number;
 
 	constructor(
 		private gameGatway: GameGateway,
 		private game: GameQ,
+		
 	) {
+		this.engine = Engine.create({
+			gravity: {
+				x: 0,
+				y: 0,
+			},
+		});
+		
+		
+		this.runner = Runner.create();
 		this.user1 = game.socket1.user.sub;
 		this.user2 = game.socket2.user.sub;
 		this.mapIndex = game.indexMap;
@@ -246,7 +258,7 @@ export class PongGame {
 			8,
 		);
 
-		Composite.add(engine.world, [
+		Composite.add(this.engine.world, [
 			this.topPaddle,
 			this.bottomPaddle,
 			this.separator,
@@ -310,7 +322,7 @@ export class PongGame {
 			},
 		);
 
-		Composite.add(engine.world, [
+		Composite.add(this.engine.world, [
 			this.topLeftObstacle,
 			this.topRightObstacle,
 			this.bottomLeftObstacle,
@@ -371,7 +383,7 @@ export class PongGame {
 			},
 		);
 
-		Composite.add(engine.world, [
+		Composite.add(this.engine.world, [
 			this.verticalObstacle1,
 			this.verticalObstacle2,
 			this.verticalObstacle3,
@@ -467,7 +479,7 @@ export class PongGame {
 	}
 
 	startGame() {
-		Runner.run(runner, engine);
+		Runner.run(this.runner, this.engine);
 
 		this.updateBallPosition = setInterval(() => {
 			if (!this.game) {
@@ -605,7 +617,7 @@ export class PongGame {
 			}
 		};
 
-		Events.on(engine, 'collisionStart', this.handleCollisionStart);
+		Events.on(this.engine, 'collisionStart', this.handleCollisionStart);
 
 		this.calcScore();
 	}
@@ -624,38 +636,38 @@ export class PongGame {
 	handleClearGame() {
 		const displayBodies = (str: string) => {
 			console.log(str);
-			for (let body of engine.world.bodies) console.log(body);
+			for (let body of this.engine.world.bodies) console.log(body);
 		};
 
 		// displayBodies('before');
 
 		// Remove Basic Bodies In Default Map
-		Composite.remove(engine.world, this.topPaddle);
-		Composite.remove(engine.world, this.bottomPaddle);
-		Composite.remove(engine.world, this.rightRect);
-		Composite.remove(engine.world, this.leftRect);
-		Composite.remove(engine.world, this.ball);
-		Composite.remove(engine.world, this.centerCirle);
-		Composite.remove(engine.world, this.separator);
+		Composite.remove(this.engine.world, this.topPaddle);
+		Composite.remove(this.engine.world, this.bottomPaddle);
+		Composite.remove(this.engine.world, this.rightRect);
+		Composite.remove(this.engine.world, this.leftRect);
+		Composite.remove(this.engine.world, this.ball);
+		Composite.remove(this.engine.world, this.centerCirle);
+		Composite.remove(this.engine.world, this.separator);
 
 		// Remove Obstacles For Map 1 && 2
 		if (this.mapIndex === 1) {
 			console.log('index 1 chosen');
-			Composite.remove(engine.world, this.topLeftObstacle);
-			Composite.remove(engine.world, this.topRightObstacle);
-			Composite.remove(engine.world, this.bottomLeftObstacle);
-			Composite.remove(engine.world, this.bottomRightObstacle);
+			Composite.remove(this.engine.world, this.topLeftObstacle);
+			Composite.remove(this.engine.world, this.topRightObstacle);
+			Composite.remove(this.engine.world, this.bottomLeftObstacle);
+			Composite.remove(this.engine.world, this.bottomRightObstacle);
 		} else if (this.mapIndex === 2) {
 			console.log('index 1 chosen');
-			Composite.remove(engine.world, this.verticalObstacle1);
-			Composite.remove(engine.world, this.verticalObstacle2);
-			Composite.remove(engine.world, this.verticalObstacle3);
-			Composite.remove(engine.world, this.verticalObstacle4);
+			Composite.remove(this.engine.world, this.verticalObstacle1);
+			Composite.remove(this.engine.world, this.verticalObstacle2);
+			Composite.remove(this.engine.world, this.verticalObstacle3);
+			Composite.remove(this.engine.world, this.verticalObstacle4);
 		}
 
 		// displayBodies('after');
 
-		Events.off(engine, 'collisionStart', this.handleCollisionStart);
+		Events.off(this.engine, 'collisionStart', this.handleCollisionStart);
 
 		// Clear Intervals:
 		clearInterval(this.movePaddleInterval);
@@ -665,11 +677,11 @@ export class PongGame {
 		// clearTimeout(this.lunchGameInterval);
 
 		// Stop The Runner:
-		Runner.stop(runner);
+		Runner.stop(this.runner);
 
 		// Clear Engine:
-		Engine.clear(engine);
-		World.clear(engine.world, false);
+		Engine.clear(this.engine);
+		World.clear(this.engine.world, false);
 
 		// Close Socket!
 		// this.socket.disconnect();
