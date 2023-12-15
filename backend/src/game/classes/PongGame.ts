@@ -1,84 +1,200 @@
-import Ball from './Ball';
-import Paddle from './Paddle';
-import { Howl } from 'howler';
-import Matter from 'matter-js';
+import { GameGateway } from '../gateway/game.gateway';
+import {
+	Bodies,
+	Composite,
+	Engine,
+	Runner,
+	Body,
+	World,
+	Events,
+} from 'matter-js';
 
-const Render = Matter.Render;
-const Engine = Matter.Engine;
-const Runner = Matter.Runner;
-const Composite = Matter.Composite;
-const engine = Engine.create({
+const engine: Engine = Engine.create({
 	gravity: {
 		x: 0,
 		y: 0,
 	},
 });
 
-class PongGame {
-	private ball: Ball;
-	private topPaddle: Paddle;
-	private bottomPaddle: Paddle;
-	private moveInterval: any;
-	private sound = {
-		topPaddleSound: new Howl({
-			src: ['/assets/sounds/leftPaddle.wav'],
-		}),
-		bottomPaddleSound: new Howl({
-			src: ['/assets/sounds/rightPaddle.wav'],
-		}),
-		win: new Howl({
-			src: ['/assets/sounds/winSound.mp3'],
-		}),
+const runner: Runner = Runner.create();
+
+export class PongGame {
+	private ball: Body;
+	private topPaddle: Body;
+	private bottomPaddle: Body;
+	private rightRect: Body;
+	private leftRect: Body;
+	private centerCirle: Body;
+	private separator: Body;
+	private topLeftObstacle: Body;
+	private topRightObstacle: Body;
+	private bottomLeftObstacle: Body;
+	private bottomRightObstacle: Body;
+	private verticalObstacle1: Body;
+	private verticalObstacle2: Body;
+	private verticalObstacle3: Body;
+	private verticalObstacle4: Body;
+	private defaultCanvasSizes: {
+		width: number;
+		height: number;
+	} = {
+		width: 560,
+		height: 836,
 	};
+	private currentBallVelocity: {
+		x: number;
+		y: number;
+	} = {
+		x: 0,
+		y: 0,
+	};
+	private paddleSizes: {
+		width: number;
+		height: number;
+	} = {
+		width: 170,
+		height: 15,
+	};
+	private lastDirection: string = 'top';
+	private movesUser1: {
+		movingRight: boolean;
+		movingLeft: boolean;
+	} = {
+		movingRight: false,
+		movingLeft: false,
+	};
+	private movesUser2: {
+		movingRight: boolean;
+		movingLeft: boolean;
+	} = {
+		movingRight: false,
+		movingLeft: false,
+	};
+	private posTopPaddleX = this.defaultCanvasSizes.width / 2;
+	private posBottomPaddleX = this.defaultCanvasSizes.width / 2;
+	playerOneScore: number = 0;
+	playerTwoScore: number = 0;
+	private updateBallPosition: NodeJS.Timer;
+	private movePaddleInterval: NodeJS.Timer;
+	private handleCollisionStart = (e: any): void => {};
+	// private mapIndex: number;
 
 	constructor(
-		private canvasWidth,
-		private canvasHeight,
+		private mapIndex: number,
+		private gameGatway: GameGateway,
 	) {
-		// this.divWidth = this.parentDiv.getBoundingClientRect().width;
-		// this.divHeight = this.parentDiv.getBoundingClientRect().height;
+		// This Function Will Run In All Maps:
+		this.handleDefaultGameMap();
 
-		// Ball Data
-		this.ball = new Ball(
-			this.canvasWidth / 2,
-			this.canvasHeight / 2,
-			15,
-			'#FFF',
+		switch (this.mapIndex) {
+			case 1:
+				this.handleGameCircleObstacles();
+				break;
+
+			case 2:
+				this.handleVerticalObstacles();
+				break;
+		}
+		console.log(
+			this.gameGatway.emitToUser1InGame(
+				{ rotate: false, opponant: this.gameGatway.user2 },
+				'launchGame',
+			),
+		);
+		console.log(
+			this.gameGatway.emitToUser2InGame(
+				{ rotate: true, opponant: this.gameGatway.user1 },
+				'launchGame',
+			),
 		);
 
-		//Paddles Data
-		this.topPaddle = new Paddle(this.canvasWidth / 2, 30, 170, 15, '#4FD6FF');
+		this.handlePaddleMove();
+		this.startGame();
+	}
 
-		this.bottomPaddle = new Paddle(
-			this.canvasWidth / 2,
-			this.canvasHeight - 30,
-			170,
+	handleDefaultGameMap() {
+		// Create Ball:
+		this.ball = Bodies.circle(
+			this.defaultCanvasSizes.width / 2,
+			this.defaultCanvasSizes.height / 2,
 			15,
-			'#FF5269',
-		);
-
-		// const render = Render.create({
-		// 	element: this.parentDiv,
-		// 	engine: engine,
-		// 	options: {
-		// 		background: '#3A3561',
-		// 		width: this.divWidth,
-		// 		height: this.divHeight,
-		// 		wireframes: false,
-		// 	},
-		// });
-
-		//Draw Objects:
-		this.ball.draw();
-		this.topPaddle.draw();
-		this.bottomPaddle.draw();
-
-		const rightRect = Matter.Bodies.rectangle(
-			this.canvasWidth,
-			this.canvasHeight / 2,
-			20,
-			this.canvasHeight,
 			{
+				label: 'ball',
+				render: {
+					fillStyle: '#FFF',
+				},
+				frictionAir: 0,
+				friction: 0,
+				inertia: Infinity,
+				restitution: 1,
+			},
+		);
+
+		// const topRect = Bodies.rectangle(
+		// 	this.canvasWidth / 2,
+		// 	0,
+		// 	this.canvasWidth,
+		// 	20,
+		// 	{
+		// 		render: {
+		// 			fillStyle: 'red',
+		// 		},		delete this.queueWaiting[user1];
+
+		// 		isStatic: true,
+		// 	},
+		// );
+		// const bottomRect = Bodies.rectangle(
+		// 	this.canvasWidth / 2,
+		// 	this.canvasHeight,
+		// 	this.canvasWidth,
+		// 	20,
+		// 	{
+		// 		render: {
+		// 			fillStyle: 'yellow',
+		// 		},
+		// 		isStatic: true,
+		// 	},
+		// );
+
+		// Create Two Paddles:
+		this.topPaddle = Bodies.rectangle(
+			this.defaultCanvasSizes.width / 2,
+			30,
+			this.paddleSizes.width,
+			this.paddleSizes.height,
+			{
+				label: 'topPaddle',
+				render: {
+					fillStyle: '#4FD6FF',
+				},
+				isStatic: true,
+				// chamfer: { radius: 10 },
+			},
+		);
+
+		this.bottomPaddle = Bodies.rectangle(
+			this.defaultCanvasSizes.width / 2,
+			this.defaultCanvasSizes.height - 30,
+			this.paddleSizes.width,
+			this.paddleSizes.height,
+			{
+				label: 'bottomPaddle',
+				render: {
+					fillStyle: '#FF5269',
+				},
+				isStatic: true,
+				// chamfer: { radius: 10 },
+			},
+		);
+
+		// Create Two Boundies:
+		this.rightRect = Bodies.rectangle(
+			this.defaultCanvasSizes.width,
+			this.defaultCanvasSizes.height / 2,
+			20,
+			this.defaultCanvasSizes.height,
+			{
+				label: 'rightRect',
 				render: {
 					fillStyle: '#CFF4FF',
 				},
@@ -86,126 +202,454 @@ class PongGame {
 			},
 		);
 
-		const leftRect = Matter.Bodies.rectangle(
+		this.leftRect = Bodies.rectangle(
 			0,
-			this.canvasHeight / 2,
+			this.defaultCanvasSizes.height / 2,
 			20,
-			this.canvasHeight,
+			this.defaultCanvasSizes.height,
 			{
+				label: 'leftRect',
 				render: {
 					fillStyle: '#CFF4FF',
+				},
+				isStatic: true,
+			},
+		);
+
+		this.separator = Bodies.rectangle(
+			this.defaultCanvasSizes.width / 2,
+			this.defaultCanvasSizes.height / 2,
+			this.defaultCanvasSizes.width,
+			8,
+			{
+				isSensor: true,
+				render: {
+					fillStyle: '#CFF4FF',
+				},
+			},
+		);
+
+		this.centerCirle = Bodies.circle(
+			this.defaultCanvasSizes.width / 2,
+			this.defaultCanvasSizes.height / 2,
+			8,
+		);
+
+		Composite.add(engine.world, [
+			this.topPaddle,
+			this.bottomPaddle,
+			this.separator,
+			this.centerCirle,
+			this.ball,
+			this.rightRect,
+			this.leftRect,
+			// bottomRect,
+			// topRect,
+		]);
+
+		this.setBallVelocity();
+	}
+
+	handleGameCircleObstacles() {
+		this.topLeftObstacle = Bodies.circle(
+			this.defaultCanvasSizes.width / 4,
+			this.defaultCanvasSizes.height / 4,
+			50,
+			{
+				isStatic: true,
+				render: {
+					fillStyle: 'white',
+				},
+			},
+		);
+
+		this.topRightObstacle = Bodies.circle(
+			(3 * this.defaultCanvasSizes.width) / 4,
+			this.defaultCanvasSizes.height / 4,
+			40,
+			{
+				isStatic: true,
+				render: {
+					fillStyle: 'white',
+				},
+			},
+		);
+
+		this.bottomRightObstacle = Bodies.circle(
+			(3 * this.defaultCanvasSizes.width) / 4,
+			(3 * this.defaultCanvasSizes.height) / 4,
+			50,
+			{
+				isStatic: true,
+				render: {
+					fillStyle: 'white',
+				},
+			},
+		);
+
+		this.bottomLeftObstacle = Bodies.circle(
+			this.defaultCanvasSizes.width / 4,
+			(3 * this.defaultCanvasSizes.height) / 4,
+			40,
+			{
+				isStatic: true,
+				render: {
+					fillStyle: 'white',
+				},
+			},
+		);
+
+		Composite.add(engine.world, [
+			this.topLeftObstacle,
+			this.topRightObstacle,
+			this.bottomLeftObstacle,
+			this.bottomRightObstacle,
+		]);
+	}
+
+	handleVerticalObstacles() {
+		this.verticalObstacle1 = Bodies.rectangle(
+			this.defaultCanvasSizes.width - 65,
+			this.defaultCanvasSizes.height / 5,
+			15,
+			170,
+			{
+				render: {
+					fillStyle: 'white',
+				},
+				isStatic: true,
+			},
+		);
+
+		this.verticalObstacle2 = Bodies.rectangle(
+			this.defaultCanvasSizes.width / 2,
+			this.defaultCanvasSizes.height / 3,
+			15,
+			100,
+			{
+				render: {
+					fillStyle: 'white',
+				},
+				isStatic: true,
+			},
+		);
+
+		this.verticalObstacle3 = Bodies.rectangle(
+			65,
+			(2 * this.defaultCanvasSizes.height) / 3,
+			15,
+			170,
+			{
+				render: {
+					fillStyle: 'white',
+				},
+				isStatic: true,
+			},
+		);
+
+		this.verticalObstacle4 = Bodies.rectangle(
+			this.defaultCanvasSizes.width - 65,
+			(4 * this.defaultCanvasSizes.height) / 5,
+			15,
+			170,
+			{
+				render: {
+					fillStyle: 'white',
 				},
 				isStatic: true,
 			},
 		);
 
 		Composite.add(engine.world, [
-			this.ball.body,
-			this.topPaddle.body,
-			this.bottomPaddle.body,
-			rightRect,
-			leftRect,
+			this.verticalObstacle1,
+			this.verticalObstacle2,
+			this.verticalObstacle3,
+			this.verticalObstacle4,
 		]);
-
-		// Render.run(render);
-
-		// create runner
-		// let runner = Runner.create();
-
-		// run the engine
-		// Runner.run(runner, engine);
 	}
 
-	resetObjsDefaultPosition = (): void => {
-		Matter.Body.setPosition(this.ball.body, {
-			x: this.ball.xCord,
-			y: this.ball.yCord,
+	handleKeyDown(data: any) {
+		// if (!this.game) return;
+
+		let movingLeft: boolean;
+		let movingRight: boolean;
+
+		if (data.state === 'keydown') {
+			if (data.key === 'd' || data.key === 'ArrowRight') movingRight = true;
+			else if (data.key === 'a' || data.key === 'ArrowLeft') movingLeft = true;
+		} else {
+			if (data.key === 'd' || data.key === 'ArrowRight') movingRight = false;
+			else if (data.key === 'a' || data.key === 'ArrowLeft') movingLeft = false;
+		}
+		if (data.display_name === this.gameGatway.user1.display_name)
+			this.movesUser1 = {
+				movingLeft,
+				movingRight,
+			};
+		else {
+			this.movesUser2 = {
+				movingLeft,
+				movingRight,
+			};
+		}
+	}
+
+	handlePaddleMove() {
+		this.movePaddleInterval = setInterval(() => {
+			if (!this.gameGatway.game) {
+				clearInterval(this.updateBallPosition);
+				return;
+			}
+			let stepX1 = 0;
+
+			if (this.movesUser1.movingLeft) {
+				stepX1 = this.posBottomPaddleX - 11;
+				if (stepX1 <= this.paddleSizes.width / 2)
+					stepX1 = this.paddleSizes.width / 2;
+			} else if (this.movesUser1.movingRight) {
+				stepX1 = this.posBottomPaddleX + 11;
+				if (
+					stepX1 >=
+					this.defaultCanvasSizes.width - this.paddleSizes.width / 2
+				)
+					stepX1 = this.defaultCanvasSizes.width - this.paddleSizes.width / 2;
+			}
+			if (stepX1 != 0) {
+				this.posBottomPaddleX = stepX1;
+				Body.setPosition(this.bottomPaddle, {
+					x: stepX1,
+					y: this.bottomPaddle.position.y,
+				});
+			}
+
+			let stepX2 = 0;
+
+			if (this.movesUser2.movingRight) {
+				stepX2 = this.posTopPaddleX - 11;
+				if (stepX2 <= this.paddleSizes.width / 2)
+					stepX2 = this.paddleSizes.width / 2;
+			} else if (this.movesUser2.movingLeft) {
+				stepX2 = this.posTopPaddleX + 11;
+				if (
+					stepX2 >=
+					this.defaultCanvasSizes.width - this.paddleSizes.width / 2
+				)
+					stepX2 = this.defaultCanvasSizes.width - this.paddleSizes.width / 2;
+			}
+			if (stepX2 != 0) {
+				this.posTopPaddleX = stepX2;
+				Body.setPosition(this.topPaddle, {
+					x: stepX2,
+					y: this.topPaddle.position.y,
+				});
+			}
+			if (stepX2 || stepX1)
+				this.gameGatway.emitToGame(
+					{
+						xPosition1: this.posBottomPaddleX,
+						xPosition2: this.posTopPaddleX,
+					},
+					'updatePaddlePosition',
+				);
+		}, 15);
+	}
+
+	startGame() {
+		Runner.run(runner, engine);
+
+		this.updateBallPosition = setInterval(() => {
+			if (!this.gameGatway.game) {
+				clearInterval(this.updateBallPosition);
+				return;
+			}
+			this.gameGatway.emitToGame(this.ball.position, 'updateBallPosition');
+			// this.calcScore();
+			this.handleDetectCollision();
+		}, 15);
+	}
+
+	resetToDefaultPosition() {
+		// Reset Ball Position
+		Body.setPosition(this.ball, {
+			x: this.defaultCanvasSizes.width / 2,
+			y: this.defaultCanvasSizes.height / 2,
 		});
-		// clearInterval(this.moveInterval);
-	};
 
-	// movePaddle = (): void => {
-	// 	document.addEventListener('keydown', (e) => {
-	// 		if (e.key === 'd' || e.key === 'ArrowRight')
-	// 			this.socket.emit('keyevent', {
-	// 				key: e.key,
-	// 				state: 'keydown',
-	// 			});
-	// 		else if (e.key === 'a' || e.key === 'ArrowLeft')
-	// 			this.socket.emit('keyevent', {
-	// 				key: e.key,
-	// 				state: 'keydown',
-	// 			});
-	// 	});
+		// Reset Ball Speed
+		this.setBallVelocity();
 
-	// 	document.addEventListener('keyup', (e) => {
-	// 		if (e.key === 'd' || e.key === 'ArrowRight')
-	// 			this.socket.emit('keyevent', {
-	// 				key: e.key,
-	// 				state: 'keyup',
-	// 			});
-	// 		else if (e.key === 'a' || e.key === 'ArrowLeft')
-	// 			this.socket.emit('keyevent', {
-	// 				key: e.key,
-	// 				state: 'keyup',
-	// 			});
-	// 	});
+		// Reset Paddles Position
+		// Body.setPosition(this.topPaddle, {
+		// 	x: this.defaultCanvasSizes.width / 2,
+		// 	y: 30,
+		// });
 
-	// 	this.socket.on('updatePaddlePosition', (data: any) => {
-	// 		console.log(data.xPosition);
-	// 		Matter.Body.setPosition(this.bottomPaddle.body, {
-	// 			x: data.xPosition,
-	// 			y: this.bottomPaddle.body.position.y,
-	// 		});
-	// 	});
-	// };
+		// Body.setPosition(this.bottomPaddle, {
+		// 	x: this.defaultCanvasSizes.width / 2,
+		// 	y: this.defaultCanvasSizes.height - 30,
+		// });
 
-	// moveBotPaddle = () => {
-	// 	let currentPositionX;
+		this.gameGatway.emitToGame({}, 'resetDefaultPosition');
+	}
 
-	// 	Matter.Events.on(engine, 'collisionStart', (e) => {
-	// 		const pairs = e.pairs[0];
-	// 		// alert(this.divHeight);
-	// 		if (
-	// 			pairs.bodyA === this.topPaddle.body ||
-	// 			pairs.bodyB === this.topPaddle.body
-	// 		)
-	// 			this.sound.topPaddleSound.play();
-	// 		else if (
-	// 			pairs.bodyA === this.bottomPaddle.body ||
-	// 			pairs.bodyB === this.bottomPaddle.body
-	// 		)
-	// 			this.sound.bottomPaddleSound.play();
-	// 	});
+	setBallVelocity() {
+		// Random Value Between A Range
+		// Math.floor(Math.random() * (max - min + 1)) + min;
+		let randomVelocity = Math.floor(Math.random() * 11) - 5;
 
-	// 	Matter.Events.on(engine, 'beforeUpdate', () => {
-	// 		if (this.ball.body.position.y + this.ball.radius >= this.divHeight - 8) {
-	// 			this.sound.win.play();
-	// 		}
-	// 		currentPositionX = this.ball.body.position.x;
-	// 		if (
-	// 			this.ball.body.position.y >=
-	// 			this.bottomPaddle.body.position.y + this.bottomPaddle.height / 2
-	// 		)
-	// 			this.resetObjsDefaultPosition();
-	// 		else if (
-	// 			this.topPaddle.body.position.x + this.topPaddle.width / 2 >=
-	// 				this.divWidth &&
-	// 			this.ball.body.position.x >= this.divWidth - this.topPaddle.width / 2
-	// 		)
-	// 			currentPositionX = this.divWidth - this.topPaddle.width / 2;
-	// 		else if (
-	// 			this.topPaddle.body.position.x - this.topPaddle.width / 2 <= 0 &&
-	// 			this.ball.body.position.x <= this.topPaddle.width / 2
-	// 		)
-	// 			currentPositionX = this.topPaddle.width / 2;
+		if (randomVelocity >= 0 && randomVelocity < 3) randomVelocity = 3;
+		else if (randomVelocity >= -2 && randomVelocity <= 0) randomVelocity = -3;
 
-	// 		Matter.Body.setPosition(this.topPaddle.body, {
-	// 			x: currentPositionX,
-	// 			y: this.topPaddle.body.position.y,
-	// 		});
-	// 	});
-	// };
+		if (this.lastDirection === 'top') {
+			this.currentBallVelocity = {
+				x: randomVelocity,
+				y: -4,
+			};
+		} else {
+			this.currentBallVelocity = {
+				x: randomVelocity,
+				y: 4,
+			};
+		}
+
+		Body.setVelocity(this.ball, {
+			x: this.currentBallVelocity.x,
+			y: this.currentBallVelocity.y,
+		});
+
+		this.gameGatway.emitToGame(this.ball.velocity, 'setBallVelocity');
+	}
+
+	updateBallVelocity() {
+		// Limit Velocity Value
+		if (this.currentBallVelocity.y === 10 || this.currentBallVelocity.y === -10)
+			return;
+		else {
+			if (this.lastDirection === 'top') this.currentBallVelocity.y -= 1;
+			else this.currentBallVelocity.y += 1;
+
+			Body.setVelocity(this.ball, {
+				x: this.ball.velocity.x,
+				y: this.currentBallVelocity.y,
+			});
+
+			this.gameGatway.emitToGame(this.ball.velocity, 'setBallVelocity');
+		}
+	}
+
+	emitScore() {
+		if (
+			this.ball.position.y < this.topPaddle.position.y ||
+			this.ball.position.y > this.bottomPaddle.position.y
+		) {
+			if (this.ball.position.y < this.topPaddle.position.y) {
+				this.playerOneScore++;
+				this.lastDirection = 'top';
+			} else {
+				this.playerTwoScore++;
+				this.lastDirection = 'bottom';
+			}
+			this.gameGatway.emitToUser1InGame(
+				{
+					yourScore: this.playerOneScore,
+					opponantScore: this.playerTwoScore,
+				},
+				'updateScore',
+			);
+			this.gameGatway.emitToUser2InGame(
+				{
+					yourScore: this.playerTwoScore,
+					opponantScore: this.playerOneScore,
+				},
+				'updateScore',
+			);
+			this.resetToDefaultPosition();
+		}
+	}
+
+	handleDetectCollision() {
+		this.handleCollisionStart = (e: any): void => {
+			const pairs = e.pairs[0];
+
+			if (pairs.bodyA === this.topPaddle || pairs.bodyB === this.topPaddle) {
+				// this.sound.topPaddleSound.play();
+				this.updateBallVelocity();
+			} else if (
+				pairs.bodyA === this.bottomPaddle ||
+				pairs.bodyB === this.bottomPaddle
+			) {
+				// this.sound.bottomPaddleSound.play();
+				this.updateBallVelocity();
+			}
+		};
+
+		Events.on(engine, 'collisionStart', this.handleCollisionStart);
+
+		this.calcScore();
+	}
+
+	calcScore() {
+		if (
+			this.ball.position.y > this.bottomPaddle.position.y ||
+			this.ball.position.y < this.topPaddle.position.y
+		)
+			this.emitScore();
+		if (this.playerOneScore === 1000 || this.playerTwoScore === 1000) {
+			this.gameGatway.endGame();
+		}
+	}
+
+	handleClearGame() {
+		const displayBodies = (str: string) => {
+			console.log(str);
+			for (let body of engine.world.bodies) console.log(body);
+		};
+
+		// displayBodies('before');
+
+		// Remove Basic Bodies In Default Map
+		Composite.remove(engine.world, this.topPaddle);
+		Composite.remove(engine.world, this.bottomPaddle);
+		Composite.remove(engine.world, this.rightRect);
+		Composite.remove(engine.world, this.leftRect);
+		Composite.remove(engine.world, this.ball);
+		Composite.remove(engine.world, this.centerCirle);
+		Composite.remove(engine.world, this.separator);
+
+		// Remove Obstacles For Map 1 && 2
+		if (this.mapIndex === 1) {
+			console.log('index 1 chosen');
+			Composite.remove(engine.world, this.topLeftObstacle);
+			Composite.remove(engine.world, this.topRightObstacle);
+			Composite.remove(engine.world, this.bottomLeftObstacle);
+			Composite.remove(engine.world, this.bottomRightObstacle);
+		} else if (this.mapIndex === 2) {
+			console.log('index 1 chosen');
+			Composite.remove(engine.world, this.verticalObstacle1);
+			Composite.remove(engine.world, this.verticalObstacle2);
+			Composite.remove(engine.world, this.verticalObstacle3);
+			Composite.remove(engine.world, this.verticalObstacle4);
+		}
+
+		// displayBodies('after');
+
+		Events.off(engine, 'collisionStart', this.handleCollisionStart);
+
+		// Clear Intervals:
+		clearInterval(this.movePaddleInterval);
+		clearInterval(this.updateBallPosition);
+
+		// clearTimeout Of Paddle Game Runner:
+		// clearTimeout(this.lunchGameInterval);
+
+		// Stop The Runner:
+		Runner.stop(runner);
+
+		// Clear Engine:
+		Engine.clear(engine);
+		World.clear(engine.world, false);
+
+		// Close Socket!
+		// this.socket.disconnect();
+	}
 }
-
-export default PongGame;
