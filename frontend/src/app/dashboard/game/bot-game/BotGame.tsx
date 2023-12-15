@@ -69,37 +69,6 @@ const BotGame = ({ mapIndex }: any) => {
 						: LoserPlayerPopUp(router);
 				}
 
-<<<<<<< HEAD
-			Swal.fire({
-				title: "Game Will Start In",
-				icon: "info",
-				iconColor: "var(--pink-color)",
-				color: "#ffff",
-				html: "<b style='font-size:80px'></b>&emsp;Seconds",
-				timer: 3 * 1000,
-				background: "#2E2F54",
-				customClass: "rounded-[30px] font-['Whitney_BlackSc'] text-sm",
-				timerProgressBar: true,
-				allowOutsideClick: false,
-				didOpen: () => {
-					Swal.showLoading();
-					const timer = Swal.getPopup()!.querySelector("b");
-					timerInterval = setInterval(() => {
-						timer!.textContent = `${(Swal.getTimerLeft()! / 1000).toFixed(0)}`;
-					}, 100);
-					const timerProgressBar = Swal.getPopup()!.querySelector(
-						".swal2-timer-progress-bar",
-					) as HTMLElement;
-					timerProgressBar!.style.backgroundColor = "var(--pink-color)";
-				},
-				willClose: () => {
-					clearInterval(timerInterval);
-				},
-			}).then(() => {
-				setStartGame((prev: any) => !prev);
-				pongRef.current = new PongGame(parentCanvasRef.current!, mapIndex);
-=======
->>>>>>> origin/Samer_V1
 				setScore({
 					...score,
 					playerScore: pongRef.current.playerScore,

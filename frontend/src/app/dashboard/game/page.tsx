@@ -1,9 +1,5 @@
 "use client";
 import PlayModeCard from "@/app/components/PlayModeCard";
-<<<<<<< HEAD
-// import { SocketContext, socket } from "./SocketContext";
-=======
->>>>>>> origin/Samer_V1
 
 const PlayMode = () => {
 	return (
@@ -13,13 +9,7 @@ const PlayMode = () => {
 				<div className="font-['Whitney_Bold'] text-xl min-[580px]:text-2xl min-[940px]:text-3xl">
 					OR
 				</div>
-<<<<<<< HEAD
-				{/* <SocketContext.Provider value={socket}> */}
 				<PlayModeCard flag="online" />
-				{/* </SocketContext.Provider> */}
-=======
-				<PlayModeCard flag="online" />
->>>>>>> origin/Samer_V1
 			</div>
 		</div>
 	);

@@ -20,20 +20,6 @@ const engine: Engine = Engine.create({
 const runner: Runner = Runner.create();
 
 class PongGame {
-<<<<<<< HEAD
-	private ball: any;
-	private topPaddle: any;
-	private bottomPaddle: any;
-	private rightRect: any;
-	private leftRect: any;
-	private centerCirle: any;
-	private separator: any;
-	private divWidth: number;
-	private divHeight: number;
-	private maxBallSpeed: number = 10;
-	private moveInterval: any;
-	private lunchGameInterval: any;
-=======
 	private ball: Body | undefined;
 	private topPaddle: Body | undefined;
 	private bottomPaddle: Body | undefined;
@@ -62,33 +48,16 @@ class PongGame {
 	private moveInterval: NodeJS.Timer | undefined;
 	// private lunchGameInterval: any;
 	private updatePositionInterval: NodeJS.Timer | undefined;
->>>>>>> origin/Samer_V1
 	private handleKeyDown = (e: KeyboardEvent): void => {};
 	private handleKeyUp = (e: KeyboardEvent): void => {};
 	private handleCollisionStart = (e: any): void => {};
 	private handleBeforeUpdate = (): void => {};
-<<<<<<< HEAD
-	private handleSetVelocity = (data: any) => {
-		Body.setVelocity(this.ball, {
-			x: this.map(data.x, this.defaultCanvasSizes.width, this.divWidth),
-			y: this.map(data.y, this.defaultCanvasSizes.height, this.divHeight),
-		});
-	};
-	private handleSetPosition = (data: any) => {
-		Body.setPosition(this.ball, {
-			x: this.map(data.x, this.defaultCanvasSizes.width, this.divWidth),
-			y: this.map(data.y, this.defaultCanvasSizes.height, this.divHeight),
-		});
-	};
-	private defaultCanvasSizes: any = {
-=======
 	private handleSetVelocity = (data: any) => {};
 	private handleSetPosition = (data: any) => {};
 	private defaultCanvasSizes: {
 		width: number;
 		height: number;
 	} = {
->>>>>>> origin/Samer_V1
 		width: 560,
 		height: 836,
 	};
@@ -109,15 +78,11 @@ class PongGame {
 	private render: Render;
 	playerScore: number = 0;
 	botScore: number = 0;
-<<<<<<< HEAD
-	private sound = {
-=======
 	private sound: {
 		topPaddleSound: Howl;
 		bottomPaddleSound: Howl;
 		goal: Howl;
 	} = {
->>>>>>> origin/Samer_V1
 		topPaddleSound: new Howl({
 			src: ["/assets/sounds/leftPaddle.mp3"],
 		}),
@@ -453,51 +418,6 @@ class PongGame {
 	};
 
 	moveOnlineModeBall = (): void => {
-<<<<<<< HEAD
-		//  this.socket.on("setBallVelocity", (data: any) => {
-		// 	Body.setVelocity(this.ball, {
-		// 		x: this.map(data.x, this.defaultCanvasSizes.width, this.divWidth),
-		// 		y: this.map(data.y, this.defaultCanvasSizes.height, this.divHeight),
-		// 	});
-		// });
-		// this.socket.on("updateBallPosition", (data: any) => {
-		// 	Body.setPosition(this.ball, {
-		// 		x: this.map(data.x, this.defaultCanvasSizes.width, this.divWidth),
-		// 		y: this.map(data.y, this.defaultCanvasSizes.height, this.divHeight),
-		// 	});
-		// });
-
-		this.socket.on("setBallVelocity", this.handleSetVelocity);
-		this.socket.on("updateBallPosition", this.handleSetPosition);
-	};
-
-	setBotModeBall = (): void => {
-		Body.setVelocity(this.ball, {
-			x: this.currentBallSpeed.x,
-			y: this.currentBallSpeed.y,
-		});
-	};
-
-	// setBallSpeed = (): void => {
-	// 	// Limit the ball's speed
-	// 	if (
-	// 		this.currentBallSpeed.x < this.maxBallSpeed &&
-	// 		this.currentBallSpeed.y < this.maxBallSpeed
-	// 	)
-	// 		Body.setVelocity(this.ball, {
-	// 			x: (this.currentBallSpeed.x += this.map(
-	// 				0.2,
-	// 				this.defaultCanvasSizes.width,
-	// 				this.divWidth,
-	// 			)),
-	// 			y: (this.currentBallSpeed.y += this.map(
-	// 				0.2,
-	// 				this.defaultCanvasSizes.height,
-	// 				this.divHeight,
-	// 			)),
-	// 		});
-	// };
-=======
 		this.handleSetVelocity = (data: any) => {
 			this.setBallVelocity();
 			// Body.setVelocity(this.ball!, {
@@ -562,7 +482,6 @@ class PongGame {
 			y: this.currentBallVelocity.y,
 		});
 	};
->>>>>>> origin/Samer_V1
 
 	movePaddle = (): void => {
 		if (this.socket) {
@@ -596,19 +515,12 @@ class PongGame {
 					});
 			});
 			this.socket.on("updatePaddlePosition", (data: any) => {
-<<<<<<< HEAD
-				Body.setPosition(this.bottomPaddle, {
-=======
 				Body.setPosition(this.bottomPaddle!, {
->>>>>>> origin/Samer_V1
 					x: this.map(
 						data.xPosition1,
 						this.defaultCanvasSizes.width,
 						this.divWidth,
 					),
-<<<<<<< HEAD
-					y: this.bottomPaddle.position.y,
-=======
 					y: this.bottomPaddle!.position.y,
 				});
 				Body.setPosition(this.topPaddle!, {
@@ -618,15 +530,6 @@ class PongGame {
 						this.divWidth,
 					),
 					y: this.topPaddle!.position.y,
->>>>>>> origin/Samer_V1
-				});
-				Body.setPosition(this.topPaddle, {
-					x: this.map(
-						data.xPosition2,
-						this.defaultCanvasSizes.width,
-						this.divWidth,
-					),
-					y: this.topPaddle.position.y,
 				});
 			});
 		} else {
@@ -679,42 +582,11 @@ class PongGame {
 
 	resetToDefaultPosition() {
 		// Reset Ball Position
-<<<<<<< HEAD
-		Body.setPosition(this.ball, {
-=======
 		Body.setPosition(this.ball!, {
->>>>>>> origin/Samer_V1
 			x: this.divWidth / 2,
 			y: this.divHeight / 2,
 		});
 
-<<<<<<< HEAD
-		// Reset Paddles Position
-		Body.setPosition(this.bottomPaddle, {
-			x: this.divWidth / 2,
-			y:
-				this.divHeight -
-				this.map(30, this.defaultCanvasSizes.height, this.divHeight),
-		});
-	}
-
-	moveBotPaddle = (): void => {
-		this.handleCollisionStart = (): void => {
-			(e: any) => {
-				const pairs = e.pairs[0];
-
-				if (pairs.bodyA === this.topPaddle || pairs.bodyB === this.topPaddle) {
-					this.sound.topPaddleSound.play();
-					// this.setBallSpeed();
-				} else if (
-					pairs.bodyA === this.bottomPaddle ||
-					pairs.bodyB === this.bottomPaddle
-				) {
-					this.sound.bottomPaddleSound.play();
-					// this.setBallSpeed();
-				}
-			};
-=======
 		// Reset Ball Speed
 		this.setBallVelocity();
 
@@ -790,7 +662,6 @@ class PongGame {
 				this.sound.bottomPaddleSound.play();
 				this.updateBallVelocity();
 			}
->>>>>>> origin/Samer_V1
 		};
 
 		Events.on(engine, "collisionStart", this.handleCollisionStart);
@@ -833,15 +704,6 @@ class PongGame {
 		};
 
 		displayBodies("before");
-<<<<<<< HEAD
-		Composite.remove(engine.world, this.topPaddle);
-		Composite.remove(engine.world, this.bottomPaddle);
-		Composite.remove(engine.world, this.rightRect);
-		Composite.remove(engine.world, this.leftRect);
-		Composite.remove(engine.world, this.ball);
-		Composite.remove(engine.world, this.centerCirle);
-		Composite.remove(engine.world, this.separator);
-=======
 
 		// Remove Basic Bodies In Default Map
 		Composite.remove(engine.world, this.topPaddle!);
@@ -866,7 +728,6 @@ class PongGame {
 			Composite.remove(engine.world, this.verticalObstacle3!);
 			Composite.remove(engine.world, this.verticalObstacle4!);
 		}
->>>>>>> origin/Samer_V1
 
 		displayBodies("after");
 
@@ -880,13 +741,8 @@ class PongGame {
 		Runner.stop(runner);
 
 		this.render.canvas?.remove();
-<<<<<<< HEAD
-		this.render.canvas = null;
-		this.render.context = null;
-=======
 		this.render.canvas = null!;
 		this.render.context = null!;
->>>>>>> origin/Samer_V1
 		this.render.textures = {};
 
 		// Stop The Render:

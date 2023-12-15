@@ -1,16 +1,5 @@
 "use client";
 import { useRef, useState } from "react";
-<<<<<<< HEAD
-import { Swiper, SwiperSlide } from "swiper/react";
-import { EffectCoverflow, Pagination } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/effect-coverflow";
-import "swiper/css/pagination";
-import Link from "next/link";
-import Image from "next/image";
-// import { useRouter } from "next/navigation";
-// import { SocketContext } from "../SocketContext";
-=======
 import Link from "next/link";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -37,7 +26,6 @@ export const mappedImagesSlides: JSX.Element[] = ImagesSlides.map(
 		</SwiperSlide>
 	),
 );
->>>>>>> origin/Samer_V1
 
 const ChooseMapBot = () => {
 	const swiperRef = useRef<any>(null);
@@ -68,35 +56,7 @@ const ChooseMapBot = () => {
 						}
 						modules={[EffectCoverflow]}
 					>
-<<<<<<< HEAD
-						<SwiperSlide style={{ height: "400px", width: "270px" }}>
-							<img
-								src="/assets/game-maps/default-map.gif"
-								style={{ height: "100%", objectFit: "cover" }}
-							/>
-							{/* <Image
-								style={{ height: "100%", objectFit: "cover" }}
-								src={"/assets/game-maps/default-map.gif"}
-								width={72}
-								height={51}
-								alt=""
-							/> */}
-						</SwiperSlide>
-						<SwiperSlide style={{ height: "400px", width: "270px" }}>
-							<img
-								src="/assets/game-maps/map2-with-obstacles.gif"
-								style={{ height: "100%", objectFit: "cover" }}
-							/>
-						</SwiperSlide>
-						<SwiperSlide style={{ height: "400px", width: "270px" }}>
-							<img
-								src="/assets/game-maps/map3-with-obstacles.gif"
-								style={{ height: "100%", objectFit: "cover" }}
-							/>
-						</SwiperSlide>
-=======
 						{mappedImagesSlides}
->>>>>>> origin/Samer_V1
 					</Swiper>
 				</div>
 				<Link

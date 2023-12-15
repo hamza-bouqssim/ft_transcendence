@@ -7,11 +7,6 @@ const Game = ({
 		mapIndex: number;
 	};
 }) => {
-<<<<<<< HEAD
-	return (
-		<section className="relative h-screen min-h-[653px] text-white md:min-h-[900px] xl:min-h-[800px]">
-			<BotGame mapIndex={Number(params.mapIndex)} />
-=======
 	const isValidIndex = /^[0-2]$/.test(String(params.mapIndex));
 
 	return (
@@ -23,7 +18,6 @@ const Game = ({
 					Invalid Map index!
 				</h1>
 			)}
->>>>>>> origin/Samer_V1
 		</section>
 	);
 };

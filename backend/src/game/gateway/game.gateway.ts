@@ -8,9 +8,6 @@ import {
 	ConnectedSocket,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-<<<<<<< HEAD
-import { Bodies, Composite, Engine, Runner, Body, World } from 'matter-js';
-=======
 import {
 	Bodies,
 	Composite,
@@ -20,7 +17,6 @@ import {
 	World,
 	Events,
 } from 'matter-js';
->>>>>>> origin/Samer_V1
 import { GameService } from '../game.service';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'prisma/prisma.service';
@@ -33,24 +29,15 @@ const engine: Engine = Engine.create({
 	},
 });
 
-<<<<<<< HEAD
-const runner: any = Runner.create();
-=======
 const runner: Runner = Runner.create();
->>>>>>> origin/Samer_V1
 
 type GameQ = {
 	indexMap: number;
 	user1: string;
 	user2: string;
 	status: string;
-<<<<<<< HEAD
-	socket1: string[];
-	socket2: string[];
-=======
 	socket1: string;
 	socket2: string;
->>>>>>> origin/Samer_V1
 	duration: number;
 };
 
@@ -60,35 +47,6 @@ type GameQ = {
 	namespace: '/game',
 })
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
-<<<<<<< HEAD
-	// export class GameGateway implements OnGatewayConnection {
-	@WebSocketServer()
-	server: Server;
-
-	private defaultCanvasSizes: any = {
-		width: 560,
-		height: 836,
-	};
-	private paddleSizes: any = {
-		width: 170,
-		height: 15,
-	};
-	private ballSpeed: any = {
-		x: 2.5,
-		y: 2.5,
-	};
-
-	private ball: any;
-	private topPaddle: any;
-	private bottomPaddle: any;
-	private rightRect: any;
-	private leftRect: any;
-	private movesUser1 = {
-		movingRight: false,
-		movingLeft: false,
-	};
-	private movesUser2 = {
-=======
 	@WebSocketServer()
 	server: Server;
 
@@ -140,7 +98,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		movingRight: boolean;
 		movingLeft: boolean;
 	} = {
->>>>>>> origin/Samer_V1
 		movingRight: false,
 		movingLeft: false,
 	};
@@ -148,56 +105,32 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	private posBottomPaddleX = this.defaultCanvasSizes.width / 2;
 	private playerOneScore: number = 0;
 	private playerTwoScore: number = 0;
-<<<<<<< HEAD
-	private updateBallPosition: any;
-	private movePaddleInterval: any;
-	private mapIndex: number;
-	private userId: string;
-=======
 	private updateBallPosition: NodeJS.Timer;
 	private movePaddleInterval: NodeJS.Timer;
 	private handleCollisionStart = (e: any): void => {};
 	private mapIndex: number;
 	private userId: any;
->>>>>>> origin/Samer_V1
 	private user1: any;
 	private user2: any;
 	private game: GameQ;
 	private queueWaiting: {
 		userId: string;
-<<<<<<< HEAD
-		sockets: string[];
-		indexMap: number;
-	}[] = [];
-
-	private queueGame: GameQ[] = [];
-=======
 		sockets: string;
 		indexMap: number;
 	}[] = [];
 	private queueInGame: GameQ[] = [];
->>>>>>> origin/Samer_V1
 
 	constructor(
 		private readonly gameservice: GameService,
 		private readonly jwtService: JwtService,
 		private readonly prisma: PrismaService,
 	) {}
-<<<<<<< HEAD
-	sleep = async (ms: number) =>
-		new Promise((resolve) => setTimeout(resolve, ms));
-=======
 	// sleep = async (ms: number) =>
 	// 	new Promise((resolve) => setTimeout(resolve, ms));
->>>>>>> origin/Samer_V1
 
 	async handleConnection(socket: AuthenticatedSocket, ...args: any[]) {
 		console.log('connect1   ...');
 		console.log('socket', socket.user.sub);
-<<<<<<< HEAD
-		socket.join(`@${socket.user.sub}`);
-=======
->>>>>>> origin/Samer_V1
 		if (socket.user) {
 			const newStatus = await this.prisma.user.update({
 				where: { id: socket.user.sub },
@@ -205,11 +138,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			});
 		}
 		this.userId = socket.user.sub;
-<<<<<<< HEAD
-		this.pushSocket(this.userId, socket.id, 0);
-		if (this.queueWaiting.length >= 2) await this.checkQueue();
-=======
->>>>>>> origin/Samer_V1
 	}
 
 	async handleDisconnect(socket: AuthenticatedSocket) {
@@ -223,41 +151,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		}
 
 		this.userId = socket.user.sub;
-<<<<<<< HEAD
-		const queue = this.getQueueWaiting(this.userId);
-		if (queue) {
-			if (queue.sockets.length === 1)
-				this.queueWaiting = this.queueWaiting.filter(
-					(queue) => queue.userId !== this.userId,
-				);
-			else queue.sockets = queue.sockets.filter((id) => id !== socket.id);
-		} else {
-			const findGame = this.getQueueGame(this.userId);
-			if (findGame) {
-				if (findGame.user1 === this.userId) {
-					findGame.socket1 = findGame.socket1.filter((id) => id !== socket.id);
-					if (findGame.socket1.length === 0 && findGame.status === 'playing') {
-						console.log('user1 leave game');
-					}
-				} else {
-					findGame.socket2 = findGame.socket2.filter((id) => id !== socket.id);
-					if (findGame.socket2.length === 0 && findGame.status === 'playing') {
-						console.log('user2 leave game');
-					}
-				}
-				if ((findGame.socket1.length === 0 || findGame.socket2.length === 0)) {
-
-					if (findGame.socket1.length === 0 && this.game) {
-						this.playerOneScore = 0;
-						this.playerTwoScore = 7;
-					} else {
-						this.playerOneScore = 7;
-						this.playerTwoScore = 0;
-					}
-					console.log('end game1');
-					await this.endGame();
-
-=======
 		const queue = this.getStratQueue(this.userId);
 		if (queue) {
 			this.queueWaiting = this.queueWaiting.filter(
@@ -279,99 +172,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 					this.playerOneScore = 7;
 					this.playerTwoScore = 0;
 					this.endGame();
->>>>>>> origin/Samer_V1
 				}
 			}
 		}
 	}
-<<<<<<< HEAD
-
-	// async handleDisconnect(socket: AuthenticatedSocket) {
-	// 	console.log('Connection closed1');
-	// 	socket.leave(`@${socket.user.sub}`);
-	// 	if (socket.user) {
-	// 		const newStatus = await this.prisma.user.update({
-	// 			where: { id: socket.user.sub },
-	// 			data: { status: 'online' },
-	// 		});
-	// 	}
-
-	// 	this.userId = socket.user.sub;
-	// 	const queue = this.getQueueWaiting(this.userId);
-	// 	if (queue) {
-	// 		if (queue.sockets.length === 1)
-	// 			this.queueWaiting = this.queueWaiting.filter(
-	// 				(queue) => queue.userId !== this.userId,
-	// 			);
-	// 		else queue.sockets = queue.sockets.filter((id) => id !== socket.id);
-	// 	} else {
-	// 		const findGame = this.getQueueGame(this.userId);
-	// 		if (findGame) {
-	// 			if (findGame.user1 === this.userId) {
-	// 				findGame.socket1 = findGame.socket1.filter((id) => id !== socket.id);
-	// 				if (findGame.socket1.length === 0 && findGame.status === 'playing') {
-
-	// 					// start timer
-	// 					console.log('user1 leave game');
-	// 					this.emitToGame(this.userId, {}, 'stopGame');
-	// 					await this.sleep(10000);
-	// 					if(findGame.socket1.length === 0 && this.game)
-	// 					{
-	// 						this.playerOneScore = 0;
-	// 						this.playerTwoScore = 7;
-	// 						this.endGame();
-	// 						return;
-	// 					}
-	// 					// end timer
-	// 				}
-	// 			} else {
-	// 				findGame.socket2 = findGame.socket2.filter((id) => id !== socket.id);
-	// 				if (findGame.socket2.length === 0 && findGame.status === 'playing') {
-	// 					// start timer
-	// 					console.log('user2 leave game');
-	// 					this.emitToGame(this.userId, {}, 'stopGame');
-	// 					await this.sleep(10000);
-	// 					if(findGame.socket2.length === 0 && this.game)
-	// 					{
-	// 						this.playerOneScore = 7;
-	// 						this.playerTwoScore = 0;
-	// 						this.endGame();
-	// 						return;
-	// 					}
-	// 					// end timer
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-	// }
-
-
-	// @SubscribeMessage('joinGame')
-	// async handleJoinGame(client: AuthenticatedSocket, data: any) {
-	// 	console.log('join game');
-	// 	this.mapIndex = 0;
-	// 	// console.log("index:", this.mapIndex)
-	// 	this.pushSocket(client.user.sub, client.id, 0);
-	// 	if (this.queueWaiting.length >= 2) await this.checkQueue();
-	// 	console.log('waitting: ', this.queueWaiting);
-	// 	console.log('inGame: ', this.queueGame);
-	// }
-
-	//emit to user a message in an event---------------------------------------
-	emitToGame(userId: string, payload: any, event: string) {
-		this.server.to(`@${this.user1.id}`).emit(event, payload);
-		this.server.to(`@${this.user2.id}`).emit(event, payload);
-	}
-
-	emitToUser1InGame(userId: string, payload: any, event: string) {
-		if (!this.game) return;
-		this.server.to(`@${this.user1.id}`).emit(event, payload);
-	}
-
-	emitToUser2InGame(userId: string, payload: any, event: string) {
-		if (!this.game) return;
-		this.server.to(`@${this.user2.id}`).emit(event, payload);
-=======
 
 	@SubscribeMessage('startGame')
 	async handleJoinGame(client: AuthenticatedSocket, data: any) {
@@ -403,7 +207,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		if (!this.game) return 1338;
 		this.server.to(`@${this.user2.id}`).emit(event, payload);
 		return 2;
->>>>>>> origin/Samer_V1
 	}
 
 	//get map that readu to play in it-------------------------
@@ -428,7 +231,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			this.queueWaiting = this.queueWaiting.filter(
 				(queue) => queue.userId !== userIdOne && queue.userId !== userIdTwo,
 			);
-			this.queueGame.push({
+			this.queueInGame.push({
 				user1: userIdOne,
 				user2: userIdTwo,
 				status: 'pending',
@@ -442,36 +245,18 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				(queue) => queue.userId !== userIdOne && queue.userId !== userIdTwo,
 			);
 
-<<<<<<< HEAD
-			this.game = this.getQueueGame(userIdOne);
-			const idGame = userIdOne;
-
-			this.emitToUser2InGame(
-				userIdTwo,
-=======
 			this.game = this.getInGameQueue(userIdOne);
 			const idGame = userIdOne;
 			this.emitToUser2InGame(
->>>>>>> origin/Samer_V1
 				{ opponent: this.user1, rotate: true, idGame },
 				'knowOpponent',
 			);
 			this.emitToUser1InGame(
-<<<<<<< HEAD
-				userIdTwo,
-=======
->>>>>>> origin/Samer_V1
 				{ opponent: this.user2, rotate: false, idGame },
 				'knowOpponent',
 			);
 			if (!this.game) return;
 			console.log('test startgame +++++++++++++++');
-<<<<<<< HEAD
-			this.emitToUser1InGame(userIdTwo, { idGame }, 'startGame');
-
-			this.emitToUser2InGame(userIdTwo, { idGame }, 'startGame');
-=======
->>>>>>> origin/Samer_V1
 
 			this.game.status = 'playing';
 		}
@@ -479,105 +264,16 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 	// Queue---------------------------------------
 
-<<<<<<< HEAD
-	getQueueWaiting(userId: string) {
-=======
 	getStratQueue(userId: string) {
->>>>>>> origin/Samer_V1
 		return this.queueWaiting.find((queue) => queue.userId === userId);
 	}
 
-	getQueueGame(userId: string) {
-		return this.queueGame.find(
+	getInGameQueue(userId: string) {
+		return this.queueInGame.find(
 			(queue) => queue.user1 === userId || queue.user2 === userId,
 		);
 	}
 
-<<<<<<< HEAD
-	pushSocket(userId: string, socketId: string, indexMap?: number) {
-		if (this.queueGame.length > 0) {
-			const findGame = this.getQueueGame(userId);
-			if (findGame) {
-				if (findGame.user1 === userId && !findGame.socket1.includes(socketId)) {
-					// if (findGame.socket1.length === 0)
-						// emit he is back
-					// else
-						// emit anthor socket join
-					findGame.socket1.push(socketId);
-					console.log('pushSocket1', this.queueGame);
-				} else if (!findGame.socket2.includes(socketId)) {
-					// if (findGame.socket2.length === 0)
-						// emit he is back
-					// else
-						// emit anthor socket join
-					findGame.socket2.push(socketId);
-					console.log('pushSocket2', this.queueGame);
-				}
-			}
-		} else {
-			const findQueue = this.getQueueWaiting(userId);
-			if (findQueue && !findQueue.sockets.includes(socketId))
-				findQueue.sockets.push(socketId);
-			else
-				this.queueWaiting.push({
-					userId,
-					sockets: [socketId],
-					indexMap,
-				});
-		}
-	}
-
-	closeAllSockets(socketsId: any[]) {
-		socketsId.forEach((socketId) => {
-			socketId.disconnect(true);
-		});
-	}
-
-	async endGame() {
-		const game = this.game;
-		if (game) {
-			const { user1, user2, duration } = game;
-			if (this.playerOneScore > this.playerTwoScore) {
-				this.emitToUser1InGame(
-					this.userId,
-					{ status: 'winner' },
-					'gameIsFinished',
-				);
-				this.emitToUser2InGame(
-					this.userId,
-					{ status: 'loser' },
-					'gameIsFinished',
-				);
-			} else {
-				this.emitToUser2InGame(
-					this.userId,
-					{ status: 'winner' },
-					'gameIsFinished',
-				);
-				this.emitToUser1InGame(
-					this.userId,
-					{ status: 'loser' },
-					'gameIsFinished',
-				);
-			}
-			// Clear Game
-			this.handleClearGame();
-			await this.gameservice.createTwoMatchHistory(
-				user2,
-				user1,
-				this.playerTwoScore,
-				this.playerOneScore,
-				duration,
-			);
-			this.game = null;
-			console.log(this.playerOneScore, this.playerTwoScore);
-			this.user1 = '';
-			this.user2 = '';
-			this.playerOneScore = 0;
-			this.playerTwoScore = 0;
-			this.queueGame = this.queueGame.filter((game) => game.user1 != user1);
-		}
-=======
 	async endGame() {
 		const game = this.game;
 		if (game) {
@@ -614,17 +310,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		@ConnectedSocket() socket: AuthenticatedSocket,
 	) {
 		if (!this.game || socket.user.sub === this.game.user1) return;
->>>>>>> origin/Samer_V1
 
-	}
-	// End Queue---------------------------------------
-	@SubscribeMessage('launchGameRequest')
-	handleLaunchGameRequest(
-		@MessageBody() gameData: any,
-		@ConnectedSocket() socket: AuthenticatedSocket,
-	) {
-		if (!this.game || socket.user.sub !== this.game.user2) return;
-		this.mapIndex = 0;
+		// This Function Will Run In All Maps:
 		this.handleDefaultGameMap();
 
 		switch (this.mapIndex) {
@@ -636,20 +323,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				this.handleVerticalObstacles();
 				break;
 		}
-<<<<<<< HEAD
-		this.emitToUser1InGame(
-			this.userId,
-			{ rotate: false, opponant: this.user2 },
-			'launchGame',
-		);
-		this.emitToUser2InGame(
-			this.userId,
-			{ rotate: true, opponant: this.user1 },
-			'launchGame',
-		);
-		this.handlePaddleMove();
-		this.game.duration = Date.now();
-=======
 		console.log(
 			this.emitToUser1InGame(
 				{ rotate: false, opponant: this.user2 },
@@ -664,7 +337,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		);
 
 		this.handlePaddleMove();
->>>>>>> origin/Samer_V1
 		this.startGame();
 	}
 
@@ -674,7 +346,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			this.defaultCanvasSizes.width / 2,
 			this.defaultCanvasSizes.height / 2,
 			15,
-<<<<<<< HEAD
 			{
 				label: 'ball',
 				render: {
@@ -687,12 +358,31 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			},
 		);
 
-		Body.setVelocity(this.ball, {
-			x: this.ballSpeed.x,
-			y: this.ballSpeed.y,
-		});
+		// const topRect = Bodies.rectangle(
+		// 	this.canvasWidth / 2,
+		// 	0,
+		// 	this.canvasWidth,
+		// 	20,
+		// 	{
+		// 		render: {
+		// 			fillStyle: 'red',
+		// 		},		delete this.queueWaiting[user1];
 
-		this.emitToGame(this.userId, this.ball.velocity, 'setBallVelocity');
+		// 		isStatic: true,
+		// 	},
+		// );
+		// const bottomRect = Bodies.rectangle(
+		// 	this.canvasWidth / 2,
+		// 	this.canvasHeight,
+		// 	this.canvasWidth,
+		// 	20,
+		// 	{
+		// 		render: {
+		// 			fillStyle: 'yellow',
+		// 		},
+		// 		isStatic: true,
+		// 	},
+		// );
 
 		// Create Two Paddles:
 		this.topPaddle = Bodies.rectangle(
@@ -719,89 +409,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				label: 'bottomPaddle',
 				render: {
 					fillStyle: '#FF5269',
-=======
-			{
-				label: 'ball',
-				render: {
-					fillStyle: '#FFF',
-				},
-				frictionAir: 0,
-				friction: 0,
-				inertia: Infinity,
-				restitution: 1,
-			},
-		);
-
-		// const topRect = Bodies.rectangle(
-		// 	this.canvasWidth / 2,
-		// 	0,
-		// 	this.canvasWidth,
-		// 	20,
-		// 	{
-		// 		render: {
-		// 			fillStyle: 'red',
-		// 		},		delete this.queueWaiting[user1];
-
-		// 		isStatic: true,
-		// 	},
-		// );
-		// const bottomRect = Bodies.rectangle(
-		// 	this.canvasWidth / 2,
-		// 	this.canvasHeight,
-		// 	this.canvasWidth,
-		// 	20,
-		// 	{
-		// 		render: {
-		// 			fillStyle: 'yellow',
-		// 		},
-		// 		isStatic: true,
-		// 	},
-		// );
-
-		// Create Two Paddles:
-		this.topPaddle = Bodies.rectangle(
-			this.defaultCanvasSizes.width / 2,
-			30,
-			this.paddleSizes.width,
-			this.paddleSizes.height,
-			{
-				label: 'topPaddle',
-				render: {
-					fillStyle: '#4FD6FF',
->>>>>>> origin/Samer_V1
 				},
 				isStatic: true,
 				// chamfer: { radius: 10 },
 			},
 		);
-
-<<<<<<< HEAD
-		// const topRect = Bodies.rectangle(
-		// 	this.canvasWidth / 2,
-		// 	0,
-		// 	this.canvasWidth,
-		// 	20,
-		// 	{
-		// 		render: {
-		// 			fillStyle: 'red',
-		// 		},		delete this.queueWaiting[user1];
-
-		// 		isStatic: true,
-		// 	},
-		// );
-
-		// const bottomRect = Bodies.rectangle(
-		// 	this.canvasWidth / 2,
-		// 	this.canvasHeight,
-		// 	this.canvasWidth,
-		// 	20,
-		// 	{
-		// 		render: {
-		// 			fillStyle: 'yellow',
-		// 		},
-		// 		isStatic: true,
-		// 	},
-		// );
 
 		// Create Two Boundies:
 		this.rightRect = Bodies.rectangle(
@@ -813,31 +425,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				label: 'rightRect',
 				render: {
 					fillStyle: '#CFF4FF',
-=======
-		this.bottomPaddle = Bodies.rectangle(
-			this.defaultCanvasSizes.width / 2,
-			this.defaultCanvasSizes.height - 30,
-			this.paddleSizes.width,
-			this.paddleSizes.height,
-			{
-				label: 'bottomPaddle',
-				render: {
-					fillStyle: '#FF5269',
->>>>>>> origin/Samer_V1
 				},
 				isStatic: true,
-				// chamfer: { radius: 10 },
 			},
 		);
 
-<<<<<<< HEAD
 		this.leftRect = Bodies.rectangle(
 			0,
-=======
-		// Create Two Boundies:
-		this.rightRect = Bodies.rectangle(
-			this.defaultCanvasSizes.width,
->>>>>>> origin/Samer_V1
 			this.defaultCanvasSizes.height / 2,
 			20,
 			this.defaultCanvasSizes.height,
@@ -850,30 +444,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			},
 		);
 
-<<<<<<< HEAD
-		const separator = Bodies.rectangle(
-			this.defaultCanvasSizes.width / 2,
-			this.defaultCanvasSizes.height / 2,
-			this.defaultCanvasSizes.width,
-			8,
-=======
-		this.leftRect = Bodies.rectangle(
-			0,
-			this.defaultCanvasSizes.height / 2,
-			20,
-			this.defaultCanvasSizes.height,
->>>>>>> origin/Samer_V1
-			{
-				isSensor: true,
-				render: {
-					fillStyle: '#CFF4FF',
-				},
-			},
-		);
-
-<<<<<<< HEAD
-		const centerCirle = Bodies.circle(
-=======
 		this.separator = Bodies.rectangle(
 			this.defaultCanvasSizes.width / 2,
 			this.defaultCanvasSizes.height / 2,
@@ -888,7 +458,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		);
 
 		this.centerCirle = Bodies.circle(
->>>>>>> origin/Samer_V1
 			this.defaultCanvasSizes.width / 2,
 			this.defaultCanvasSizes.height / 2,
 			8,
@@ -897,13 +466,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		Composite.add(engine.world, [
 			this.topPaddle,
 			this.bottomPaddle,
-<<<<<<< HEAD
-			separator,
-			centerCirle,
-=======
 			this.separator,
 			this.centerCirle,
->>>>>>> origin/Samer_V1
 			this.ball,
 			this.rightRect,
 			this.leftRect,
@@ -915,11 +479,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 	handleGameCircleObstacles() {
-<<<<<<< HEAD
-		const topLeftObstacle = Bodies.circle(
-=======
 		this.topLeftObstacle = Bodies.circle(
->>>>>>> origin/Samer_V1
 			this.defaultCanvasSizes.width / 4,
 			this.defaultCanvasSizes.height / 4,
 			50,
@@ -931,11 +491,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			},
 		);
 
-<<<<<<< HEAD
-		const topRightObstacle = Bodies.circle(
-=======
 		this.topRightObstacle = Bodies.circle(
->>>>>>> origin/Samer_V1
 			(3 * this.defaultCanvasSizes.width) / 4,
 			this.defaultCanvasSizes.height / 4,
 			40,
@@ -947,11 +503,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			},
 		);
 
-<<<<<<< HEAD
-		const bottomRightObstacle = Bodies.circle(
-=======
 		this.bottomRightObstacle = Bodies.circle(
->>>>>>> origin/Samer_V1
 			(3 * this.defaultCanvasSizes.width) / 4,
 			(3 * this.defaultCanvasSizes.height) / 4,
 			50,
@@ -963,11 +515,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			},
 		);
 
-<<<<<<< HEAD
-		const bottomLeftObstacle = Bodies.circle(
-=======
 		this.bottomLeftObstacle = Bodies.circle(
->>>>>>> origin/Samer_V1
 			this.defaultCanvasSizes.width / 4,
 			(3 * this.defaultCanvasSizes.height) / 4,
 			40,
@@ -988,11 +536,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 	handleVerticalObstacles() {
-<<<<<<< HEAD
-		const verticalObstacle1 = Bodies.rectangle(
-=======
 		this.verticalObstacle1 = Bodies.rectangle(
->>>>>>> origin/Samer_V1
 			this.defaultCanvasSizes.width - 65,
 			this.defaultCanvasSizes.height / 5,
 			15,
@@ -1005,11 +549,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			},
 		);
 
-<<<<<<< HEAD
-		const verticalObstacle2 = Bodies.rectangle(
-=======
 		this.verticalObstacle2 = Bodies.rectangle(
->>>>>>> origin/Samer_V1
 			this.defaultCanvasSizes.width / 2,
 			this.defaultCanvasSizes.height / 3,
 			15,
@@ -1035,11 +575,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			},
 		);
 
-<<<<<<< HEAD
-		const verticalObstacle4 = Bodies.rectangle(
-=======
 		this.verticalObstacle4 = Bodies.rectangle(
->>>>>>> origin/Samer_V1
 			this.defaultCanvasSizes.width - 65,
 			(4 * this.defaultCanvasSizes.height) / 5,
 			15,
@@ -1063,14 +599,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@SubscribeMessage('keyevent')
 	handleKeyDown(@MessageBody() data: any) {
 		if (!this.game) return;
-<<<<<<< HEAD
-		let movingLeft: any;
-		let movingRight: any;
-=======
 
 		let movingLeft: boolean;
 		let movingRight: boolean;
->>>>>>> origin/Samer_V1
 
 		if (data.state === 'keydown') {
 			if (data.key === 'd' || data.key === 'ArrowRight') movingRight = true;
@@ -1092,39 +623,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		}
 	}
 
-<<<<<<< HEAD
-	// applyMove(movesUser: any, posPaddle: number, paddle: any, isButtom: boolean) {
-	// 	let stepX = 0;
-
-	// 	if (movesUser.movingLeft) {
-	// 		stepX = posPaddle - 11;
-	// 		if (stepX <= this.paddleSizes.width / 2)
-	// 			stepX = this.paddleSizes.width / 2;
-	// 	} else if (movesUser.movingRight) {
-	// 		stepX = posPaddle + 11;
-	// 		if (stepX >= this.defaultCanvasSizes.width - this.paddleSizes.width / 2)
-	// 			stepX = this.defaultCanvasSizes.width - this.paddleSizes.width / 2;
-	// 	}
-	// 	if (stepX != 0) {
-	// 		posPaddle = stepX;
-	// 		Body.setPosition(paddle, {
-	// 			x: stepX,
-	// 			y: paddle.position.y,
-	// 		});
-	// 		this.emitToGame(
-	// 			this.userId,
-	// 			{
-	// 				xPosition: stepX,
-	// 			},
-	// 			'updatePaddlePosition',
-	// 		);
-	// 	}
-	// 	if (isButtom) this.posBottomPaddleX = posPaddle;
-	// 	else this.posTopPaddleX = posPaddle;
-	// }
-
-=======
->>>>>>> origin/Samer_V1
 	handlePaddleMove() {
 		this.movePaddleInterval = setInterval(() => {
 			if (!this.game) {
@@ -1151,17 +649,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 					x: stepX1,
 					y: this.bottomPaddle.position.y,
 				});
-<<<<<<< HEAD
-				// this.emitToGame(
-				// 	this.userId,
-				// 	{
-				// 		xPosition1: stepX1,
-				// 		xPosition2: this.bottomPaddle.position.x,
-				// 	},
-				// 	'updatePaddlePosition',
-				// );
-=======
->>>>>>> origin/Samer_V1
 			}
 
 			let stepX2 = 0;
@@ -1187,22 +674,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			}
 			if (stepX2 || stepX1)
 				this.emitToGame(
-<<<<<<< HEAD
-					this.userId,
-=======
->>>>>>> origin/Samer_V1
 					{
 						xPosition1: this.posBottomPaddleX,
 						xPosition2: this.posTopPaddleX,
 					},
 					'updatePaddlePosition',
 				);
-<<<<<<< HEAD
-
-			// this.applyMove(this.movesUser1, this.posBottomPaddleX, this.bottomPaddle,true)
-			// this.applyMove(this.movesUser2, this.posTopPaddleX, this.topPaddle,false)
-=======
->>>>>>> origin/Samer_V1
 		}, 15);
 	}
 
@@ -1214,14 +691,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				clearInterval(this.updateBallPosition);
 				return;
 			}
-<<<<<<< HEAD
-			this.emitToGame(this.userId, this.ball.position, 'updateBallPosition');
-			this.calcScore();
-=======
 			this.emitToGame(this.ball.position, 'updateBallPosition');
 			// this.calcScore();
 			this.handleDetectCollision();
->>>>>>> origin/Samer_V1
 		}, 15);
 	}
 
@@ -1232,42 +704,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			y: this.defaultCanvasSizes.height / 2,
 		});
 
-<<<<<<< HEAD
-		// Reset Paddles Position
-		Body.setPosition(this.bottomPaddle, {
-			x: this.defaultCanvasSizes.width / 2,
-			y: this.defaultCanvasSizes.height - 30,
-		});
-	}
-
-	emitScore() {
-		if (this.ball.position.y < this.topPaddle.position.y) this.playerOneScore++;
-		else if (this.ball.position.y > this.bottomPaddle.position.y)
-			this.playerTwoScore++;
-		this.emitToUser1InGame(
-			this.userId,
-			{
-				yourScore: this.playerOneScore,
-				opponantScore: this.playerTwoScore,
-			},
-			'updateScore',
-		);
-		this.emitToUser2InGame(
-			this.userId,
-			{
-				yourScore: this.playerTwoScore,
-				opponantScore: this.playerOneScore,
-			},
-			'updateScore',
-		);
-		// this.sound.win.play();
-		this.resetToDefaultPosition();
-	}
-
-
-	calcScore() {
-		if (
-=======
 		// Reset Ball Speed
 		this.setBallVelocity();
 
@@ -1383,7 +819,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	calcScore() {
 		if (
->>>>>>> origin/Samer_V1
 			this.ball.position.y > this.bottomPaddle.position.y ||
 			this.ball.position.y < this.topPaddle.position.y
 		)
@@ -1433,26 +868,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		clearInterval(this.movePaddleInterval);
 		clearInterval(this.updateBallPosition);
 
-<<<<<<< HEAD
-		// const displayBodies = (str: string) => {
-		// 	console.log(str);
-		// 	for (let body of engine.world.bodies) console.log(body);
-		// };
-		// displayBodies('before');
-		for (let body of engine.world.bodies) Composite.remove(engine.world, body);
-		// Composite.remove(engine.world, [
-		// 	this.bottomPaddle,
-		// 	this.ball,
-		// 	this.rightRect,
-		// ]);
-		// displayBodies('after');
-
-		// Remove Events:
-		// Events.off(engine, 'collisionStart', this.handleCollisionStart);
-		// Events.off(engine, 'beforeUpdate', this.handleBeforeUpdate);
-
-=======
->>>>>>> origin/Samer_V1
 		// clearTimeout Of Paddle Game Runner:
 		// clearTimeout(this.lunchGameInterval);
 
@@ -1464,10 +879,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		World.clear(engine.world, false);
 
 		// Close Socket!
-<<<<<<< HEAD
-		// clearInterval(this.moveInterval);
-=======
->>>>>>> origin/Samer_V1
 		// this.socket.disconnect();
 	}
 }
