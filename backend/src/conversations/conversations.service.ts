@@ -32,6 +32,8 @@ export class ConversationsService  {
       this.eventEmitter.emit('createConversation.created', {
         conversation
       });
+      // this.userService.notificationMessage( conversation., messages.participents.recipientId);
+
       return {message : 'Conversation create succefully'}
 
   }

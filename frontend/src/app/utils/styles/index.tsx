@@ -244,15 +244,17 @@ export const OflineStyling = styled.div`
 
 export const ConversationSideBarItem = styled.div `
 
-
-    padding: 9px 2px;
+    background-color: white ;
+    padding: 9px;
     display: flex;
     align-items: center;
     height: 100%;
     gap: 20px;
-    border-bottom: 1px solid #1e1b34;
+    margin: 10px 0;
+    /* border-bottom: 1px solid #1e1b34; */
     box-sizing: border-box;
 
+    
 `;
 
 export const ModalContentBodyStyle = styled.div `

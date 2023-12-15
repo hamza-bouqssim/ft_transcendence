@@ -304,18 +304,7 @@ export class UserService {
         return notifications;
     }
 
-    async notificationMessage(userId : string, recipientId : string){
-        const notification = await this.prisma.notificationMessage.create({
-            data: {
-                sender: { connect: { id: userId } },
-                recipient: { connect: { id: recipientId } },
-            },
-        });
-    
-        return notification;
-
-            
-    }
+  
 
     async isBlockedByUser(senderId: string, recipientUser: string): Promise<boolean> {
         console.log("enter");
@@ -324,5 +313,17 @@ export class UserService {
         console.log("blocked friend here", BlockedFriends);
         return BlockedFriends.some((friend) => friend.user.id === recipientUser);
       }
+    //   async notificationMessage(chatId : string, userId : string){
+    //     // const notificationMessage = await this.prisma.notificationGlobal.create({
+    //     //     data: {
+    //     //         Sender: { connect: { id: userSender.id } },
+    //     //         recipient: { connect: { id: userRecipient.id } },
+    //     //         content: message,
+    //     //         image_content: userSender.avatar_url,
+    //     //     },
+    //     // });
+
+
+    //   }
 }
 

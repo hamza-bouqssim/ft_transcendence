@@ -105,24 +105,28 @@ const ChatComponnent  = () =>{
 			return lastMessage.content;
 		
 	}
-	
+	useEffect(()=>{
+		
+		socket.on('onMessage', (messages : any)=>{
+			dispatch(fetchConversationThunk());
+			dispatch(fetchAuthUser())
+            dispatch(fetchMessagesThunk(channel?.id));
+
+			const isRecipient = messages.participents.recipient.display_name === UsersAuth.display_name;
+			if (isRecipient) {
+				setUnreadConversations((prevUnread) => new Set(prevUnread.add(messages.participentsId)));
+			}
+			
+		})
+
+		return () =>{
+			socket.off('onMessage');
+		}
+	},[UsersAuth, channel?.id])
 	const isUnread = (conversationId: string) => {
 		return unreadConversations.has(`${conversationId}`)
 	}
-	// async function handleClick(conversation : ConversationTypes){
-	// 	updateChannel(conversation);
-	// 	markConversationAsRead(conversation.id);
-
-	// 	await getUnreadMessages(conversation.id);
-	// 	dispatch(fetchMessagesUnreadThunk(conversation.id)); 
-	// 	dispatch(fetchMessagesThunk(conversation.id)); 
 	
-	// 	// const isRecipient = conversation.recipient.display_name === UsersAuth.display_name;
-	// 	// if (isRecipient) {
-	// 	//   setUnreadConversations((prevUnread) => new Set(prevUnread.add(conversation.id)));
-	// 	// }
-	//   };
-
 	const markConversationAsRead = (conversationId: string) => {
 		const updatedUnreadConversations = new Set(unreadConversations);
 		updatedUnreadConversations.delete(`${conversationId}`);
