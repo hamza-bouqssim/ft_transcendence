@@ -77,8 +77,6 @@ const SendRequest  = () => {
 
         }catch(error){
           ToastError(`Error refusing friend request, ${error}`);
-
-
         }
       }
       return (

@@ -8,9 +8,32 @@ import { CreateConversationParams, createUserParams } from "@/app/utils/types"
 import { AppDispatch } from "@/app/store"
 import { createConversation } from "@/app/utils/api"
 import { Dispatch, FC } from "react"
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 export const CreateConversationForm = () => {
+  const ToastError = (message: any) => {
+		toast.error(message, {
+		  position: toast.POSITION.TOP_RIGHT,
+		  autoClose: 5000,
+		  hideProgressBar: false,
+		  closeOnClick: true,
+		  pauseOnHover: true,
+		  draggable: true,
+		});
+	  };
+	
+	  const ToastSuccess = (message: any) => {
+		toast.success(message, {
+		  position: toast.POSITION.TOP_RIGHT,
+		  autoClose: 5000,
+		  hideProgressBar: false,
+		  closeOnClick: true,
+		  pauseOnHover: true,
+		  draggable: true,
+		});
+	  };
         const {register, handleSubmit, formState: { errors }} = useForm<CreateConversationParams>();
         const dispatch = useDispatch<AppDispatch>();
 
@@ -21,24 +44,25 @@ export const CreateConversationForm = () => {
                 const responseData = res.payload as { data?: { response?: { message?: string } } };
                 const message = responseData.data?.response?.message;
                 if (message) {
-                    alert(message);
+                    ToastSuccess(message);
+
                 }else {
                   const responseData = res.payload as {message?: string};
                   const message = responseData.message;
                   if(message)
-                    alert(message);
+                    ToastError(message);
                 }
             }
-
           }catch(err : any){
-            console.error("the error here--->", err);
-            alert(err.message || "An unexpected error occurred");
-
+            ToastError(err.message || "An unexpected error occurred");
           }
         
 
         }
     return (
+      <>
+      <ToastContainer />
+
         <form className={styles.formConversation} onSubmit={handleSubmit(onSubmit)}>
           
                 <InputContainer backgroundColor="#87a2c6">
@@ -51,5 +75,6 @@ export const CreateConversationForm = () => {
            
             
         </form>
+        </>
     )
 }
