@@ -49,6 +49,13 @@ const MatchMaking = () => {
 		// const handleStartGame = (payload: { idGame: string }) => {
 
 		// };
+		console.log("Userdata", Userdata);
+		const handleRedirectUser = (payload: any) => {
+			if (Userdata.display_name === payload.display_name)
+				router.push("/dashboard");
+		};
+		gameSocket.on("redirectUser", handleRedirectUser);
+
 		const handleKnowOpponent = (payload: any) => {
 			// setOpponentPlayer(payload.opponent);
 			setOpponentPlayer((prevData) => ({
@@ -69,6 +76,7 @@ const MatchMaking = () => {
 			console.log("remove start game event");
 			// gameSocket.off("startGame", handleStartGame);
 			gameSocket.off("knowOpponent", handleKnowOpponent);
+			gameSocket.off("redirectUser", handleRedirectUser);
 		};
 	}, []);
 

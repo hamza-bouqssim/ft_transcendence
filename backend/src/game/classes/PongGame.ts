@@ -18,7 +18,6 @@ import { GameQ } from '../gateway/game.gateway';
 // 	},
 // });
 
-
 // const runner: Runner = Runner.create();
 
 export class PongGame {
@@ -90,7 +89,6 @@ export class PongGame {
 	constructor(
 		private gameGatway: GameGateway,
 		private game: GameQ,
-		
 	) {
 		this.engine = Engine.create({
 			gravity: {
@@ -98,8 +96,7 @@ export class PongGame {
 				y: 0,
 			},
 		});
-		
-		
+
 		this.runner = Runner.create();
 		this.user1 = game.socket1.user.sub;
 		this.user2 = game.socket2.user.sub;
@@ -468,7 +465,8 @@ export class PongGame {
 			}
 			if (stepX2 || stepX1)
 				this.gameGatway.emitToGame(
-					this.user1,this.user2,
+					this.user1,
+					this.user2,
 					{
 						xPosition1: this.posBottomPaddleX,
 						xPosition2: this.posTopPaddleX,
@@ -487,8 +485,11 @@ export class PongGame {
 				return;
 			}
 			this.gameGatway.emitToGame(
-				this.user1,this.user2,
-				this.ball.position, 'updateBallPosition');
+				this.user1,
+				this.user2,
+				this.ball.position,
+				'updateBallPosition',
+			);
 			// this.calcScore();
 			this.handleDetectCollision();
 		}, 15);
@@ -516,8 +517,11 @@ export class PongGame {
 		// });
 
 		this.gameGatway.emitToGame(
-			this.user1,this.user2,
-			{}, 'resetDefaultPosition');
+			this.user1,
+			this.user2,
+			{},
+			'resetDefaultPosition',
+		);
 	}
 
 	setBallVelocity() {
@@ -546,8 +550,11 @@ export class PongGame {
 		});
 
 		this.gameGatway.emitToGame(
-			this.user1,this.user2,
-			this.ball.velocity, 'setBallVelocity');
+			this.user1,
+			this.user2,
+			this.ball.velocity,
+			'setBallVelocity',
+		);
 	}
 
 	updateBallVelocity() {
@@ -564,8 +571,11 @@ export class PongGame {
 			});
 
 			this.gameGatway.emitToGame(
-				this.user1,this.user2,
-				this.ball.velocity, 'setBallVelocity');
+				this.user1,
+				this.user2,
+				this.ball.velocity,
+				'setBallVelocity',
+			);
 		}
 	}
 
