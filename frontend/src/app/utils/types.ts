@@ -48,6 +48,8 @@ export type   ConversationTypes= {
     sender : User;
     recipient : User;
     createdAt : string;
+    recipientId : string;
+    senderId : string;
     lastMessage: MessageType;
 }
 
@@ -57,6 +59,15 @@ export type AcceptRequestParams ={
 
 export type UsersTypes = {
     id : string;
+    email : string;
+    username : string;
+    display_name : string;
+    avatar_url : string;
+    status : string;
+}
+
+export type UsersType = {
+    sub: string;
     email : string;
     username : string;
     display_name : string;
@@ -106,9 +117,12 @@ export type FetchMessagePayload = {
     id: number;
     messages: MessageType[];
 };
-
+export type messageUnread = {
+    count : number;
+}
 export type messageTypes = {
     id : string;
+    participents :  ConversationTypes;
     content : string;
     createdAt : string;
     sender : User;

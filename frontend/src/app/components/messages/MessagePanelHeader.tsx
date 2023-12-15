@@ -70,8 +70,8 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({ setUpdateRome, update
                     {!channel.name && channel.recipient.display_name && <h1 className="ml-2">{channel.recipient.display_name }</h1>}
             </div>
             {
-              channel.members.some(member => member.isAdmin && member.user_id === Userdata.id) ? (
-                    pathname.includes('groups') && !updateRome ? (
+              pathname.includes('groups')  && channel.members.some(member => member.isAdmin && member.user_id === Userdata.id) ? (
+                     !updateRome ? (
                     <IoMdSettings
                         size={30}
                         onClick={() => {

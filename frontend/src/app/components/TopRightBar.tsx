@@ -8,6 +8,8 @@ import { useRouter } from "next/navigation";
 import { deleteCookie } from "cookies-next";
 import { socketContext } from "../utils/context/socketContext";
 import NotificationComponent from "./NotificationComponent";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 type Change = {
 	menu: boolean;
@@ -15,6 +17,27 @@ type Change = {
 };
 
 const TopRightBar = (props: Change) => {
+	const ToastError = (message: any) => {
+		toast.error(message, {
+		  position: toast.POSITION.TOP_RIGHT,
+		  autoClose: 5000,
+		  hideProgressBar: false,
+		  closeOnClick: true,
+		  pauseOnHover: true,
+		  draggable: true,
+		});
+	  };
+	
+	  const ToastSuccess = (message: any) => {
+		toast.success(message, {
+		  position: toast.POSITION.TOP_RIGHT,
+		  autoClose: 5000,
+		  hideProgressBar: false,
+		  closeOnClick: true,
+		  pauseOnHover: true,
+		  draggable: true,
+		});
+	  };
 	const {Userdata,setUserdata} = useContext(socketContext)
     useEffect(() => {
         getAuthUser().then(({data}) => {
@@ -28,8 +51,10 @@ const TopRightBar = (props: Change) => {
 			getlogout();
 			deleteCookie("logged");
 			router.push("/", { scroll: false });
+			ToastSuccess(`Logout succefully `);
 		} catch (err) {
-			alert("failed to logout");
+			ToastError(`Failed to logout`);
+
 		}
 	}
 
@@ -37,6 +62,7 @@ const TopRightBar = (props: Change) => {
 	
 	return (
 		<>
+		<ToastContainer />
 		<div className="fixed z-50 right-0 top-6  flex h-12 w-64 items-center justify-end gap-2 rounded-l-3xl lg:right-7 min-[1750px]:h-14 min-[1750px]:w-80 min-[1750px]:gap-4">
 			<div className="relative ">
 			<div onClick={() => {setNotefication(!notfication)}} className="relative">

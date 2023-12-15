@@ -14,6 +14,7 @@ import FriendsBloque from "../FriendsBloque/FriendsBloque"
 import { useContext } from "react";
 import {socketContext } from "@/app/utils/context/socketContext";
 import { SendRequestForm } from "../forms/SendRequestForm"
+import { FaCheck } from "react-icons/fa"
 const CoversationSideBar = () => {
 	const [newRooms , setNewRooms]  = useState<boolean>(false)
 	const router = useRouter();
@@ -23,7 +24,6 @@ const CoversationSideBar = () => {
 	
     return (
 		<div className="w-full h-full relative p-2  xl:rounded-[20px] pt-4 bg-white">
-			{/* {show &&  <CreateConversationModal   setShow={setShow} />   } */}
 			<div className="flex items-center rounded-full justify-between w-3/4 mb-4  mx-auto  bg-[#DFDFDF]">
 				<button
 					onClick={()=>{
@@ -65,7 +65,7 @@ const CoversationSideBar = () => {
  				</button>
  			</div>}
 			
-			{newRooms &&  (pathname.includes('chat')  && selectUsers === 'online')  ? <OnlineFriends/> :  (pathname.includes('chat') && selectUsers === 'allFriends') ? <ListFriends/> : ( pathname.includes('chat') && selectUsers === 'EnAttent') ? <SendRequest/> :( pathname.includes('chat') && selectUsers === 'Bloques') ? <FriendsBloque/> : ( pathname.includes('chat') && selectUsers === 'Add') ? <SendRequestForm/> : <></> }
+			{newRooms &&  ((pathname.includes('chat')  && selectUsers === 'online')  ? <OnlineFriends/> :  (pathname.includes('chat') && selectUsers === 'allFriends') ? <ListFriends/> : ( pathname.includes('chat') && selectUsers === 'EnAttent') ? <SendRequest/> :( pathname.includes('chat') && selectUsers === 'Bloques') ? <FriendsBloque/> : ( pathname.includes('chat') && selectUsers === 'Add') ? <SendRequestForm/> : <></> )}
 
 			{!newRooms 
 				&&  pathname.includes('chat') 
@@ -80,9 +80,16 @@ const CoversationSideBar = () => {
 				? <div className="text-black"></div> 
 				: <CreatGroups setNewRooms={setNewRooms} ></CreatGroups> )
 			}
-			{!newRooms  &&
-				<button onClick={()=>{setNewRooms(true)}} className="absolute right-5 p-4 bottom-20 md:bottom-4 bg-[#5B8CD3] rounded-full "><IoMdAdd />
+			{!newRooms  ?
+				<button onClick={()=>{setNewRooms(true)}} className="absolute right-5 p-4 bottom-5 bg-[#5B8CD3] rounded-full "><IoMdAdd />
 				</button>
+				:
+				<div className="absolute right-5  bottom-5 flex items-center">
+					<button onClick={()=>{setNewRooms(false)}} className="text-[#5B8CD3] mr-4">Cancel</button>
+					<button onClick={()=>{setNewRooms(false)}} className=" bg-[#5B8CD3] p-4 rounded-full "><FaCheck />
+					</button>
+				</div>
+			
 			}
 		</div>
      );

@@ -15,7 +15,7 @@ type props = {
     setMessage :Dispatch<React.SetStateAction<any>>   
 }
 
-const MessageInputField: FC<props> = ({setMessage, Message}) => {
+const MessageInputFieldRoom: FC<props> = ({setMessage, Message}) => {
     const pathname = usePathname();
     const socket = useContext(socketContext).socket;
     const { channel } = useContext(socketContext);
@@ -89,4 +89,4 @@ const MessageInputField: FC<props> = ({setMessage, Message}) => {
     )
 }
 
-export default MessageInputField
+export default MessageInputFieldRoom

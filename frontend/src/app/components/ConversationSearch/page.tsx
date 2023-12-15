@@ -1,3 +1,4 @@
+"use client"
 import { UsersTypes } from "@/app/utils/types";
 import { useState, useEffect } from "react";
 import { MdSearch } from "react-icons/md";

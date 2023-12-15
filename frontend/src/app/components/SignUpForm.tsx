@@ -16,7 +16,7 @@ import SignInForm from "./SignInForm";
 import { createUserParams } from "../utils/types";
 import { postRegisterUser } from "../utils/api";
 import { useRouter } from "next/navigation";
-// import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const SignUpForm = forwardRef((_props: any, ref: any) => {
@@ -32,6 +32,7 @@ const SignUpForm = forwardRef((_props: any, ref: any) => {
 			  pauseOnHover: true,
 			  draggable: true,
 			});
+			
 		  };
 	type FormData = {
 		email: string;
@@ -50,7 +51,7 @@ const SignUpForm = forwardRef((_props: any, ref: any) => {
 		// console.log(data);
 		try {
 			await postRegisterUser(data);
-			alert(`Welcome ${data.username}`);
+			ToastFunction(`Welcome ${data.username}`);
 			router.push("/signIn", { scroll: false });
 		} catch (err :  any) {
 			if (err.response) {
@@ -69,7 +70,7 @@ const SignUpForm = forwardRef((_props: any, ref: any) => {
 
 	return (
 		<div ref={ref} className="">
-			{/* <ToastContainer /> */}
+			<ToastContainer />
 			<form
 				action=""
 				className="relative flex h-full w-full flex-col items-center justify-center gap-3 sm:gap-4"

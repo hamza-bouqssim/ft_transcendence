@@ -270,13 +270,13 @@ export class UserService {
       }
       // create notification
 
-      async createNotification(userAdmin: User, member: User, message: string) {
+      async createNotification(userSender: User, userRecipient: User, message: string) {
         const notification = await this.prisma.notificationGlobal.create({
             data: {
-                Sender: { connect: { id: userAdmin.id } },
-                recipient: { connect: { id: member.id } },
+                Sender: { connect: { id: userSender.id } },
+                recipient: { connect: { id: userRecipient.id } },
                 content: message,
-                image_content: userAdmin.avatar_url,
+                image_content: userSender.avatar_url,
             },
         });
     
@@ -301,10 +301,28 @@ export class UserService {
             },
         });
 
-        
-        
-
         return notifications;
     }
+
+    async notificationMessage(userId : string, recipientId : string){
+        const notification = await this.prisma.notificationMessage.create({
+            data: {
+                sender: { connect: { id: userId } },
+                recipient: { connect: { id: recipientId } },
+            },
+        });
+    
+        return notification;
+
+            
+    }
+
+    async isBlockedByUser(senderId: string, recipientUser: string): Promise<boolean> {
+        console.log("enter");
+        // Implement logic to check if recipientUser is blocked by userId
+        const BlockedFriends = await this.blockedFriends(senderId);
+        console.log("blocked friend here", BlockedFriends);
+        return BlockedFriends.some((friend) => friend.user.id === recipientUser);
+      }
 }
 

@@ -507,6 +507,7 @@ export class RoomsService {
         content : createMessageRoom.content,
         chatRoomId : createMessageRoom.chatRoomId,
         senderId: id,
+
       },
     });
     if (!message) {

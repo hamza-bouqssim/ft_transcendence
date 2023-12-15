@@ -11,7 +11,7 @@ import {usePathname} from 'next/navigation'
 
 
 
-const MessageContainer = () => {
+const MessageContainerRoom = () => {
     const scrollRef = useRef<HTMLDivElement | null>(null);
     const [Message,setMessage] = useState<any[]>([]);
     const [MessageRoom,setMessageRoom] = useState<any[]>([]);
@@ -75,4 +75,4 @@ const MessageContainer = () => {
     )
 }
 
-export default MessageContainer; 
+export default MessageContainerRoom; 

@@ -1,22 +1,23 @@
 "use client"
-import { InputField, MessagePanelStyle, MessagePannelBody, MessagePannelHeaderStyle } from "@/app/utils/styles"
-import MessageContainer from "./MessageContainerRoom";
+import { InputField, MessageContainerStyle, MessagePanelStyle, MessagePannelBody, MessagePannelHeaderStyle } from "@/app/utils/styles"
+import MessageContainer from "./MessageContainer";
 import MessageInputField from "./MessageInputFieldRoom";
 import { messageTypes } from "@/app/utils/types";
 import { FC, useState } from "react";
 import MessagePanelHeader from "./MessagePanelHeader";
-import { useParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { postNewMessage } from "@/app/utils/api";
 import UpdateComponent from "../updateComponent/UpdateComponent";
 import { InfoRoom } from "../InfoRoom/InfoRoom";
 import {useContext} from 'react'
+import MessageContainerRoom from "./MessageContainerRoom";
 
 
 const MessagePanel = () => {
 
         const [updateRome,setUpdateRome] = useState<boolean>(false)
-        
-        console.log("hi")
+        const pathname = usePathname()
+        console.log(pathname)
      
     return (
         <div className="p-2 md:p-6   h-full flex items-center w-full justify-between"> 
@@ -24,8 +25,10 @@ const MessagePanel = () => {
                     <MessagePanelHeader setUpdateRome={setUpdateRome} updateRome={updateRome} />
                     { !updateRome ? 
                         <>
-                            <MessageContainer />
-
+                            {pathname.includes('chat') ? 
+                             <MessageContainer />:
+                             <MessageContainerRoom/>
+                            }
                         </>
                         :
                         <UpdateComponent></UpdateComponent>
