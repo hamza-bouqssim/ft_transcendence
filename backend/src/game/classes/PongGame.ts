@@ -9,7 +9,7 @@ import {
 	World,
 	Events,
 } from 'matter-js';
-import { AuthenticatedSocket } from 'src/utils/interfaces';
+import { GameQ } from '../gateway/game.gateway';
 
 const engine: Engine = Engine.create({
 	gravity: {
@@ -18,16 +18,7 @@ const engine: Engine = Engine.create({
 	},
 });
 
-type GameQ = {
-	indexMap: number;
-	status: string;
-	socket1: AuthenticatedSocket;
-	socket2: AuthenticatedSocket;
-	duration: number;
-	user1: any;
-	user2: any;
-	launch : boolean;
-};
+
 const runner: Runner = Runner.create();
 
 export class PongGame {
@@ -625,7 +616,7 @@ export class PongGame {
 			this.ball.position.y < this.topPaddle.position.y
 		)
 			this.emitScore();
-		if (this.playerOneScore === 1000 || this.playerTwoScore === 1000) {
+		if (this.playerOneScore === 15 || this.playerTwoScore === 15) {
 			this.gameGatway.endGame(this.game);
 		}
 	}

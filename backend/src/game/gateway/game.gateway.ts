@@ -22,6 +22,7 @@ import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'prisma/prisma.service';
 import { AuthenticatedSocket } from 'src/utils/interfaces';
 import { PongGame } from '../classes/PongGame';
+import { de } from '@faker-js/faker';
 
 // const engine: Engine = Engine.create({
 // 	gravity: {
@@ -32,7 +33,7 @@ import { PongGame } from '../classes/PongGame';
 
 // const runner: Runner = Runner.create();
 
-type GameQ = {
+export type GameQ = {
 	indexMap: number;
 	status: string;
 	socket1: AuthenticatedSocket;
@@ -54,6 +55,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	server: Server;
 
 	private pong: PongGame;
+	private mapPong: Map<string, PongGame> = new Map();
 
 	// private ball: Body;
 	// private topPaddle: Body;
@@ -160,16 +162,16 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			if (findGame) {
 				if (findGame.socket1.user.sub  === userId && socket.id === findGame.socket1.id) {
 					console.log('user1 leave game');
-					this.pong.playerOneScore = 0;
-					this.pong.playerTwoScore = 7;
+					this.mapPong[game.user1.id].playerOneScore = 0;
+					this.mapPong[game.user1.id].playerTwoScore = 7;
 					this.endGame(game);
 				} else if (
 					findGame.socket2.user.sub  === userId &&
 					socket.id === findGame.socket2.id
 				) {
 					console.log('user2 leave game');
-					this.pong.playerOneScore = 7;
-					this.pong.playerTwoScore = 0;
+					this.mapPong[game.user1.id].playerOneScore = 7;
+					this.mapPong[game.user1.id].playerTwoScore = 0;
 					this.endGame(game);
 				}
 			}
@@ -274,11 +276,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 
 	async endGame(game : any) {
-		if (game) {
+		if (this.mapPong[game.user1.id]) {
 			const  user1 = game.socket1.user.sub ;
 			const  user2 = game.socket2.user.sub ;
 			const duration = Date.now() - game.duration;
-			if (this.pong.playerOneScore > this.pong.playerTwoScore) {
+			if (this.mapPong[game.user1.id].playerOneScore > this.mapPong[game.user1.id].playerTwoScore) {
 				this.emitToUser1InGame(user1, { status: 'winner' }, 'gameIsFinished');
 				this.emitToUser2InGame(user2 ,{ status: 'loser' }, 'gameIsFinished');
 			} else {
@@ -286,17 +288,20 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				this.emitToUser1InGame(user1 ,{ status: 'loser' }, 'gameIsFinished');
 			}
 			// Clear Game
-			// this.handleClearGame();
 			// await this.gameservice.createTwoMatchHistory(
-			// 	user1,
-			// 	user2,
-			// 	this.playerOneScore,
-			// 	this.playerTwoScore,
-			// 	duration,
-			// );
-			console.log(this.pong.playerOneScore, this.pong.playerTwoScore);
-			this.pong.playerOneScore = 0;
-			this.pong.playerTwoScore = 0;
+				// 	user1,
+				// 	user2,
+				// 	this.playerOneScore,
+				// 	this.playerTwoScore,
+				// 	duration,
+				// );
+				// delete this.mapPong[game.user1.id];
+			console.log(this.mapPong[game.user1.id].playerOneScore, this.mapPong[game.user1.id].playerTwoScore);
+			// this.mapPong[game.user1.id].playerOneScore = 0;
+			// this.mapPong[game.user1.id].playerOneScore = 0;
+			// this.mapPong[game.user1.id].playerTwoScore = 0;
+			// this.mapPong[game.user1.id].handleClearGame();
+			delete this.mapPong[game.user1.id];
 			this.queueInGame = this.queueInGame.filter((game) => game.socket1.user.sub  != user1);
 		}
 	}
@@ -313,7 +318,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			return;
 		}
 
-		this.pong = new PongGame(this, game);
+		this.mapPong[game.user1.id] = new PongGame(this, game);
 
 		// // This Function Will Run In All Maps:
 		// this.handleDefaultGameMap();
@@ -605,7 +610,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		const game = this.getInGameQueue(socket.user.sub);
 		if (!game) return;
 
-		this.pong.handleKeyDown(data);
+		this.mapPong[game.user1.id].handleKeyDown(data);
 
 		// let movingLeft: boolean;
 		// let movingRight: boolean;
