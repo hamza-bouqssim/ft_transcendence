@@ -1,10 +1,10 @@
 import { AppDispatch } from "@/app/store";
-import { createConversationThunk } from "@/app/store/conversationSlice";
+import { createConversationThunk, fetchConversationUserThunk } from "@/app/store/conversationSlice";
 import { getAllFriends } from "@/app/utils/api";
 import { Conversation, ConversationSideBarContainer, ConversationSideBarItem } from "@/app/utils/styles";
 import { CreateConversationParams, FriendsTypes } from "@/app/utils/types";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { MenuButton, MenuButton2 } from "../Buttons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -16,13 +16,26 @@ import { fetchBlockFriendThunk } from "@/app/store/blockSlice";
 import { fetchGetAllFriendsThunk } from "@/app/store/friendsSlice";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { socketContext } from "@/app/utils/context/socketContext";
+import { fetchMessagesThunk } from "@/app/store/messageSlice";
 
 
 const ListFriends = () => {
-  const ToastFunction = (message : any) => {
+  const ToastError = (message: any) => {
 		toast.error(message, {
 		  position: toast.POSITION.TOP_RIGHT,
-		  autoClose: 5000, // You can customize the duration
+		  autoClose: 5000,
+		  hideProgressBar: false,
+		  closeOnClick: true,
+		  pauseOnHover: true,
+		  draggable: true,
+		});
+	  };
+	
+	  const ToastSuccess = (message: any) => {
+		toast.success(message, {
+		  position: toast.POSITION.TOP_RIGHT,
+		  autoClose: 5000,
 		  hideProgressBar: false,
 		  closeOnClick: true,
 		  pauseOnHover: true,
@@ -32,6 +45,8 @@ const ListFriends = () => {
 
 
     const [Friends, setFriends] = useState<FriendsTypes[]>([]);
+    const { updateChannel, channel } = useContext(socketContext);
+
     const dispatch = useDispatch<AppDispatch>();
     const [openMenuId, setOpenMenuId] = useState<string | null>(null);
     const [change, setChange] = useState<{
@@ -71,10 +86,10 @@ const ListFriends = () => {
       
         try {
           await dispatch(fetchBlockFriendThunk(id));
-            ToastFunction("You have blocked this friend successfully");
+            ToastSuccess("You have blocked this friend successfully");
 
         } catch (error) {
-          ToastFunction("Failed to block the friend. Please try again");
+          ToastError("Failed to block the friend. Please try again");
 
         }
 
@@ -86,6 +101,21 @@ const ListFriends = () => {
           <ToastContainer />
 				<ConversationSideBarContainer>
 					{friends.map(function(elem : FriendsTypes){
+            const handleSendMessage = async () =>
+            {
+
+                  dispatch(fetchConversationUserThunk(elem.display_name))
+                    .unwrap()
+                    .then(({data}) => {
+                      updateChannel(data);
+                      dispatch(fetchMessagesThunk(data.id));
+
+                  }).catch((err)=>{
+                      console.log(err);
+                  }
+                );
+
+            }
 						return(
 							<ConversationSideBarItem key={elem.id}>
                 <Image src={elem.avatar_url} className="h-14 w-14 rounded-[50%] bg-black " alt="Description of the image" width={60}   height={60} />
@@ -101,9 +131,9 @@ const ListFriends = () => {
 				          />
       
                 {openMenuId === elem.id &&
-                <div className={`absolute  top-10 left-2 h-[120px]  w-[200px] flex-col items-center justify-center gap-1 rounded-[15px] border-2 border-solid border-[#000000] bg-white font-['Whitney_Semibold'] `}>
+                <div className={`absolute  top-[-120px] left-2 h-[120px]  w-[200px] flex-col items-center justify-center gap-1 rounded-[15px] border-2 border-solid border-[#000000] bg-white font-['Whitney_Semibold'] `}>
 					        <button className={`bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`}>see profile</button>
-					        <button className={` bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`}>send message</button>
+					        <button className={` bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} onClick={()=>handleSendMessage()}>send message</button>
                   <button className={` bg-[#EA7F87] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} value="Bloque" onClick={()=> handlleBloque(elem.id)}>Bloque</button>
 
 				        </div>}

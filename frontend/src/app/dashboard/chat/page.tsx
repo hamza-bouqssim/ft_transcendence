@@ -10,13 +10,16 @@ import { fetchGetRequestThunk } from "@/app/store/requestSlice";
 import { fetchGetAllFriendsThunk } from "@/app/store/friendsSlice";
 import { fetchBlocksThunk } from "@/app/store/blockSlice";
 import { fetchUsersThunk } from "@/app/store/usersSlice";
+import { fetchConversationThunk } from "@/app/store/conversationSlice";
+import { fetchMessagesThunk } from "@/app/store/messageSlice";
+import { ConversationTypes, messageTypes } from "@/app/utils/types";
 
 
 
 
 
 const ConversationChannelPagechat = () => { 
-    const { channel } = useContext(socketContext);
+  const { updateChannel, channel } = useContext(socketContext);
 
    
     const socket = useContext(socketContext).socket
@@ -39,30 +42,49 @@ const ConversationChannelPagechat = () => {
     socket.on('blockNotification', (data : any) =>{
       dispatch(fetchBlocksThunk());
       dispatch(fetchGetAllFriendsThunk());
+      updateChannel(data);
+      dispatch(fetchMessagesThunk(channel?.id));
 
       
     })
     socket.on('debloqueNotification', (data : any)=>{
       dispatch(fetchBlocksThunk());
       dispatch(fetchGetAllFriendsThunk());
+      updateChannel(data);
+      dispatch(fetchMessagesThunk(channel.id));
+
 
     })
     socket.on('online', (data : any)=>{
-      console.log("online socket");
       dispatch(fetchUsersThunk())
       dispatch(fetchGetAllFriendsThunk());
 
 
     })
     socket.on('offline', (data : any)=>{
-      console.log("offline socket");
       dispatch(fetchUsersThunk())
-
       dispatch(fetchGetAllFriendsThunk());
 
 
     });
-		  
+		socket.on('createConversation', (data : any)=>{
+      dispatch(fetchConversationThunk());
+
+    });
+    socket.on('deleteConversation', (data : ConversationTypes)=>{
+			updateChannel(data);
+			dispatch(fetchConversationThunk());
+      updateChannel(data);
+			dispatch(fetchMessagesThunk(channel?.id));
+
+		  })
+    socket.on('onMessage', (messages : messageTypes)=>{
+			dispatch(fetchConversationThunk());
+			updateChannel(messages.participents);
+      dispatch(fetchMessagesThunk(channel?.id));
+
+		
+		})
       return () => {
         socket.off('AcceptNotification');
         socket.off('newFriendRequest');
@@ -71,9 +93,13 @@ const ConversationChannelPagechat = () => {
         socket.off('debloqueNotification');
         socket.off('online');
         socket.off('offline');
+        socket.off('createConversation');
+        socket.off('deleteConversation');
+        socket.off('onMessage');
+
       };
 		
-	  }, [socket, dispatch]);
+	  }, [socket, dispatch, channel?.id]);
     return ( 
         <div className=" flex h-screen  xl:container xl:mx-auto">  
           <div className={`h-full  xl:p-10 xl"pl-5 xl:pr-2 ${!channel ? 'block w-full xl:w-[35%]  ' : 'hidden xl:block  xl:w-[35%] '}`}>

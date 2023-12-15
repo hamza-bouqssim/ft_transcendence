@@ -48,6 +48,8 @@ export type   ConversationTypes= {
     sender : User;
     recipient : User;
     createdAt : string;
+    recipientId : string;
+    senderId : string;
     lastMessage: MessageType;
 }
 
@@ -64,6 +66,15 @@ export type UsersTypes = {
     status : string;
 }
 
+export type UsersType = {
+    sub: string;
+    email : string;
+    username : string;
+    display_name : string;
+    avatar_url : string;
+    status : string;
+}
+
 
 export type FriendsTypes = {
     id : string;
@@ -71,6 +82,7 @@ export type FriendsTypes = {
     username : string;
     avatar_url : string;
     friend : User;
+    status : string;
 }
 
 export type BloquesTypes = {
@@ -89,6 +101,12 @@ export type MessageType = {
     createdAt: string;
     sender: User;
   };
+export type NotificationTypes = {
+    id : string;
+    content : string;
+    image_content : String;
+
+}
 
 export type ConversationMessage = {
     id: number;
@@ -99,9 +117,12 @@ export type FetchMessagePayload = {
     id: number;
     messages: MessageType[];
 };
-
+export type messageUnread = {
+    count : number;
+}
 export type messageTypes = {
     id : string;
+    participents :  ConversationTypes;
     content : string;
     createdAt : string;
     sender : User;

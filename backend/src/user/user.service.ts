@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { User } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
 import { findUserParams } from 'src/utils/types';
 
@@ -264,5 +265,61 @@ export class UserService {
 
 
       }
-  
+      // create notification
+
+      async createNotification(userSender: User, userRecipient: User, message: string) {
+        const notification = await this.prisma.notificationGlobal.create({
+            data: {
+                Sender: { connect: { id: userSender.id } },
+                recipient: { connect: { id: userRecipient.id } },
+                content: message,
+                image_content: userSender.avatar_url,
+            },
+        });
+    
+        return notification;
+    }
+    async notificationCreate(user : User){
+
+        await this.prisma.notificationGlobal.updateMany({
+            where: {
+                recipient_id: user.id,
+            },
+            data: {
+                vue: true,
+            },
+        });
+        const notifications = await this.prisma.notificationGlobal.findMany({
+            where: {
+                recipient_id: user.id,
+            },
+            include: {
+                Sender: true, // Corrected syntax: remove the semicolon and use a comma
+            },
+        });
+
+        return notifications;
+    }
+
+    async notificationMessage(userId : string, recipientId : string){
+        const notification = await this.prisma.notificationMessage.create({
+            data: {
+                sender: { connect: { id: userId } },
+                recipient: { connect: { id: recipientId } },
+            },
+        });
+    
+        return notification;
+
+            
+    }
+
+    async isBlockedByUser(senderId: string, recipientUser: string): Promise<boolean> {
+        console.log("enter");
+        // Implement logic to check if recipientUser is blocked by userId
+        const BlockedFriends = await this.blockedFriends(senderId);
+        console.log("blocked friend here", BlockedFriends);
+        return BlockedFriends.some((friend) => friend.user.id === recipientUser);
+      }
 }
+

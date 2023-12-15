@@ -46,6 +46,7 @@ export class FriendRequestController {
     async blockFriend(@Body() request: {friendIdToBlock: string}, @Req() req)
     {
         const user = req.user;
+        await this.friendshipService.deleteMessagesWithUser(user.id, request.friendIdToBlock);
         return this.friendshipService.block(request.friendIdToBlock, user.id);
     }
 
@@ -57,13 +58,7 @@ export class FriendRequestController {
         return this.friendshipService.unblock(request.friendIdToUnblock, user.id);
     }
 
-    // @Get('all-Friends')
-    // async allFriends(@Req() req)
-    // {
-    //     const user = req.user;
-    //   return this.friendshipService.allMyFriends(user.ud);
-
-    // }
+  
 
     
 }

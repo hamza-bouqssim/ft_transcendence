@@ -14,16 +14,28 @@ import 'react-toastify/dist/ReactToastify.css';
 
 
 const FriendsBloque = () =>{
-  const ToastFunction = (message : any) => {
+  const ToastError = (message: any) => {
 		toast.error(message, {
 		  position: toast.POSITION.TOP_RIGHT,
-		  autoClose: 5000, // You can customize the duration
+		  autoClose: 5000,
 		  hideProgressBar: false,
 		  closeOnClick: true,
 		  pauseOnHover: true,
 		  draggable: true,
 		});
 	  };
+	
+	  const ToastSuccess = (message: any) => {
+		toast.success(message, {
+		  position: toast.POSITION.TOP_RIGHT,
+		  autoClose: 5000,
+		  hideProgressBar: false,
+		  closeOnClick: true,
+		  pauseOnHover: true,
+		  draggable: true,
+		});
+	  };
+
     const [bloques, setBloques] = useState<BloquesTypes[]>([]);
     const dispatch = useDispatch<AppDispatch>();
     const { friendsBlock , status, error } = useSelector((state:any) => state.friendsBlock);
@@ -37,10 +49,10 @@ const FriendsBloque = () =>{
       
         try {
           await dispatch(fetchDebloqueUserThunk(id));
-            ToastFunction("You have Deblocked this friend successfully");
+            ToastSuccess("You have Deblocked this friend successfully");
 
         } catch (error) {
-          ToastFunction("Failed to Deblock the friend. Please try again.");
+          ToastError("Failed to Deblock the friend. Please try again.");
 
         }
       };

@@ -16,21 +16,27 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const SendRequest  = () => {
   
-  const ToastFunction = (message : any) => {
+  const ToastError = (message: any) => {
 		toast.error(message, {
 		  position: toast.POSITION.TOP_RIGHT,
-		  autoClose: 5000, 
+		  autoClose: 5000,
 		  hideProgressBar: false,
 		  closeOnClick: true,
 		  pauseOnHover: true,
 		  draggable: true,
 		});
 	  };
-    const [change, setChange] = useState<{
-      menu: boolean;
-    }>({
-      menu: false,
-    });
+	
+	  const ToastSuccess = (message: any) => {
+		toast.success(message, {
+		  position: toast.POSITION.TOP_RIGHT,
+		  autoClose: 5000,
+		  hideProgressBar: false,
+		  closeOnClick: true,
+		  pauseOnHover: true,
+		  draggable: true,
+		});
+	  };
            
     const dispatch = useDispatch<AppDispatch>();
 
@@ -55,10 +61,10 @@ const SendRequest  = () => {
         try {
          
           await dispatch(fetchAcceptFriendRequestThunk(id));
-          ToastFunction("You are accepting the request !");
+          ToastSuccess("You are accepting the request !");
 
         } catch (error) {
-          ToastFunction(`Error accepting friend request: ${error}`);
+          ToastError(`Error accepting friend request: ${error}`);
 
         }
       };
@@ -66,13 +72,11 @@ const SendRequest  = () => {
       const handleClickRefuseRequest = async (id : string) =>{
         try{
           await dispatch(fetchREfuseFriendRquestThunk(id));
-          ToastFunction("You are refusing the request");
+          ToastSuccess("You are refusing the request");
 
 
         }catch(error){
-          ToastFunction(`Error refusing friend request, ${error}`);
-
-
+          ToastError(`Error refusing friend request, ${error}`);
         }
       }
       return (

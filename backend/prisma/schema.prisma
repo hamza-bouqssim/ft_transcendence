@@ -41,6 +41,7 @@ model User {
   senderNotif NotificationGlobal[] @relation("sender")
   recipientNotif NotificationGlobal[] @relation("recipient")
   senderNotifMessage NotificationMessage[] @relation("senderMessage")
+  recipientNotifMessage NotificationMessage[] @relation("recipientMessage")
   senderOfmessage Message[] @relation("senderMessage")
   player1 Pong_match[]  @relation("player1")
   player2 Pong_match[]  @relation("player2")
@@ -80,25 +81,25 @@ model ChatParticipents {
   id          String      @id @default(uuid())
   senderId    String
   recipientId String
+  vue         Boolean     @default(false)
+  unreadMessageCount Int  @default(0)
   lastMessageId String?
-  createdAt DateTime @default(now())
-  recipient   User     @relation("recipient", fields: [recipientId], references: [id])
-  messages    Message[] @relation("participentsMessages")
-  lastMessage Message?   @relation("lastMessageSent", fields: [lastMessageId], references: [id])
-  sender      User     @relation("sender", fields: [senderId], references: [id])
-
+  createdAt   DateTime    @default(now())
+  recipient   User        @relation("recipient", fields: [recipientId], references: [id])
+  messages    Message[]   @relation("participentsMessages")
+  lastMessage Message?    @relation("lastMessageSent", fields: [lastMessageId], references: [id])
+  sender      User        @relation("sender", fields: [senderId], references: [id])
 }
 
 model Message {
   id String @id @default(uuid())
+  vue Boolean  @default(false)
   content String?
   senderId String
-  // recipientId String
   participentsId String
   createdAt DateTime @default(now())
   lastMessageFor ChatParticipents[] @relation("lastMessageSent")
   participents ChatParticipents @relation("participentsMessages", fields: [participentsId], references: [id])
-  // recipient User @relation("recipientMessage", fields: [recipientId], references: [id])
   sender User @relation("senderMessage", fields: [senderId], references: [id])
 }
 
@@ -202,7 +203,6 @@ model NotificationGlobal {
   id String @id @default(uuid())
   Sender_id String
   recipient_id String
-  type String
   content String
   vue Boolean @default(false)
   created_at   DateTime        @default(now())
@@ -213,7 +213,9 @@ model NotificationGlobal {
 }
 model NotificationMessage{
   id String @id @default(uuid())
+  sender_id String
   recipient_id String
-  Sender User @relation("senderMessage",fields: [recipient_id], references: [id])
-  vue Boolean @default(true)
+  sender User @relation("senderMessage",fields: [sender_id], references: [id])
+  recipient User @relation("recipientMessage", fields: [recipient_id], references: [id])
+  vue Boolean @default(false)
 }

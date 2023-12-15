@@ -200,12 +200,13 @@ async changeAvatar(@Req() req, @UploadedFile() file: Express.Multer.File) {
 
     }
 
-    // @Post('notification')
-    // @UseGuards(AuthGuard('jwt'))
-    // async createNOtification(@Boby() request: {message: string}){
-    //   const notification = await this.userService.notificationCreate(request.)
-
-    // }
+    @Get('notification')
+    @UseGuards(AuthGuard('jwt'))
+    async getNotification(@Req() req){
+      const user = req.user;
+      const notifications = await this.userService.notificationCreate(user);
+      return notifications;
+    }
      
     
 }
