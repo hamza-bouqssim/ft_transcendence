@@ -1,3 +1,4 @@
+import { th } from '@faker-js/faker';
 import { GameGateway } from '../gateway/game.gateway';
 import {
 	Bodies,
@@ -8,6 +9,7 @@ import {
 	World,
 	Events,
 } from 'matter-js';
+import { AuthenticatedSocket } from 'src/utils/interfaces';
 
 const engine: Engine = Engine.create({
 	gravity: {
@@ -16,6 +18,16 @@ const engine: Engine = Engine.create({
 	},
 });
 
+type GameQ = {
+	indexMap: number;
+	status: string;
+	socket1: AuthenticatedSocket;
+	socket2: AuthenticatedSocket;
+	duration: number;
+	user1: any;
+	user2: any;
+	launch : boolean;
+};
 const runner: Runner = Runner.create();
 
 export class PongGame {
@@ -76,13 +88,19 @@ export class PongGame {
 	playerTwoScore: number = 0;
 	private updateBallPosition: NodeJS.Timer;
 	private movePaddleInterval: NodeJS.Timer;
+
+	private user1: string;
+	private user2: string;
 	private handleCollisionStart = (e: any): void => {};
-	// private mapIndex: number;
+	private mapIndex: number;
 
 	constructor(
-		private mapIndex: number,
 		private gameGatway: GameGateway,
+		private game: GameQ,
 	) {
+		this.user1 = game.socket1.user.sub;
+		this.user2 = game.socket2.user.sub;
+		this.mapIndex = game.indexMap;
 		// This Function Will Run In All Maps:
 		this.handleDefaultGameMap();
 
@@ -97,13 +115,15 @@ export class PongGame {
 		}
 		console.log(
 			this.gameGatway.emitToUser1InGame(
-				{ rotate: false, opponant: this.gameGatway.user2 },
+				this.user1,
+				{ rotate: false, opponant: this.user2 },
 				'launchGame',
 			),
 		);
 		console.log(
 			this.gameGatway.emitToUser2InGame(
-				{ rotate: true, opponant: this.gameGatway.user1 },
+				this.user2,
+				{ rotate: true, opponant: this.user1 },
 				'launchGame',
 			),
 		);
@@ -381,7 +401,7 @@ export class PongGame {
 			if (data.key === 'd' || data.key === 'ArrowRight') movingRight = false;
 			else if (data.key === 'a' || data.key === 'ArrowLeft') movingLeft = false;
 		}
-		if (data.display_name === this.gameGatway.user1.display_name)
+		if (data.display_name === this.game.user1.display_name)
 			this.movesUser1 = {
 				movingLeft,
 				movingRight,
@@ -396,7 +416,7 @@ export class PongGame {
 
 	handlePaddleMove() {
 		this.movePaddleInterval = setInterval(() => {
-			if (!this.gameGatway.game) {
+			if (!this.game) {
 				clearInterval(this.updateBallPosition);
 				return;
 			}
@@ -445,6 +465,7 @@ export class PongGame {
 			}
 			if (stepX2 || stepX1)
 				this.gameGatway.emitToGame(
+					this.user1,this.user2,
 					{
 						xPosition1: this.posBottomPaddleX,
 						xPosition2: this.posTopPaddleX,
@@ -458,11 +479,13 @@ export class PongGame {
 		Runner.run(runner, engine);
 
 		this.updateBallPosition = setInterval(() => {
-			if (!this.gameGatway.game) {
+			if (!this.game) {
 				clearInterval(this.updateBallPosition);
 				return;
 			}
-			this.gameGatway.emitToGame(this.ball.position, 'updateBallPosition');
+			this.gameGatway.emitToGame(
+				this.user1,this.user2,
+				this.ball.position, 'updateBallPosition');
 			// this.calcScore();
 			this.handleDetectCollision();
 		}, 15);
@@ -489,7 +512,9 @@ export class PongGame {
 		// 	y: this.defaultCanvasSizes.height - 30,
 		// });
 
-		this.gameGatway.emitToGame({}, 'resetDefaultPosition');
+		this.gameGatway.emitToGame(
+			this.user1,this.user2,
+			{}, 'resetDefaultPosition');
 	}
 
 	setBallVelocity() {
@@ -517,7 +542,9 @@ export class PongGame {
 			y: this.currentBallVelocity.y,
 		});
 
-		this.gameGatway.emitToGame(this.ball.velocity, 'setBallVelocity');
+		this.gameGatway.emitToGame(
+			this.user1,this.user2,
+			this.ball.velocity, 'setBallVelocity');
 	}
 
 	updateBallVelocity() {
@@ -533,7 +560,9 @@ export class PongGame {
 				y: this.currentBallVelocity.y,
 			});
 
-			this.gameGatway.emitToGame(this.ball.velocity, 'setBallVelocity');
+			this.gameGatway.emitToGame(
+				this.user1,this.user2,
+				this.ball.velocity, 'setBallVelocity');
 		}
 	}
 
@@ -550,6 +579,7 @@ export class PongGame {
 				this.lastDirection = 'bottom';
 			}
 			this.gameGatway.emitToUser1InGame(
+				this.user1,
 				{
 					yourScore: this.playerOneScore,
 					opponantScore: this.playerTwoScore,
@@ -557,6 +587,7 @@ export class PongGame {
 				'updateScore',
 			);
 			this.gameGatway.emitToUser2InGame(
+				this.user2,
 				{
 					yourScore: this.playerTwoScore,
 					opponantScore: this.playerOneScore,
@@ -595,7 +626,7 @@ export class PongGame {
 		)
 			this.emitScore();
 		if (this.playerOneScore === 1000 || this.playerTwoScore === 1000) {
-			this.gameGatway.endGame();
+			this.gameGatway.endGame(this.game);
 		}
 	}
 
