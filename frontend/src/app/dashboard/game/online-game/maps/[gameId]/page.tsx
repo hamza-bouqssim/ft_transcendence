@@ -1,21 +1,11 @@
 "use client";
-<<<<<<< HEAD
-import { Swiper, SwiperSlide } from "swiper/react";
-import { useRef, useState } from "react";
-import Link from "next/link";
-import { EffectCoverflow, Pagination } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/effect-coverflow";
-import "swiper/css/pagination";
-=======
 import { Swiper } from "swiper/react";
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { EffectCoverflow } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/effect-coverflow";
-import { mappedImagesSlides } from "../../bot-game/maps/page";
->>>>>>> origin/Samer_V1
+import { mappedImagesSlides } from "../../../bot-game/maps/page";
 
 const ChoseMapOnline = () => {
 	const swiperRef = useRef<any>(null);
@@ -46,38 +36,6 @@ const ChoseMapOnline = () => {
 						}
 						modules={[EffectCoverflow]}
 					>
-<<<<<<< HEAD
-						<SwiperSlide style={{ height: "400px", width: "270px" }}>
-							<img
-								src="/assets/game-maps/default-map.gif"
-								style={{ height: "100%", objectFit: "cover" }}
-							/>
-						</SwiperSlide>
-						<SwiperSlide style={{ height: "400px", width: "270px" }}>
-							<img
-								src="/assets/game-maps/map2-with-obstacles.gif"
-								style={{ height: "100%", objectFit: "cover" }}
-							/>
-						</SwiperSlide>
-						<SwiperSlide style={{ height: "400px", width: "270px" }}>
-							<img
-								src="/assets/game-maps/map3-with-obstacles.gif"
-								style={{ height: "100%", objectFit: "cover" }}
-							/>
-						</SwiperSlide>
-					</Swiper>
-				</div>
-				{/* <SocketContext.Provider value={socket}> */}
-					<Link
-						href={{
-							pathname: "./match-making",
-							query: { mapIndex },
-						}}
-						className="glassmorphism m-auto w-fit px-7 py-2 font-['Whitney_Semibold'] duration-150 ease-in-out hover:bg-[--purple-color]"
-					>
-						Choose
-					</Link>
-=======
 						{mappedImagesSlides}
 					</Swiper>
 				</div>
@@ -91,7 +49,6 @@ const ChoseMapOnline = () => {
 				>
 					Choose
 				</Link>
->>>>>>> origin/Samer_V1
 				{/* </SocketContext.Provider> */}
 			</div>
 		</div>

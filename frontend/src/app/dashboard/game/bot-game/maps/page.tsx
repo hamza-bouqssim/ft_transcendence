@@ -1,5 +1,6 @@
 "use client";
 import { useRef, useState } from "react";
+<<<<<<< HEAD
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCoverflow, Pagination } from "swiper/modules";
 import "swiper/css";
@@ -9,6 +10,34 @@ import Link from "next/link";
 import Image from "next/image";
 // import { useRouter } from "next/navigation";
 // import { SocketContext } from "../SocketContext";
+=======
+import Link from "next/link";
+import Image from "next/image";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { EffectCoverflow } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/effect-coverflow";
+
+const ImagesSlides: string[] = [
+	"/assets/game-maps/default-map.gif",
+	"/assets/game-maps/map2-with-obstacles.gif",
+	"/assets/game-maps/map3-with-obstacles.gif",
+];
+
+export const mappedImagesSlides: JSX.Element[] = ImagesSlides.map(
+	(elem: string, index: number): JSX.Element => (
+		<SwiperSlide key={index} style={{ height: "400px", width: "270px" }}>
+			<Image
+				style={{ height: "100%", objectFit: "cover" }}
+				src={elem}
+				width={500}
+				height={500}
+				alt=""
+			/>
+		</SwiperSlide>
+	),
+);
+>>>>>>> origin/Samer_V1
 
 const ChooseMapBot = () => {
 	const swiperRef = useRef<any>(null);
@@ -39,6 +68,7 @@ const ChooseMapBot = () => {
 						}
 						modules={[EffectCoverflow]}
 					>
+<<<<<<< HEAD
 						<SwiperSlide style={{ height: "400px", width: "270px" }}>
 							<img
 								src="/assets/game-maps/default-map.gif"
@@ -64,6 +94,9 @@ const ChooseMapBot = () => {
 								style={{ height: "100%", objectFit: "cover" }}
 							/>
 						</SwiperSlide>
+=======
+						{mappedImagesSlides}
+>>>>>>> origin/Samer_V1
 					</Swiper>
 				</div>
 				<Link

@@ -207,7 +207,6 @@ model Match_History {
   playerTwo  String
   resultOne  Int
   resultTwo  Int
-  result     Result   @default(UNPROCESSED)
   createdAt  DateTime @default(now())
   playerone  User     @relation("playerOne", fields: [playerOne], references: [id])
   playertwo  User     @relation("playerTow", fields: [playerTwo], references: [id])
