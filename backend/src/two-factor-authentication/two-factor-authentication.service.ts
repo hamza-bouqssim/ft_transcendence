@@ -10,10 +10,7 @@ export class TwoFactorAuthenticationService {
     {
         const secret = authenticator.generateSecret();
         await this.prisma.user.update({where: {email: _email}, data: {two_factor_secret_key:secret}});
-        console.log("generated secret:  " + secret);
-        // const appName = this.configService.getOrThrow('TFA_APP_NAME');
         const uri = authenticator.keyuri('APP', _email, secret);
-        console.log("uri:       " + uri);
         return{uri, secret};
     }
 
@@ -27,7 +24,6 @@ export class TwoFactorAuthenticationService {
     
     async enableTwoFactor(_email: string)
     {
-        
         const id = this.prisma.user.findUnique({where: {email: _email}});
         await this.prisma.user.update({where: {email: _email}, data: {tfa_enabled: true}});
     }
@@ -36,11 +32,4 @@ export class TwoFactorAuthenticationService {
     {
         await this.prisma.user.update({where: {email: email}, data: {tfa_enabled:false}});
     }
-
-    // async isEnable(_email: string)
-    // {
-    //     const isEnable = await this.prisma.user.findUnique({
-    //         where: {email: _email},
-    //          data:{tfa_enabed: true}})
-    // }
 }

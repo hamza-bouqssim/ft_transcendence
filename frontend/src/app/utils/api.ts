@@ -99,4 +99,8 @@ export const confirm = async (code : string) => {
     const res = API.post("/two-factor-authentication/2fa/confirm", {code})
     return res;
 }
+export const disable2Fa = async () => {
+    const res = API.post("/two-factor-authentication/2fa/disable")
+    return res;
+}
 

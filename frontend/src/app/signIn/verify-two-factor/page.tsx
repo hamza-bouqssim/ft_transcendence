@@ -11,6 +11,7 @@ const TwoFactorVerify = () => {
     const [Loading, setLoading] = useState(false);
     const [otp, setOtp] = useState("");
     const [isVerified, setIsVerified] = useState(false);
+    const [message, setMessage] = useState("")
     const router = useRouter();
 
     const _verificationCode = async () => {
@@ -18,6 +19,7 @@ const TwoFactorVerify = () => {
           await confirm(otp).then((res)=>{
             console.log("success", res);
             setIsVerified(res.data.success);
+            setMessage(res.data.message)
             if(res.data.success)
                 router.push('/dashboard');
             // setLoading(false);
@@ -27,13 +29,16 @@ const TwoFactorVerify = () => {
           console.log("error:", e);
         })
       }
+      const toSignInCompo = () => {
+        router.push('/signIn');
+      }
 
     return (
         <div className="absolute left-0 z-10 right-0 bottom-0 top-0 bg-[#0000005f] backdrop-blur-[0px] opacity-100">
             <div className="w-[380px] h-[600px] z-30 bg-white absolute top-0 left-0 bottom-0 right-0 m-auto  drop-shadow-xl rounded-[20px] overflow-hidden">
        <div className="h-full flex flex-col items-center  font-['Whitney_Semibold'] relative">
         <div className='w-full h-[14%] '>
-            <FontAwesomeIcon icon={faXmark} className='text-black text-[35px] border-2 rounded-xl px-2 absolute top-6 right-8 cursor-pointer hover:bg-[--purple-color] hover:text-white' />
+            <FontAwesomeIcon icon={faXmark} onClick={toSignInCompo} className='text-black text-[35px] border-2 rounded-xl px-2 absolute top-6 right-8 cursor-pointer hover:bg-[--purple-color] hover:text-white' />
           </div>
         <div className='flex justify-center items-center  h-[80%] w-full flex-col p-5 gap-8 -mt-6'>
           <div className='ml-7 mr-auto'>
@@ -56,6 +61,15 @@ const TwoFactorVerify = () => {
 
             )}
           </div>
+          {message != "" && (
+        <div>
+          {/* {isVerified ? ( */}
+            <p style={{ color: isVerified ? 'green' : 'red' }} className="font-bold font-['Whitney_Semibold']">{message}</p>
+          {/* ) : (
+            <p style={{ color: 'red' }}>Invalid 2FA CODE</p>
+          )} */}
+        </div>
+      )}
 
        </div>
     </div> 

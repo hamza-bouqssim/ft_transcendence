@@ -1,19 +1,23 @@
 "user client"
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { generateQrcode, verifyCode } from '../utils/api'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faXmark } from '@fortawesome/free-solid-svg-icons';
+import { useRouter } from 'next/navigation';
+import { socketContext } from '../utils/context/socketContext';
 
 interface Props {
   closeQrForm :  () => void;
 }
 
 export function Qrcodeform({closeQrForm } : Props) {
+  const {Userdata,setUserdata} = useContext(socketContext);
   const [qrCodeData, setQRCodeData] = useState("");
   const [otp, setOtp] = useState("");
   const [Loading, setLoading] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const [message, setMessage] = useState("");
+  const router = useRouter();
   useEffect(() => {
     
     generateQrcode().then((res)=>{
@@ -23,14 +27,16 @@ export function Qrcodeform({closeQrForm } : Props) {
     })
     
   }, []);
-
   const _verificationCode = async () => {
     setLoading(true);
       await verifyCode(otp).then((res)=>{
         console.log("success", res);
         setMessage(res.data.message);
         setIsVerified(res.data.success);
+        setUserdata({...Userdata, tfa_enabled: res.data.success});
         setLoading(false);
+        //   router.push('/dashboard');
+        // if (res.data.success)
       })
       .catch((e) =>{
       setLoading(false)
@@ -67,14 +73,8 @@ export function Qrcodeform({closeQrForm } : Props) {
 
             )}
             {message != "" && (
-        <div>
-          {/* {isVerified ? ( */}
             <p style={{ color: isVerified ? 'green' : 'red' }}>{message}</p>
-          {/* ) : (
-            <p style={{ color: 'red' }}>Invalid 2FA CODE</p>
-          )} */}
-        </div>
-      )}
+            )}
           </div>
 
        </div>

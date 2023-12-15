@@ -3,15 +3,17 @@ import PopUp from "./popUp";
 import Swal from "sweetalert2";
 import { socketContext } from "../utils/context/socketContext";
 import { Qrcodeform } from "./Qrcodefom";
+import { disable2Fa } from "../utils/api";
 
 type FormProps = {
 	img: string;
 };
 
 const Form = ({ img }: FormProps) => {
-	const {Userdata} : any = useContext(socketContext);
+	const {Userdata, setUserdata} : any = useContext(socketContext);
+	
 
-	console.log(Userdata)
+	console.log("user data form",Userdata);
 	const [name, setName] = useState<string>("");
 	const [login, setLogin] = useState<string>("");
 	const [pass, setPass] = useState<string>("");
@@ -36,6 +38,16 @@ const Form = ({ img }: FormProps) => {
 	const closeQrForm : () => void = () => {
 		setDisplay2fa(false);
 	}
+	const _disable = async () => {
+		  await disable2Fa().then((res)=>{
+			console.log("success", res);
+			// setIsVerified(res.data.success);
+			setUserdata({...Userdata, tfa_enabled: false});
+		  })
+		  .catch((e) =>{
+		  console.log("error:", e);
+		})
+	  }
 	return (
 		<>
 		<div>
@@ -87,17 +99,24 @@ const Form = ({ img }: FormProps) => {
 					
 				</div>
 				<div className="flex flex-col items-center  justify-center border-t border-[#9f9f9f4a] md:flex-row md:justify-evenly">
-					<h1 className="p-4 text-black ">Two-factor authentication</h1>
+					<h1 className="p-4 text-black font-['Whitney Semibold'] ">Two-factor authentication</h1>
 					<div className="my-3">
-						{Userdata?.tfa_enabled ?<input
-							type="button"
-							className="rounded-[20px] bg-[#EA7F87] px-8 py-3 text-white"
-							value="Disable 2FA"
-						/> :<input onClick={() => {setDisplay2fa(true)}}
+
+					{Userdata?.tfa_enabled ? (
+					<input
+						onClick={_disable}
+						type="button"
+						className="rounded-[20px] bg-[#EA7F87] px-8 py-3 text-white"
+						value="Disable 2FA"
+					/>
+					) : (
+					<input
+						onClick={() => setDisplay2fa(true)}
 						type="button"
 						className="rounded-[20px] cursor-pointer bg-[--purple-color] px-8 py-3 text-white"
 						value="Enable 2FA"
-					/>  }
+					/>
+					)}
 						
 					</div>
 				</div>

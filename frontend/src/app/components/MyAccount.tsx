@@ -28,7 +28,7 @@ const MyAccount = () => {
 						}}
 					/>
 					<label
-						className="rounded-[20px] bg-[#5B8CD4] px-6 py-3"
+						className="rounded-[20px] font-['Whitney Semibold'] bg-[#5B8CD4] px-6 py-3"
 						htmlFor="file"
 					>
 						Change Photo
@@ -36,7 +36,7 @@ const MyAccount = () => {
 				</div>
 				<input
 					type="button"
-					className="rounded-[20px] bg-[#EA7F87] px-8 py-3"
+					className="rounded-[20px] font-['Whitney Semibold'] bg-[#EA7F87] px-8 py-3"
 					onClick={() => {
 						setSrc("/assets/unknown.png");
 					}}
