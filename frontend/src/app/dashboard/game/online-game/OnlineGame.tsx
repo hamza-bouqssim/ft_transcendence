@@ -9,7 +9,7 @@ import {
 } from "@/app/components/GamePopUp";
 import { socket, socketContext } from "@/app/utils/context/socketContext";
 import { useGameSocket } from "@/app/providers/game-socket-provider";
-import { opponentData } from "./match-making/page";
+import OpponentData from "../utils/OpponentData";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 
 const OnlineGame = ({ mapIndex }: any) => {
@@ -32,8 +32,8 @@ const OnlineGame = ({ mapIndex }: any) => {
 	console.log("map index:", mapIndex);
 
 	const { Userdata } = useContext<any>(socketContext);
-	const opponentPlayer = useAtomValue(opponentData);
-	const setClearAtom = useSetAtom(opponentData);
+	const opponentPlayer = useAtomValue(OpponentData);
+	const setClearAtom = useSetAtom(OpponentData);
 	const clearAtomData = () => {
 		setClearAtom(() => ({
 			opponent: {

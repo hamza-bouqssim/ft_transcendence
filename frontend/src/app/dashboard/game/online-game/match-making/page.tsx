@@ -10,6 +10,7 @@ import { socketContext } from "@/app/utils/context/socketContext";
 import { useSearchParams } from "next/navigation";
 import { useGameSocket } from "@/app/providers/game-socket-provider";
 import { atom, useAtom, useAtomValue, useSetAtom } from "jotai";
+import OpponentData from "../../utils/OpponentData";
 
 // const sleep = async (ms: number) =>
 // 	new Promise((resolve) => setTimeout(resolve, ms));
@@ -42,7 +43,7 @@ const MatchMaking = () => {
 	// const opponentPlayer = useAtomValue(opponentData);
 	// const setOpponent = useSetAtom(opponentData);
 
-	const [opponentPlayer, setOpponentPlayer] = useAtom(opponentData);
+	const [opponentPlayer, setOpponentPlayer] = useAtom(OpponentData);
 
 	useEffect(() => {
 		// const handleStartGame = (payload: { idGame: string }) => {
@@ -145,21 +146,5 @@ const MatchMaking = () => {
 		</>
 	);
 };
-
-export const opponentData = atom<{
-	opponent: {
-		username: string;
-		display_name: string;
-		avatar_url: string;
-	};
-	isRotate: boolean;
-}>({
-	opponent: {
-		username: "",
-		display_name: "",
-		avatar_url: "/assets/unknown.png",
-	},
-	isRotate: false,
-});
 
 export default MatchMaking;
