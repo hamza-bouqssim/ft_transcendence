@@ -19,6 +19,16 @@ export class CreateMessageRoom{
 
 }
 
+export class Member{
+    @IsNotEmpty()
+    @IsString()
+    id:string;
+
+    @IsNotEmpty()
+    @IsString()
+    userId:string;
+}
+
 export class CreateChatRoom{
 
     @IsNotEmpty()

@@ -21,8 +21,8 @@ export class UserController {
     async grabMyInfos(@Req() req) {
       
      const user = req.user
-
       return {
+        id:user.id,
         username: user.username,
         email : user.email,
         display_name: user.display_name,

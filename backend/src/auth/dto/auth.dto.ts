@@ -17,11 +17,6 @@ export class AuthDto{
     @IsString()
     password?: string;
 
-    @IsString()
-    two_factor_auth?: string;
-
-    @IsString()
-    two_factor_secret_key?: string;
 
     @IsString()
     avatar_url?: string

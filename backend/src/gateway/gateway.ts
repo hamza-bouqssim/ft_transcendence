@@ -63,31 +63,35 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
     
     @SubscribeMessage('joinToRoom')
     handleJoinRome(client: Socket, roomId: RoomId){
+        console.log("joinToRoom" ,roomId.id )
          client.join(roomId.id.toString());
     }
     
     @SubscribeMessage('leaveToRoom')
     handleLeaveRome (client: Socket, roomId: RoomId) {
+        console.log("leaveToRoom" ,roomId.id )
         client.leave (roomId.id);
     }
 
  
 
     @SubscribeMessage('messageRome')
-    async handleMessage(client: Socket, createMessageRoom: CreateMessageRoom){
-        const messageRome = await this.roomsService.createMessage(createMessageRoom,"123123");
+    async handleMessage(client: AuthenticatedSocket, createMessageRoom: CreateMessageRoom){
+        const messageRome = await this.roomsService.createMessage(createMessageRoom,client.user.sub);
         this.server.to(createMessageRoom.chatRoomId.toString()).emit ('messageRome', messageRome);
     }
     @SubscribeMessage('Typing')
-    handleTyping(client: Socket, roomId: RoomId){
-        this.server.to(roomId.id.toString()).emit ('Typing', true);
+    handleTyping(client: Socket, {id,userId}){
+        console.log("Typing")
+        this.server.to(id.toString()).emit ('Typing', {status: true,userId:userId});
     }
 
 
     
     @SubscribeMessage('leaveTyping')
-    handleLeaveTyoing (client: Socket, roomId: RoomId) {
-        this.server.to(roomId.id.toString()).emit ('Typing', false);
+    handleLeaveTyoing (client: Socket, { id,userId}) {
+        console.log("leaveTyping")
+        this.server.to(id.toString()).emit ('Typing',{status: false,userId:userId});
     }
     
 
@@ -114,7 +118,7 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         }
 
         @OnEvent("order.created")
-         async onNotification(data:any) {
+         async onNotificationCreate(data:any) {
              const userAdmin = data.members.find((userAdmin) => userAdmin.isAdmin)
             data.members.map((member) => {
                 if(!member.isAdmin)
@@ -124,6 +128,32 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
                     this.userService.createNotification( userAdmin.user,member.user, message);
 
                 }             
+            })
+        }
+        @OnEvent("order.update")
+         async onNotificationupdate(data:any) {
+            console.log(data)
+            const update = await this.prisma.chatRoom.findUnique({
+                where: { id: data.id },
+                include:{
+                  members:{
+                    include:{
+                      user:true
+                    }
+                  }
+                }
+            })
+            update.members.map((member) => {
+            if(!member.isAdmin)
+            {
+                this.server.to(member.user_id).emit('update', "");
+            }             
+            })
+        }
+        @OnEvent("order.delete")
+         async onNotificationdelete(data:any) {
+            data.members.map((member) => {
+                this.server.to(member.user_id).emit('delete', "");         
             })
         }
         @OnEvent("request.created")

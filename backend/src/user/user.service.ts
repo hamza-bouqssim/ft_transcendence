@@ -253,16 +253,19 @@ export class UserService {
       async userInfo(user_id : string){
 
         const user = await this.prisma.user.findUnique({
-            where: { id: user_id},
-            
-            
+            where: { 
+                id: user_id
+            },
+            select:{
+                id:true
+            }
+
           });
           if (!user) {
             throw new NotFoundException('User not found');
           }
+          console.log(user)
           return user;
-      
-
 
       }
       // create notification

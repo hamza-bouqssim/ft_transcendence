@@ -26,11 +26,7 @@ export const fetchGetRequestThunk = createAsyncThunk('request/fetchGetRequestThu
       return rejectWithValue('Failed to fetch requests');
 
     }
-
-
   }
-  
-
 });
 
 export const fetchRequestThunk = createAsyncThunk('request/create', async (data: CreateRequestParams, { rejectWithValue }) => {

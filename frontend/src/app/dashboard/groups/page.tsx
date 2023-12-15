@@ -19,20 +19,29 @@ import { getAllRooms } from "@/app/store/roomsSlice";
 
 
 const ConversationChannelPage = () => {
-  const {channel } = useContext(socketContext);
+  const {channel ,updateChannel} = useContext(socketContext);
   const socket = useContext(socketContext).socket
   const dispatch= useDispatch<AppDispatch>();
 
 	useEffect(()=>{
-		console.log("socket")
-    socket.on('connect', () => {
-			console.log('Socket connected:', socket.id);
-		  });
-  
 		socket.on("notification",(payload:any) =>{
-      console.log(payload)
 			dispatch(getAllRooms())
 		})
+    socket.on("delete",(payload:any) =>{
+			dispatch(getAllRooms())
+      updateChannel("")
+		})
+    socket.on("update",(payload:any) =>{
+			dispatch(getAllRooms())
+      updateChannel("")
+		})
+    return () => {
+      socket.off("notification");
+      socket.off("delete");
+      socket.off("update");
+    };
+  
+
 	},[socket])
     return ( 
             <div className=" flex h-screen  xl:container xl:mx-auto">

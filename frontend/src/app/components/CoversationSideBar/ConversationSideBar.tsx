@@ -27,7 +27,6 @@ const CoversationSideBar = () => {
 			<div className="flex items-center rounded-full justify-between w-3/4 mb-4  mx-auto  bg-[#DFDFDF]">
 				<button
 					onClick={()=>{
-						console.log(channel)
 						router.push("/dashboard/chat")
 						updateChannel("")
 					}
@@ -36,8 +35,6 @@ const CoversationSideBar = () => {
 				</button>
 				<button 
 					onClick={() =>{
-						console.log(channel)
-
 						router.push("/dashboard/groups")
 						updateChannel("")
 					}
@@ -83,7 +80,7 @@ const CoversationSideBar = () => {
 				? <div className="text-black"></div> 
 				: <CreatGroups setNewRooms={setNewRooms} ></CreatGroups> )
 			}
-			{!newRooms ?
+			{!newRooms  ?
 				<button onClick={()=>{setNewRooms(true)}} className="absolute right-5 p-4 bottom-5 bg-[#5B8CD3] rounded-full "><IoMdAdd />
 				</button>
 				:

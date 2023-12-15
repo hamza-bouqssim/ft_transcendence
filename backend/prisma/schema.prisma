@@ -104,37 +104,6 @@ model Message {
 }
 
 
-model ChatRoom {
-  id        String @id @default(uuid())
-  name      String    @unique
-  Privacy   String   
-  password  String?
-  picture   String?   @default("https://images.squarespace-cdn.com/content/v1/5f60d7057b9b7d7609ef628f/1603219780222-V253F1WLHBH8HNHXIFUX/group.png")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  members   Member[]
-  messageRome  MessageRome[]
-}
-
-model Member {
-  id          String @id @default(uuid())
-  user_id     String
-  chatRoomId  String
-  isAdmin     Boolean
-  user        User        @relation(fields: [user_id], references: [id])
-  chatRoom    ChatRoom    @relation(fields: [chatRoomId], references: [id])
-}
-
-model MessageRome{
-  id          String @id @default(uuid())
-  content     String
-  chatRoomId  String
-  senderId    String
-  createdAt   DateTime @default(now())
-  user        User        @relation(fields: [senderId], references: [id])
-  chatRoom    ChatRoom    @relation(fields: [chatRoomId], references: [id])
-
-}
 
 
 model Session {
@@ -219,3 +188,39 @@ model NotificationMessage{
   recipient User @relation("recipientMessage", fields: [recipient_id], references: [id])
   vue Boolean @default(false)
 }
+
+model ChatRoom {
+  id        String @id @default(uuid())
+  name      String    @unique
+  Privacy   String   
+  password  String?
+  picture   String?   @default("https://images.squarespace-cdn.com/content/v1/5f60d7057b9b7d7609ef628f/1603219780222-V253F1WLHBH8HNHXIFUX/group.png")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  members   Member[]
+  messageRome  MessageRome[]
+
+}
+
+model Member {
+  id          String @id @default(uuid())
+  user_id     String
+  chatRoomId  String
+  isAdmin     Boolean
+  Status      String @default("Member") //Ban // Mut
+  user        User        @relation(fields: [user_id], references: [id])
+  chatRoom    ChatRoom    @relation(fields: [chatRoomId], references: [id])
+}
+
+model MessageRome{
+  id          String @id @default(uuid())
+  content     String
+  chatRoomId  String
+  senderId    String
+  createdAt   DateTime @default(now())
+  user        User        @relation(fields: [senderId], references: [id])
+  chatRoom    ChatRoom    @relation(fields: [chatRoomId], references: [id])
+
+}
+
+

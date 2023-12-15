@@ -110,3 +110,15 @@ export const getAllRoomsApi = () =>{
 }
 
 
+export const getConversationMessageRoom = (id:string) =>{
+  const response = API.post("/rooms/getConversation",{id})
+  return response;
+}
+
+
+export const getAllMembersApi =(id:string) =>
+{
+  const response = API.post("/rooms/allMember",{id})
+  return response;
+}
+

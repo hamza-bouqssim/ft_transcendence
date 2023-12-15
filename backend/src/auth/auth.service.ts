@@ -92,6 +92,7 @@ export class AuthService {
     }
 
     async validateUser(dto: AuthDto) {
+      console.log(dto)
       const user = await this.prisma.user.findUnique({ where: { email: dto.email } });
       if (user) return user;
     
@@ -106,6 +107,7 @@ export class AuthService {
           two_factor_secret_key: "",
         },
       });
+      console.log(createNewUser)
     
       return createNewUser;
     }

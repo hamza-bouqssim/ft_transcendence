@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Injectable,HttpStatus,HttpException } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
-import { RoomId ,DeleteChatRoom,UpdateChatRoom,CreateChatRoom,CreateMessageRoom} from "src/Rooms/dto/rooms.dto";
+import { RoomId,Member ,DeleteChatRoom,UpdateChatRoom,CreateChatRoom,getAllRooms ,CreateMessageRoom} from "src/Rooms/dto/rooms.dto";
 import * as bcrypt from 'bcrypt';
 
 
@@ -18,10 +18,14 @@ export class RoomsService {
     const memberInfo = await this.prisma.member.findMany({
       where: {
         user_id: id,
+        Status: {
+          not: {
+            in: ["Ban", "kick"],
+          },
+        },
       },
     });
     if (!memberInfo || memberInfo.length === 0) {
-      console.log("sdfdsfdsf")
       throw new HttpException("No members found for the given user in any chat room.", HttpStatus.BAD_REQUEST);
     }
   
@@ -45,6 +49,7 @@ export class RoomsService {
             user_id: id,
           },
           select: {
+            user_id:true,
             isAdmin: true,
           },
         },
@@ -58,13 +63,6 @@ export class RoomsService {
   
     return chatRooms;
   }
-  
-// name: 'sacsadadsad',
-// Privacy: 'Public',
-// password: '',
-// picture: null,
-// idUserAdd: [ '6a171716-6e2a-45c8-a9c6-66f3d3fd1908' ]
-  
   
   async creatRooms(data:CreateChatRoom,id:string)
   {
@@ -170,6 +168,7 @@ export class RoomsService {
             user_id: id,
           },
           select: {
+            user_id:true,
             isAdmin: true,
           },
         },
@@ -191,7 +190,6 @@ export class RoomsService {
             isAdmin: true,
           },
         },
-        messageRome: true,
       },
     });
     if (!chatRoom) {
@@ -201,6 +199,16 @@ export class RoomsService {
     if (!chatRoom.members.length) {
       throw new Error(`User  is not an admin for the chat room.`);
     }
+    const ChatRoom = await this.prisma.chatRoom.findUnique({
+      where: { id: deleteChatRoom.id },
+      include:{
+        members:{
+          include:{
+            user:true
+          }
+        }
+      }
+    });
 
     await this.prisma.member.deleteMany({
       where: { chatRoomId: deleteChatRoom.id },
@@ -212,7 +220,7 @@ export class RoomsService {
       where: { id: deleteChatRoom.id },
     });
 
-    return deletedChatRoom;
+    return ChatRoom;
   }
 
 
@@ -246,27 +254,213 @@ export class RoomsService {
   }
 
 
-  async allMember()
+  async allMember(id:string, roomId:RoomId) 
   {
+    const userRole = await this.prisma.member.findFirst({
+      where: {
+          user_id: id,
+          chatRoomId: roomId.id,
+      },
+      select: {
+        isAdmin: true,
+      },
+    });
 
+    let members;
+
+    if (userRole?.isAdmin) {
+      members = await this.prisma.member.findMany({
+        where: {
+          chatRoomId: roomId.id,
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              username: true,
+              status: true,
+              email: true,
+              display_name: true,
+              avatar_url: true,
+            },
+          },
+        },
+      });
+    } else {
+      members = await this.prisma.member.findMany({
+        where: {
+          chatRoomId: roomId.id,
+          Status: { not: 'Ban' },
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              username: true,
+              status: true,
+              email: true,
+              display_name: true,
+              avatar_url: true,
+            },
+          },
+        },
+      });
+    }
+    return members;
+  }
+
+  async banMember(id: string, memberUpdate: Member) {
+    const userRole = await this.prisma.member.findFirst({
+      where: {
+        user_id: id,
+        chatRoomId: memberUpdate.id,
+      },
+    });
+
+    if (!userRole?.isAdmin) {
+      throw new HttpException("User is not an admin in the room", HttpStatus.BAD_REQUEST);
+    }
+    const userRole1 = await this.prisma.member.findFirst({
+      where: {
+        user_id: memberUpdate.id,
+        chatRoomId: memberUpdate.id,
+      },
+    });
+    if (userRole1?.isAdmin) {
+      throw new HttpException("can t ban owner in the room", HttpStatus.BAD_REQUEST);
+    }
+    const userBan = await this.prisma.member.findFirst({
+      where: {
+        user_id: memberUpdate.userId,
+        chatRoomId: memberUpdate.id,
+      },
+    });
+    const updatedMember = await this.prisma.member.update({
+      where: {
+        id: userBan.id,
+      },
+      data: {
+        Status: "Ban",
+      },
+    });
+
+    return updatedMember;
   }
 
 
-  async banMember()
+
+  async mutMember(id: string, memberUpdate: Member)
   {
+    const userRole = await this.prisma.member.findFirst({
+      where: {
+        user_id: id,
+        chatRoomId: memberUpdate.id,
+      },
+    });
 
-  }
+    if (!userRole?.isAdmin) {
+      throw new HttpException("User is not an admin in the room", HttpStatus.BAD_REQUEST);
+    }
+    const userRole1 = await this.prisma.member.findFirst({
+      where: {
+        user_id: memberUpdate.id,
+        chatRoomId: memberUpdate.id,
+      },
+    });
+    if (userRole1?.isAdmin) {
+      throw new HttpException("can t Mut owner in the room", HttpStatus.BAD_REQUEST);
+    }
 
+    const userMut = await this.prisma.member.findFirst({
+      where: {
+        user_id: memberUpdate.userId,
+        chatRoomId: memberUpdate.id,
+      },
+    });
+    const updatedMember = await this.prisma.member.update({
+      where: {
+        id: userMut.id,
+      },
+      data: {
+        Status: "Mut",
+      },
+    });
 
-  async mutMember()
-  {
+    return updatedMember;
 
   }
 
   //modifier 
 
-  async kekMember()
+  async kickMember(id: string, memberUpdate: Member)
   {
+    const userRole = await this.prisma.member.findFirst({
+      where: {
+        user_id: id,
+        chatRoomId: memberUpdate.id,
+      },
+    });
+
+    if (!userRole?.isAdmin) {
+      throw new HttpException("User is not an admin in the room", HttpStatus.BAD_REQUEST);
+    }
+    const userRole1 = await this.prisma.member.findFirst({
+      where: {
+        user_id: memberUpdate.id,
+        chatRoomId: memberUpdate.id,
+      },
+    });
+    if (userRole1?.isAdmin) {
+      throw new HttpException("can t kick owner in the room", HttpStatus.BAD_REQUEST);
+    }
+
+    const userkick = await this.prisma.member.findFirst({
+      where: {
+        user_id: memberUpdate.userId,
+        chatRoomId: memberUpdate.id,
+      },
+    });
+    const updatedMember = await this.prisma.member.update({
+      where: {
+        id: userkick.id,
+      },
+      data: {
+        Status: "kick",
+      },
+    });
+
+    return updatedMember;
+
+  }
+  async Member(id: string, memberUpdate: Member)
+  {
+    const userRole = await this.prisma.member.findFirst({
+      where: {
+        user_id: id,
+        chatRoomId: memberUpdate.id,
+      },
+    });
+
+    if (!userRole?.isAdmin) {
+      throw new HttpException("User is not an admin in the room", HttpStatus.BAD_REQUEST);
+    }
+
+    const userkick = await this.prisma.member.findFirst({
+      where: {
+        user_id: memberUpdate.userId,
+        chatRoomId: memberUpdate.id,
+      },
+    });
+    const updatedMember = await this.prisma.member.update({
+      where: {
+        id: userkick.id,
+      },
+      data: {
+        Status: "Member",
+      },
+    });
+
+    return updatedMember;
 
   }
 
@@ -321,6 +515,36 @@ export class RoomsService {
     }
     return message;
   }
+
+
+  async getConversation(roomId: RoomId,id: string)
+  {
+    const isMember = await this.prisma.chatRoom.findFirst({
+      where: {
+        id: roomId.id
+      },
+      include: {
+        members: {
+          where: {
+            user_id: id,
+          },
+        },
+      },
+    });
+
+    if (!isMember) {
+      throw new HttpException("User is not a member in this room", HttpStatus.BAD_REQUEST );
+    }
+
+    const chatRoomMessages = await this.prisma.messageRome.findMany({
+      where: {
+        chatRoomId: roomId.id,
+      },
+    });
+
+    return chatRoomMessages;
+  }
+
 
 }
 

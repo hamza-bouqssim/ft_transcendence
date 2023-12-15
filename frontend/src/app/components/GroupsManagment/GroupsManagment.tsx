@@ -6,19 +6,21 @@ import {useEffect,useContext} from 'react'
 import {getAllRooms} from '@/app/store/roomsSlice'
 import {socketContext } from "@/app/utils/context/socketContext";
 
-  interface Room {
-    id: string;
-    name: string;
-    Privacy: string;
-    password?:string;
-    picture: string;
-    createdAt: string;
-    updatedAt: string;
-    members: {
-      isAdmin: boolean;
-    };
-    lastMessage?:string;
-  }
+interface Member {
+  user_id: string;
+  isAdmin: boolean;
+}
+
+interface Room {
+  id: string;
+  name: string;
+  Privacy: string;
+  picture: string;
+  createdAt: Date;
+  updatedAt: Date;
+  members: Member[];
+}
+
   function compareRooms(a: Room, b: Room): number {
     if (a.lastMessage && b.lastMessage) {
       return a.lastMessage.localeCompare(b.lastMessage);
@@ -52,19 +54,18 @@ import {socketContext } from "@/app/utils/context/socketContext";
 
     const { rooms, status, error } = useSelector((state:any) => state.room);
     const {updateChannel, channel } = useContext(socketContext);
-
     useEffect(() => {
       dispatch(getAllRooms())
     }, [dispatch]);
- 
+    console.log("hi")
     if (status =="loading") {
       return(
         <div className="flex items-center justify-center mt-40">
         <div
-              class=" text-[#5B8CD3]   h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+              className=" text-[#5B8CD3]   h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
               role="status">
               <span
-                class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+                className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
                 >Loading...</span>
             </div></div>)
     }
@@ -76,7 +77,7 @@ import {socketContext } from "@/app/utils/context/socketContext";
     return (
       <div className="text-black  pb-2 pt-5 h-[calc(100%-100px)] overflow-auto  no-scrollbar">
         {rooms && [...rooms].sort(compareRooms)?.map((data: Room) => (
-          <div key={data.id} onClick={() =>{updateChannel(data)}}  className="cursor-pointer rounded-lg hover:bg-[#F2F3FD] flex items-center justify-between px-2 py-3">
+          <div key={data.id} onClick={() =>{updateChannel(data) ; }}  className="cursor-pointer rounded-lg hover:bg-[#F2F3FD] flex items-center justify-between px-2 py-3">
             <div className="flex items-center justify-start">
                 <img className="w-16 h-16  bg-cover rounded-full" src={data.picture} alt="" />
                 <div className="ml-4">

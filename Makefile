@@ -15,9 +15,11 @@ help:
 build: 
 	docker-compose build
 
-up:
+build-up: build
 	docker-compose up
 
+up:
+	docker-compose up
 stop:
 	docker-compose stop
 

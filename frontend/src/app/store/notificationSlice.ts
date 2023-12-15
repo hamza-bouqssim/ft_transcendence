@@ -21,11 +21,7 @@ export const fetchNotificationThunk = createAsyncThunk('notiication/fetchNotific
     const response = await getNotification();
     return response.data;
 
-  })
-
-  
-
-
+})
 
 export const NotificationSlice = createSlice({
   name: 'notification',
