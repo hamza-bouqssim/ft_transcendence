@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { findUserParams } from 'src/utils/types';
 
@@ -46,7 +46,7 @@ export class UserService {
             if(!find)
                 throw new HttpException("User Not Found!", HttpStatus.BAD_REQUEST); 
             if (find.display_name === newDisplayedName)
-                throw new HttpException("This Display Name already in use, Choose another one !!!", HttpStatus.BAD_REQUEST);
+                throw new Error("This Display Name already in use, Choose another one !!!");
 
         const search = await this.prisma.user.findUnique({
             where : {
@@ -69,13 +69,13 @@ export class UserService {
         
         return {message : 'Update display_name  succefully'}    }
 
+
+
     async changeUserName(_email: string, newUserName: string){
         const find = await this.prisma.user.findUnique({where: {email:_email}});
 
         if(!find)
-            throw new HttpException("User Not Found!", HttpStatus.BAD_REQUEST)
-        if (find.username === newUserName)
-            throw new HttpException("This UserName already in use, Choose another one !!!", HttpStatus.BAD_REQUEST);
+            throw new HttpException("User Not Found!", HttpStatus.BAD_REQUEST);
         const updatedUserName = await this.prisma.user.update({
             where: {email: _email},
             data: {username: newUserName},

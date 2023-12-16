@@ -10,6 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
 import * as path from 'path';
 import { AuthGuard } from '@nestjs/passport';
 import { PrismaService } from 'prisma/prisma.service';
+import { Request } from 'express';
 @Controller('user')
 export class UserController {
 
@@ -44,10 +45,10 @@ export class UserController {
       try {
         const user = req.user;
         const updated = await this.userService.changeDisplayedName(user.email, request.newDisplayName);
-        return res.status(200).json({ success: true, response: updated});
+        return res.status(200).json({ success: true, message: "Updated Successfully"});
       }catch(error){
         // throw new Error('Failed to update the displayed name');
-          return res.status(401).json({ success: false, message: error.message || 'An unexpected error occurred' });
+        return res.send({ success: false, message: error.message || 'An unexpected error occurred' });
 
       }
     }
@@ -57,10 +58,10 @@ export class UserController {
     async changeUserName(@Body() request: {newUserName : string}, @Req() req, @Res() res){
       try {
         const user = req.user
-        const updated = await this.userService.changeUserName(user.email, req.newUserName);
-        return res.status(200).json({ success: true, response: updated});
+        const updated = await this.userService.changeUserName(user.email, request.newUserName);
+        return res.status(200).json({ success: true, message: "Updated Successfully"});
       }catch(error){
-        return res.status(401).json({ success: false, message: error.message || 'An unexpected error occurred' });
+        return res.status(401).json({ success: false, message: error.message});
       }
     }
 
@@ -108,6 +109,15 @@ export class UserController {
       await this.prisma.user.update({where:{email: user.email}, data: {avatar_url: request.avatar}});
       res.send({success:true, message:"avatar uploaded succesfully"});
     }
+    @Post('first_time') 
+    @UseGuards(AuthGuard('jwt'))
+    async firstTime(@Req() req, @Res() res)
+    {
+      const user = req.user;
+      await this.prisma.user.update({where: {email: user.email}, data:{first_time: false}});
+      res.send({success: true, message:"first time setted to false"});
+    }
+    
 
     @Get('my-friends')
     @UseGuards(AuthGuard('jwt'))

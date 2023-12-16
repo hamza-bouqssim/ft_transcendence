@@ -21,10 +21,10 @@ const MyAccount = () => {
 			formData.append("upload_preset", "ibahlawn"); //put this in the ENV
 			formData.append("cloud_name", 'dnbhh3qxj');  //put this in the ENV
 	
-			const res = await newAPI.post('https://api.cloudinary.com/v1_1/dnbhh3qxj/image/upload', formData); //a9cess the /dnbhh.../ from the env
+			const res = await newAPI.post('https://api.cloudinary.com/v1_1/dnbhh3qxj/image/upload', formData); //access the /dnbhh.../ from the env
 
 			console.log(res.data.secure_url);
-			await changePhoto(res.data.secure_url).then((result) => console.log(result));
+			// await changePhoto(res.data.secure_url).then((result) => console.log(result));
 			setImage(res.data.secure_url);
 			setUserdata({ ...Userdata, avatar_url: res.data.secure_url });
 		} catch (err) {

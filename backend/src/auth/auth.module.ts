@@ -23,7 +23,8 @@ import { TwoFactorAuthenticationModule } from 'src/two-factor-authentication/two
     PrismaService,
     FortyTwoStrategy,
     GoogleStrategy,
-    JwtStrategy, TwoFactorAuthenticationService
+    JwtStrategy,
+    TwoFactorAuthenticationService
   ],
   controllers: [AuthController],
 

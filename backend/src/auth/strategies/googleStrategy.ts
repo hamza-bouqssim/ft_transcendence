@@ -19,10 +19,11 @@ export class GoogleStrategy extends PassportStrategy(Strategy){
         });
     }
     async validate(accessToken:string ,refreshToken: string, profile: Profile){
+        console.log(profile);
         const authDto: AuthDto = {
           email: profile.emails[0]?.value,
           username: profile.displayName,
-          display_name: await this.authService.generateNickname(profile.emails[0]?.value),
+          display_name: profile.name.givenName + " " + profile.name.familyName,
           avatar_url: profile._json.picture || "api_backend/src/uploads/default-profile-photo.jpg",
         };
         const user = await this.authService.validateUser(authDto);
