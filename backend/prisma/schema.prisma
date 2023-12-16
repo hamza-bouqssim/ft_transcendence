@@ -33,6 +33,7 @@ model User {
   display_name String @unique
   avatar_url String
   two_factor_auth String
+  first_time Boolean @default(true)
   two_factor_secret_key String
   tfa_enabled Boolean @default(false)
   friend Friend[] @relation("UserToFriend")

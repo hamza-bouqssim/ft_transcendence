@@ -80,6 +80,13 @@ export class AuthController {
         const user = req.user;
         const payload = { sub: user.id, email: user.email };
 
+        if(user.first_time)
+        {
+            const token = this.jwtService.sign(payload);
+            res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
+            return res.redirect("http://localhost:3000/dashboard/settings");
+        }
+        
         if(user.tfa_enabled)
         {
             const token = this.jwtService.sign(payload);
