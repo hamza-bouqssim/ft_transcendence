@@ -1,4 +1,5 @@
 import { Howl } from "howler";
+import { getCurrentSizes } from "../data";
 import {
 	Bodies,
 	Body,
@@ -61,6 +62,19 @@ class PongGame {
 		width: 560,
 		height: 836,
 	};
+	private map(
+		value: number,
+		minDefaultRange: number,
+		maxDefaultRange: number,
+		minTargetRange: number,
+		maxTargetRange: number,
+	): number {
+		return (
+			minTargetRange +
+			(maxTargetRange - minTargetRange) *
+				((value - minDefaultRange) / (maxDefaultRange - minDefaultRange))
+		);
+	}
 	private paddleSizes: {
 		width: number;
 		height: number;
@@ -68,13 +82,13 @@ class PongGame {
 		width: 170,
 		height: 15,
 	};
-	private map = (
-		inputSize: number,
-		defaultCanvasSize: number,
-		currentCanvasSize: number,
-	): number => {
-		return (inputSize * currentCanvasSize) / defaultCanvasSize;
-	};
+	// private map = (
+	// 	inputSize: number,
+	// 	defaultCanvasSize: number,
+	// 	currentCanvasSize: number,
+	// ): number => {
+	// 	return (inputSize * currentCanvasSize) / defaultCanvasSize;
+	// };
 	private render: Render;
 	playerScore: number = 0;
 	botScore: number = 0;
@@ -100,19 +114,25 @@ class PongGame {
 		private display_name?: string,
 		private socket?: any,
 	) {
-		this.divWidth = this.parentDiv.getBoundingClientRect().width;
-		this.divHeight = this.parentDiv.getBoundingClientRect().height;
+		[this.divWidth, this.divHeight] = getCurrentSizes(
+			this.parentDiv.clientWidth,
+			this.parentDiv.clientHeight,
+		);
 
 		// Update Paddles && ball Size With New Mapped Values:
 		this.paddleSizes = {
 			width: this.map(
 				this.paddleSizes.width,
+				0,
 				this.defaultCanvasSizes.width,
+				0,
 				this.divWidth,
 			),
 			height: this.map(
 				this.paddleSizes.height,
+				0,
 				this.defaultCanvasSizes.height,
+				0,
 				this.divHeight,
 			),
 		};
@@ -159,7 +179,7 @@ class PongGame {
 		this.ball = Bodies.circle(
 			this.divWidth / 2,
 			this.divHeight / 2,
-			this.map(15, this.defaultCanvasSizes.width, this.divWidth),
+			this.map(15, 0, this.defaultCanvasSizes.width, 0, this.divWidth),
 			{
 				label: "ball",
 				render: {
@@ -194,7 +214,7 @@ class PongGame {
 		// Create Two Paddles:
 		this.topPaddle = Bodies.rectangle(
 			this.divWidth / 2,
-			this.map(30, this.defaultCanvasSizes.height, this.divHeight),
+			this.map(30, 0, this.defaultCanvasSizes.height, 0, this.divHeight),
 			this.paddleSizes.width,
 			this.paddleSizes.height,
 			{
@@ -210,7 +230,7 @@ class PongGame {
 		this.bottomPaddle = Bodies.rectangle(
 			this.divWidth / 2,
 			this.divHeight -
-				this.map(30, this.defaultCanvasSizes.height, this.divHeight),
+				this.map(30, 0, this.defaultCanvasSizes.height, 0, this.divHeight),
 			this.paddleSizes.width,
 			this.paddleSizes.height,
 			{
@@ -227,7 +247,7 @@ class PongGame {
 		this.rightRect = Bodies.rectangle(
 			this.divWidth,
 			this.divHeight / 2,
-			this.map(20, this.defaultCanvasSizes.width, this.divWidth),
+			this.map(20, 0, this.defaultCanvasSizes.width, 0, this.divWidth),
 			this.divHeight,
 			{
 				label: "rightRect",
@@ -241,7 +261,7 @@ class PongGame {
 		this.leftRect = Bodies.rectangle(
 			0,
 			this.divHeight / 2,
-			this.map(20, this.defaultCanvasSizes.width, this.divWidth),
+			this.map(20, 0, this.defaultCanvasSizes.width, 0, this.divWidth),
 			this.divHeight,
 			{
 				label: "leftRect",
@@ -256,7 +276,7 @@ class PongGame {
 			this.divWidth / 2,
 			this.divHeight / 2,
 			this.divWidth,
-			this.map(8, this.defaultCanvasSizes.height, this.divHeight),
+			this.map(8, 0, this.defaultCanvasSizes.height, 0, this.divHeight),
 			{
 				isSensor: true,
 				render: {
@@ -268,7 +288,7 @@ class PongGame {
 		this.centerCirle = Bodies.circle(
 			this.divWidth / 2,
 			this.divHeight / 2,
-			this.map(8, this.defaultCanvasSizes.width, this.divWidth),
+			this.map(8, 0, this.defaultCanvasSizes.width, 0, this.divWidth),
 			{
 				isSensor: true,
 				render: {
@@ -294,7 +314,7 @@ class PongGame {
 		this.topLeftObstacle = Bodies.circle(
 			this.divWidth / 4,
 			this.divHeight / 4,
-			this.map(50, this.defaultCanvasSizes.width, this.divWidth),
+			this.map(50, 0, this.defaultCanvasSizes.width, 0, this.divWidth),
 			{
 				isStatic: true,
 				render: {
@@ -306,7 +326,7 @@ class PongGame {
 		this.topRightObstacle = Bodies.circle(
 			(3 * this.divWidth) / 4,
 			this.divHeight / 4,
-			this.map(40, this.defaultCanvasSizes.width, this.divWidth),
+			this.map(40, 0, this.defaultCanvasSizes.width, 0, this.divWidth),
 			{
 				isStatic: true,
 				render: {
@@ -318,7 +338,7 @@ class PongGame {
 		this.bottomRightObstacle = Bodies.circle(
 			(3 * this.divWidth) / 4,
 			(3 * this.divHeight) / 4,
-			this.map(50, this.defaultCanvasSizes.width, this.divWidth),
+			this.map(50, 0, this.defaultCanvasSizes.width, 0, this.divWidth),
 			{
 				isStatic: true,
 				render: {
@@ -330,7 +350,7 @@ class PongGame {
 		this.bottomLeftObstacle = Bodies.circle(
 			this.divWidth / 4,
 			(3 * this.divHeight) / 4,
-			this.map(40, this.defaultCanvasSizes.width, this.divWidth),
+			this.map(40, 0, this.defaultCanvasSizes.width, 0, this.divWidth),
 			{
 				isStatic: true,
 				render: {
@@ -350,10 +370,10 @@ class PongGame {
 	gameVerticalObstacles = (): void => {
 		this.verticalObstacle1 = Bodies.rectangle(
 			this.divWidth -
-				this.map(65, this.defaultCanvasSizes.width, this.divWidth),
+				this.map(65, 0, this.defaultCanvasSizes.width, 0, this.divWidth),
 			this.divHeight / 5,
-			this.map(15, this.defaultCanvasSizes.width, this.divWidth),
-			this.map(170, this.defaultCanvasSizes.height, this.divHeight),
+			this.map(15, 0, this.defaultCanvasSizes.width, 0, this.divWidth),
+			this.map(170, 0, this.defaultCanvasSizes.height, 0, this.divHeight),
 			{
 				render: {
 					fillStyle: "white",
@@ -365,8 +385,8 @@ class PongGame {
 		this.verticalObstacle2 = Bodies.rectangle(
 			this.divWidth / 2,
 			this.divHeight / 3,
-			this.map(15, this.defaultCanvasSizes.width, this.divWidth),
-			this.map(100, this.defaultCanvasSizes.height, this.divHeight),
+			this.map(15, 0, this.defaultCanvasSizes.width, 0, this.divWidth),
+			this.map(100, 0, this.defaultCanvasSizes.height, 0, this.divHeight),
 			{
 				render: {
 					fillStyle: "white",
@@ -376,10 +396,10 @@ class PongGame {
 		);
 
 		this.verticalObstacle3 = Bodies.rectangle(
-			this.map(65, this.defaultCanvasSizes.width, this.divWidth),
-			(2 * this.divHeight) / 3,
-			this.map(15, this.defaultCanvasSizes.width, this.divWidth),
-			this.map(170, this.defaultCanvasSizes.height, this.divHeight),
+			this.map(65, 0, this.defaultCanvasSizes.width, 0, this.divWidth),
+			(3 * this.divHeight) / 4,
+			this.map(15, 0, this.defaultCanvasSizes.width, 0, this.divWidth),
+			this.map(100, 0, this.defaultCanvasSizes.height, 0, this.divHeight),
 			{
 				render: {
 					fillStyle: "white",
@@ -390,10 +410,10 @@ class PongGame {
 
 		this.verticalObstacle4 = Bodies.rectangle(
 			this.divWidth -
-				this.map(65, this.defaultCanvasSizes.width, this.divWidth),
+				this.map(65, 0, this.defaultCanvasSizes.width, 0, this.divWidth),
 			(4 * this.divHeight) / 5,
-			this.map(15, this.defaultCanvasSizes.width, this.divWidth),
-			this.map(170, this.defaultCanvasSizes.height, this.divHeight),
+			this.map(15, 0, this.defaultCanvasSizes.width, 0, this.divWidth),
+			this.map(170, 0, this.defaultCanvasSizes.height, 0, this.divHeight),
 			{
 				render: {
 					fillStyle: "white",
@@ -428,8 +448,14 @@ class PongGame {
 
 		this.handleSetPosition = (data: any) => {
 			Body.setPosition(this.ball!, {
-				x: this.map(data.x, this.defaultCanvasSizes.width, this.divWidth),
-				y: this.map(data.y, this.defaultCanvasSizes.height, this.divHeight),
+				x: this.map(data.x, 0, this.defaultCanvasSizes.width, 0, this.divWidth),
+				y: this.map(
+					data.y,
+					0,
+					this.defaultCanvasSizes.height,
+					0,
+					this.divHeight,
+				),
 			});
 		};
 
@@ -461,19 +487,23 @@ class PongGame {
 			this.currentBallVelocity = {
 				x: this.map(
 					randomVelocity,
+					0,
 					this.defaultCanvasSizes.width,
+					0,
 					this.divWidth,
 				),
-				y: this.map(-4, this.defaultCanvasSizes.height, this.divHeight),
+				y: this.map(-4, 0, this.defaultCanvasSizes.height, 0, this.divHeight),
 			};
 		} else {
 			this.currentBallVelocity = {
 				x: this.map(
 					randomVelocity,
+					0,
 					this.defaultCanvasSizes.width,
+					0,
 					this.divWidth,
 				),
-				y: this.map(4, this.defaultCanvasSizes.height, this.divHeight),
+				y: this.map(4, 0, this.defaultCanvasSizes.height, 0, this.divHeight),
 			};
 		}
 
@@ -518,7 +548,9 @@ class PongGame {
 				Body.setPosition(this.bottomPaddle!, {
 					x: this.map(
 						data.xPosition1,
+						0,
 						this.defaultCanvasSizes.width,
+						0,
 						this.divWidth,
 					),
 					y: this.bottomPaddle!.position.y,
@@ -526,7 +558,9 @@ class PongGame {
 				Body.setPosition(this.topPaddle!, {
 					x: this.map(
 						data.xPosition2,
+						0,
 						this.defaultCanvasSizes.width,
+						0,
 						this.divWidth,
 					),
 					y: this.topPaddle!.position.y,
@@ -556,7 +590,7 @@ class PongGame {
 				if (movingLeft) {
 					stepX =
 						this.bottomPaddle!.position.x -
-						this.map(11, this.defaultCanvasSizes.width, this.divWidth);
+						this.map(11, 0, this.defaultCanvasSizes.width, 0, this.divWidth);
 					if (stepX <= this.paddleSizes.width / 2) {
 						stepX = this.paddleSizes.width / 2;
 					}
@@ -567,7 +601,7 @@ class PongGame {
 				} else if (movingRight) {
 					stepX =
 						this.bottomPaddle!.position.x +
-						this.map(11, this.defaultCanvasSizes.width, this.divWidth);
+						this.map(11, 0, this.defaultCanvasSizes.width, 0, this.divWidth);
 					if (stepX >= this.divWidth - this.paddleSizes.width / 2) {
 						stepX = this.divWidth - this.paddleSizes.width / 2;
 					}
@@ -611,13 +645,17 @@ class PongGame {
 		else if (this.lastDirection === "top") {
 			this.currentBallVelocity.y -= this.map(
 				1,
+				0,
 				this.defaultCanvasSizes.height,
+				0,
 				this.divHeight,
 			);
 		} else {
 			this.currentBallVelocity.y += this.map(
 				1,
+				0,
 				this.defaultCanvasSizes.height,
+				0,
 				this.divHeight,
 			);
 		}

@@ -72,13 +72,23 @@ export default function RootLayout({
 
 	const changeValues = { change, setChange };
 	const pathName = usePathname();
+
+	const shouldHide = (): boolean => {
+		const validPaths = [
+			`/bot-game/maps/0`,
+			`/bot-game/maps/1`,
+			`/bot-game/maps/2`,
+		];
+
+		return validPaths.some((path) => pathName.endsWith(path));
+	};
+
 	return (
 		<html lang="en">
 			<body>
 				<div className="flex h-screen w-full text-white">
 					<AppWithProviders socket={socket}>
-						{pathName.endsWith("/online_game") ||
-						pathName.endsWith("/bot_game") ? null : (
+						{shouldHide() ? null : (
 							<SideBar
 								sideBar={change.sideBar}
 								onClick={() =>
@@ -91,25 +101,26 @@ export default function RootLayout({
 								}
 							/>
 						)}
-
-						<TopRightBar
-							menu={change.menu}
-							onClick={() =>
-								setChange({
-									...change,
-									sideBar: false,
-									chatBox: false,
-									menu: !change.menu,
-								})
-							}
-						/>
-
+						{shouldHide() ||
+						pathName.includes("online-game/match-making") ? null : (
+							<TopRightBar
+								menu={change.menu}
+								onClick={() =>
+									setChange({
+										...change,
+										sideBar: false,
+										chatBox: false,
+										menu: !change.menu,
+									})
+								}
+							/>
+						)}
 						{/* <div className="mt-[70px] h-[85%] w-full lg:flex lg:items-center lg:justify-evenly min-[1750px]:ml-72 min-[1750px]:mt-[90px] min-[1750px]:w-[86%]">
 						{children}
 					</div> */}
 
 						<ChangeContext.Provider value={changeValues}>
-								<div className="h-full w-full">{children}</div>
+							<div className="h-full w-full">{children}</div>
 						</ChangeContext.Provider>
 					</AppWithProviders>
 				</div>

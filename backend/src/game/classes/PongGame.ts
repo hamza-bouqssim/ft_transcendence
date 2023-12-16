@@ -1,4 +1,3 @@
-import { th } from '@faker-js/faker';
 import { GameGateway } from '../gateway/game.gateway';
 import {
 	Bodies,
@@ -101,6 +100,7 @@ export class PongGame {
 		this.user1 = game.socket1.user.sub;
 		this.user2 = game.socket2.user.sub;
 		this.mapIndex = game.indexMap;
+
 		// This Function Will Run In All Maps:
 		this.handleDefaultGameMap();
 
@@ -356,9 +356,9 @@ export class PongGame {
 
 		this.verticalObstacle3 = Bodies.rectangle(
 			65,
-			(2 * this.defaultCanvasSizes.height) / 3,
+			(3 * this.defaultCanvasSizes.height) / 4,
 			15,
-			170,
+			100,
 			{
 				render: {
 					fillStyle: 'white',
@@ -687,7 +687,7 @@ export class PongGame {
 		// clearTimeout(this.lunchGameInterval);
 
 		// Stop The Runner:
-		Runner.stop(this.runner);
+		// Runner.stop(this.runner);
 
 		// Clear Engine:
 		Engine.clear(this.engine);

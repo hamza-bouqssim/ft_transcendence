@@ -4,13 +4,13 @@ import { faUserGroup } from "@fortawesome/free-solid-svg-icons";
 import InviteField from "../../../../components/InviteField";
 import PlayerCard from "../../../../components/PlayerCard";
 import { ChangeContext } from "../../../layout";
-import { useEffect, useContext, useState, createContext } from "react";
+import { useEffect, useContext } from "react";
 import { useRouter } from "next/navigation";
 import { socketContext } from "@/app/utils/context/socketContext";
 import { useSearchParams } from "next/navigation";
 import { useGameSocket } from "@/app/providers/game-socket-provider";
-import { atom, useAtom, useAtomValue, useSetAtom } from "jotai";
-import OpponentData from "../../utils/OpponentData";
+import { useAtom } from "jotai";
+import { OpponentData } from "../../utils/data";
 
 // const sleep = async (ms: number) =>
 // 	new Promise((resolve) => setTimeout(resolve, ms));
@@ -21,16 +21,6 @@ const MatchMaking = () => {
 	const { change, setChange } = useContext(ChangeContext);
 	const router = useRouter();
 	const gameSocket = useGameSocket();
-	// const [opponentPlayer, setOpponentPlayer] = useState<{
-	// 	username: string;
-	// 	display_name: string;
-	// 	avatar_url: string;
-	// }>({
-	// 	username: "",
-	// 	display_name: "",
-	// 	avatar_url: "/assets/unknown.png",
-	// });
-
 	const checkQueryValue = (): boolean => {
 		if (mapIndex) {
 			const isValidIndex = /^[0-2]$/.test(mapIndex);
@@ -38,17 +28,10 @@ const MatchMaking = () => {
 		}
 		return false;
 	};
-
 	const { Userdata } = useContext<any>(socketContext);
-	// const opponentPlayer = useAtomValue(opponentData);
-	// const setOpponent = useSetAtom(opponentData);
-
 	const [opponentPlayer, setOpponentPlayer] = useAtom(OpponentData);
 
 	useEffect(() => {
-		// const handleStartGame = (payload: { idGame: string }) => {
-
-		// };
 		console.log("Userdata", Userdata);
 		const handleRedirectUser = (payload: any) => {
 			if (Userdata.display_name === payload.display_name)
@@ -57,14 +40,11 @@ const MatchMaking = () => {
 		gameSocket.on("redirectUser", handleRedirectUser);
 
 		const handleKnowOpponent = (payload: any) => {
-			// setOpponentPlayer(payload.opponent);
 			setOpponentPlayer((prevData) => ({
 				...prevData,
 				opponent: payload.opponent,
 				isRotate: payload.rotate,
 			}));
-
-			// router.push(`./match-making/${mapIndex}`);
 			router.push(`./match-making/${mapIndex}/${payload.idGame}`);
 		};
 		console.log("setup start game event");
@@ -74,7 +54,6 @@ const MatchMaking = () => {
 		gameSocket.on("knowOpponent", handleKnowOpponent);
 		return () => {
 			console.log("remove start game event");
-			// gameSocket.off("startGame", handleStartGame);
 			gameSocket.off("knowOpponent", handleKnowOpponent);
 			gameSocket.off("redirectUser", handleRedirectUser);
 		};

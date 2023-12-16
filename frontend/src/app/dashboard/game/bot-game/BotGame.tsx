@@ -1,14 +1,14 @@
 "use client";
-import { useEffect, useRef, useState, useContext } from "react";
-import PlayerScore from "@/app/components/PlayerScore";
-import PongGame from "../classes/PongGame";
+import { useEffect, useRef, useState } from "react";
+import PongGame from "../utils/classes/PongGame";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 import {
 	LoserPlayerPopUp,
 	WinnerPlayerPopUp,
 } from "@/app/components/GamePopUp";
-import { socketContext } from "@/app/utils/context/socketContext";
+import { getCurrentSizes } from "../utils/data";
+import PlayerScore from "@/app/components/PlayerScore";
 
 const BotGame = ({ mapIndex }: any) => {
 	const router = useRouter();
@@ -22,11 +22,28 @@ const BotGame = ({ mapIndex }: any) => {
 		playerScore: 0,
 		botScore: 0,
 	});
-	const { Userdata } = useContext<any>(socketContext);
+	const [currentSize, setCurrentSize] = useState<{
+		width: number;
+		height: number;
+	}>({
+		width: 560,
+		height: 836,
+	});
 
 	useEffect(() => {
-		let timerInterval: any;
-		let scoreInterval: any;
+		const parentWidth: number = parentCanvasRef.current?.clientWidth!;
+		const parentHeight: number = parentCanvasRef.current?.clientHeight!;
+
+		setCurrentSize({
+			...currentSize,
+			width: getCurrentSizes(parentWidth, parentHeight)[0],
+			height: getCurrentSizes(parentWidth, parentHeight)[1],
+		});
+	}, []);
+
+	useEffect(() => {
+		let timerInterval: NodeJS.Timer;
+		let scoreInterval: NodeJS.Timer;
 
 		Swal.fire({
 			title: "Game Will Start In",
@@ -64,7 +81,7 @@ const BotGame = ({ mapIndex }: any) => {
 				) {
 					pongRef.current.clear();
 					clearInterval(scoreInterval);
-					pongRef.current.playerScore === 8
+					pongRef.current.playerScore === 7
 						? WinnerPlayerPopUp(router)
 						: LoserPlayerPopUp(router);
 				}
@@ -84,29 +101,21 @@ const BotGame = ({ mapIndex }: any) => {
 	}, []);
 
 	return (
-		<div className="absolute left-[50%] top-[50%] flex h-[642px] w-[96%] -translate-x-[50%] -translate-y-[50%] flex-col items-center justify-evenly md:h-[900px] md:gap-3 md:px-4 xl:h-[700px] xl:max-w-[1280px] xl:flex-row-reverse xl:px-10 min-[1750px]:h-[900px] min-[1750px]:max-w-[1600px]">
-			<PlayerScore
-				flag="top"
-				userName="Mr.BOT"
-				displayName="bot"
-				color={"#4FD6FF"}
-				profileImage={"/assets/bot.png"}
-				startGame={startGame}
-				score={score.botScore}
-			/>
-			<div
-				className={`h-[500px] w-full max-w-[340px] shadow-[0_0_50px_2px_var(--blue-color)] md:h-[590px] md:max-w-[380px] xl:h-[700px] xl:max-w-[420px] min-[1750px]:h-[836px] min-[1750px]:max-w-[560px]`}
-				ref={parentCanvasRef}
-			></div>
-			<PlayerScore
-				flag="bottom"
-				userName={Userdata?.username}
-				displayName={Userdata?.display_name}
-				color={"#FF5269"}
-				profileImage={Userdata?.avatar_url}
-				startGame={startGame}
-				score={score.playerScore}
-			/>
+		<div
+			style={{ maxWidth: currentSize.width, maxHeight: currentSize.height }}
+			className={`absolute left-[50%] top-[50%] h-[90vh] w-[80vw] -translate-x-[50%] -translate-y-[50%]`}
+			ref={parentCanvasRef}
+		>
+			{startGame && (
+				<div className="absolute left-[50%] top-[50%] flex aspect-[2.5/1] w-full -translate-x-[50%] -translate-y-[50%] flex-col items-center gap-[5%] px-[7%]">
+					<PlayerScore flag="top" color="#4fd6ff90" score={score.botScore} />
+					<PlayerScore
+						flag="bottom"
+						color="#ff526990"
+						score={score.playerScore}
+					/>
+				</div>
+			)}
 		</div>
 	);
 };
