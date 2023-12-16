@@ -1,11 +1,13 @@
-import { Controller, Post, Get, Delete, Body } from '@nestjs/common';
+import { Controller, Post, Get, Delete, Body, UseGuards } from '@nestjs/common';
 import { GameService } from './game.service';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('game')
 export class GameController {
 	constructor(private readonly gameService: GameService) {}
 
 	@Get('myhistory')
+	@UseGuards(AuthGuard('jwt'))
 	async getMyHistory(@Body('userId') userId: string) {
 	  try {
 		const history = await this.gameService.history_matches(userId);
@@ -42,6 +44,7 @@ export class GameController {
 	}
 
 	@Get('ranking')
+	@UseGuards(AuthGuard('jwt'))
 	async getAllRanking() {
 		try {
 			const rating = await this.gameService.getRanks();
@@ -59,6 +62,7 @@ export class GameController {
 	}
 
 	@Get('myresult')
+	@UseGuards(AuthGuard('jwt'))
 	async getMyState(@Body('userId') userId: string) {
 		try{
 			return await this.gameService.getResult(userId);
@@ -69,15 +73,15 @@ export class GameController {
 		}
 	}
 
-	@Post('test')
-	async test(@Body() body : any){
-		try{
-			const state = await this.gameService.getStateGame(body.userId);
-			return await this.gameService.updateStateGame(state.win,state.lose,state.totalMatch,body.userId,body.rating)
-		}
-		catch(error){
-			console.log(error);
-			return {};
-		}
-	}
+	// @Post('test')
+	// async test(@Body() body : any){
+	// 	try{
+	// 		const state = await this.gameService.getStateGame(body.userId);
+	// 		return await this.gameService.updateStateGame(state.win,state.lose,state.totalMatch,body.userId,body.rating)
+	// 	}
+	// 	catch(error){
+	// 		console.log(error);
+	// 		return {};
+	// 	}
+	// }
 }

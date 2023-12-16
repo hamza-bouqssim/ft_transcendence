@@ -45,15 +45,14 @@ export class WebSocketChatGateway
 		if (socket.user) {
 			if (!this.NsessionOfuser.has(userId)) {
 				this.NsessionOfuser.set(userId, 1);
-				const newStatus = await this.prisma.user.update({
+				const newStatus = (await this.prisma.user.update({
 					where: {
 						id: userId, // or use email or display_name based on your requirements
 					},
 					data: {
 						status: 'online',
 					},
-				}) as any
-    ;
+				})) as any;
 				// const newStatus = await this.prisma.user.update({
 				//     where: { id: userId},
 				//     data: { status: "online"},

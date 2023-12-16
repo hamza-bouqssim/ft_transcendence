@@ -1,15 +1,35 @@
 "use client";
-import { Swiper } from "swiper/react";
 import { useRef, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
+import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCoverflow } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/effect-coverflow";
-import { mappedImagesSlides } from "../../bot-game/maps/page";
 
 const ChoseMapOnline = () => {
 	const swiperRef = useRef<any>(null);
 	const [mapIndex, setMapIndex] = useState<number>(0);
+
+	const ImagesSlides: string[] = [
+		"/assets/game-maps/default-map.gif",
+		"/assets/game-maps/map2-with-obstacles.gif",
+		"/assets/game-maps/map3-with-obstacles.gif",
+	];
+
+	const mappedImagesSlides: JSX.Element[] = ImagesSlides.map(
+		(elem: string, index: number): JSX.Element => (
+			<SwiperSlide key={index} style={{ height: "400px", width: "270px" }}>
+				<Image
+					style={{ height: "100%", objectFit: "cover" }}
+					src={elem}
+					width={500}
+					height={500}
+					alt=""
+				/>
+			</SwiperSlide>
+		),
+	);
 
 	return (
 		<div className="relative h-[100vh] min-h-[600px] w-full select-none">
@@ -39,7 +59,6 @@ const ChoseMapOnline = () => {
 						{mappedImagesSlides}
 					</Swiper>
 				</div>
-				{/* <SocketContext.Provider value={socket}> */}
 				<Link
 					href={{
 						pathname: "./match-making",
@@ -49,7 +68,6 @@ const ChoseMapOnline = () => {
 				>
 					Choose
 				</Link>
-				{/* </SocketContext.Provider> */}
 			</div>
 		</div>
 	);

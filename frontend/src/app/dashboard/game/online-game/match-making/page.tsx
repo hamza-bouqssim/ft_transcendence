@@ -10,6 +10,7 @@ import { socketContext } from "@/app/utils/context/socketContext";
 import { useSearchParams } from "next/navigation";
 import { useGameSocket } from "@/app/providers/game-socket-provider";
 import { atom, useAtom, useAtomValue, useSetAtom } from "jotai";
+import OpponentData from "../../utils/OpponentData";
 
 // const sleep = async (ms: number) =>
 // 	new Promise((resolve) => setTimeout(resolve, ms));
@@ -42,12 +43,19 @@ const MatchMaking = () => {
 	// const opponentPlayer = useAtomValue(opponentData);
 	// const setOpponent = useSetAtom(opponentData);
 
-	const [opponentPlayer, setOpponentPlayer] = useAtom(opponentData);
+	const [opponentPlayer, setOpponentPlayer] = useAtom(OpponentData);
 
 	useEffect(() => {
 		// const handleStartGame = (payload: { idGame: string }) => {
 
 		// };
+		console.log("Userdata", Userdata);
+		const handleRedirectUser = (payload: any) => {
+			if (Userdata.display_name === payload.display_name)
+				router.push("/dashboard");
+		};
+		gameSocket.on("redirectUser", handleRedirectUser);
+
 		const handleKnowOpponent = (payload: any) => {
 			// setOpponentPlayer(payload.opponent);
 			setOpponentPlayer((prevData) => ({
@@ -68,6 +76,7 @@ const MatchMaking = () => {
 			console.log("remove start game event");
 			// gameSocket.off("startGame", handleStartGame);
 			gameSocket.off("knowOpponent", handleKnowOpponent);
+			gameSocket.off("redirectUser", handleRedirectUser);
 		};
 	}, []);
 
@@ -145,21 +154,5 @@ const MatchMaking = () => {
 		</>
 	);
 };
-
-export const opponentData = atom<{
-	opponent: {
-		username: string;
-		display_name: string;
-		avatar_url: string;
-	};
-	isRotate: boolean;
-}>({
-	opponent: {
-		username: "",
-		display_name: "",
-		avatar_url: "/assets/unknown.png",
-	},
-	isRotate: false,
-});
 
 export default MatchMaking;
