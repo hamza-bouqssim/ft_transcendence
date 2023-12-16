@@ -7,7 +7,6 @@ import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
 import { SignAuthDto } from './dto/signIn.dto';
 import { TwoFactorAuthenticationService } from 'src/two-factor-authentication/two-factor-authentication.service';
-import { ftAndGoogleTfaDto } from './dto/twoFactor42andGoogle.dto';
 
 
 @Controller('auth')
@@ -96,7 +95,7 @@ export class AuthController {
 
         const token = this.jwtService.sign(payload);
         res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
-        return res.redirect("http://localhost:3000/dashboard")
+        return res.redirect("http://localhost:3000/dashboard");
     }
 
     @Get('logout')

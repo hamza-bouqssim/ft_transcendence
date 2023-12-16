@@ -9,17 +9,18 @@ import { diskStorage } from 'multer';
 import { v4 as uuidv4 } from 'uuid';
 import * as path from 'path';
 import { AuthGuard } from '@nestjs/passport';
+import { PrismaService } from 'prisma/prisma.service';
 @Controller('user')
 export class UserController {
 
-    constructor(private readonly userService:UserService){}
+    constructor(private readonly userService:UserService,
+      private readonly prisma:PrismaService){}
 
     @Get('info')
     @UseGuards(AuthGuard('jwt'))
     async grabMyInfos(@Req() req) {
       
      const user = req.user
-     console.log(user)
 
       return {
         username: user.username,
@@ -98,41 +99,15 @@ export class UserController {
     //     throw new Error('Failed to update the Avatar');
     //   }
     // }
-    @Post('changeAvatar')
+    
+    @Post('changePhoto')
     @UseGuards(AuthGuard('jwt'))
-    @UseInterceptors(FileInterceptor('file', {
-      storage: diskStorage({
-            destination: 'src/uploads',
-            filename: (req, file, callback) => {
-              const filename: string = path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
-              const extension: string = path.parse(file.originalname).ext;
-              callback(null, `${filename}${extension}`);
-            },
-          }),
-          fileFilter: (req, file, _callback) => {
-            if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
-              _callback(null, true);//accept that type
-            }
-            else {
-              _callback(new UnauthorizedException('Only JPEG and PNG files are allowed'), false); // refuse somthing else like .pdf ...etc
-            }
-          },
-          limits: {
-            fileSize: 1024 * 1024, // still don't know why this don't work !!!!!!!!! figure it out !
-          },
-     
-}))
-async changeAvatar(@Req() req, @UploadedFile() file: Express.Multer.File) {
-  try {
-    const user = req.user;
-    const imagePath = file.path;
-    const updatedAvatar = await this.userService._changeAvatar(user.email, imagePath);
-    return { success: true, response: updatedAvatar };
-  } catch (error) {
-    console.error(error);
-    return { success: false, message: 'Failed to update the Avatar' };
-  }
-}
+    async changePhoto(@Req() req, @Res() res, @Body() request: {avatar: string})
+    {
+      const user = req.user;
+      await this.prisma.user.update({where:{email: user.email}, data: {avatar_url: request.avatar}});
+      res.send({success:true, message:"avatar uploaded succesfully"});
+    }
 
     @Get('my-friends')
     @UseGuards(AuthGuard('jwt'))
