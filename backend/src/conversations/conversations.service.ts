@@ -117,7 +117,6 @@ export class ConversationsService  {
 
 
 async createMessags(user : any, params: CreateMessageParams) {
-   console.log("creating message*****");
     const chat = await this.prisma.chatParticipents.findUnique({
         where: {
           id: params.participentsId,
@@ -269,7 +268,6 @@ async findUnreadMessages(conversationId: string) {
       vue: false,
     },
   });
-  console.log("here unreadMessage-->",unreadMessageCount)
   return unreadMessageCount;
 }
 

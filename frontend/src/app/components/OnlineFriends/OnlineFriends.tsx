@@ -62,11 +62,25 @@ const OnlineFriends = () =>{
     const handlleBloque = async (id: string) => {
       
       try {
-        await dispatch(fetchBlockFriendThunk(id));
-        ToastSuccess("You have blocked this friend successfully");
+        const res = await dispatch(fetchBlockFriendThunk(id));
+        if (res.payload && typeof res.payload === 'object') {
+        const responseData = res.payload as { data?: { response?: { message?: string } } };
+        const message = responseData.data?.response?.message;
+        if (message) {
+          ToastSuccess(message);
+  
+        }else {
+          const responseData = res.payload as {message?: string};
+          const message = responseData.message;
+          if(message)
+          ToastError(message);
+        }
+      }
+    
       } catch (error) {
-        ToastError("Failed to block the friend. Please try again.");
-
+        
+        ToastError("Failed to block this friend. Please try again.");
+    
       }
     };
 
@@ -119,7 +133,7 @@ const OnlineFriends = () =>{
                 <div className={`absolute  top-[-120px] left-2 h-[120px]  w-[200px] flex-col items-center justify-center gap-1 rounded-[15px] border-2 border-solid border-[#000000] bg-white font-['Whitney_Semibold'] `}>
 					        <button className={`bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> handleClick()}>see profile</button>
 					        <button className={` bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> handleSendMessage() }>send message</button>
-                  <button className={` bg-[#EA7F87] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} value="Bloque" onClick={()=> handlleBloque(elem)}>Bloque</button>
+                  <button className={` bg-[#EA7F87] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} value="Bloque" onClick={()=> handlleBloque(elem.id)}>Bloque</button>
 
 				        </div>}
             </div>               

@@ -125,7 +125,6 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         }
         @OnEvent("order.update")
          async onNotificationupdate(data:any) {
-            console.log(data)
             const update = await this.prisma.chatRoom.findUnique({
                 where: { id: data.id },
                 include:{

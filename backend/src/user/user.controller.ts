@@ -129,7 +129,6 @@ async changeAvatar(@Req() req, @UploadedFile() file: Express.Multer.File) {
     const updatedAvatar = await this.userService._changeAvatar(user.email, imagePath);
     return { success: true, response: updatedAvatar };
   } catch (error) {
-    console.error(error);
     return { success: false, message: 'Failed to update the Avatar' };
   }
 }

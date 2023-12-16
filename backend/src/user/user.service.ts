@@ -91,7 +91,6 @@ export class UserService {
     {
         const find = await this.prisma.user.findUnique({where: {email:_email}});
 
-        // console.log("old: " + (find?.avatar_url || 'null') + "\n new:  " + avatarPath);
         
         if(!find)
             throw new HttpException("User Not Found!",  HttpStatus.BAD_REQUEST)
@@ -104,7 +103,7 @@ export class UserService {
         if (!updatedAvatar)
             throw new HttpException("Error",  HttpStatus.BAD_REQUEST);
         
-            return {message : 'Updating Image succefuly'};
+            return {message : 'Updating Image succefully'};
     }
 
     async listFriends(userId: string) {
@@ -264,7 +263,6 @@ export class UserService {
           if (!user) {
             throw new NotFoundException('User not found');
           }
-          console.log(user)
           return user;
 
       }
@@ -307,10 +305,7 @@ export class UserService {
   
 
     async isBlockedByUser(senderId: string, recipientUser: string): Promise<boolean> {
-        console.log("enter");
-        // Implement logic to check if recipientUser is blocked by userId
         const BlockedFriends = await this.blockedFriends(senderId);
-        console.log("blocked friend here", BlockedFriends);
         return BlockedFriends.some((friend) => friend.user.id === recipientUser);
       }
     //   async notificationMessage(chatId : string, userId : string){

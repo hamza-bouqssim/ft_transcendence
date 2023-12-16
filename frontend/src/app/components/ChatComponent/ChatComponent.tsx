@@ -105,24 +105,7 @@ const ChatComponnent  = () =>{
 			return lastMessage.content;
 		
 	}
-	useEffect(()=>{
-		
-		socket.on('onMessage', (messages : any)=>{
-			dispatch(fetchConversationThunk());
-			dispatch(fetchAuthUser())
-            dispatch(fetchMessagesThunk(channel?.id));
-
-			const isRecipient = messages.participents.recipient.display_name === UsersAuth.display_name;
-			if (isRecipient) {
-				setUnreadConversations((prevUnread) => new Set(prevUnread.add(messages.participentsId)));
-			}
-			
-		})
-
-		return () =>{
-			socket.off('onMessage');
-		}
-	},[UsersAuth, channel?.id])
+	
 	const isUnread = (conversationId: string) => {
 		return unreadConversations.has(`${conversationId}`)
 	}
@@ -135,12 +118,24 @@ const ChatComponnent  = () =>{
 	  const handlleBloque = async (conversation : ConversationTypes) => {
 			const user = getDisplayUser(conversation)
 		try {
-		  await dispatch(fetchBlockFriendThunk(user.id));
-			ToastSuccess("You are blocked this friend successfully");
+		  const res = await dispatch(fetchBlockFriendThunk(user.id));
+		  if (res.payload && typeof res.payload === 'object') {
+			const responseData = res.payload as { data?: { response?: { message?: string } } };
+			const message = responseData.data?.response?.message;
+			if (message) {
+				ToastSuccess(message);
+
+			}else {
+			  const responseData = res.payload as {message?: string};
+			  const message = responseData.message;
+			  if(message)
+				ToastError(message);
+			}
+		}
   
 		} catch (error) {
 			
-			ToastError("Failed to block the friend. Please try again.");
+			ToastError("Failed to block this friend. Please try again.");
   
 		}
 	  };

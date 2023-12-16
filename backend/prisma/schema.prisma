@@ -40,8 +40,12 @@ model User {
   recipientOfChatParticipents ChatParticipents[] @relation("recipient")
   senderNotif NotificationGlobal[] @relation("sender")
   recipientNotif NotificationGlobal[] @relation("recipient")
+  senderPlay requestPlay[] @relation("sender_playing")
+  recipientPlay requestPlay[] @relation("recipient_playing")
   senderNotifMessage NotificationMessage[] @relation("senderMessage")
   senderOfmessage Message[] @relation("senderMessage")
+  // blockUserOne    blockList[] @relation("userOne")
+  // blockUserTwo    blockList[] @relation("userTwo")
   player1 Pong_match[]  @relation("player1")
   player2 Pong_match[]  @relation("player2")
   Member  Member[]
@@ -223,5 +227,22 @@ model MessageRome{
   chatRoom    ChatRoom    @relation(fields: [chatRoomId], references: [id])
 
 }
+model requestPlay{
+  id String @id @default(uuid())
+  senderId   String
+  recipientId String
+  Sender User @relation("sender_playing",fields: [senderId], references: [id])
+  recipient User @relation("recipient_playing",fields: [recipientId], references: [id])
+  createdAt   DateTime @default(now())
+  status Status @default(PENDING)  
+}
+
+// model blockList{
+//   id String @id @default(uuid())
+//   userOneId String
+//   userTwoId String
+//   userOne User @relation("userOne",fields: [userOneId], references: [id])
+//   userTwo User @relation("userTwo", fields: [userTwoId], references: [id])
+// }
 
 

@@ -85,12 +85,25 @@ const ListFriends = () => {
       const handlleBloque = async (id: string) => {
       
         try {
-          await dispatch(fetchBlockFriendThunk(id));
-            ToastSuccess("You have blocked this friend successfully");
-
+          const res = await dispatch(fetchBlockFriendThunk(id));
+          if (res.payload && typeof res.payload === 'object') {
+          const responseData = res.payload as { data?: { response?: { message?: string } } };
+          const message = responseData.data?.response?.message;
+          if (message) {
+            ToastSuccess(message);
+    
+          }else {
+            const responseData = res.payload as {message?: string};
+            const message = responseData.message;
+            if(message)
+            ToastError(message);
+          }
+        }
+      
         } catch (error) {
-          ToastError("Failed to block the friend. Please try again");
-
+          
+          ToastError("Failed to block this friend. Please try again.");
+      
         }
 
       };
