@@ -132,26 +132,58 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
     }
     
 
+        // async handleDisconnect(socket: AuthenticatedSocket) {
+        //     const userId = socket.user.sub;
+        //     if (this.NsessionOfuser.has(userId)) {
+        //         const sessionNumber = this.NsessionOfuser.get(userId) - 1;
+    
+        //         if (sessionNumber > 0) {
+        //             this.NsessionOfuser.set(userId, sessionNumber);
+        //         } else {
+        //             this.NsessionOfuser.delete(userId);
+        //             const newStatus = await this.prisma.user.update({
+        //                 where: { id: socket.user.sub},
+        //                 data: { status: "offline"},
+                        
+        //             });
+        //         }
+        //     }
+        //     console.log("leave Notification-->", socket.user.sub)
+        //     socket.leave(socket.user.sub);
+            
+        // }
         async handleDisconnect(socket: AuthenticatedSocket) {
             const userId = socket.user.sub;
+          
             if (this.NsessionOfuser.has(userId)) {
-                const sessionNumber = this.NsessionOfuser.get(userId) - 1;
-    
-                if (sessionNumber > 0) {
-                    this.NsessionOfuser.set(userId, sessionNumber);
+              const sessionNumber = this.NsessionOfuser.get(userId) - 1;
+          
+              if (sessionNumber > 0) {
+                this.NsessionOfuser.set(userId, sessionNumber);
+              } else {
+                this.NsessionOfuser.delete(userId);
+          
+                // Check if the user exists before updating the status
+                const existingUser = await this.prisma.user.findUnique({
+                  where: { id: userId },
+                });
+          
+                if (existingUser) {
+                  const newStatus = await this.prisma.user.update({
+                    where: { id: userId },
+                    data: { status: "offline" },
+                  });
                 } else {
-                    this.NsessionOfuser.delete(userId);
-                    const newStatus = await this.prisma.user.update({
-                        where: { id: socket.user.sub},
-                        data: { status: "offline"},
-                        
-                    });
+                  console.error('User not found for update:', userId);
+                  // Handle the case where the user doesn't exist
                 }
+              }
             }
-            console.log("leave Notification-->", socket.user.sub)
-            socket.leave(socket.user.sub);
-            
-        }
+          
+            console.log("leave Notification-->", userId);
+            socket.leave(userId);
+          }
+          
         
         
         

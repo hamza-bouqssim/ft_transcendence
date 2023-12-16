@@ -28,12 +28,12 @@ const Form = ({ img }: FormProps) => {
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		await changeDisplayedName(_display_name).then((res) => {
-			if(res.data.success == false)
-			{
+			// if(res.data.success == false)
+			// {
 				setMessage(res.data.message);
 				setSuccess(res.data.success);
 
-			}
+			// }
 		})
 		
 		.catch((e) =>{
@@ -44,9 +44,10 @@ const Form = ({ img }: FormProps) => {
 		})
 		changeUserName(_username).then(result => console.log("res",result))
 		await changePhoto(Userdata.avatar_url).then((result) => console.log(result));
-		setUserdata({...Userdata, first_time: false, username: _username, display_name: _display_name});
+		setUserdata({...Userdata, username: _username, display_name: _display_name, first_time:false});
 		await firstTime().then(rslt => console.log(rslt));
-		router.push('/dashboard');
+		if(Userdata.first_time)
+			router.push('/dashboard');
 	};
 
 	const closeQrForm : () => void = () => {

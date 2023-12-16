@@ -28,7 +28,8 @@ export class UserController {
         email : user.email,
         display_name: user.display_name,
         avatar_url: user.avatar_url,
-        tfa_enabled:user.tfa_enabled
+        tfa_enabled:user.tfa_enabled,
+        first_time: user.first_time
       };
     }
 
