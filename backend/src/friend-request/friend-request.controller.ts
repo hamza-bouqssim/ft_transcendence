@@ -61,7 +61,7 @@ export class FriendRequestController {
       try{
         const user = req.user;
         this.friendshipService.deleteMessagesWithUser(user.id, request.friendIdToBlock);
-        const returnvalue =  await this.friendshipService.block(request.friendIdToBlock, user.id);
+        const returnvalue =  await this.friendshipService.block(user.id, request.friendIdToBlock);
         return res.status(200).json({ success: true, response: returnvalue });
 
       }catch (err) {
@@ -76,7 +76,7 @@ export class FriendRequestController {
     async unblockFriend(@Body() request: {friendIdToUnblock: string}, @Req() req)
     {
         const user = req.user;
-        return this.friendshipService.unblock(request.friendIdToUnblock, user.id);
+        return this.friendshipService.unblock( user.id, request.friendIdToUnblock);
     }
 
   

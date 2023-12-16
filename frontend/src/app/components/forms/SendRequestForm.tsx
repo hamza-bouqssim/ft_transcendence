@@ -12,16 +12,28 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 export const SendRequestForm= () => {
-  const ToastFunction = (message : any) => {
+  const ToastError = (message: any) => {
 		toast.error(message, {
 		  position: toast.POSITION.TOP_RIGHT,
-		  autoClose: 5000, // You can customize the duration
+		  autoClose: 5000,
 		  hideProgressBar: false,
 		  closeOnClick: true,
 		  pauseOnHover: true,
 		  draggable: true,
 		});
 	  };
+	
+	  const ToastSuccess = (message: any) => {
+		toast.success(message, {
+		  position: toast.POSITION.TOP_RIGHT,
+		  autoClose: 5000,
+		  hideProgressBar: false,
+		  closeOnClick: true,
+		  pauseOnHover: true,
+		  draggable: true,
+		});
+	  };
+
         const {register, handleSubmit, formState: { errors }} = useForm<CreateRequestParams>();
         const dispatch = useDispatch<AppDispatch>();
         const { request, status, error } = useSelector((state:any) => state.request);
@@ -31,13 +43,13 @@ export const SendRequestForm= () => {
       
             if (response.payload && response.payload.message) {
               const errorMessage = response.payload.message;
-              ToastFunction(`Error: ${errorMessage}`);
+              ToastError(`Error: ${errorMessage}`);
             } else {
-              ToastFunction("Friend request sent successfully");
+              ToastSuccess("Friend request sent successfully");
 
             }
           } catch (err: any) {
-            ToastFunction(`Error: ${err.message || 'An unexpected error occurred'}!`);
+            ToastError(`Error: ${err.message || 'An unexpected error occurred'}!`);
 
           }
             

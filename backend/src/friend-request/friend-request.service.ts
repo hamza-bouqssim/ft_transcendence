@@ -58,12 +58,12 @@ export class FriendRequestService {
         {
             throw new HttpException('You are alrighdy Friends !', HttpStatus.BAD_REQUEST)
         }
-        const BlockedFriends = await this.prisma.friend.findFirst(
+        const BlockedFriends = await this.prisma.blockList.findFirst(
         {
                 where: {
                     OR: [
-                        { user_id: user.id, friend_id: _friendDisplay_name.id, status: "BLOCKED"},
-                        {user_id: _friendDisplay_name.id, friend_id: user.id , status: "BLOCKED" },
+                        { userOneId: user.id, userTwoId: _friendDisplay_name.id},
+                        {userOneId: _friendDisplay_name.id, userTwoId: user.id  },
                       ],
             }});
 
@@ -136,15 +136,15 @@ export class FriendRequestService {
         {
             throw new HttpException('This is not your friend,  you cant play with !', HttpStatus.BAD_REQUEST)
         }
-        const BlockedFriends = await this.prisma.friend.findFirst(
+        const BlockedFriends = await this.prisma.blockList.findFirst(
             {
-                where: {
-                    OR: [
-                        { user_id: user.id, friend_id: recipientUser.id, status: "BLOCKED"},
-                        {user_id: recipientUser.id, friend_id: user.id , status: "BLOCKED" },
-                      ],
-            }});
-
+                    where: {
+                        OR: [
+                            { userOneId: user.id, userTwoId: recipientUser.id},
+                            {userOneId: recipientUser.id, userTwoId: user.id  },
+                          ],
+                }});
+    
         if(BlockedFriends)
         {
             throw new HttpException('You cant send request because you blocked each other', HttpStatus.BAD_REQUEST)
@@ -182,7 +182,7 @@ export class FriendRequestService {
             }
         })
         if(!req_play)
-            throw new UnauthorizedException ("the request doesn't exist");
+            throw new UnauthorizedException ("The request doesn't exist");
         if(req_play.senderId != userId)
             throw new UnauthorizedException ("You are not the person who send this request");
         await this.prisma.friend.update({where: {id: requestId}, data: {status: 'ACCEPTED'}});
@@ -199,14 +199,12 @@ export class FriendRequestService {
                 user : true,
                 friends : true,
             }
-
-        
         })
         if(!req)
-            throw new UnauthorizedException ("the request doesn't exist");
+            throw new UnauthorizedException ("The request doesn't exist");
 
-        if(req.friend_id !== user.id)
-            throw new UnauthorizedException("have you ever seeing someone is accepting friend request the he send hhhhhh");
+        if(req.user_id === user.id)
+            throw new UnauthorizedException("You are not authorized to accept this friend request");
        
 
         await this.prisma.friend.update({where: {id: requestId}, data: {status: 'ACCEPTED'}});
@@ -238,52 +236,63 @@ export class FriendRequestService {
         return { message: 'Friend request refused and deleted from the database' };
     }
 
-    async block(friendId: string, userId: string){
-
-        const checkBlock = await this.prisma.friend.findFirst({
-            where: {
-                OR: [
-                    { user_id: userId, friend_id: friendId, status: 'BLOCKED' },
-                    { user_id: friendId, friend_id: userId, status: 'BLOCKED' },
-                ]
-
-            }
-
-        })
+    async block(senderId: string, recipientId: string){
+        const user = await this.prisma.user.findFirst({where: {id: senderId}});
+        const recipientUser = await this.prisma.user.findFirst({where: {id: recipientId}});
+        if(senderId === recipientId)
+            throw new HttpException("You cant block your self ", HttpStatus.BAD_REQUEST)
 
 
-        if(checkBlock)
+        if(!user || !recipientUser)
         {
-            throw new HttpException("Alrighdy blocked", HttpStatus.BAD_REQUEST)
-
+            throw new HttpException('User Not Found!', HttpStatus.BAD_REQUEST)
         }
+        const checkBlocking = await this.prisma.blockList.findFirst({
+            where: {
+                AND:[
+                    {userOneId: senderId, userTwoId: recipientId},
+                ]
+            }
+        })
+        if(checkBlocking)
+            throw new HttpException("Alrighdy blocked", HttpStatus.BAD_REQUEST)
 
         const friendship = await this.prisma.friend.findFirst({
             where: {
                 OR: [
-                    { user_id: userId, friend_id: friendId, status: 'ACCEPTED' },
-                    { user_id: friendId, friend_id: userId, status: 'ACCEPTED' },
-                ]
-            }
-        });
-
-        if(!friendship)
-            throw new HttpException("Friendship doesn't exist to block this user", HttpStatus.BAD_REQUEST)
-
-
+                    { user_id: senderId, friend_id: recipientId, status: { in: ['ACCEPTED', 'PENDING'] } },
+                    { user_id: recipientId, friend_id: senderId, status: { in: ['ACCEPTED', 'PENDING'] } },
+                  ],
+                },
+              });
             
-        await this.prisma.friend.update({where: {id: friendship.id}, data: {
-            status: 'BLOCKED',
-            user_id : friendId, friend_id: userId
+              // If there is a friendship, delete it
+        if (friendship) {
+            await this.prisma.friend.delete({
+                where: { id: friendship.id },
+            });
+        }
+        await this.prisma.blockList.create({
+            data: {
+                userOneId: senderId,
+                userTwoId: recipientId
+            },
+            include :{
+                userOne: true,
+                userTwo : true,
+            }
         
-        }});
+
+        })
+
+
 
 
         const chatParticipents = await this.prisma.chatParticipents.findFirst({
             where: {
               OR: [
-                { senderId: userId, recipientId: friendId },
-                { senderId: friendId, recipientId: userId },
+                { senderId: senderId, recipientId: recipientId },
+                { senderId: recipientId, recipientId: senderId },
               ],
             },
             include: {
@@ -314,32 +323,36 @@ export class FriendRequestService {
         return {message: "Blocked succefully"}
     }
 
-    async unblock(friendId: string, userId: string){
+    async unblock(senderId: string, recipientId: string){
 
-        const friendship = await this.prisma.friend.findFirst({
+        const user = await this.prisma.user.findFirst({where: {id: senderId}});
+        const recipientUser = await this.prisma.user.findFirst({where: {id: recipientId}});
+        
+        if(!user || !recipientUser)
+        {
+            throw new HttpException('User Not Found!', HttpStatus.BAD_REQUEST)
+        }
+        const checkBlocking = await this.prisma.blockList.findFirst({
             where: {
-                OR: [
-                    { user_id: userId, friend_id: friendId, status: 'BLOCKED' },
-                    { user_id: friendId, friend_id: userId, status: 'BLOCKED' },
+                AND:[
+                    {userOneId: senderId, userTwoId: recipientId},
                 ]
             }
-        });
-    
-        if(!friendship)
-            throw new UnauthorizedException("Friendship doesn't exist or is not blocked by the user.");
-    
-        
-        if (friendship.friend_id !== userId) {
-            throw new UnauthorizedException("You don't have permission to unblock this user.");
-        }
-    
-        await this.prisma.friend.update({where: {id: friendship.id}, data: {status: 'ACCEPTED'}});
+        })
+        if(!checkBlocking)
+            throw new HttpException("You are not blocked this user ", HttpStatus.BAD_REQUEST)   
+
+            await this.prisma.blockList.delete({
+                where: {
+                  id: checkBlocking.id,
+                },
+              });
 
         const chatParticipents = await this.prisma.chatParticipents.findFirst({
             where: {
               OR: [
-                { senderId: userId, recipientId: friendId },
-                { senderId: friendId, recipientId: userId },
+                { senderId: senderId, recipientId: recipientId },
+                { senderId: recipientId, recipientId: senderId },
               ],
             },
             include: {
@@ -366,7 +379,7 @@ export class FriendRequestService {
             chatParticipents
           });
         
-        return {message: "Unblocked"}
+        return {message: "Unblocked succefully"}
     }
     
     async deleteMessagesWithUser(userId : string, blockedUserId : string){

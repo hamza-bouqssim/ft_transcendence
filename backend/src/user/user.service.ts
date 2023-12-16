@@ -159,10 +159,31 @@ export class UserService {
         return await this.prisma.friend.findMany({where: { friend_id: userId, status: 'PENDING'}, select: {id : true , user: {select: {id: true, username: true, display_name: true, avatar_url:true}}, friends: true}});
     }
 
-    async blockedFriends(userId: string)
-    {
-        return await this.prisma.friend.findMany({where: {friend_id: userId, status: 'BLOCKED'}, select: {user: {select: {id: true, username: true, display_name: true, avatar_url:true}}}});
-    }
+    async blockedFriends(userId: string) {
+        const blockedUsers = await this.prisma.blockList.findMany({
+          where: {
+            userOneId: userId,
+          },
+        });
+      
+        const blockedUserIds = blockedUsers.map(block => block.userTwoId);
+      
+        const blockedFriends = await this.prisma.user.findMany({
+          where: {
+            id: {
+              in: blockedUserIds,
+            },
+          },
+          select: {
+            id: true,
+            username: true,
+            display_name: true,
+            avatar_url: true,
+          },
+        });
+      
+        return blockedFriends;
+      }
     
     async findByEmail(email : string)
     {
@@ -304,9 +325,9 @@ export class UserService {
 
   
 
-    async isBlockedByUser(senderId: string, recipientUser: string): Promise<boolean> {
-        const BlockedFriends = await this.blockedFriends(senderId);
-        return BlockedFriends.some((friend) => friend.user.id === recipientUser);
+    async isBlockedByUser(senderId: string, recipientUserId: string): Promise<boolean> {
+        const blockedFriends = await this.blockedFriends(senderId);
+        return blockedFriends.some((friend) => friend.id === recipientUserId);
       }
     //   async notificationMessage(chatId : string, userId : string){
     //     // const notificationMessage = await this.prisma.notificationGlobal.create({
