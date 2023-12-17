@@ -11,6 +11,7 @@ import { UserModule } from './user/user.module';
 import { FriendRequestModule } from './friend-request/friend-request.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { TwoFactorAuthenticationModule } from './two-factor-authentication/two-factor-authentication.module';
+import { GameModule } from './game/game.module';
 
 
 @Module({
@@ -24,7 +25,7 @@ import { TwoFactorAuthenticationModule } from './two-factor-authentication/two-f
 		UserModule,
     FriendRequestModule,
 	TwoFactorAuthenticationModule,
-		// GameModule,
+		GameModule,
 		EventEmitterModule.forRoot()
 	],
 	controllers: [AppController],

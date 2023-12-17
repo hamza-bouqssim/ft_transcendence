@@ -1,21 +1,20 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import PlayerScore from "@/app/components/PlayerScore";
-import PongGame from "../classes/PongGame";
+import PongGame from "../utils/classes/PongGame";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 import {
 	LoserPlayerPopUp,
 	WinnerPlayerPopUp,
 } from "@/app/components/GamePopUp";
-import { useAtomValue } from "jotai";
-import { gameData } from "../page";
+import { getCurrentSizes } from "../utils/data";
+import PlayerScore from "@/app/components/PlayerScore";
 
-const BotGame = () => {
-	const gameDataValues = useAtomValue(gameData);
+const BotGame = ({ mapIndex }: any) => {
 	const router = useRouter();
 	const parentCanvasRef = useRef<HTMLDivElement>(null);
 	const pongRef = useRef<any>();
+	const [startGame, setStartGame] = useState<boolean>(false);
 	const [score, setScore] = useState<{
 		playerScore: number;
 		botScore: number;
@@ -23,87 +22,100 @@ const BotGame = () => {
 		playerScore: 0,
 		botScore: 0,
 	});
-	const [startGame, setStartGame] = useState<boolean>(false);
+	const [currentSize, setCurrentSize] = useState<{
+		width: number;
+		height: number;
+	}>({
+		width: 560,
+		height: 836,
+	});
 
 	useEffect(() => {
-		if (score.botScore === 8 || score.playerScore === 8) {
-			score.playerScore === 8
-				? WinnerPlayerPopUp(router)
-				: LoserPlayerPopUp(router);
-			pongRef.current.clear();
-		} else if (pongRef.current)
-			setScore({
-				...score,
-				playerScore: pongRef.current.playerScore,
-				botScore: pongRef.current.botScore,
-			});
-		else {
-			let timerInterval: any;
+		const parentWidth: number = parentCanvasRef.current?.clientWidth!;
+		const parentHeight: number = parentCanvasRef.current?.clientHeight!;
 
-			Swal.fire({
-				title: "Game Will Start In",
-				icon: "info",
-				iconColor: "var(--pink-color)",
-				color: "#ffff",
-				html: "<b style='font-size:80px'></b>&emsp;Seconds",
-				timer: 3 * 1000,
-				background: "#2E2F54",
-				customClass: "rounded-[30px] font-['Whitney_BlackSc'] text-sm",
-				timerProgressBar: true,
-				allowOutsideClick: false,
-				didOpen: () => {
-					Swal.showLoading();
-					const timer = Swal.getPopup()!.querySelector("b");
-					timerInterval = setInterval(() => {
-						timer!.textContent = `${(Swal.getTimerLeft()! / 1000).toFixed(0)}`;
-					}, 100);
-					const timerProgressBar = Swal.getPopup()!.querySelector(
-						".swal2-timer-progress-bar",
-					) as HTMLElement;
-					timerProgressBar!.style.backgroundColor = "var(--pink-color)";
-				},
-				willClose: () => {
-					clearInterval(timerInterval);
-				},
-			}).then(() => {
-				setStartGame((prev: any) => !prev);
-				pongRef.current = new PongGame(
-					parentCanvasRef.current!,
-					gameDataValues.chosenMapIndex,
-				);
+		setCurrentSize({
+			...currentSize,
+			width: getCurrentSizes(parentWidth, parentHeight)[0],
+			height: getCurrentSizes(parentWidth, parentHeight)[1],
+		});
+	}, []);
+
+	useEffect(() => {
+		let timerInterval: NodeJS.Timer;
+		let scoreInterval: NodeJS.Timer;
+
+		Swal.fire({
+			title: "Game Will Start In",
+			icon: "info",
+			iconColor: "var(--pink-color)",
+			color: "#ffff",
+			html: "<b style='font-size:80px'></b>&emsp;Seconds",
+			timer: 3 * 1000,
+			background: "#2E2F54",
+			customClass: "rounded-[30px] font-['Whitney_BlackSc'] text-sm",
+			timerProgressBar: true,
+			allowOutsideClick: false,
+			didOpen: () => {
+				Swal.showLoading();
+				const timer = Swal.getPopup()!.querySelector("b");
+				timerInterval = setInterval(() => {
+					timer!.textContent = `${(Swal.getTimerLeft()! / 1000).toFixed(0)}`;
+				}, 100);
+				const timerProgressBar = Swal.getPopup()!.querySelector(
+					".swal2-timer-progress-bar",
+				) as HTMLElement;
+				timerProgressBar!.style.backgroundColor = "var(--pink-color)";
+			},
+			willClose: () => {
+				clearInterval(timerInterval);
+			},
+		}).then(() => {
+			setStartGame((prev: any) => !prev);
+			pongRef.current = new PongGame(parentCanvasRef.current!, mapIndex);
+
+			scoreInterval = setInterval(() => {
+				if (
+					pongRef.current.botScore === 7 ||
+					pongRef.current.playerScore === 7
+				) {
+					pongRef.current.clear();
+					clearInterval(scoreInterval);
+					pongRef.current.playerScore === 7
+						? WinnerPlayerPopUp(router)
+						: LoserPlayerPopUp(router);
+				}
+
 				setScore({
 					...score,
 					playerScore: pongRef.current.playerScore,
 					botScore: pongRef.current.botScore,
 				});
-			});
-		}
-	}, [score]);
+			}, 10);
+		});
+
+		return () => {
+			pongRef.current?.clear();
+			clearInterval(scoreInterval);
+		};
+	}, []);
 
 	return (
-		<div className="absolute left-[50%] top-[50%] flex h-[642px] w-[96%] -translate-x-[50%] -translate-y-[50%] flex-col items-center justify-evenly md:h-[900px] md:gap-3 md:px-4 xl:h-[700px] xl:max-w-[1280px] xl:flex-row-reverse xl:px-10 min-[1750px]:h-[900px] min-[1750px]:max-w-[1600px]">
-			<PlayerScore
-				flag="top"
-				name="Mr.BOT"
-				username="@bot"
-				score={score.botScore}
-				playerBgColor={"#4FD6FF"}
-				isBotPlayer={true}
-				startGame={startGame}
-			/>
-			<div
-				className="h-[500px] w-full max-w-[340px] shadow-[0_0_50px_2px_var(--blue-color)] md:h-[590px] md:max-w-[380px] xl:h-[700px] xl:max-w-[420px] min-[1750px]:h-[836px] min-[1750px]:max-w-[560px]"
-				ref={parentCanvasRef}
-			></div>
-			<PlayerScore
-				flag="bottom"
-				name="hamzaBouQssi"
-				username="@hbouqssi"
-				score={score.playerScore}
-				playerBgColor={"#FF5269"}
-				isBotPlayer={false}
-				startGame={startGame}
-			/>
+		<div
+			style={{ maxWidth: currentSize.width, maxHeight: currentSize.height }}
+			className={`absolute left-[50%] top-[50%] h-[90vh] w-[80vw] -translate-x-[50%] -translate-y-[50%]`}
+			ref={parentCanvasRef}
+		>
+			{startGame && (
+				<div className="absolute left-[50%] top-[50%] flex aspect-[2.5/1] w-full -translate-x-[50%] -translate-y-[50%] flex-col items-center gap-[5%] px-[7%]">
+					<PlayerScore flag="top" color="#4fd6ff90" score={score.botScore} />
+					<PlayerScore
+						flag="bottom"
+						color="#ff526990"
+						score={score.playerScore}
+					/>
+				</div>
+			)}
 		</div>
 	);
 };

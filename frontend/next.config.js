@@ -1,14 +1,16 @@
 /** @type {import('next').NextConfig} */
 
-
-const nextConfig = {
-
-
-}
-
+const nextConfig = {};
 
 module.exports = {
+	reactStrictMode: false,
 	images: {
-		domains: ['cdn.intra.42.fr', 'lh3.googleusercontent.com','cdn.landesa.org','images.squarespace-cdn.com','res.cloudinary.com']
-	}
-}
+		domains: [
+			"cdn.intra.42.fr",
+			"lh3.googleusercontent.com",
+			"cdn.landesa.org",
+			"images.squarespace-cdn.com",
+			"res.cloudinary.com",
+		],
+	},
+};
