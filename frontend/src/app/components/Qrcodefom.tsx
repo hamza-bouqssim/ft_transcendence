@@ -1,4 +1,4 @@
-"user client"
+"use client";
 import React, { useContext, useEffect, useState } from 'react'
 import { generateQrcode, verifyCode } from '../utils/api'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

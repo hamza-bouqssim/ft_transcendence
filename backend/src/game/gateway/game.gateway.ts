@@ -5,24 +5,24 @@ import {
 	WebSocketServer,
 	OnGatewayDisconnect,
 	OnGatewayConnection,
+	ConnectedSocket,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { OnModuleInit } from '@nestjs/common';
-import { Bodies, Composite, Engine, Runner, Body, World } from 'matter-js';
 import { GameService } from '../game.service';
-import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'prisma/prisma.service';
-import { whichWithAuthenticated } from 'src/user/utils/auth-utils';
 import { AuthenticatedSocket } from 'src/utils/interfaces';
+import { PongGame } from '../classes/PongGame';
 
-const engine = Engine.create({
-	gravity: {
-		x: 0,
-		y: 0,
-	},
-});
-
-const runner: any = Runner.create();
+export type GameQ = {
+	indexMap: number;
+	status: string;
+	socket1: AuthenticatedSocket;
+	socket2: AuthenticatedSocket;
+	duration: number;
+	user1: any;
+	user2: any;
+	launch: boolean;
+};
 
 @WebSocketGateway({
 	origin: ['http://localhost:3000'],
@@ -30,277 +30,119 @@ const runner: any = Runner.create();
 	namespace: '/game',
 })
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
-	// export class GameGateway implements OnGatewayConnection {
 	@WebSocketServer()
 	server: Server;
 
-	// private canvasWidth: number = 560;
-	// private canvasHeight: number = 836;
-	private defaultCanvasSizes: any = {
-		width: 560,
-		height: 836,
-	};
-	private currentCanvasSizes: any = {
-		width: this.defaultCanvasSizes.width,
-		height: this.defaultCanvasSizes.height,
-	};
-	private paddleSizes: any = {
-		width: 170,
-		height: 15,
-	};
-	private currentBallSpeed: any = {
-		x: 4,
-		y: 4,
-	};
-	private map = (
-		inputSize: number,
-		defaultCanvasSize: number,
-		currentCanvasSize: number,
-	): number => {
-		return (inputSize * currentCanvasSize) / defaultCanvasSize;
-	};
-	private ball: any;
-	private topPaddle: any;
-	private bottomPaddle: any;
-	private rightRect: any;
-	private leftRect: any;
-	private movingRight: boolean = false;
-	private movingLeft: boolean = false;
-	private posPaddleX = this.defaultCanvasSizes.width / 2;
-	private playerOneScore: number = 0;
-	private playerTwoScore: number = 0;
-	private updateBallPosition: any;
-	private movePaddleInterval: any;
-	private userId: string;
-	private mapIndex: number;
-	private queueStartGame: {
-		userId: string;
-		sockets: string[];
+	// private pong: PongGame;
+	private mapPong: Map<string, PongGame> = new Map();
+	private queueWaiting: {
+		socket: AuthenticatedSocket;
 		indexMap: number;
 	}[] = [];
-	private queueInGame: {
-		indexMap: number;
-		user1: string;
-		user2: string;
-		status: string;
-		socket1: string[];
-		socket2: string[];
-		duration: number;
-	}[] = [];
+	private queueGame: GameQ[] = [];
 
 	constructor(
 		private readonly gameservice: GameService,
-		private readonly jwtService: JwtService,
 		private readonly prisma: PrismaService,
-	) {
-		this.handlePaddleMove();
-	}
-	sleep = async (ms: number) =>
-		new Promise((resolve) => setTimeout(resolve, ms));
-
-	// async getUserId(token: string) {
-	// 	const decodedToken = this.jwtService.decode(token) as {
-	// 		[key: string]: any;
-	// 	};
-	// 	let user: any;
-
-	// 	if (decodedToken && decodedToken.email) {
-	// 		user = await this.prisma.user.findUnique({
-	// 			where: { email: decodedToken.email },
-	// 		});
-	// 		console.log(user);
-	// 		// console.log("connect1", this.queueInGame);
-	// 		return user.id;
-	// 	}
-	// }
-
-	// extractTokenFromConnection(client: Socket): any | null {
-	// 	// Implement your logic to extract the token from the connection.
-	// 	// For example, if tokens are passed in query parameters:
-	// 	let token;
-	// 	const tokenQueryParam = client.handshake.query.token;
-	// 	const tokenTmp = client.handshake.headers.cookie;
-
-	// 	if (tokenTmp && typeof tokenTmp === 'string') {
-	// 		const cookies = tokenTmp.split(';');
-	// 		const tokenCookie = cookies.find((cookie) =>
-	// 			cookie.trim().startsWith('token='),
-	// 		);
-	// 		if (tokenCookie) {
-	// 			token = tokenCookie.split('=')[1];
-	// 		} else {
-	// 			token = null;
-	// 		}
-	// 	} else {
-	// 		token = null;
-	// 	}
-
-	// 	// If tokens are passed in headers:
-	// 	const tokenHeader = client.handshake.headers['authorization'];
-
-	// 	return tokenQueryParam || tokenHeader || token;
-	// }
+	) {}
+	// sleep = async (ms: number) =>
+	// 	new Promise((resolve) => setTimeout(resolve, ms));
 
 	async handleConnection(socket: AuthenticatedSocket, ...args: any[]) {
+		console.log('connect1   ...');
+		console.log('socket', socket.user.sub);
 		if (socket.user) {
 			const newStatus = await this.prisma.user.update({
-				where: { id: socket.user.id },
+				where: { id: socket.user.sub },
 				data: { status: 'ingame' },
 			});
-		}
-		const userId = socket.user.id;
-		if (this.queueInGame.length > 0) {
-			const findGame = this.getInGameQueue(userId);
-			if (findGame) {
-				if (findGame.user1 === userId) {
-					findGame.socket1.push(socket.id);
-				} else {
-					findGame.socket2.push(socket.id);
-				}
-			}
 		}
 	}
 
 	async handleDisconnect(socket: AuthenticatedSocket) {
+		console.log('Connection closed1');
+		socket.leave(`@${socket.user.sub}`);
+		const game = this.getQueueGame(socket.user.sub);
 		if (socket.user) {
 			const newStatus = await this.prisma.user.update({
-				where: { id: socket.user.id },
+				where: { id: socket.user.sub },
 				data: { status: 'online' },
 			});
 		}
-		const userId = socket.user.id;
-		const queue = this.getStratQueue(userId);
+
+		const userId = socket.user.sub;
+		const queue = this.getQueueWaiting(userId);
 		if (queue) {
-			if (queue.sockets.length === 1)
-				this.queueStartGame = this.queueStartGame.filter(
-					(queue) => queue.userId !== userId,
-				);
-			else queue.sockets = queue.sockets.filter((id) => id !== socket.id);
+			this.queueWaiting = this.queueWaiting.filter(
+				(queue) => queue.socket.user.sub !== userId,
+			);
 		} else {
-			const findGame = this.getInGameQueue(userId);
+			const findGame = this.getQueueGame(userId);
 			if (findGame) {
-				if (findGame.user1 === userId) {
-					findGame.socket1 = findGame.socket1.filter((id) => id !== socket.id);
-					if (findGame.socket1.length === 0) {
-					}
-				} else {
-					findGame.socket2 = findGame.socket2.filter((id) => id !== socket.id);
-					if (findGame.socket2.length === 0) console.log('user2 leave game');
+				if (
+					findGame.socket1.user.sub === userId &&
+					socket.id === findGame.socket1.id
+				) {
+					console.log('user1 leave game');
+					this.mapPong[game.user1.id].playerOneScore = 0;
+					this.mapPong[game.user1.id].playerTwoScore = 7;
+					this.endGame(game);
+				} else if (
+					findGame.socket2.user.sub === userId &&
+					socket.id === findGame.socket2.id
+				) {
+					console.log('user2 leave game');
+					this.mapPong[game.user1.id].playerOneScore = 7;
+					this.mapPong[game.user1.id].playerTwoScore = 0;
+					this.endGame(game);
 				}
-				if (findGame.socket1.length === 0 || findGame.socket2.length === 0)
-					this.queueInGame = this.queueInGame.filter(
-						(queue) => userId !== queue.user1 && userId !== queue.user2,
-					);
 			}
-		
 		}
 	}
 
-	// async handleConnection(client: any) {
-	// 	// const user = whichWithAuthenticated(req)
-	// 	// const token;
-	// 	console.log('+++++');
-	// 	const token = this.extractTokenFromConnection(client);
-	// 	if (token === null) return;
-	// 	const userId = await this.getUserId(token);
-	// 	if (this.queueInGame.length > 0) {
-	// 		const findGame = this.getInGameQueue(userId);
-	// 		if (findGame) {
-	// 			if (findGame.user1 === userId) {
-	// 				console.log('pushSocketToQueue1', this.queueInGame);
-	// 				findGame.socket1.push(client.id);
-	// 			} else {
-	// 				console.log('pushSocketToQueue2', this.queueInGame);
-	// 				findGame.socket2.push(client.id);
-	// 			}
-	// 		}
-	// 	}
-	// 	console.log('waitting', this.queueStartGame);
-	// 	console.log('ingame', this.queueInGame);
-	// 	// console.log("connect1", this.queueInGame);
-	// }
+	@SubscribeMessage('startGame')
+	async handleJoinGame(client: AuthenticatedSocket, data: any) {
+		const game = this.getQueueGame(client.user.sub);
+		const wait = this.getQueueWaiting(client.user.sub);
+		const user = await this.gameservice.findUserById(client.user.sub);
 
-	// async handleDisconnect(client: any) {
-	// 	console.log(client.handshake);
-	// 	const token = this.extractTokenFromConnection(client);
-	// 	const userId = await this.getUserId(token);
-	// 	const queue = this.getStratQueue(userId);
-	// 	if (queue) {
-	// 		if (queue.sockets.length === 1)
-	// 			this.queueStartGame = this.queueStartGame.filter(
-	// 				(queue) => queue.userId !== userId,
-	// 			);
-	// 		else queue.sockets = queue.sockets.filter((id) => id !== client.id);
-	// 		console.log('queueStartGamet d', this.queueStartGame);
-	// 	} else {
-	// 		const findGame = this.getInGameQueue(userId);
-	// 		if (findGame) {
-	// 			if (findGame.user1 === userId) {
-	// 				findGame.socket1 = findGame.socket1.filter((id) => id !== client.id);
-	// 				if (findGame.socket1.length === 0) {
-	// 					console.log('user1 leave game');
-	// 				}
-	// 			} else {
-	// 				findGame.socket2 = findGame.socket2.filter((id) => id !== client.id);
-	// 				if (findGame.socket2.length === 0) console.log('user2 leave game');
-	// 			}
-	// 			if (findGame.socket1.length === 0 || findGame.socket2.length === 0)
-	// 				this.queueInGame = this.queueInGame.filter(
-	// 					(queue) => userId !== queue.user1 && userId !== queue.user2,
-	// 				);
-	// 		}
-	// 		console.log('queueInGame d', this.queueInGame);
-	// 	}
-	// }
+		if (game || wait) {
+			client.emit('redirectUser', {
+				display_name: user.display_name,
+			});
+			return;
+		}
+		if (Number(data.indexMap) > 2 || Number(data.indexMap) < 0) return;
+		client.join(`@${client.user.sub}`);
+		this.queueWaiting.push({
+			indexMap: Number(data.indexMap),
+			socket: client,
+		});
 
-	@SubscribeMessage('joinGame')
-	handleJoinGame(client: Socket, data: any) {
-		console.log('test--------------');
-		this.userId = data.userData.id;
-		this.mapIndex = data.mapIndex;
-		// console.log("index:", this.mapIndex)
-		this.pushSocketToQueue(this.userId, client.id, 0);
-		if (this.queueStartGame.length >= 2) this.checkQueue();
+		if (this.queueWaiting.length >= 2) await this.checkQueue();
 	}
 
-	//emit to user a message in an event---------------------------------------
-	emitToGame(userId: string, payload: any, event: string) {
-		const queue = this.queueInGame.find(
-			(game) => game.user2 === userId || game.user1 === userId,
-		);
-		const socketIds = [...queue.socket1, ...queue.socket2];
-
-		socketIds.forEach((socketId) => {
-			console.log(socketId, '++++++++++++++++++---------------------->>>>');
-			this.server.to(socketId).emit(event, payload);
-		});
+	// emit to user a message in an event---------------------------------------
+	emitToGame(user1: string, user2: string, payload: any, event: string) {
+		this.server.to(`@${user1}`).emit(event, payload);
+		this.server.to(`@${user2}`).emit(event, payload);
 	}
 
 	emitToUser1InGame(userId: string, payload: any, event: string) {
-		const socketIds = this.queueInGame.find(
-			(game) => game.user2 === userId || game.user1 === userId,
-		).socket1;
-
-		socketIds.forEach((socketId) => {
-			this.server.to(socketId).emit(event, payload);
-		});
+		this.server.to(`@${userId}`).emit(event, payload);
+		return 1;
 	}
 
 	emitToUser2InGame(userId: string, payload: any, event: string) {
-		const socketIds = this.queueInGame.find(
-			(game) => game.user2 === userId || game.user1 === userId,
-		).socket2;
-
-		socketIds.forEach((socketId) => {
-			this.server.to(socketId).emit(event, payload);
-		});
+		this.server.to(`@${userId}`).emit(event, payload);
+		return 2;
 	}
 
 	//get map that readu to play in it-------------------------
 	mapReadyToPlay() {
-		const map = this.queueStartGame.filter((queue) => queue.indexMap === 0);
-		const map1 = this.queueStartGame.filter((queue) => queue.indexMap === 1);
-		const map2 = this.queueStartGame.filter((queue) => queue.indexMap === 2);
+		const map = this.queueWaiting.filter((queue) => queue.indexMap === 0);
+		const map1 = this.queueWaiting.filter((queue) => queue.indexMap === 1);
+		const map2 = this.queueWaiting.filter((queue) => queue.indexMap === 2);
 		if (map.length >= 2) return map;
 		if (map1.length >= 2) return map1;
 		if (map2.length >= 2) return map2;
@@ -311,602 +153,130 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		let map = this.mapReadyToPlay();
 		if (!map) return;
 		while (map.length >= 2) {
-			const userIdOne = map[0].userId;
-			const userIdTwo = map[1].userId;
-			this.queueStartGame = this.queueStartGame.filter(
-				(queue) => queue.userId !== userIdOne && queue.userId !== userIdTwo,
+			const userIdOne = map[0].socket.user.sub;
+			const userIdTwo = map[1].socket.user.sub;
+			const user1 = await this.gameservice.findUserById(userIdOne);
+			const user2 = await this.gameservice.findUserById(userIdTwo);
+			this.queueWaiting = this.queueWaiting.filter(
+				(queue) =>
+					queue.socket.user.sub !== userIdOne &&
+					queue.socket.user.sub !== userIdTwo,
 			);
-			this.queueInGame.push({
-				user1: userIdOne,
-				user2: userIdTwo,
+			this.queueGame.push({
 				status: 'pending',
-				socket1: map[0].sockets,
-				socket2: map[1].sockets,
+				socket1: map[0].socket,
+				socket2: map[1].socket,
 				duration: Date.now(),
 				indexMap: map[0].indexMap,
+				user1: user1,
+				user2: user2,
+				launch: false,
 			});
+
 			map = map.filter(
-				(queue) => queue.userId !== userIdOne && queue.userId !== userIdTwo,
+				(queue) =>
+					queue.socket.user.sub !== userIdOne &&
+					queue.socket.user.sub !== userIdTwo,
 			);
-			const currentGame = this.getInGameQueue(userIdOne);
-			const idGame = userIdOne + userIdTwo;
-			await this.sleep(4000);
-			this.emitToGame(
+
+			const game = this.getQueueGame(userIdOne);
+			const idGame = userIdOne;
+			this.emitToUser2InGame(
 				userIdTwo,
-				{ opponentId: userIdTwo, idGame },
-				'startGame',
+				{ opponent: user1, rotate: true, idGame },
+				'knowOpponent',
 			);
-			// this.emitToUser1InGame(userIdTwo, { opponentId: userIdTwo }, 'startGame');
-			// this.emitToUser2InGame(userIdOne, { opponentId: userIdOne }, "startGame");
-			currentGame.status = 'playing';
+			this.emitToUser1InGame(
+				userIdOne,
+				{ opponent: user2, rotate: false, idGame },
+				'knowOpponent',
+			);
+			if (!game) return;
+			console.log('test startgame +++++++++++++++');
+
+			game.status = 'playing';
 		}
 		return;
 	}
 	// Queue---------------------------------------
-
-	getStratQueue(userId: string) {
-		return this.queueStartGame.find((queue) => queue.userId === userId);
+	getQueueWaiting(userId: string) {
+		return this.queueWaiting.find((queue) => queue.socket.user.sub === userId);
 	}
 
-	getInGameQueue(userId: string) {
-		return this.queueInGame.find(
-			(queue) => queue.user1 === userId || queue.user2 === userId,
+	getQueueGame(userId: string) {
+		return this.queueGame.find(
+			(queue) =>
+				queue.socket1.user.sub === userId || queue.socket2.user.sub === userId,
 		);
 	}
 
-	pushSocketToQueue(userId: string, socketId: string, indexMap?: number) {
-		if (this.queueInGame.length > 0) {
-			const findGame = this.getInGameQueue(userId);
-			if (findGame) {
-				if (findGame.user1 === userId) {
-					findGame.socket1.push(socketId);
-				} else {
-					findGame.socket2.push(socketId);
-				}
+	async endGame(game: any) {
+		if (this.mapPong[game.user1.id]) {
+			const user1 = game.socket1.user.sub;
+			const user2 = game.socket2.user.sub;
+			const duration = Date.now() - game.duration;
+			if (
+				this.mapPong[game.user1.id].playerOneScore >
+				this.mapPong[game.user1.id].playerTwoScore
+			) {
+				this.emitToUser1InGame(user1, { status: 'winner' }, 'gameIsFinished');
+				this.emitToUser2InGame(user2, { status: 'loser' }, 'gameIsFinished');
+			} else {
+				this.emitToUser2InGame(user2, { status: 'winner' }, 'gameIsFinished');
+				this.emitToUser1InGame(user1, { status: 'loser' }, 'gameIsFinished');
 			}
-		} else {
-			const findQueue = this.getStratQueue(userId);
-			if (findQueue) this.getStratQueue(userId).sockets.push(socketId);
-			else
-				this.queueStartGame.push({
-					userId,
-					sockets: [socketId],
-					indexMap,
-				});
-		}
-	}
-
-	// End Queue---------------------------------------
-
-	@SubscribeMessage('launchGameRequest')
-	handleLaunchGameRequest(@MessageBody() gameData: any) {
-		this.mapIndex = gameData.chosenMapIndex;
-
-		// Update Canvas. Paddles && ball Size With New Mapped Values:
-		this.currentCanvasSizes = {
-			width: gameData.canvasSizes.width,
-			height: gameData.canvasSizes.height,
-		};
-
-		this.paddleSizes = {
-			width: this.map(
-				this.paddleSizes.width,
-				this.defaultCanvasSizes.width,
-				this.currentCanvasSizes.width,
-			),
-			height: this.map(
-				this.paddleSizes.height,
-				this.defaultCanvasSizes.height,
-				this.currentCanvasSizes.height,
-			),
-		};
-
-		this.currentBallSpeed = {
-			x: this.map(
-				this.currentBallSpeed.x,
-				this.defaultCanvasSizes.width,
-				this.currentCanvasSizes.width,
-			),
-			y: this.map(
-				this.currentBallSpeed.y,
-				this.defaultCanvasSizes.height,
-				this.currentCanvasSizes.height,
-			),
-		};
-
-
-		// This Function Will Run In All Maps:
-		this.handleDefaultGameMap();
-
-		switch (this.mapIndex) {
-			case 1:
-				this.handleGameCircleObstacles();
-				break;
-
-			case 2:
-				this.handleVerticalObstacles();
-				break;
-		}
-
-		this.server.emit('launchGame', {});
-		this.startGame();
-	}
-
-	handleDefaultGameMap() {
-		// Create Ball:
-		this.ball = Bodies.circle(
-			this.currentCanvasSizes.width / 2,
-			this.currentCanvasSizes.height / 2,
-			this.map(
-				15,
-				this.defaultCanvasSizes.width,
-				this.currentCanvasSizes.width,
-			),
-			{
-				label: 'ball',
-				render: {
-					fillStyle: '#FFF',
-				},
-				frictionAir: 0,
-				friction: 0,
-				inertia: Infinity,
-				restitution: 1,
-			},
-		);
-
-		Body.setVelocity(this.ball, {
-			x: this.currentBallSpeed.x,
-			y: this.currentBallSpeed.y,
-		});
-		this.server.emit('setBallVelocity', this.ball.velocity);
-
-		// Create Two Paddles:
-		this.topPaddle = Bodies.rectangle(
-			this.currentCanvasSizes.width / 2,
-			this.map(
-				30,
-				this.defaultCanvasSizes.height,
-				this.currentCanvasSizes.height,
-			),
-			this.paddleSizes.width,
-			this.paddleSizes.height,
-			{
-				label: 'topPaddle',
-				render: {
-					fillStyle: '#4FD6FF',
-				},
-				isStatic: true,
-				// chamfer: { radius: 10 },
-			},
-		);
-
-		this.bottomPaddle = Bodies.rectangle(
-			this.currentCanvasSizes.width / 2,
-			this.currentCanvasSizes.height -
-				this.map(
-					30,
-					this.defaultCanvasSizes.height,
-					this.currentCanvasSizes.height,
-				),
-			this.paddleSizes.width,
-			this.paddleSizes.height,
-			{
-				label: 'bottomPaddle',
-				render: {
-					fillStyle: '#FF5269',
-				},
-				isStatic: true,
-				// chamfer: { radius: 10 },
-			},
-		);
-
-		// const topRect = Bodies.rectangle(
-		// 	this.canvasWidth / 2,
-		// 	0,
-		// 	this.canvasWidth,
-		// 	20,
-		// 	{
-		// 		render: {
-		// 			fillStyle: 'red',
-		// 		},
-		// 		isStatic: true,
-		// 	},
-		// );
-
-		// const bottomRect = Bodies.rectangle(
-		// 	this.canvasWidth / 2,
-		// 	this.canvasHeight,
-		// 	this.canvasWidth,
-		// 	20,
-		// 	{
-		// 		render: {
-		// 			fillStyle: 'yellow',
-		// 		},
-		// 		isStatic: true,
-		// 	},
-		// );
-
-		// Create Two Boundies:
-		this.rightRect = Bodies.rectangle(
-			this.currentCanvasSizes.width,
-			this.currentCanvasSizes.height / 2,
-			this.map(
-				20,
-				this.defaultCanvasSizes.width,
-				this.currentCanvasSizes.width,
-			),
-			this.currentCanvasSizes.height,
-			{
-				label: 'rightRect',
-				render: {
-					fillStyle: '#CFF4FF',
-				},
-				isStatic: true,
-			},
-		);
-
-		this.leftRect = Bodies.rectangle(
-			0,
-			this.currentCanvasSizes.height / 2,
-			this.map(
-				20,
-				this.defaultCanvasSizes.width,
-				this.currentCanvasSizes.width,
-			),
-			this.currentCanvasSizes.height,
-			{
-				label: 'leftRect',
-				render: {
-					fillStyle: '#CFF4FF',
-				},
-				isStatic: true,
-			},
-		);
-
-		const separator = Bodies.rectangle(
-			this.currentCanvasSizes.width / 2,
-			this.currentCanvasSizes.height / 2,
-			this.currentCanvasSizes.width,
-			this.map(
-				8,
-				this.defaultCanvasSizes.height,
-				this.currentCanvasSizes.height,
-			),
-			{
-				isSensor: true,
-				render: {
-					fillStyle: '#CFF4FF',
-				},
-			},
-		);
-
-		const centerCirle = Bodies.circle(
-			this.currentCanvasSizes.width / 2,
-			this.currentCanvasSizes.height / 2,
-			this.map(8, this.defaultCanvasSizes.width, this.currentCanvasSizes.width),
-			{
-				isSensor: true,
-				render: {
-					fillStyle: '#CFF4FF',
-				},
-			},
-		);
-
-		Composite.add(engine.world, [
-			this.topPaddle,
-			this.bottomPaddle,
-			separator,
-			centerCirle,
-			this.ball,
-			this.rightRect,
-			this.leftRect,
-			// bottomRect,
-			// topRect,
-		]);
-	}
-
-	handleGameCircleObstacles() {
-		const topLeftObstacle = Bodies.circle(
-			this.currentCanvasSizes.width / 4,
-			this.currentCanvasSizes.height / 4,
-			this.map(
-				50,
-				this.defaultCanvasSizes.width,
-				this.currentCanvasSizes.width,
-			),
-			{
-				isStatic: true,
-				render: {
-					fillStyle: 'white',
-				},
-			},
-		);
-
-		const topRightObstacle = Bodies.circle(
-			(3 * this.currentCanvasSizes.width) / 4,
-			this.currentCanvasSizes.height / 4,
-			this.map(
-				40,
-				this.defaultCanvasSizes.width,
-				this.currentCanvasSizes.width,
-			),
-			{
-				isStatic: true,
-				render: {
-					fillStyle: 'white',
-				},
-			},
-		);
-
-		const bottomRightObstacle = Bodies.circle(
-			(3 * this.currentCanvasSizes.width) / 4,
-			(3 * this.currentCanvasSizes.height) / 4,
-			this.map(
-				50,
-				this.defaultCanvasSizes.width,
-				this.currentCanvasSizes.width,
-			),
-			{
-				isStatic: true,
-				render: {
-					fillStyle: 'white',
-				},
-			},
-		);
-
-		const bottomLeftObstacle = Bodies.circle(
-			this.currentCanvasSizes.width / 4,
-			(3 * this.currentCanvasSizes.height) / 4,
-			this.map(
-				40,
-				this.defaultCanvasSizes.width,
-				this.currentCanvasSizes.width,
-			),
-			{
-				isStatic: true,
-				render: {
-					fillStyle: 'white',
-				},
-			},
-		);
-
-		Composite.add(engine.world, [
-			topLeftObstacle,
-			topRightObstacle,
-			bottomLeftObstacle,
-			bottomRightObstacle,
-		]);
-	}
-
-	handleVerticalObstacles() {
-		const verticalObstacle1 = Bodies.rectangle(
-			this.currentCanvasSizes.width -
-				this.map(
-					65,
-					this.defaultCanvasSizes.width,
-					this.currentCanvasSizes.width,
-				),
-			this.currentCanvasSizes.height / 5,
-			this.map(
-				15,
-				this.defaultCanvasSizes.width,
-				this.currentCanvasSizes.width,
-			),
-			this.map(
-				170,
-				this.defaultCanvasSizes.height,
-				this.currentCanvasSizes.height,
-			),
-			{
-				render: {
-					fillStyle: 'white',
-				},
-				isStatic: true,
-			},
-		);
-
-		const verticalObstacle2 = Bodies.rectangle(
-			this.currentCanvasSizes.width / 2,
-			this.currentCanvasSizes.height / 3,
-			this.map(
-				15,
-				this.defaultCanvasSizes.width,
-				this.currentCanvasSizes.width,
-			),
-			this.map(
-				100,
-				this.defaultCanvasSizes.height,
-				this.currentCanvasSizes.height,
-			),
-			{
-				render: {
-					fillStyle: 'white',
-				},
-				isStatic: true,
-			},
-		);
-
-		const verticalObstacle3 = Bodies.rectangle(
-			this.map(
-				65,
-				this.defaultCanvasSizes.width,
-				this.currentCanvasSizes.width,
-			),
-			(2 * this.currentCanvasSizes.height) / 3,
-			this.map(
-				15,
-				this.defaultCanvasSizes.width,
-				this.currentCanvasSizes.width,
-			),
-			this.map(
-				170,
-				this.defaultCanvasSizes.height,
-				this.currentCanvasSizes.height,
-			),
-			{
-				render: {
-					fillStyle: 'white',
-				},
-				isStatic: true,
-			},
-		);
-
-		const verticalObstacle4 = Bodies.rectangle(
-			this.currentCanvasSizes.width -
-				this.map(
-					65,
-					this.defaultCanvasSizes.width,
-					this.currentCanvasSizes.width,
-				),
-			(4 * this.currentCanvasSizes.height) / 5,
-			this.map(
-				15,
-				this.defaultCanvasSizes.width,
-				this.currentCanvasSizes.width,
-			),
-			this.map(
-				170,
-				this.defaultCanvasSizes.height,
-				this.currentCanvasSizes.height,
-			),
-			{
-				render: {
-					fillStyle: 'white',
-				},
-				isStatic: true,
-			},
-		);
-
-		Composite.add(engine.world, [
-			verticalObstacle1,
-			verticalObstacle2,
-			verticalObstacle3,
-			verticalObstacle4,
-		]);
-	}
-
-	startGame() {
-		Runner.run(Runner.create(), engine);
-
-		this.updateBallPosition = setInterval(() => {
-			this.server.emit('updateBallPosition', this.ball.position);
-			this.calScore();
-		}, 15);
-	}
-
-	resetToDefaultPosition() {
-		// Reset Ball Position
-		Body.setPosition(this.ball, {
-			x: this.currentCanvasSizes.width / 2,
-			y: this.currentCanvasSizes.height / 2,
-		});
-
-		// Reset Paddles Position
-		Body.setPosition(this.bottomPaddle, {
-			x: this.currentCanvasSizes.width / 2,
-			y:
-				this.currentCanvasSizes.height -
-				this.map(
-					30,
-					this.defaultCanvasSizes.height,
-					this.currentCanvasSizes.height,
-				),
-		});
-	}
-
-	calScore() {
-		if (this.ball.position.y > this.bottomPaddle.position.y) {
-			this.playerOneScore++;
-			this.server.emit('updateScore', {
-				playerOneScore: this.playerOneScore,
-				playerTwoScore: this.playerTwoScore,
-			});
-			// this.sound.win.play();
-			this.resetToDefaultPosition();
-		}
-		if (this.playerOneScore === 2 || this.playerTwoScore === 2) {
-			// TODO: latter We Will Close The Socket With The Specific SocketID:
-			this.playerOneScore = 0;
-			this.playerTwoScore = 0;
-			///////////////////////
-			this.server.emit('gameIsFinished', {});
-
 			// Clear Game
-			this.handleClearGame();
+
+			const score1 = this.mapPong[game.user1.id].playerOneScore;
+			const score2 = this.mapPong[game.user1.id].playerTwoScore;
+			// delete this.mapPong[game.user1.id];
+			if (!this.mapPong[game.user1.id]) console.log('zpi');
+			console.log(
+				this.mapPong[game.user1.id].playerOneScore,
+				this.mapPong[game.user1.id].playerTwoScore,
+			);
+			this.mapPong[game.user1.id].handleClearGame();
+			delete this.mapPong[game.user1.id];
+			this.queueGame = this.queueGame.filter(
+				(game) => game.socket1.user.sub != user1,
+				// await this.gameservice.createTwoMatchHistory(
+				// 	user1,
+				// 	user2,
+				// 	score1,
+				// 	score2,
+				// 	duration,
+				// ),
+			);
 		}
 	}
+	// End Queue---------------------------------------
+	@SubscribeMessage('launchGameRequest')
+	handleLaunchGameRequest(
+		@MessageBody() gameData: any,
+		@ConnectedSocket() socket: AuthenticatedSocket,
+	) {
+		const game = this.getQueueGame(socket.user.sub);
+		if (!game) return;
+		if (
+			game &&
+			!game.launch &&
+			(game.socket1.id === socket.id || game.socket2.id === socket.id)
+		) {
+			game.launch = true;
+			return;
+		}
 
-	handleClearGame() {
-		// Clear Intervals:
-		clearInterval(this.movePaddleInterval);
-		clearInterval(this.updateBallPosition);
-
-		// const displayBodies = (str: string) => {
-		// 	console.log(str);
-		// 	for (let body of engine.world.bodies) console.log(body);
-		// };
-
-		// displayBodies('before');
-		for (let body of engine.world.bodies) Composite.remove(engine.world, body);
-		// Composite.remove(engine.world, [
-		// 	this.bottomPaddle,
-		// 	this.ball,
-		// 	this.rightRect,
-		// ]);
-		// displayBodies('after');
-
-		// Remove Events:
-		// Events.off(engine, 'collisionStart', this.handleCollisionStart);
-		// Events.off(engine, 'beforeUpdate', this.handleBeforeUpdate);
-
-		// clearTimeout Of Paddle Game Runner:
-		// clearTimeout(this.lunchGameInterval);
-
-		// Stop The Runner:
-		Runner.stop(runner);
-
-		// Clear Engine:
-		Engine.clear(engine);
-		World.clear(engine.world, false);
-
-		// Remove Listeners:
-		// document.removeEventListener('keydown', this.handleKeyDown);
-		// document.removeEventListener('keyup', this.handleKeyUp);
-
-		// Close Socket!
-		// clearInterval(this.moveInterval);
-		// this.socket.disconnect();
+		this.mapPong[game.user1.id] = new PongGame(this, game);
 	}
 
-	handlePaddleMove() {
-		this.movePaddleInterval = setInterval(() => {
-			let stepX = 0;
+	@SubscribeMessage('keyevent')
+	handleKeyDown(
+		@MessageBody() data: any,
+		@ConnectedSocket() socket: AuthenticatedSocket,
+	) {
+		const game = this.getQueueGame(socket.user.sub);
+		if (!game) return;
 
-			if (this.movingLeft) {
-				stepX = this.posPaddleX - 13;
-				if (stepX <= this.paddleSizes.width / 2) {
-					stepX = this.paddleSizes.width / 2;
-				}
-			} else if (this.movingRight) {
-				stepX = this.posPaddleX + 13;
-				if (
-					stepX >=
-					this.currentCanvasSizes.width - this.paddleSizes.width / 2
-				) {
-					stepX = this.currentCanvasSizes.width - this.paddleSizes.width / 2;
-				}
-			}
-			if (stepX != 0) {
-				this.posPaddleX = stepX;
-				Body.setPosition(this.bottomPaddle, {
-					x: stepX,
-					y: this.bottomPaddle.position.y,
-				});
-				this.server.emit('updatePaddlePosition', {
-					paddleLabel: 'bottomPaddle',
-					xPosition: stepX,
-				});
-			}
-		}, 20);
+		this.mapPong[game.user1.id].handleKeyDown(data);
 	}
 }

@@ -1,7 +1,5 @@
 "use client";
 import PlayModeCard from "@/app/components/PlayModeCard";
-import { SocketContext, socket } from "./SocketContext";
-import { atom } from "jotai";
 
 const PlayMode = () => {
 	return (
@@ -11,21 +9,10 @@ const PlayMode = () => {
 				<div className="font-['Whitney_Bold'] text-xl min-[580px]:text-2xl min-[940px]:text-3xl">
 					OR
 				</div>
-				<SocketContext.Provider value={socket}>
-					<PlayModeCard flag="online" />
-				</SocketContext.Provider>
+				<PlayModeCard flag="online" />
 			</div>
 		</div>
 	);
 };
-
-export const gameData = atom({
-	chosenGameMode: "",
-	chosenMapIndex: 0,
-	canvasSizes: {
-		width: 560,
-		height: 836
-	},
-});
 
 export default PlayMode;
