@@ -47,7 +47,7 @@ const ChatComponnent  = () =>{
 		});
 	  };
 
-	const socket = useContext(socketContext).socket
+	const socket = useContext(socketContext).socket;
     const router = useRouter();
 	const [show, setShow] = useState<any>(false);
     const { updateChannel, channel } = useContext(socketContext);
@@ -63,7 +63,8 @@ const ChatComponnent  = () =>{
     };
     useEffect(() => {
       dispatch(fetchConversationThunk());
-	  dispatch(fetchAuthUser())
+	  dispatch(fetchAuthUser());
+	
     }, [dispatch]);
 
 	const handleDebloque = async (conversation : ConversationTypes) => {
@@ -138,7 +139,13 @@ const ChatComponnent  = () =>{
 			ToastError("Failed to block this friend. Please try again.");
   
 		}
+
 	  };
+	  
+	  const countUnread = async (id : string)=>{
+		const count = await dispatch(fetchMessagesUnreadThunk(id));
+		return count;
+	}
 	  const deleteConversation = async (conversation : ConversationTypes) =>{
 		try {
 			await dispatch(fetchDeleteConversation(conversation.id));
@@ -164,6 +171,7 @@ const ChatComponnent  = () =>{
 		</div>
 			<div className="p-2">
 				{conversations.map(function(elem : ConversationTypes){
+					 const unreadCount = messagesUnread[elem.id] || 0;
 						function handleClick()
 						{
 							updateChannel(elem)
@@ -175,6 +183,7 @@ const ChatComponnent  = () =>{
 						{
 							router.push(`/dashboard/${elem.recipientId}`)
 						}
+						
 
 						return(
 							<div onClick={handleClick}  key={elem.id}  className={`cursor-pointer rounded-lg hover:bg-[#F2F3FD] ${
@@ -194,9 +203,8 @@ const ChatComponnent  = () =>{
 				         			 />
       
                 					{openMenuId === elem.id &&
-                						<div className={`absolute  top-[-120px] left-2 h-[140px]  w-[200px] flex-col items-center justify-center gap-1 rounded-[15px] border-2 border-solid border-[#000000] bg-white font-['Whitney_Semibold'] `}>
+                						<div className={`absolute  top-[-120px] left-2 h-[120px]  w-[200px] flex-col items-center justify-center gap-1 rounded-[15px] border-2 border-solid border-[#000000] bg-white font-['Whitney_Semibold'] `}>
 					        				<button className={`bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> handleClickUser()}>View profile</button>
-											<button className={`bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> handleClickUser()}>Invite to play</button>
 					        				<button className={` bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> deleteConversation(elem)}>Delete Chat</button>
                   							<button className={` bg-[#EA7F87] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} value="Bloque" onClick={()=> handlleBloque(elem)}>Bloque</button>
 

@@ -18,6 +18,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { socketContext } from "@/app/utils/context/socketContext";
 import { fetchMessagesThunk } from "@/app/store/messageSlice";
+import { fetchSendRequestPLay } from "@/app/store/requestSlice";
 
 
 const ListFriends = () => {
@@ -129,6 +130,22 @@ const ListFriends = () => {
                 );
 
             }
+            const handlePLayingRequest = async(display_name : string) =>{
+              try { 
+                const response= await dispatch(fetchSendRequestPLay(display_name));
+                if (response.payload && response.payload.message) {
+                  const errorMessage = response.payload.message;
+                  ToastError(`Error: ${errorMessage}`);
+                } else {
+                  ToastSuccess("Friend request sent successfully");
+    
+                }
+              } catch (err: any) {
+                ToastError(`Error: ${err.message || 'An unexpected error occurred'}!`);
+    
+              }
+
+            }
 						return(
 							<ConversationSideBarItem key={elem.id}>
                 <Image src={elem.avatar_url} className="h-14 w-14 rounded-[50%] bg-black " alt="Description of the image" width={60}   height={60} />
@@ -146,6 +163,7 @@ const ListFriends = () => {
                 {openMenuId === elem.id &&
                 <div className={`absolute  top-[-120px] left-2 h-[120px]  w-[200px] flex-col items-center justify-center gap-1 rounded-[15px] border-2 border-solid border-[#000000] bg-white font-['Whitney_Semibold'] `}>
 					        <button className={`bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`}>see profile</button>
+                  <button className={`bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> handlePLayingRequest(elem.display_name)}>Invite to play</button>
 					        <button className={` bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} onClick={()=>handleSendMessage()}>send message</button>
                   <button className={` bg-[#EA7F87] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} value="Bloque" onClick={()=> handlleBloque(elem.id)}>Bloque</button>
 

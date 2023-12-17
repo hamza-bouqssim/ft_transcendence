@@ -252,16 +252,6 @@ async markConversationAsRead(conversationId: string) {
 
 
 async findUnreadMessages(conversationId: string) {
-  // const conversation = await this.prisma.chatParticipents.findUnique({
-  //   where : {
-  //     id : conversationId
-  //   }
-
-  // });
-  // if (!conversation) {
-  //   throw new HttpException('Conversation not found', HttpStatus.BAD_REQUEST)
-
-  // }
   const unreadMessageCount = await this.prisma.message.count({
     where: {
       participentsId:conversationId,

@@ -50,9 +50,10 @@ const ConversationChannelPagechat = () => {
     socket.on('debloqueNotification', (data : any)=>{
       dispatch(fetchBlocksThunk());
       dispatch(fetchGetAllFriendsThunk());
-      if(data != null)
-      {
+      
         updateChannel(data);
+      if(channel != null)
+      {
         dispatch(fetchMessagesThunk(channel.id));
       }
 

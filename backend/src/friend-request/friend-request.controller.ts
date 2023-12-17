@@ -24,7 +24,7 @@ export class FriendRequestController {
           return res.status(401).json({ success: false, message: err.message || 'An unexpected error occurred' });
         }
       }
-      //send request to play
+      
       @Post('send-request-play')
       async sendRequestPlay(@Body() request: { display_name : string}, @Req() req, @Res() res){
         try{
@@ -45,6 +45,13 @@ export class FriendRequestController {
         const user = req.user;
         return this.friendshipService.acceptFriendRequest(request.requestId, user);
     }
+    @Post('accept_request_play')
+    async acceptRequestToPlay(@Body() request: {requestId: string}, @Req() req){
+      const user = req.user;
+      return this.friendshipService.acceptRequestToPlay(request.requestId, user);
+
+
+    }
 
 
     @Post('refuse-request')
@@ -52,6 +59,13 @@ export class FriendRequestController {
     {
         const user = req.user;
         return this.friendshipService.refuseFriendRequest(request.requestId, user); 
+    }
+
+    @Post('refuse-request-play')
+    async refuseRequestPlay(@Body() request: {requestId : string}, @Req() req){
+      const user = req.user;
+      return this.friendshipService.refusePLayRequest(request.requestId, user); 
+
     }
     
 

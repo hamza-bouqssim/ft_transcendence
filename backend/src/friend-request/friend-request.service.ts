@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Injectable, UnauthorizedException,HttpStatus,HttpException } from '@nestjs/common';
+import { Injectable, HttpStatus,HttpException } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { PrismaService } from 'prisma/prisma.service';
@@ -96,7 +96,7 @@ export class FriendRequestService {
     }
 
     //send request to play 
-    async sendRequestPlay(senderDisplay_name: string, recipientDisplay_name ){
+    async sendRequestPlay(senderDisplay_name: string, recipientDisplay_name : string ){
         const user = await this.prisma.user.findFirst({where: {display_name: senderDisplay_name}});
         const recipientUser = await this.prisma.user.findFirst({where: {display_name: recipientDisplay_name}});
         
@@ -123,19 +123,21 @@ export class FriendRequestService {
         {
             throw new HttpException('Request Already Sent !', HttpStatus.BAD_REQUEST)
         }
-        const alrighdyfriend = await this.prisma.friend.findFirst(
-            {
-                where: {
-                    OR: [
-                        { user_id: user.id, friend_id: recipientUser.id, status: "ACCEPTED"},
-                        {user_id: recipientUser.id, friend_id: user.id , status: "ACCEPTED" },
-                      ],
-            }});
+        // console.log("display user-->", user.id);
+        // console.log("display rci-->", recipientUser.id);
+        // const alrighdyfriend = await this.prisma.friend.findFirst(
+        //     {
+        //         where: {
+        //             OR: [
+        //                 { user_id: user.id, friend_id: recipientUser.id, status: "ACCEPTED"},
+        //                 {user_id: recipientUser.id, friend_id: user.id , status: "ACCEPTED" },
+        //               ],
+        //     }});
 
-        if(!alrighdyfriend)
-        {
-            throw new HttpException('This is not your friend,  you cant play with !', HttpStatus.BAD_REQUEST)
-        }
+        // if(!alrighdyfriend)
+        // {
+        //     throw new HttpException('This is not your friend,  you cant play with !', HttpStatus.BAD_REQUEST)
+        // }
         const BlockedFriends = await this.prisma.blockList.findFirst(
             {
                     where: {
@@ -166,7 +168,7 @@ export class FriendRequestService {
           });
     
    
-        return {message: 'Request to play sent successfully'};
+        return {message: 'Request to play sent succesfully'};
 
 
     }
@@ -182,10 +184,15 @@ export class FriendRequestService {
             }
         })
         if(!req_play)
-            throw new UnauthorizedException ("The request doesn't exist");
+            throw new HttpException("The request doesn't exist!", HttpStatus.BAD_REQUEST)
+
         if(req_play.senderId != userId)
-            throw new UnauthorizedException ("You are not the person who send this request");
+            throw new HttpException("You are not the person who send this request", HttpStatus.BAD_REQUEST)
+
+        
         await this.prisma.friend.update({where: {id: requestId}, data: {status: 'ACCEPTED'}});
+        return {message: 'Accept request to play succesfully'};
+
 
     }
 
@@ -201,10 +208,12 @@ export class FriendRequestService {
             }
         })
         if(!req)
-            throw new UnauthorizedException ("The request doesn't exist");
+            throw new HttpException("The request doesn't exist", HttpStatus.BAD_REQUEST)
+
 
         if(req.user_id === user.id)
-            throw new UnauthorizedException("You are not authorized to accept this friend request");
+            throw new HttpException("You are not authorized to accept this friend request", HttpStatus.BAD_REQUEST)
+
        
 
         await this.prisma.friend.update({where: {id: requestId}, data: {status: 'ACCEPTED'}});
@@ -220,11 +229,12 @@ export class FriendRequestService {
         const req = await this.prisma.friend.findUnique({ where: { id: requestId } });
     
         if (!req) {
-            throw new UnauthorizedException("The request doesn't exist");
+            throw new HttpException("The request doesn't exist", HttpStatus.BAD_REQUEST)
         }
     
         if (req.friend_id !== user.id) {
-            throw new UnauthorizedException("You are not authorized to refuse this friend request");
+            throw new HttpException("You are not authorized to refuse this friend request", HttpStatus.BAD_REQUEST)
+
         }
     
         await this.prisma.friend.delete({ where: { id: requestId } });
@@ -233,14 +243,38 @@ export class FriendRequestService {
             RefuseruserId: req.friend_id,
           });
     
-        return { message: 'Friend request refused and deleted from the database' };
+        return { message: 'Friend request refused.' };
+    }
+
+    async refusePLayRequest(requestId: string, user: User){
+
+        const req = await this.prisma.requestPlay.findUnique({ where: { id: requestId } });
+    
+        if (!req) {
+            throw new HttpException("The request doesn't exist", HttpStatus.BAD_REQUEST)
+        }
+        if (req.senderId !== user.id) {
+            throw new HttpException("You are not authorized to refuse this playing request", HttpStatus.BAD_REQUEST)
+
+        }
+        await this.prisma.requestPlay.delete({ where: { id: requestId } });
+
+        this.eventEmitter.emit('requestRefuse.created', {
+            RefuseruserId: req.senderId,
+          });
+    
+        return { message: 'PLaying request refused.' };
+
+    
+
     }
 
     async block(senderId: string, recipientId: string){
         const user = await this.prisma.user.findFirst({where: {id: senderId}});
         const recipientUser = await this.prisma.user.findFirst({where: {id: recipientId}});
         if(senderId === recipientId)
-            throw new HttpException("You cant block your self ", HttpStatus.BAD_REQUEST)
+            throw new HttpException("You cant block your self", HttpStatus.BAD_REQUEST)
+
 
 
         if(!user || !recipientUser)

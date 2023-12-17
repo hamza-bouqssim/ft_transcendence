@@ -1,5 +1,5 @@
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { AcceptRequest, DebloqueUser, SendRequest, bloqueFriend, getAllFriends, getBloques, getConversationMessage, getRequest, refuseRequest} from '../utils/api';
+import { AcceptRequest, DebloqueUser, SendRequest, acceptRequestToPlay, bloqueFriend, getAllFriends, getBloques, getConversationMessage, getRequest, refusePLayRequest, refuseRequest, sendRequestPlay} from '../utils/api';
 import { AcceptRequestParams, ConversationMessage, CreateRequestParams, FriendsTypes, RequestTypes, UsersTypes, messageTypes } from '../utils/types';
 
 export interface requestState {
@@ -56,7 +56,36 @@ export const fetchREfuseFriendRquestThunk = createAsyncThunk('request/refuse', a
   return response;
 })
 
+/// request PLaying
 
+export const fetchSendRequestPLay = createAsyncThunk('request/send', async (display_name : string, { rejectWithValue })=>{
+  try{
+    const response = await sendRequestPlay(display_name);
+
+    if (!response.data.success) 
+    {
+      throw new Error(response.data.error);
+    }
+      return response.data;
+    } catch (err: any) {
+      if (err.response && err.response.data) {
+        return rejectWithValue(err.response.data); 
+      } else {
+        throw new Error("create conversation failed with an unknown error");
+      }
+  }
+})
+
+export const fetchAcceptRequestPlay = createAsyncThunk('request/accept', async(requestId: string) =>{
+  const response = await acceptRequestToPlay(requestId);
+  return response;
+})
+
+
+export const fetchRefuseRequestPlay = createAsyncThunk('request/refuse', async(requestId: string) =>{
+  const response = await refusePLayRequest(requestId);
+  return response;
+})
 
 
 
@@ -92,7 +121,23 @@ export const requestSlice = createSlice({
 
       })
       .addCase(fetchAcceptFriendRequestThunk.fulfilled, (state, action) => {
+
+      }).addCase(fetchSendRequestPLay.pending, (state: any) =>{
+        state.status = 'loading';
       })
+      .addCase(fetchSendRequestPLay.fulfilled, (state, action) => {
+        state.status = 'success';
+      }).addCase(fetchSendRequestPLay.rejected, (state: any, action )=>{
+        state.status = 'failed';
+
+      }).addCase(fetchAcceptRequestPlay.pending, (state: any) =>{
+        state.status = 'loading';
+      
+     
+      }).addCase(fetchRefuseRequestPlay.pending, (state: any) =>{
+        state.status = 'loading';
+      })
+      
      
   },
 });
