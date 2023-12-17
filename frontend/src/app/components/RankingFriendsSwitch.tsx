@@ -1,8 +1,10 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import InviteField from './InviteField';
 import { faCheck, faPlus  } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import RankedFriends from './RankedFriends';
+import Image from 'next/image';
+import { socketContext } from '../utils/context/socketContext';
 
 const RankingFriendsSwitch = () => {
     const [showRank, setShowRank] = useState(false);
@@ -50,57 +52,54 @@ const RankingFriendsSwitch = () => {
       {
         "rank": 1,
         "username": "rgatnaou",
-        "picture": "assets/rgatnaou.jpeg"
+        "picture": "https://cdn.landesa.org/wp-content/uploads/default-user-image.png"
       },
       {
         "rank": 2,
         "username": "ykhadiri",
-        "picture": "assets/yassine.png"
+        "picture": "https://cdn.landesa.org/wp-content/uploads/default-user-image.png"
       },
       {
         "rank": 3,
         "username": "souchen",
-        "picture": "assets/soukaina.png"
+        "picture": "https://cdn.landesa.org/wp-content/uploads/default-user-image.png"
       },
 
       {
         "rank": 4,
         "username": "mjalloul",
-        "picture": "assets/mjalloul.jpeg"
+        "picture": "https://cdn.landesa.org/wp-content/uploads/default-user-image.png"
       },
       {
         "rank": 5,
         "username": "abdollah",
-        "picture": "assets/mjalloul.jpeg"
+        "picture": "https://cdn.landesa.org/wp-content/uploads/default-user-image.png"
       },
       {
         "rank": 6,
         "username": "redone",
-        "picture": "assets/mjalloul.jpeg"
+        "picture": "https://cdn.landesa.org/wp-content/uploads/default-user-image.png"
       }
     ]);
 
-    const [user, setUser] = useState({
-      "picture": "assets/rgatnaou.jpeg",
-      "username": "rgatnaou",
-      "display_name": "RedOne Gatnaou"
-    })
+    const {Userdata} = useContext(socketContext);
+  
   return (
     <div className='flex flex-col items-center gap-2 pt-5 pb-10 bg-white w-full h-full rounded-[70px] overflow-hidden'>
       <div className='w-[80%] h-[22%] p-2 bg-gray-100 rounded-[50px] flex gap-1 items-center '>
 
         <button onClick={_showUser} className={`w-1/2 ${clickedButton === 'user' ? 'bg-[#498CDA] text-white' : 'bg-gray-300 text-gray-600'} h-full rounded-3xl duration-300 hover:scale-105`}>User</button>
         <button  onClick={_showRank} className={`w-1/2 bg-[#498CDA] ${clickedButton === 'rank' ? 'bg-[#498CDA] text-white' : 'bg-gray-300 text-gray-600'} h-full rounded-3xl duration-300 hover:scale-105`}>Rank</button>
-        <button onClick={_showFriends} className={`w-1/2 ${clickedButton === 'friends' ? 'bg-[#498CDA] text-white' : 'bg-gray-300 text-gray-600'} h-full rounded-3xl duration-300 hover:scale-105`}>Friends</button>
+        <button onClick={_showFriends} className={`w-1/2 ${clickedButton === 'friends' ? 'bg-[#498CDA] text-white' : 'bg-gray-300 text-gray-600'} h-full rounded-3xl duration-300 hover:scale-105`}>Suggestion</button>
 
       </div>
 
       {
         showuser && (
           <div className='pt-[10px]  flex justify-center items-center flex-col relative w-full h-[75%] rounded-[50px] text-black animate-bounce'>
-            <img src={user.picture} alt="" className='w-[145px] h-[145px] rounded-full border-solid border-4 border-[#498CDA]' />
-            <h1>{user.display_name}</h1>
-            <h5>@{user.username}</h5>
+            <Image src={players[2]?.picture}  className='w-[110px] h-[110px] rounded-full ' alt="Description of the image" width={60}   height={60} />
+            <h1>{Userdata?.display_name}</h1>
+            <h5>@{Userdata?.username}</h5>
           </div>
         )}
 
@@ -112,16 +111,16 @@ const RankingFriendsSwitch = () => {
 
           
           <div className='w-[110px] rounded-full bg-gray-100 h-[110px] border-solid border-4 border-amber-900 overflow-hidden'>
-            <img src={players[2]?.picture} alt="" />
+          <Image src={players[1]?.picture} className='w-[110px] h-[110px] rounded-full ' alt="Description of the image" width={60}   height={60} />
           </div>
 
          
           <div className='w-[140px] rounded-full bg-gray-100 h-[140px] top-0 absolute border-solid border-4 border-amber-500 overflow-hidden hover:bg-black'>
-          <img src={players[0]?.picture} alt=""/>
+          <Image src={players[0]?.picture}  className='w-[140px] h-[140px] rounded-full ' alt="Description of the image" width={60}   height={60} />
           </div>
           
           <div className='w-[110px] rounded-full bg-gray-100 h-[110px] border-solid border-4 border-gray-700 overflow-hidden'>
-          <img src={players[1]?.picture} alt="" />
+          <Image src={players[2]?.picture}  className='w-[110px] h-[110px] rounded-full ' alt="Description of the image" width={60}   height={60} />
           </div>
 
           <div className='absolute  w-[50%] mt-[150px] top-2 text-black'>
@@ -141,11 +140,10 @@ const RankingFriendsSwitch = () => {
 
         <div className=' overflow-auto scrollbar-hide'>
           <InviteField />
-          <InviteField />
-          <InviteField />
-          <InviteField />
-          <InviteField />
-          <InviteField />
+         
+          
+
+         
         </div>
 
           <button  onClick={_sendreq} className='absolute bottom-0 right-0 mb-[-35px] mr-4 rounded-full'>

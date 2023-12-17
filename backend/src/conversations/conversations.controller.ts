@@ -1,21 +1,16 @@
 /* eslint-disable prettier/prettier */
 import { Body, Controller, Get, Param, Post, UseGuards, Req, Res } from '@nestjs/common';
 import { ConversationsService } from './conversations.service';
-import { UserService } from 'src/user/user.service';
 import { Request } from 'src/user/interfaces/request.interface';
-import { whichWithAuthenticated } from 'src/user/utils/auth-utils';
-import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from 'prisma/prisma.service';
 import { AuthGuard } from '@nestjs/passport';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { createMessageDto } from './dtos/CreateMessage.dto';
 
 
 
 @Controller('chat')
 @UseGuards(AuthGuard('jwt'))
 export class ConversationsController {
-constructor(private  conversationService : ConversationsService ,)
+constructor(private  conversationService : ConversationsService , private eventEmitter : EventEmitter2)
 {}
 
 
@@ -27,7 +22,6 @@ constructor(private  conversationService : ConversationsService ,)
         const returnValue = await this.conversationService.createConversations(user,  request.display_name);
         return res.status(200).json({ success: true, response: returnValue });
     } catch (err) {
-        console.log(err);
         return res.status(401).json({ success: false, message: err.message || 'An unexpected error occurred' });
     }
 
@@ -49,24 +43,35 @@ async findConversationUser(@Body() request: {display_name : string}, @Req() req:
 }
 @Get(':id')
 async getconversationById(@Param('id') id: string){
-    // return this.conversationService.find();
     const conversation = await this.conversationService.findConversationById(id);
-    // console.log(conversation)
     return conversation;
 }
-// @Post('create_messages')
-// async createConversation(@Req() req: Request , @Body() dto : createMessageDto)
-// {    
-//     const user =req.user
-//     const messages = await this.conversationService.createMessags(user, dto);
-//     return this.eventEmitter.emit('message.create', messages);
-    
-// }
+
 
 @Get('messages/:conversationId')
 async getMessagesFromConversatin(@Param('conversationId') conversationId : string){
     const getMessages = await this.conversationService.getMessageByConversationId(conversationId);
    return getMessages;
 }
+
+@Get(':id/mark-as-read')
+async markConversationAsRead(@Param('id') id: string) {
+  await this.conversationService.markConversationAsRead(id);
+}
+
+@Post('unread-messages')
+async getUnreadMessages(@Body() request: {conversationId : string}) {
+  const unreadMessages = await this.conversationService.findUnreadMessages(request.conversationId);
+  return unreadMessages;
+}
+// delete conversation
+
+@Post('delete-conversation')
+  async deleteConversation(@Body() request: {conversationId : string}) {
+      const deleteConversation = await this.conversationService.deleteConversation(request.conversationId);
+      return deleteConversation;
+     
+  }
+
 
 }

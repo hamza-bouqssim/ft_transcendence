@@ -19,12 +19,8 @@ const SignIn = () => {
 						</div>
 					</div>
 					<div className="flex cursor-pointer items-center justify-center gap-4">
-						<Link href="http://localhost:8000/auth/google/login">
-							<GoogleSignInButton />
-						</Link>
-						<Link href="http://localhost:8000/auth/42/login">
-							<IntraSignInButton />
-						</Link>
+						<Link href="http://localhost:8000/auth/google/login" ><GoogleSignInButton /></Link>
+						<Link href="http://localhost:8000/auth/42/login" ><IntraSignInButton /></Link>
 					</div>
 					<div className="relative h-[2px] w-56 bg-[#8E8E8E] md:w-[17rem]">
 						<span className="absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] transform bg-white px-2 text-[.7rem] text-[#8E8E8E] sm:text-sm md:text-[.9rem]">
@@ -36,7 +32,7 @@ const SignIn = () => {
 					</div>
 					<Link href={"/signUp"}>
 						<h2 className="font-['Whitney_SemiBold'] text-xs text-[--purple-color] lg:text-lg xl:text-xl">
-							{"Don't Have An Account?"}
+							Don`t Have An Account?
 							<span className="text-xs text-[--pink-color] underline lg:text-xl xl:text-2xl">
 								{" "}
 								Register

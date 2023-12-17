@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
+import { User } from 'src/gateway/User';
 import { findUserParams } from 'src/utils/types';
 
 @Injectable()
@@ -24,65 +25,75 @@ export class UserService {
         
     }
 
+    async allFriendsRequest(userId : string)
+    {
+        const friendsAsUser = await this.prisma.friend.findMany({
+            where: {
+                OR: [
+                    {user_id: userId},
+                    {friend_id: userId}
+                ]
+            
+            },
+        
+        });
+        return friendsAsUser;
+
+    }
+
 
     async changeDisplayedName(_email: string, newDisplayedName: string){
-        const find = await this.prisma.user.findUnique({where: {email:_email}});
+        const find = await this.prisma.user.findUnique({where: {email:_email}});        
+            if(!find)
+                throw new HttpException("User Not Found!", HttpStatus.BAD_REQUEST); 
+            if (find.display_name === newDisplayedName)
+                throw new Error("This Display Name already in use, Choose another one !!!");
 
-        // console.log("old: " + (find?.display_name || 'null') + "\n new:  " + newDisplayedName);
-        
-        if(!find)
-            throw new UnauthorizedException("User Not Found!")
-        if (find.display_name === newDisplayedName)
-            throw new UnauthorizedException("This Display Name already in use, Choose another one !!!");
-        //should search if there a user with the same display_name that i want to put to that user
         const search = await this.prisma.user.findUnique({
-            where:{
-                display_name: newDisplayedName
-            }
+            where : {
+            display_name: newDisplayedName
+        }
         })
+
         if(search)
         {
-            throw new UnauthorizedException("Display_name alrighdy in use");
+            throw new HttpException("Display_name alrighdy in use", HttpStatus.BAD_REQUEST);
         }
+
         const updatedDipslayName = await this.prisma.user.update({
             where: {email: _email},
             data: {display_name: newDisplayedName}
         })
 
         if(!updatedDipslayName)
-            throw new UnauthorizedException("Error");
+            throw new HttpException("Error", HttpStatus.BAD_REQUEST);
         
-            return updatedDipslayName;
-    }
+        return {message : 'Update display_name  succefully'}    }
+
+
 
     async changeUserName(_email: string, newUserName: string){
         const find = await this.prisma.user.findUnique({where: {email:_email}});
 
-        
         if(!find)
-            throw new UnauthorizedException("User Not Found!")
-        if (find.username === newUserName)
-            throw new UnauthorizedException("This UserName already in use, Choose another one !!!");
-
+            throw new HttpException("User Not Found!", HttpStatus.BAD_REQUEST);
         const updatedUserName = await this.prisma.user.update({
             where: {email: _email},
-            data: {username: newUserName}
+            data: {username: newUserName},
         })
-
         if (!updatedUserName)
-            throw new UnauthorizedException("Error");
-        
-            return updatedUserName;
+            throw new HttpException("Error",  HttpStatus.BAD_REQUEST);
+        return {message : 'Update username succefully'}
+
     }
 
     async _changeAvatar(_email: string, avatarPath: any)
     {
         const find = await this.prisma.user.findUnique({where: {email:_email}});
 
-        // console.log("old: " + (find?.avatar_url || 'null') + "\n new:  " + avatarPath);
         
         if(!find)
-            throw new UnauthorizedException("User Not Found!")
+            throw new HttpException("User Not Found!",  HttpStatus.BAD_REQUEST)
 
         const updatedAvatar = await this.prisma.user.update({
             where: {email: _email},
@@ -90,9 +101,9 @@ export class UserService {
         })
 
         if (!updatedAvatar)
-            throw new UnauthorizedException("Error");
+            throw new HttpException("Error",  HttpStatus.BAD_REQUEST);
         
-            return updatedAvatar;
+            return {message : 'Updating Image succefuly'};
     }
 
     async listFriends(userId: string) {
@@ -145,13 +156,47 @@ export class UserService {
     
     async pendingRequests(userId: string)
     {
-        return await this.prisma.friend.findMany({where: { friend_id: userId, status: 'PENDING'}, select: {id : true , user: {select: {id: true, username: true, display_name: true, avatar_url:true}}}});
+        return await this.prisma.friend.findMany({where: { friend_id: userId, status: 'PENDING'}, select: {id : true , user: {select: {id: true, username: true, display_name: true, avatar_url:true}}, friends: true}});
     }
 
-    async blockedFriends(userId: string)
-    {
-        return await this.prisma.friend.findMany({where: {friend_id: userId, status: 'BLOCKED'}, select: {user: {select: {id: true, username: true, display_name: true, avatar_url:true}}}});
+    async pendingPLayingRequest(userId : string){
+        return await this.prisma.requestPlay.findMany({
+            where : {
+                recipientId: userId, status: 'PENDING'
+            },
+            select:{
+                Sender : true,
+                recipient : true,
+            }
+        })
+
     }
+
+    async blockedFriends(userId: string) {
+        const blockedUsers = await this.prisma.blockList.findMany({
+          where: {
+            userOneId: userId,
+          },
+        });
+      
+        const blockedUserIds = blockedUsers.map(block => block.userTwoId);
+      
+        const blockedFriends = await this.prisma.user.findMany({
+          where: {
+            id: {
+              in: blockedUserIds,
+            },
+          },
+          select: {
+            id: true,
+            username: true,
+            display_name: true,
+            avatar_url: true,
+          },
+        });
+      
+        return blockedFriends;
+      }
     
     async findByEmail(email : string)
     {
@@ -213,5 +258,97 @@ export class UserService {
         });
     }
 
+    async allFriendsId(userId: string) {
+        const friends = await this.prisma.friend.findMany({
+          where: {
+            OR: [
+              { user_id: userId },
+              { friend_id: userId },
+            ],
+          },
+          include: {
+            user: true,
+            friends: true,
+          },
+        });
+        const processedFriends = friends.map((friend) => {
+            if (friend.user.id === userId) {
+              return friend.friends; // Display friend data if the user initiated the request
+            } else {
+              return friend.user; // Display user data if the friend initiated the request
+            }
+          });
+      
+    
+        return processedFriends;
+      }
+
+      async userInfo(user_id : string){
+
+        const user = await this.prisma.user.findUnique({
+            where: { id: user_id},
+            
+            
+          });
+          if (!user) {
+            throw new NotFoundException('User not found');
+          }
+          return user;
+
+      }
+      // create notification
+
+      async createNotification(userSender: User, userRecipient: User, message: string) {
+        const notification = await this.prisma.notificationGlobal.create({
+            data: {
+                Sender: { connect: { id: userSender.id } },
+                recipient: { connect: { id: userRecipient.id } },
+                content: message,
+                image_content: userSender.avatar_url,
+            },
+        });
+    
+        return notification;
+    }
+    async notificationCreate(user : User){
+
+        await this.prisma.notificationGlobal.updateMany({
+            where: {
+                recipient_id: user.id,
+            },
+            data: {
+                vue: true,
+            },
+        });
+        const notifications = await this.prisma.notificationGlobal.findMany({
+            where: {
+                recipient_id: user.id,
+            },
+            include: {
+                Sender: true, // Corrected syntax: remove the semicolon and use a comma
+            },
+        });
+
+        return notifications;
+    }
+
   
+
+    async isBlockedByUser(senderId: string, recipientUserId: string): Promise<boolean> {
+        const blockedFriends = await this.blockedFriends(senderId);
+        return blockedFriends.some((friend) => friend.id === recipientUserId);
+      }
+    //   async notificationMessage(chatId : string, userId : string){
+    //     // const notificationMessage = await this.prisma.notificationGlobal.create({
+    //     //     data: {
+    //     //         Sender: { connect: { id: userSender.id } },
+    //     //         recipient: { connect: { id: userRecipient.id } },
+    //     //         content: message,
+    //     //         image_content: userSender.avatar_url,
+    //     //     },
+    //     // });
+
+
+    //   }
 }
+

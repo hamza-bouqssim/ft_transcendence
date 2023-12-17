@@ -75,8 +75,8 @@ export class PongGame {
 	private posBottomPaddleX = this.defaultCanvasSizes.width / 2;
 	playerOneScore: number = 0;
 	playerTwoScore: number = 0;
-	private updateBallPosition: NodeJS.Timer;
-	private movePaddleInterval: NodeJS.Timer;
+	private updateBallPosition: any;
+	private movePaddleInterval: any;
 
 	private user1: string;
 	private user2: string;

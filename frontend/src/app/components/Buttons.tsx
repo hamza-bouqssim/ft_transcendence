@@ -21,7 +21,6 @@ export const GoogleSignInButton = () => {
 			await loginGoogle();
 		} catch (err) {
 			alert("failed to login");
-			// console.log(err);
 		}
 	};
 
@@ -104,12 +103,9 @@ export const LogoutButton = (props: any) => {
 	const router = useRouter();
 	const logoutFunction =  async () =>{
 		try {
-			await getlogout();
-			deleteCookie('logged');
-			router.push("/", { scroll: false });
+			window.location.href = "http://localhost:8000/auth/logout";
 		} catch (err) {
 			alert("failed to logout");
-			console.log(err);
 		}
 	}
 	return (
