@@ -41,7 +41,6 @@ model User {
   senderNotif NotificationGlobal[] @relation("sender")
   recipientNotif NotificationGlobal[] @relation("recipient")
   senderNotifMessage NotificationMessage[] @relation("senderMessage")
-  recipientNotifMessage NotificationMessage[] @relation("recipientMessage")
   senderOfmessage Message[] @relation("senderMessage")
   player1 Pong_match[]  @relation("player1")
   player2 Pong_match[]  @relation("player2")
@@ -180,14 +179,16 @@ model NotificationGlobal {
   recipient User @relation("recipient",fields: [recipient_id], references: [id])
 
 }
+
 model NotificationMessage{
   id String @id @default(uuid())
-  sender_id String
-  recipient_id String
-  sender User @relation("senderMessage",fields: [sender_id], references: [id])
-  recipient User @relation("recipientMessage", fields: [recipient_id], references: [id])
-  vue Boolean @default(false)
+  roomId String
+  userId String
+  number Int @default(0)
+  UserId User @relation("senderMessage",fields: [userId], references: [id])
 }
+
+
 
 model ChatRoom {
   id        String @id @default(uuid())
@@ -222,5 +223,3 @@ model MessageRome{
   chatRoom    ChatRoom    @relation(fields: [chatRoomId], references: [id])
 
 }
-
-

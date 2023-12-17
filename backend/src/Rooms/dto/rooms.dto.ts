@@ -92,3 +92,18 @@ export class getAllRooms{
     id :string;
 
 }
+
+export class JoinRooms{
+   
+    @IsNotEmpty()
+    @IsString()
+    id :string;
+
+    @IsNotEmpty()
+    @IsString()
+    Privacy :string;
+
+
+    @IsString()
+    password :string;
+}

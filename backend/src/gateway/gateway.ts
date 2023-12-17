@@ -37,11 +37,14 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
             if (!this.NsessionOfuser.has(userId)) {
                 
                 this.NsessionOfuser.set(userId, 1);
-                await this.prisma.user.update({
-                    where: { id: userId},
-                    data: { status: "online"},
-                    
-                });
+                const existingUser = await this.prisma.user.findUnique({ where: { id:userId  } });
+                if (existingUser) {
+                    await this.prisma.user.update({
+                        where: { id: userId},
+                        data: { status: "online"},
+                        
+                    });
+                }
             } else {
                 const sessionNumber = this.NsessionOfuser.get(userId) + 1;
                 this.NsessionOfuser.set(userId, sessionNumber);
@@ -54,7 +57,6 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
     async handleMessageCreateEvent(socket : AuthenticatedSocket,payload : any){
         const messages = await this.conversationService.createMessags(socket.user, payload);
         this.server.to(messages.participents.recipient.id).to(messages.participents.sender.id).to(messages.participentsId.toString()).emit('onMessage', messages, socket.user);
-        this.userService.notificationMessage( messages.participents.senderId, messages.participents.recipientId);
 
     }
     
@@ -98,11 +100,14 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
                 } else {
                     
                     this.NsessionOfuser.delete(userId);
-                    await this.prisma.user.update({
-                        where: { id: socket.user.sub},
-                        data: { status: "offline"},
-                        
-                    });
+                    const existingUser = await this.prisma.user.findUnique({ where: { id:userId } });
+                    if (existingUser) {
+                        await this.prisma.user.update({
+                            where: { id: userId},
+                            data: { status: "offline"},
+                            
+                        });
+                    }
                     this.eventEmitter.emit('offline.created', { userId });
                 }
             }

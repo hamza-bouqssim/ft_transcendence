@@ -304,18 +304,7 @@ export class UserService {
         return notifications;
     }
 
-    async notificationMessage(userId : string, recipientId : string){
-        const notification = await this.prisma.notificationMessage.create({
-            data: {
-                sender: { connect: { id: userId } },
-                recipient: { connect: { id: recipientId } },
-            },
-        });
-    
-        return notification;
 
-            
-    }
 
     async isBlockedByUser(senderId: string, recipientUser: string): Promise<boolean> {
         console.log("enter");
