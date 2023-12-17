@@ -15,16 +15,17 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy)
         });
     }
     async validate(accessToken: string, refreshToken: string, profile: any){
+        console.log(profile._json.login + " " + profile._json.usual_full_name);
         const dto: AuthDto = {
             email: profile.emails[0]?.value,
             username: profile._json.usual_full_name,
-            display_name: await this.authService.generateNickname(profile.emails[0]?.value),
-            avatar_url: profile._json.image.link || "api_backend/src/uploads/default-profile-photo.jpg",
+            display_name: profile._json.login,
+            avatar_url: profile._json.image?.link || "api_backend/src/uploads/default-profile-photo.jpg",
         };
         const user = await this.authService.validateUser(dto);
         if(!user)
         {
-            throw new UnauthorizedException("Google Authentication Failed");
+            throw new UnauthorizedException("Google Authentication Failed"); 
         }
         return user;
     }

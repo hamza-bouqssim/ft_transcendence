@@ -79,7 +79,7 @@ const Dashboard = () => {
 							<Boxes title="LOSSES" value={results.LOSSES} color="#FC7785"/>
 						</div>
 						<h1 className="mt-[20px]">History</h1>
-						<div className=" history-header mt-[20px]  w-full h-[40px] bg-[#79a9f28d] rounded-[40px] flex justify-between px-1 py-1 ">
+						<div className=" history-header mt-[20px] shadow-lg w-full h-[40px] bg-[#79a9f28d] rounded-[40px] flex justify-between px-1 py-1 ">
 								<div className="w-[23%] text-center ">
 								<h1>Players</h1>
 								</div>

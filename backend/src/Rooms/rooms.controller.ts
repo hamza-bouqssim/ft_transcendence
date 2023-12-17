@@ -24,7 +24,7 @@ export class RoomsController {
     try {
       const {id}=req.user
       const chatRoom = await this.roomsService.getAllRooms(id);
-      return res.status(200).json({data: chatRoom });
+      return res.status(200).json({success : true,data: chatRoom });
     } catch (error) {
       return res.status(401).json({message: error.response});
     }

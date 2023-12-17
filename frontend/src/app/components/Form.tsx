@@ -1,158 +1,87 @@
-import { useContext, useEffect, useState } from "react";
+import { useState ,useContext} from "react";
 import PopUp from "./popUp";
 import Swal from "sweetalert2";
-import { useForm } from "react-hook-form";
-import { CreateChangeParams, User } from "../utils/types";
-import { AppDispatch } from "../store";
-import { useDispatch } from "react-redux";
-import {  fetchUpdateAvatar, fetchUpdateDisplayName, fetchUpdateUserName } from "../store/usersSlice";
-import Image from "next/image";
-// import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { socketContext } from "../utils/context/socketContext";
-import { getAuthUser } from "../utils/api";
+import { Qrcodeform } from "./Qrcodefom";
+import { changeDisplayedName, changePhoto, changeUserName, disable2Fa, firstTime } from "../utils/api";
+import { useRouter } from "next/navigation"
 
+type FormProps = {
+	img: string;
+};
 
+const Form = ({ img }: FormProps) => {
+	
+	const {Userdata, setUserdata} : any = useContext(socketContext);
 
-const Form = () => {
-	const [name, setName] = useState<string>("");
-	const [login, setLogin] = useState<string>("");
-	const [pass, setPass] = useState<string>("");
-	const [confirm, setConfirm] = useState<string>("");
+	const router = useRouter();
+	console.log("user data form",Userdata);
+	const [display2fa,setDisplay2fa] = useState(false);
 	const [show, setShow] = useState<boolean>(false);
-	const {register, handleSubmit,formState: { errors }} = useForm<CreateChangeParams>();
-	const dispatch = useDispatch<AppDispatch>();
-
-	const ToastFunction = (message : any) => {
-		toast.error(message, {
-		  position: toast.POSITION.TOP_RIGHT,
-		  autoClose: 5000, // You can customize the duration
-		  hideProgressBar: false,
-		  closeOnClick: true,
-		  pauseOnHover: true,
-		  draggable: true,
-		});
-	  };
-	
-	
-
-	const onSubmit = async (data: CreateChangeParams) => {
-		try {
-		  const res1 = await dispatch(fetchUpdateDisplayName(data.display_name));
-		  if(res1.payload.success)
-		  {
-			ToastFunction(res1.payload.response.message);
-
-		  }else{
-			ToastFunction(res1.payload.message);
-
-		  }
-		  const res2 = await dispatch(fetchUpdateUserName(data.username));
-		  if(res2.payload.success)
-		  {
-			ToastFunction(res2.payload.response.message);
-
-		  }else{
-			ToastFunction(res2.payload.message);
-
-		  }
-		  data.avatarUrl = "https://media.macphun.com/img/uploads/customer/how-to/579/15531840725c93b5489d84e9.43781620.jpg?q=85&w=1340";
-		  console.log("avatar-->", data.avatarUrl[0]);
-		  const formData = new FormData();
-
-		  formData.append('file', data.avatarUrl); 
-		  const res3 = await dispatch(fetchUpdateAvatar(formData));
-		  console.log("res3-->", res3);
-    		if (res3.payload.success) {
-      			ToastFunction(res3.payload.response.message);
-    		} else {
-      			ToastFunction(res3.payload.message);
-    		}
+	const [_username, setUsername] = useState("");
+	const [_display_name, setDisplayname] = useState("");
+	const [message, setMessage] = useState("");
+	const [success, setSuccess] = useState(true);
 
 
 
-		 
-    	
-    
-		} catch (err: any) {
-			ToastFunction(`An unknown error occurred`);
-		}
-	  };
+	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		await changeDisplayedName(_display_name).then((res) => {
+			// if(res.data.success == false)
+			// {
+				setMessage(res.data.message);
+				setSuccess(res.data.success);
 
-	  const [user, setUser] = useState<User | undefined>();
+			// }
+		})
+		
+		.catch((e) =>{
+			
+			setMessage(e.data.message);
+			setSuccess(e.data.success);
+			console.log("error:", e.response.data.message);
+		})
+		changeUserName(_username).then(result => console.log("res",result))
+		await changePhoto(Userdata.avatar_url).then((result) => console.log(result));
+		setUserdata({...Userdata, username: _username, display_name: _display_name, first_time:false});
+		await firstTime().then(rslt => console.log(rslt));
+		if(Userdata.first_time)
+			router.push('/dashboard');
+	};
 
-	  useEffect(() => {
-        getAuthUser().then(({data}) => {
-            setUser(data);
-        })
-        .catch((err)=> {console.log(err);});
-    }, [user])
-
+	const closeQrForm : () => void = () => {
+		setDisplay2fa(false);
+	}
+	const _disable = async () => {
+		  await disable2Fa().then((res)=>{
+			console.log("success", res);
+			// setIsVerified(res.data.success);
+			setUserdata({...Userdata, tfa_enabled: false});
+		  })
+		  .catch((e) =>{
+		  console.log("error:", e);
+		})
+	  }
 	return (
+		<>
 		<div>
-			{/* <ToastContainer /> */}
 			<form
 				className="mt-11 text-[15px] text-black md:text-[18px] lg:text-[21px]"
-				onSubmit={handleSubmit(onSubmit)}
-
+				onSubmit={handleSubmit}
 			>
-				<div className="flex flex-col items-center justify-around gap-5 border-b border-[#9f9f9f4a] pb-3 md:flex-row">
-				<div className=" ">
-					<Image
-						className="h-24 w-24 rounded-[50%] bg-sky-200 min-[1750px]:h-24 min-[1750px]:w-24"
-						src={user?.avatar_url}
-						width={72}
-						height={51}
-						alt="user"
-					/>
-				</div> 
-				 <div className="">
-				 <input
-  					type="file"
-  					accept="image/*"
-  					className="hidden"
-  					id="file"
-  					{...register('avatarUrl', { required: 'avatarUrl is required' })}
-  					// 	onChange={(e) => {
-    				// 	const selectedFile = e.target.files && e.target.files[0];
-    				// 	console.log('Selected file:', selectedFile);
-					// 	console.log("file-->", selectedFile?.name);
-					// 	setUser((prevUser) => ({
-					// 		...prevUser!,
-					// 		avatar_url: selectedFile?.name || prevUser?.avatar_url || '',
-					// 	  }));
-  					// }}
-				/>
-				
-					<label
-						className="rounded-[20px] bg-[#5B8CD4] px-6 py-3"
-						htmlFor="file"
-					>
-						Change Photo
-					</label>
-				</div>
-				<input
-					type="button"
-					className="rounded-[20px] bg-[#EA7F87] px-8 py-3"
-					onClick={() => {
-							setUser((prevUser) => ({
-							...prevUser!,
-							avatar_url:  prevUser?.avatar_url || '',
-						  }));
-  				
-					}}
-					value="Delete"
-				/>
-			</div>
+				{show ? <PopUp setShow={setShow} /> : null}
 				<div className="my-2">
 					<label htmlFor="fullName" className="block py-2 pl-4">
 						Username
 					</label>
 					<input
 						type="text"
+						id="fullName"
+						value={_username}
+						onChange={(e) => setUsername(e.target.value)}
 						placeholder="Enter your name"
 						className="w-full rounded-[20px] border border-[#838383] px-4 py-3"
-						{...register('username', {required: 'username is required'})}
 					/>
 				</div>
 				<div className="my-2">
@@ -161,14 +90,36 @@ const Form = () => {
 					</label>
 					<input
 						type="text"
+						id="Login"
+						value={_display_name}
+						onChange={(e) => setDisplayname(e.target.value)}
 						placeholder="Enter your login"
 						className="w-full rounded-[20px] border  border-[#838383] px-4 py-3"
-						{...register('display_name', {required: 'display_name is required'})}
-
-						
 					/>
 				</div>
-			
+				
+				<div className="flex flex-col items-center  justify-center border-t border-[#9f9f9f4a] md:flex-row md:justify-evenly">
+					<h1 className="p-4 text-black font-['Whitney Semibold'] ">Two-factor authentication</h1>
+					<div className="my-3">
+
+					{Userdata?.tfa_enabled ? (
+					<input
+						onClick={_disable}
+						type="button"
+						className="rounded-[20px] bg-[#EA7F87] px-8 py-3 text-white"
+						value="Disable 2FA"
+					/>
+					) : (
+					<input
+						onClick={() => setDisplay2fa(true)}
+						type="button"
+						className="rounded-[20px] cursor-pointer bg-[--purple-color] px-8 py-3 text-white"
+						value="Enable 2FA"
+					/>
+					)}
+						
+					</div>
+				</div>
 				<div className=" flex items-center  justify-center pt-9 text-white ">
 					<div className="m-auto">
 						<h1 className="mb-4 text-black">Save Changes</h1>
@@ -178,10 +129,29 @@ const Form = () => {
 							value="Save"
 						/>
 					</div>
-					
+					<div className="m-auto ">
+						<h1 className="mb-4 text-black">Delete Account</h1>
+						<input
+							type="button"
+							className="w-full cursor-pointer rounded-[20px] bg-[#EA7F87] py-3"
+							onClick={() => setShow(!show)}
+							value="Delete"
+						/>
+					</div>
 				</div>
 			</form>
 		</div>
+		{
+			display2fa && 
+			<>
+				<div className="absolute left-0 z-10 right-0 bottom-0 top-0 bg-[#00000095] backdrop-blur-md opacity-100"></div>
+					<Qrcodeform closeQrForm={closeQrForm} />
+			</>
+		}
+		{message != "" && (
+            <p style={{ color: success ? 'green' : 'red' }}>{message}</p>
+            )}
+		</>
 	);
 };
 export default Form;

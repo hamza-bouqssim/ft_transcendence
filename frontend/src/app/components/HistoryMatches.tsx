@@ -22,7 +22,7 @@ const HistoryMatches: React.FC<HistoryMatchesProps> = ({
   totalMatches,
 }) => {
   return (
-    <div className="history-results mt-[20px]  w-full h-[40px] bg-[#79a9f28d] rounded-[40px] flex  justify-between   px-1 py-1 hover:bg-[#95c0ff8d]">
+    <div className="history-results mt-[20px]  w-full h-[40px] bg-[#79a9f28d] shadow-lg rounded-[40px] flex  justify-between   px-1 py-1 hover:bg-[#95c0ff8d]">
 
         <div className='res w-[23%]  text-center flex justify-between'>
           <div>

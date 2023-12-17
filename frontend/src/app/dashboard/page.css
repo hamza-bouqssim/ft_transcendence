@@ -5,8 +5,9 @@
     font-weight: bolder;
     font-family: "Whitney BlackSC";
 }
+
 .container .row {
-    margin-top: 70px;
+    margin-top: 80px;
     display: flex;
     justify-content: space-between;
 }

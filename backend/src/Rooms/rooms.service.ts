@@ -26,6 +26,7 @@ export class RoomsService {
       },
     });
     if (!memberInfo || memberInfo.length === 0) {
+      console.log("sdfdsfdsf")
       throw new HttpException("No members found for the given user in any chat room.", HttpStatus.BAD_REQUEST);
     }
   

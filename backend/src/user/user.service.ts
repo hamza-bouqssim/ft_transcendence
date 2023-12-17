@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
-import { User } from '@prisma/client';
+import { HttpException, HttpStatus, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
+import { User } from 'src/gateway/User';
 import { findUserParams } from 'src/utils/types';
 
 @Injectable()
@@ -47,7 +47,7 @@ export class UserService {
             if(!find)
                 throw new HttpException("User Not Found!", HttpStatus.BAD_REQUEST); 
             if (find.display_name === newDisplayedName)
-                throw new HttpException("This Display Name already in use, Choose another one !!!", HttpStatus.BAD_REQUEST);
+                throw new Error("This Display Name already in use, Choose another one !!!");
 
         const search = await this.prisma.user.findUnique({
             where : {
@@ -70,13 +70,13 @@ export class UserService {
         
         return {message : 'Update display_name  succefully'}    }
 
+
+
     async changeUserName(_email: string, newUserName: string){
         const find = await this.prisma.user.findUnique({where: {email:_email}});
 
         if(!find)
-            throw new HttpException("User Not Found!", HttpStatus.BAD_REQUEST)
-        if (find.username === newUserName)
-            throw new HttpException("This UserName already in use, Choose another one !!!", HttpStatus.BAD_REQUEST);
+            throw new HttpException("User Not Found!", HttpStatus.BAD_REQUEST);
         const updatedUserName = await this.prisma.user.update({
             where: {email: _email},
             data: {username: newUserName},
@@ -103,7 +103,7 @@ export class UserService {
         if (!updatedAvatar)
             throw new HttpException("Error",  HttpStatus.BAD_REQUEST);
         
-            return {message : 'Updating Image succefully'};
+            return {message : 'Updating Image succefuly'};
     }
 
     async listFriends(userId: string) {
@@ -286,13 +286,9 @@ export class UserService {
       async userInfo(user_id : string){
 
         const user = await this.prisma.user.findUnique({
-            where: { 
-                id: user_id
-            },
-            select:{
-                id:true
-            }
-
+            where: { id: user_id},
+            
+            
           });
           if (!user) {
             throw new NotFoundException('User not found');

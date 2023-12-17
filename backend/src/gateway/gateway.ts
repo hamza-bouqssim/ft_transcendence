@@ -7,7 +7,7 @@ import { Services } from 'src/utils/constants';
 import {Inject} from '@nestjs/common'
 import {EventEmitter2, OnEvent} from  '@nestjs/event-emitter';
 import { PrismaService } from 'prisma/prisma.service';
-import { CreateMessageRoom, RoomId } from 'src/Rooms/dto/rooms.dto';
+import { CreateMessageRoom, RoomId ,CreateChatRoom} from 'src/Rooms/dto/rooms.dto';
 import { RoomsService } from 'src/Rooms/rooms.service';
 import { ConversationsService } from 'src/conversations/conversations.service';
 import { UserService } from 'src/user/user.service';
@@ -37,8 +37,7 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
             if (!this.NsessionOfuser.has(userId)) {
                 
                 this.NsessionOfuser.set(userId, 1);
-                const existingUser = await this.prisma.user.findUnique({ where: { id:userId  } });
-                if (existingUser) {
+                if (userId) {
                     await this.prisma.user.update({
                         where: { id: userId},
                         data: { status: "online"},
@@ -100,8 +99,7 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
                 } else {
                     
                     this.NsessionOfuser.delete(userId);
-                    const existingUser = await this.prisma.user.findUnique({ where: { id:userId } });
-                    if (existingUser) {
+                    if (userId) {
                         await this.prisma.user.update({
                             where: { id: userId},
                             data: { status: "offline"},
