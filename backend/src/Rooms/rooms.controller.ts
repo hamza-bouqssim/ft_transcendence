@@ -1,9 +1,11 @@
 /* eslint-disable prettier/prettier */
 import { Controller, Get,Body, Res,UseGuards ,Post,Req} from '@nestjs/common';
 import { RoomsService } from './rooms.service';
-import { DeleteChatRoom, RoomId,Member} from './dto/rooms.dto';
+import { DeleteChatRoom, RoomId,Member,JoinRooms} from './dto/rooms.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+
+
 
 
 
@@ -97,43 +99,8 @@ export class RoomsController {
     }
   }
 
-
-
-
-
   //member mangment 
-
-  @Post("/addMemberToRooms")
-  async addMemberToRooms()
-  {
-
-  }
-
-  // @Post("/isOwner")
-  // @UseGuards(AuthGuard("jwt"))
-  // async isOwner(@Body() roomId:RoomId,@Res() res, @Req() req)
-  // {
-  //   try {
-  //     const {id}=req.user
-  //     const resisOwner = await this.roomsService.isOwner(id,roomId);
-  //     return res.status(200).json({ isOwner: resisOwner });
-  //   } catch (error) {
-  //     return res.status(500).json({ error: error});
-  //   }
-  // }
-
-  @Post("/makeOwner")
-  async makeOwner()
-  {
-
-  }
-
-  @Post("/deleteOwner")
-  async deleteOwner()
-  {
-
-  }
-
+  
   @Get("/getAllFreind")
   @UseGuards(AuthGuard("jwt"))
   async getAllFreind(@Res() res: any,@Req() req)
@@ -145,8 +112,8 @@ export class RoomsController {
     } catch (error) {
       return res.status(500).json({ error: error});
     }
- }
-
+  }
+  
   @Post("/allMember")
   @UseGuards(AuthGuard("jwt"))
   async allMember(@Res() res: any,@Req() req , @Body() RoomId:RoomId) 
@@ -158,9 +125,9 @@ export class RoomsController {
     } catch (error) {
       return res.status(500).json({ error: error});
     }
-
+    
   }
-
+  
   @Post("/banMember")
   @UseGuards(AuthGuard("jwt"))
   async banMember(@Res() res: any,@Req() req , @Body() memberUpdate:Member)
@@ -172,9 +139,9 @@ export class RoomsController {
     } catch (error) {
       return res.status(500).json({ error: error});
     }
-
+    
   }
-
+  
   @Post("/mutMember")
   @UseGuards(AuthGuard("jwt"))
   async mutMember(@Res() res: any,@Req() req , @Body() memberUpdate:Member)
@@ -186,9 +153,9 @@ export class RoomsController {
     } catch (error) {
       return res.status(500).json({ error: error});
     }
-
+    
   }
-
+  
   @Post("/kickMember")
   @UseGuards(AuthGuard("jwt"))
   async kickMember(@Res() res: any,@Req() req , @Body() memberUpdate:Member)
@@ -200,7 +167,7 @@ export class RoomsController {
     } catch (error) {
       return res.status(500).json({ error: error});
     }
-
+    
   }
   @Post("/Member")
   @UseGuards(AuthGuard("jwt"))
@@ -215,16 +182,77 @@ export class RoomsController {
     }
 
   }
-
-  @Post("/isMember")
-  async isMember()
+  @Post("/QuitRoom")
+  @UseGuards(AuthGuard("jwt"))
+  async quitRoom(@Res() res: any,@Req() req , @Body() RoomId:RoomId)
   {
+    try {
+      const {id}=req.user
+      const response = await this.roomsService.quitRoom(id,RoomId);
+      return res.status(200).json({data: response });
+    } catch (error) {
+      return res.status(500).json({ error: error});
+    }
+    
+  }
+  
+  @Post("/makeOwner")
+  @UseGuards(AuthGuard("jwt"))
+  async makeOwner(@Res() res: any,@Req() req , @Body() memberUpdate:Member)
+  {
+    try {
+      const {id}=req.user
+      const update = await this.roomsService.makeOwner(id,memberUpdate);
+      return res.status(200).json({data: update });
+    } catch (error) {
+      return res.status(500).json({ error: error});
+    }
+    
+  }
+
+  
+  @Post("/addMemberToRooms")
+  @UseGuards(AuthGuard("jwt"))
+  async addMemberToRooms(@Res() res: any,@Req() req , @Body() memberUpdate:Member)
+  {
+    try {
+      const {id}=req.user
+      const update = await this.roomsService.addMemberToRooms(id,memberUpdate);
+      return res.status(200).json({data: update });
+    }
+    catch (error) {
+      return res.status(500).json({ error: error});
+    }
 
   }
 
+
+
   @Post("/joinRooms")
-  async joinRooms()
+  @UseGuards(AuthGuard("jwt"))
+  async joinRooms(@Res() res: any,@Req() req,@Body()joinRooms:JoinRooms )
   {
+    try {
+      const {id}=req.user
+      const response = await this.roomsService.joinRooms(id,joinRooms);
+      return res.status(200).json({data: response });
+    } catch (error) {
+      return res.status(500).json({ error: error});
+    }
+
+  }
+
+  @Get("/findRoom")
+  @UseGuards(AuthGuard("jwt"))
+  async findRoom(@Res() res: any,@Req() req)
+  {
+    try {
+      const {id}=req.user
+      const allRoom = await this.roomsService.findRoom(id);
+      return res.status(200).json({data: allRoom });
+    } catch (error) {
+      return res.status(500).json({ error: error});
+    }
 
   }
 
