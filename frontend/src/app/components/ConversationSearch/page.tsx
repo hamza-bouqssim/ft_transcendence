@@ -12,7 +12,13 @@ const ConversationSearch = () => {
     
     return (
         <div className={`search-container ${styles.searchContainer}`}>
-            {show &&  <CreateSearchModal   setShow={setShow} />   }
+            {show &&  
+            <>
+            <div className=" opacity-100 bg-[#ffffff93] absolute z-10 left-0 right-0 bottom-0  top-0">
+
+            </div>
+                <CreateSearchModal  setShow={setShow}/>   
+            </>}
 
             <input
                 className={`rounded-l-lg text-black focus:outline-none bg-[#D9D9D9] bg-opacity-20 p-3 ${styles.input}`}

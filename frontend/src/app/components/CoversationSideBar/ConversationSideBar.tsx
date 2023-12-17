@@ -43,9 +43,9 @@ const CoversationSideBar = () => {
 				</button>
 			</div>
 			<hr className="bg-[#DFDFDF] w-1/2 mx-auto mt-5"/>
-			{!newRooms && <ConversationSearch  ></ConversationSearch>}
+			{!newRooms && <ConversationSearch  />}
 
-			{newRooms && pathname.includes('chat')  && <div className="flex items-center rounded-full justify-between w-3/ mb-4  mx-auto  bg-[#423d3d]">
+			{newRooms && pathname.includes('chat')  && <div className="flex items-center rounded-full justify-between w-3/ mb-4  mx-auto  bg-[#838282]">
  				
  				<button 
  					onClick={()=>{setSelectUsers("online")}}
