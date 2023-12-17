@@ -638,7 +638,7 @@ export class PongGame {
 			this.ball.position.y < this.topPaddle.position.y
 		)
 			this.emitScore();
-		if (this.playerOneScore === 15 || this.playerTwoScore === 15) {
+		if (this.playerOneScore === 7 || this.playerTwoScore === 7) {
 			this.gameGatway.endGame(this.game);
 		}
 	}
