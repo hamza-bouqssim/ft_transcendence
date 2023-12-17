@@ -32,6 +32,8 @@ export class ConversationsService  {
       this.eventEmitter.emit('createConversation.created', {
         conversation
       });
+      // this.userService.notificationMessage( conversation., messages.participents.recipientId);
+
       return {message : 'Conversation create succefully'}
 
   }
@@ -115,7 +117,6 @@ export class ConversationsService  {
 
 
 async createMessags(user : any, params: CreateMessageParams) {
-   console.log("creating message*****");
     const chat = await this.prisma.chatParticipents.findUnique({
         where: {
           id: params.participentsId,
@@ -251,23 +252,12 @@ async markConversationAsRead(conversationId: string) {
 
 
 async findUnreadMessages(conversationId: string) {
-  // const conversation = await this.prisma.chatParticipents.findUnique({
-  //   where : {
-  //     id : conversationId
-  //   }
-
-  // });
-  // if (!conversation) {
-  //   throw new HttpException('Conversation not found', HttpStatus.BAD_REQUEST)
-
-  // }
   const unreadMessageCount = await this.prisma.message.count({
     where: {
       participentsId:conversationId,
       vue: false,
     },
   });
-  console.log("here unreadMessage-->",unreadMessageCount)
   return unreadMessageCount;
 }
 

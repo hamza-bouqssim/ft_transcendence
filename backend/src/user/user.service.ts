@@ -91,7 +91,6 @@ export class UserService {
     {
         const find = await this.prisma.user.findUnique({where: {email:_email}});
 
-        // console.log("old: " + (find?.avatar_url || 'null') + "\n new:  " + avatarPath);
         
         if(!find)
             throw new HttpException("User Not Found!",  HttpStatus.BAD_REQUEST)
@@ -104,7 +103,7 @@ export class UserService {
         if (!updatedAvatar)
             throw new HttpException("Error",  HttpStatus.BAD_REQUEST);
         
-            return {message : 'Updating Image succefuly'};
+            return {message : 'Updating Image succefully'};
     }
 
     async listFriends(userId: string) {
@@ -160,10 +159,44 @@ export class UserService {
         return await this.prisma.friend.findMany({where: { friend_id: userId, status: 'PENDING'}, select: {id : true , user: {select: {id: true, username: true, display_name: true, avatar_url:true}}, friends: true}});
     }
 
-    async blockedFriends(userId: string)
-    {
-        return await this.prisma.friend.findMany({where: {friend_id: userId, status: 'BLOCKED'}, select: {user: {select: {id: true, username: true, display_name: true, avatar_url:true}}}});
+    async pendingPLayingRequest(userId : string){
+        return await this.prisma.requestPlay.findMany({
+            where : {
+                recipientId: userId, status: 'PENDING'
+            },
+            select:{
+                Sender : true,
+                recipient : true,
+            }
+        })
+
     }
+
+    async blockedFriends(userId: string) {
+        const blockedUsers = await this.prisma.blockList.findMany({
+          where: {
+            userOneId: userId,
+          },
+        });
+      
+        const blockedUserIds = blockedUsers.map(block => block.userTwoId);
+      
+        const blockedFriends = await this.prisma.user.findMany({
+          where: {
+            id: {
+              in: blockedUserIds,
+            },
+          },
+          select: {
+            id: true,
+            username: true,
+            display_name: true,
+            avatar_url: true,
+          },
+        });
+      
+        return blockedFriends;
+      }
     
     async findByEmail(email : string)
     {
@@ -264,7 +297,6 @@ export class UserService {
           if (!user) {
             throw new NotFoundException('User not found');
           }
-          console.log(user)
           return user;
 
       }
@@ -304,13 +336,23 @@ export class UserService {
         return notifications;
     }
 
+  
 
-    async isBlockedByUser(senderId: string, recipientUser: string): Promise<boolean> {
-        console.log("enter");
-        // Implement logic to check if recipientUser is blocked by userId
-        const BlockedFriends = await this.blockedFriends(senderId);
-        console.log("blocked friend here", BlockedFriends);
-        return BlockedFriends.some((friend) => friend.user.id === recipientUser);
+    async isBlockedByUser(senderId: string, recipientUserId: string): Promise<boolean> {
+        const blockedFriends = await this.blockedFriends(senderId);
+        return blockedFriends.some((friend) => friend.id === recipientUserId);
       }
+    //   async notificationMessage(chatId : string, userId : string){
+    //     // const notificationMessage = await this.prisma.notificationGlobal.create({
+    //     //     data: {
+    //     //         Sender: { connect: { id: userSender.id } },
+    //     //         recipient: { connect: { id: userRecipient.id } },
+    //     //         content: message,
+    //     //         image_content: userSender.avatar_url,
+    //     //     },
+    //     // });
+
+
+    //   }
 }
 

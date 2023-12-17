@@ -18,6 +18,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { fetchConversationUserThunk } from "@/app/store/conversationSlice";
 import { fetchMessagesThunk } from "@/app/store/messageSlice";
+import { fetchSendRequestPLay } from "@/app/store/requestSlice";
 
 const OnlineFriends = () =>{
   const ToastError = (message: any) => {
@@ -62,11 +63,25 @@ const OnlineFriends = () =>{
     const handlleBloque = async (id: string) => {
       
       try {
-        await dispatch(fetchBlockFriendThunk(id));
-        ToastSuccess("You have blocked this friend successfully");
+        const res = await dispatch(fetchBlockFriendThunk(id));
+        if (res.payload && typeof res.payload === 'object') {
+        const responseData = res.payload as { data?: { response?: { message?: string } } };
+        const message = responseData.data?.response?.message;
+        if (message) {
+          ToastSuccess(message);
+  
+        }else {
+          const responseData = res.payload as {message?: string};
+          const message = responseData.message;
+          if(message)
+          ToastError(message);
+        }
+      }
+    
       } catch (error) {
-        ToastError("Failed to block the friend. Please try again.");
-
+        
+        ToastError("Failed to block this friend. Please try again.");
+    
       }
     };
 
@@ -103,6 +118,22 @@ const OnlineFriends = () =>{
                 );
 
             }
+            const handlePLayingRequest = async(display_name : string) =>{
+              try { 
+                const response= await dispatch(fetchSendRequestPLay(display_name));
+                if (response.payload && response.payload.message) {
+                  const errorMessage = response.payload.message;
+                  ToastError(`Error: ${errorMessage}`);
+                } else {
+                  ToastSuccess("Friend request sent successfully");
+    
+                }
+              } catch (err: any) {
+                ToastError(`Error: ${err.message || 'An unexpected error occurred'}!`);
+    
+              }
+
+            }
 						return(
 							<ConversationSideBarItem key={elem.id}>
               <div className="flex">
@@ -118,8 +149,9 @@ const OnlineFriends = () =>{
                 {openMenuId === elem.id &&
                 <div className={`absolute  top-[-120px] left-2 h-[120px]  w-[200px] flex-col items-center justify-center gap-1 rounded-[15px] border-2 border-solid border-[#000000] bg-white font-['Whitney_Semibold'] `}>
 					        <button className={`bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> handleClick()}>see profile</button>
+                  <button className={`bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> handlePLayingRequest(elem.display_name)}>Invite to play</button>
 					        <button className={` bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> handleSendMessage() }>send message</button>
-                  <button className={` bg-[#EA7F87] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} value="Bloque" onClick={()=> handlleBloque(elem)}>Bloque</button>
+                  <button className={` bg-[#EA7F87] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} value="Bloque" onClick={()=> handlleBloque(elem.id)}>Bloque</button>
 
 				        </div>}
             </div>               

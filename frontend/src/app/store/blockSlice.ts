@@ -16,9 +16,23 @@ const initialState: BlockState = {
 };
 
 
-  export const fetchBlockFriendThunk = createAsyncThunk('request/block', async(id : string) => {
-    const response = await bloqueFriend(id);
-    return response;
+  export const fetchBlockFriendThunk = createAsyncThunk('request/block', async(id : string ,{rejectWithValue}) => {
+    try{
+      const response = await bloqueFriend(id);
+      if(!response.data.success){
+        throw new Error(response.data.error)
+      }
+      return response;
+
+    }catch(err : any){
+      if (err.response && err.response.data) {
+        return rejectWithValue(err.response.data); // Return the entire error object
+      } else {
+        throw new Error("create conversation failed with an unknown error");
+      }
+
+    }
+    
   })
   
   export const fetchBlocksThunk = createAsyncThunk('friendsBlock/fetchBlockFriendThunk ', async (_,{rejectWithValue} ) => {

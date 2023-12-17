@@ -64,40 +64,6 @@ export class UserController {
     }
 
 
-    // @Post('changeAvatar')
-    // @UseGuards(AuthGuard('jwt'))
-    // @UseInterceptors(FileInterceptor('file', {
-    //   storage: diskStorage({
-    //     destination: 'src/uploads',
-    //     filename: (req, file, callback) => {
-    //       const filename: string = path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
-    //       const extension: string = path.parse(file.originalname).ext;
-    //       callback(null, `${filename}${extension}`);
-    //     },
-    //   }),
-    //   fileFilter: (req, file, _callback) => {
-    //     if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
-    //       _callback(null, true);//accept that type
-    //     }
-    //     else {
-    //       _callback(new UnauthorizedException('Only JPEG and PNG files are allowed'), false); // refuse somthing else like .pdf ...etc
-    //     }
-    //   },
-    //   limits: {
-    //     fileSize: 1024 * 1024, // still don't know why this don't work !!!!!!!!! figure it out !
-    //   },
-    // }))
-    // async changeAvatar(@Req() req, @UploadedFile() file: Express.Multer.File)
-    // {
-    //   try {
-    //    const user = req.user
-    //     const imagePath = file.path;
-    //     const updatedAvatar = this.userService._changeAvatar(user.email, imagePath);
-    //     return updatedAvatar;
-    //   } catch (error) {
-    //     throw new Error('Failed to update the Avatar');
-    //   }
-    // }
     @Post('changeAvatar')
     @UseGuards(AuthGuard('jwt'))
     @UseInterceptors(FileInterceptor('file', {
@@ -129,7 +95,6 @@ async changeAvatar(@Req() req, @UploadedFile() file: Express.Multer.File) {
     const updatedAvatar = await this.userService._changeAvatar(user.email, imagePath);
     return { success: true, response: updatedAvatar };
   } catch (error) {
-    console.error(error);
     return { success: false, message: 'Failed to update the Avatar' };
   }
 }
@@ -154,7 +119,19 @@ async changeAvatar(@Req() req, @UploadedFile() file: Express.Multer.File) {
         return res.status(500).json({ message: error});
 
       }
-      
+    }
+
+    @Get('pending-request-play')
+    @UseGuards(AuthGuard('jwt'))
+    async pending_request_play(@Req() req, @Res() res){
+      try{
+        const user = req.user
+        const request = await this.userService.pendingPLayingRequest(user.id);
+        return res.status(200).json({success : true, data: request});
+      }catch(err){
+        return res.status(500).json({message : err});
+
+      }
 
     }
 

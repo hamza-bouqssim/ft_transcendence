@@ -18,10 +18,21 @@ import 'react-toastify/dist/ReactToastify.css';
 
 
 const SignInForm = forwardRef((props: any, ref: any) => {
-	const ToastFunction = (message : any) => {
+	const ToastError = (message: any) => {
 		toast.error(message, {
 		  position: toast.POSITION.TOP_RIGHT,
-		  autoClose: 5000, // You can customize the duration
+		  autoClose: 5000,
+		  hideProgressBar: false,
+		  closeOnClick: true,
+		  pauseOnHover: true,
+		  draggable: true,
+		});
+	  };
+	
+	  const ToastSuccess = (message: any) => {
+		toast.success(message, {
+		  position: toast.POSITION.TOP_RIGHT,
+		  autoClose: 5000,
 		  hideProgressBar: false,
 		  closeOnClick: true,
 		  pauseOnHover: true,
@@ -58,19 +69,19 @@ const SignInForm = forwardRef((props: any, ref: any) => {
 	const onSubmit = async (data: UserCredentialsParams) => {
 		try {
 			await postLoginUser(data);
-			ToastFunction(`You are signIn succefully`);
+			ToastSuccess(`You are signIn succefully`);
 			router.push("/dashboard", { scroll: false });
 		} catch (err : any) {
 			if (err.response) {
 			
 			  const errorMessage = err.response.data.message;
-			ToastFunction(`Failed to login: ${errorMessage}`);
+			ToastError(`Failed to login: ${errorMessage}`);
 			} else if (err.request) 
 			{
-			  ToastFunction(`No response from the server`);
+			  ToastError(`No response from the server`);
 
 			} else {
-			  ToastFunction(`Error in request setup`);
+			  ToastError(`Error in request setup`);
 			}
 		  }
 		

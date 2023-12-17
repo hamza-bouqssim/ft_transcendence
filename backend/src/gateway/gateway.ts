@@ -57,7 +57,7 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
     async handleMessageCreateEvent(socket : AuthenticatedSocket,payload : any){
         const messages = await this.conversationService.createMessags(socket.user, payload);
         this.server.to(messages.participents.recipient.id).to(messages.participents.sender.id).to(messages.participentsId.toString()).emit('onMessage', messages, socket.user);
-        // this.userService.notificationMessage( messages.participents.senderId, messages.participents.recipientId);
+        // this.userService.notificationMessage( messages.participentsId, messages.participents.recipientId);
 
     }
     
@@ -130,7 +130,6 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         }
         @OnEvent("order.update")
          async onNotificationupdate(data:any) {
-            console.log(data)
             const update = await this.prisma.chatRoom.findUnique({
                 where: { id: data.id },
                 include:{
@@ -166,7 +165,6 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         @OnEvent('requestAccept.created')
         AcceptFriendRequestNotification(data : any){
             const message = `${data.req.friends.display_name} accept your request`;
-            this.server.emit('AcceptNotification', data);
             this.userService.createNotification( data.req.friends,data.req.user, message);
 
 
@@ -182,6 +180,7 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         }
         @OnEvent('requestDebloque.created')
         debloqueNotification(data: any){
+            console.log("data-->", data.chatParticipents);
             this.server.emit('debloqueNotification', data.chatParticipents);
         }
         @OnEvent('online.created')
