@@ -305,7 +305,6 @@ export class UserService {
     }
 
 
-
     async isBlockedByUser(senderId: string, recipientUser: string): Promise<boolean> {
         console.log("enter");
         // Implement logic to check if recipientUser is blocked by userId

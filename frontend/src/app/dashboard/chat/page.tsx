@@ -42,7 +42,7 @@ const ConversationChannelPagechat = () => {
     socket.on('blockNotification', (data : any) =>{
       dispatch(fetchBlocksThunk());
       dispatch(fetchGetAllFriendsThunk());
-      updateChannel(data);
+      // updateChannel(data);
       dispatch(fetchMessagesThunk(channel?.id));
 
       
@@ -50,7 +50,7 @@ const ConversationChannelPagechat = () => {
     socket.on('debloqueNotification', (data : any)=>{
       dispatch(fetchBlocksThunk());
       dispatch(fetchGetAllFriendsThunk());
-      updateChannel(data);
+      // updateChannel(data);
       dispatch(fetchMessagesThunk(channel.id));
 
 
