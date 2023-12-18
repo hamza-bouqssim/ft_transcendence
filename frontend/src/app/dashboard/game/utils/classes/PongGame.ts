@@ -482,9 +482,9 @@ class PongGame {
 		// 	});
 		// });
 
-		this.socket.on("resetDefaultPosition", () => {
-			this.resetToDefaultPosition();
-		});
+		// this.socket.on("resetDefaultPosition", () => {
+		// 	this.resetToDefaultPosition();
+		// });
 	};
 
 	setBallVelocity = (): void => {

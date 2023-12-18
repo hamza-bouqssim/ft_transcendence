@@ -489,9 +489,9 @@ export class PongGame {
 				this.ball.position,
 				'updateBallPosition',
 			);
-			// this.calcScore();
-			this.handleDetectCollision();
+			this.calcScore();
 		}, 15);
+		this.handleDetectCollision();
 	}
 
 	resetToDefaultPosition() {
@@ -515,12 +515,12 @@ export class PongGame {
 		// 	y: this.defaultCanvasSizes.height - 30,
 		// });
 
-		this.gameGatway.emitToGame(
-			this.user1,
-			this.user2,
-			{},
-			'resetDefaultPosition',
-		);
+		// this.gameGatway.emitToGame(
+		// 	this.user1,
+		// 	this.user2,
+		// 	{},
+		// 	'resetDefaultPosition',
+		// );
 	}
 
 	setBallVelocity() {
@@ -620,7 +620,7 @@ export class PongGame {
 
 		Events.on(this.engine, 'collisionStart', this.handleCollisionStart);
 
-		this.calcScore();
+		// this.calcScore();
 	}
 
 	calcScore() {
