@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { IoAdapter } from "@nestjs/platform-socket.io";
 import { AuthenticatedSocket } from "src/utils/interfaces";
 import * as cookie from 'cookie';

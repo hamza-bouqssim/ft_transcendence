@@ -7,7 +7,7 @@ import { Services } from 'src/utils/constants';
 import {Inject} from '@nestjs/common'
 import {EventEmitter2, OnEvent} from  '@nestjs/event-emitter';
 import { PrismaService } from 'prisma/prisma.service';
-import { CreateMessageRoom, RoomId ,CreateChatRoom} from 'src/Rooms/dto/rooms.dto';
+import { CreateMessageRoom, RoomId} from 'src/Rooms/dto/rooms.dto';
 import { RoomsService } from 'src/Rooms/rooms.service';
 import { ConversationsService } from 'src/conversations/conversations.service';
 import { UserService } from 'src/user/user.service';

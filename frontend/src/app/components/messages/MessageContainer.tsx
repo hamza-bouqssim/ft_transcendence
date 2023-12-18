@@ -47,19 +47,19 @@ const MessageContainer = () => {
     const {Userdata} = useContext(socketContext);
     const dispatch = useDispatch<AppDispatch>();
     const { messages, status, error , isSenderBlocked , isRecipientBlocked} = useSelector((state:any) => state.messages);
+
     useEffect(() => {
-        const id = channel.id;        
-        dispatch(fetchMessagesThunk(id));
-        joinRoom(id);
-      }, [dispatch, channel.id]);
-
-
-    const joinRoom =(id:string) =>{
-		if(oldId)
-			socket.emit("leaveToRoom",{id:oldId})
-		socket.emit("joinToRoom",{id:id})
+      const joinRoom = (id: string) => {
+        if (oldId) socket.emit("leaveToRoom", { id: oldId });
+        socket.emit("joinToRoom", { id: id });
         setOldId(id);
-	}
+      };
+    
+      const id = channel.id;
+      dispatch(fetchMessagesThunk(id));
+      joinRoom(id);
+    }, [dispatch, channel.id, oldId, socket, setOldId]);
+    
     return (
 
        <>

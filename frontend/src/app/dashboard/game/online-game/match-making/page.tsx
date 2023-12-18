@@ -34,7 +34,7 @@ const MatchMaking = () => {
 	useEffect(() => {
 		console.log("Userdata", Userdata);
 		const handleRedirectUser = (payload: any) => {
-			if (Userdata.display_name === payload.display_name)
+			if (Userdata?.display_name === payload.display_name)
 				router.push("/dashboard");
 		};
 		gameSocket.on("redirectUser", handleRedirectUser);

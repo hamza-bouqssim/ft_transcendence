@@ -1,6 +1,6 @@
 import {MessageContainerStyle, MessageItemAvatar, MessageItemContainer, MessageItemContent, MessageItemDetails, MessageItemHeader} from "@/app/utils/styles"
 import { User, messageTypes } from "@/app/utils/types";
-import { FC, useEffect, useState,useContext ,useRef} from "react";
+import { FC, useEffect, useState,useContext ,useRef, useCallback} from "react";
 import {formatRelative} from 'date-fns'
 import { getAuthUser, getConversationMessageRoom } from "@/app/utils/api";
 import MessageInputField from "./MessageInputFieldRoom";
@@ -19,43 +19,39 @@ const MessageContainerRoom = () => {
     const { channel } = useContext(socketContext);
     const { oldId,setOldId } = useContext(socketContext);
     const socket  = useContext(socketContext).socket;
-    const {Userdata} = useContext(socketContext)
-    console.log("hi")
-    const joinRoom =(id:string) =>{
-		if(oldId)
-			socket.emit("leaveToRoom",{id:oldId})
-		socket.emit("joinToRoom",{id:id})
-        setOldId(id);
-	}
+    const {Userdata} = useContext(socketContext);
 
-    // room and chat
-    useEffect(() => {
+    const joinRoom = useCallback(
+        (id: string) => {
+          if (oldId) socket.emit("leaveToRoom", { id: oldId });
+          socket.emit("joinToRoom", { id: id });
+          setOldId(id);
+        },
+        [oldId, socket, setOldId]
+      );
+      useEffect(() => {
+     
         const id = channel.id;
-        if (pathname.includes("chat"))
-        {
-            getConversationMessage(id)
-            .then(( data :any) => {
-                joinRoom(id);
-                setMessage(data.data);
+        if (pathname.includes("chat")) {
+          getConversationMessage(id)
+            .then((data: any) => {
+              joinRoom(id);
+              setMessage(data.data);
             })
-            .catch((err:any) => console.log(err));
-
-        }
-        else
-        {
-            getConversationMessageRoom(id)
-            .then(( data :any) => {
-                joinRoom(id);
-                setMessage(data.data.data);
+            .catch((err: any) => console.log(err));
+        } else {
+          getConversationMessageRoom(id)
+            .then((data: any) => {
+              joinRoom(id);
+              setMessage(data.data.data);
             })
-            .catch((err:any) => console.log(err));
+            .catch((err: any) => console.log(err));
         }
-    }, [channel.id]);
-  
-   
-    useEffect(()=>{
-      scrollRef.current?.scrollIntoView()
-    },[Message])
+      }, [channel.id, joinRoom, pathname]);
+      
+      useEffect(() => {
+        scrollRef.current?.scrollIntoView();
+      }, [Message]);
     return (
         
         <>
