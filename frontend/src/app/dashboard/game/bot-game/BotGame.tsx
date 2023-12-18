@@ -42,8 +42,8 @@ const BotGame = ({ mapIndex }: any) => {
 	}, []);
 
 	useEffect(() => {
-		let timerInterval: NodeJS.Timer;
-		let scoreInterval: NodeJS.Timer;
+		let timerInterval: NodeJS.Timeout;
+		let scoreInterval: NodeJS.Timeout;
 
 		Swal.fire({
 			title: "Game Will Start In",

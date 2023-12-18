@@ -61,7 +61,7 @@ const OnlineGame = ({ mapIndex }: any) => {
 	useEffect(() => {
 		console.log("online-game-score-useffect");
 		if (opponentPlayer.opponent.username === "") {
-			router.push("/dashboard/game");
+			router.push("/dashboard/game", {scroll: false});
 			return;
 		}
 		const updateScoreListener = (playersScore: any) => {
