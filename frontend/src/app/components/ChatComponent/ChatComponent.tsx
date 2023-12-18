@@ -208,9 +208,9 @@ const ChatComponnent  = () =>{
 				  }
 	
 				  return (
-					<div onClick={handleClick} key={elem.id} className={`cursor-pointer rounded-lg hover:bg-[#F2F3FD] flex items-start justify-between px-2 py-3`}>
+					<div  key={elem.id} className={`cursor-pointer rounded-lg hover:bg-[#F2F3FD] flex items-start justify-between px-2 py-3`}>
 					  {/* User Information Section */}
-					  <div className="flex items-center justify-start" key={elem.id}>
+					  <div onClick={handleClick} className="flex items-center justify-start" key={elem.id}>
 						<Image
 						  src={getDisplayUser(elem)?.avatar_url}
 						  className="h-10 w-10 rounded-[50%] bg-black min-[1750px]:h-12 min-[1750px]:w-12"
@@ -233,23 +233,22 @@ const ChatComponnent  = () =>{
 						  onClick={() => handleMenuClick(elem.id)}
 						/>
 	
-						{/* Display menu if openMenuId matches the conversation id */}
 						{openMenuId === elem.id && (
-						  <div className={`absolute top-[-120px] left-2 h-[120px] w-[200px] flex-col items-center justify-center gap-1 rounded-[15px] border-2 border-solid border-[#000000] bg-white font-['Whitney_Semibold']`}>
+                			<div className={`absolute  top-[-200px] right-3 p-2 w-[200px] flex-col items-center justify-evenly rounded-[15px] border-2 border-solid border-[#000000] bg-white font-['Whitney_Semibold'] `}>
 							<button
-							  className={`bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`}
+							  className={`bg-[#d9d9d9] text-black h-[30px] w-full rounded-[15px] my-1 hover:bg-[rgba(0,0,0,.2)]`}
 							  onClick={() => handleClickUser()}
 							>
 							  View profile
 							</button>
 							<button
-							  className={`bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`}
+							  className={`bg-[#d9d9d9] text-black h-[30px] w-full rounded-[15px] my-1 hover:bg-[rgba(0,0,0,.2)]`}
 							  onClick={() => deleteConversation(elem)}
 							>
 							  Delete Chat
 							</button>
 							<button
-							  className={`bg-[#EA7F87] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`}
+							className={`bg-[#EA7F87] text-black h-[30px] w-full rounded-[15px] my-1 hover:bg-[rgba(0,0,0,.2)]`}
 							  value="Bloque"
 							  onClick={() => handlleBloque(elem)}
 							>

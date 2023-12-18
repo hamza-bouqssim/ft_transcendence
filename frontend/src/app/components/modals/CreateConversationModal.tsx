@@ -77,15 +77,19 @@ const CreateConversationModal: FC<props> = ({ setShow }) => {
     return (
 
         <form className=" py-6 flex flex-col justify-center sm:py-12" onSubmit={handleSubmit(onSubmit)}>
-			<MdClose size={20} color="red"  onClick={() => setShow(false)}/>
 
 			<div className="relative py-3 sm:max-w-xl sm:mx-auto">
 				<div
-					className="absolute inset-0 bg-gradient-to-r from-blue-300 to-blue-600 shadow-lg transform -skew-y-6 sm:skew-y-0 sm:-rotate-6 sm:rounded-3xl">
+					className="absolute inset-0 bg-gradient-to-r from-blue-300 to-blue-400 shadow-lg transform -skew-y-6 sm:skew-y-0 sm:-rotate-6 sm:rounded-3xl">
+
 				</div>
+				<MdClose  className="relative py-2 cursor-pointer" size={40} color="red"  onClick={() => setShow(false)}/>
+
 			<div className="relative px-4 py-10 bg-white shadow-lg sm:rounded-3xl sm:p-20">
+
 				<div className="max-w-md mx-auto">
 					<div>
+
 						<h1 className="text-xl font-semibold text-black">Create a conversation</h1>
 					</div>
 					<div className="divide-y divide-gray-200">

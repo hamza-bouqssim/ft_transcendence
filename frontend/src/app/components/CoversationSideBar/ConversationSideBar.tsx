@@ -15,12 +15,15 @@ import { useContext } from "react";
 import {socketContext } from "@/app/utils/context/socketContext";
 import { SendRequestForm } from "../forms/SendRequestForm"
 import { FaCheck } from "react-icons/fa"
+import CreateSearchModal from "../ConversationSearch/Modal/CreateSearchModal"
 const CoversationSideBar = () => {
 	const [newRooms , setNewRooms]  = useState<boolean>(false)
 	const router = useRouter();
 	const pathname = usePathname()
  	const [selectUsers, setSelectUsers] = useState<string>("online");     
 	const {channel ,updateChannel} = useContext(socketContext);
+	const [show, setShow] = useState<any>(false);
+
 	
     return (
 		<div className="w-full h-full relative p-2  xl:rounded-[20px] pt-4 bg-white">
@@ -43,9 +46,17 @@ const CoversationSideBar = () => {
 				</button>
 			</div>
 			<hr className="bg-[#DFDFDF] w-1/2 mx-auto mt-5"/>
-			{!newRooms && <ConversationSearch  ></ConversationSearch>}
+			{!newRooms  && <div className={`search-container`}>
+            {show  &&  <CreateSearchModal   setShow={setShow} />   }
+            <input
+                className={`rounded-l-lg text-black focus:outline-none bg-[#D9D9D9] bg-opacity-20 p-3 `}
+                placeholder="Find your friends"
+                onClick={() => {setShow(!show)}}
+            />
+            
+        </div>}
 
-			{newRooms && pathname.includes('chat')  && <div className="flex items-center rounded-full justify-between w-3/ mb-4  mx-auto  bg-[#db808e8e]">
+			{newRooms && pathname.includes('chat') && !show  && <div className="flex items-center rounded-full justify-between w-3/ mb-4  mx-auto  bg-[#db808e8e]">
  				
  				<button 
  					onClick={()=>{setSelectUsers("online")}}
@@ -68,11 +79,11 @@ const CoversationSideBar = () => {
 			{newRooms &&  ((pathname.includes('chat')  && selectUsers === 'online')  ? <OnlineFriends/> :  (pathname.includes('chat') && selectUsers === 'allFriends') ? <ListFriends/> : ( pathname.includes('chat') && selectUsers === 'EnAttent') ? <SendRequest/> :( pathname.includes('chat') && selectUsers === 'Bloques') ? <FriendsBloque/> : ( pathname.includes('chat') && selectUsers === 'Add') ? <SendRequestForm/> : <></> )}
 
 			{!newRooms 
-				&&  pathname.includes('chat') 
+				&&  pathname.includes('chat')  && !show
 				&& <ChatComponnent />
 			}
 			{!newRooms 
-				&&  pathname.includes('groups') 
+				&&  pathname.includes('groups')  && !show
 				&& <GroupsManagement/>
 			}
 			{newRooms 
