@@ -2,23 +2,20 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import PlayerScore from "@/app/components/PlayerScore";
-import PongGame from "../classes/PongGame";
+import PongGame from "../utils/classes/PongGame";
 import {
 	LoserPlayerPopUp,
 	WinnerPlayerPopUp,
 } from "@/app/components/GamePopUp";
-import { socket, socketContext } from "@/app/utils/context/socketContext";
+import { socketContext } from "@/app/utils/context/socketContext";
 import { useGameSocket } from "@/app/providers/game-socket-provider";
-import OpponentData from "../utils/OpponentData";
+import { OpponentData, getCurrentSizes } from "../utils/data";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 
 const OnlineGame = ({ mapIndex }: any) => {
-	// const [unsavedChanges, setUnsavedChanges] = useState<boolean>(false);
 	const router = useRouter();
 	const parentCanvasRef = useRef<HTMLDivElement>(null);
-	// const isRotate = useRef<boolean>(false);
 	const pongRef = useRef<any>(null);
-	// const opponentPlayer = useRef<any>(null);
 	const [startGame, setStartGame] = useState<boolean>(false);
 	const [score, setScore] = useState<{
 		playerOne: number;
@@ -28,9 +25,6 @@ const OnlineGame = ({ mapIndex }: any) => {
 		playerTwo: 0,
 	});
 	const gameSocket = useGameSocket();
-
-	console.log("map index:", mapIndex);
-
 	const { Userdata } = useContext<any>(socketContext);
 	const opponentPlayer = useAtomValue(OpponentData);
 	const setClearAtom = useSetAtom(OpponentData);
@@ -43,9 +37,26 @@ const OnlineGame = ({ mapIndex }: any) => {
 			},
 			isRotate: false,
 		}));
-
-		// console.log("setAtom", clearAtom);
 	};
+
+	const [currentSize, setCurrentSize] = useState<{
+		width: number;
+		height: number;
+	}>({
+		width: 560,
+		height: 836,
+	});
+
+	useEffect(() => {
+		const parentWidth: number = parentCanvasRef.current?.clientWidth!;
+		const parentHeight: number = parentCanvasRef.current?.clientHeight!;
+
+		setCurrentSize({
+			...currentSize,
+			width: getCurrentSizes(parentWidth, parentHeight)[0],
+			height: getCurrentSizes(parentWidth, parentHeight)[1],
+		});
+	}, []);
 
 	useEffect(() => {
 		console.log("online-game-score-useffect");
@@ -113,49 +124,31 @@ const OnlineGame = ({ mapIndex }: any) => {
 	}, []);
 
 	return (
-		<div className="absolute left-[50%] top-[50%] flex h-[642px] w-[96%] -translate-x-[50%] -translate-y-[50%] flex-col items-center justify-evenly md:h-[900px] md:gap-3 md:px-4 xl:h-[700px] xl:max-w-[1280px] xl:flex-row-reverse xl:px-10 min-[1750px]:h-[900px] min-[1750px]:max-w-[1600px]">
-			{/* <PlayerScore
-				flag="top"
-				userName={opponentPlayer.current?.username}
-				displayName={opponentPlayer.current?.display_name}
-				score={score.playerTwo}
-				color={isRotate.current ? "#FF5269" : "#4FD6FF"}
-				profileImage={opponentPlayer.current?.avatar_url}
-				startGame={startGame}
-			/> */}
-
-			<PlayerScore
-				flag="top"
-				userName={opponentPlayer.opponent.username}
-				displayName={opponentPlayer.opponent.display_name}
-				score={score.playerTwo}
-				color={opponentPlayer.isRotate ? "#FF5269" : "#4FD6FF"}
-				profileImage={opponentPlayer.opponent.avatar_url}
-				startGame={startGame}
-			/>
-
-			{/* <div
-				className={`${
-					isRotate.current ? "rotate-180" : ""
-				} h-[500px] w-full max-w-[340px] shadow-[0_0_50px_2px_var(--blue-color)] md:h-[590px] md:max-w-[380px] xl:h-[700px] xl:max-w-[420px] min-[1750px]:h-[836px] min-[1750px]:max-w-[560px]`}
-				ref={parentCanvasRef}
-			></div> */}
-
-			<div
-				className={`${
-					opponentPlayer.isRotate ? "rotate-180" : ""
-				} h-[500px] w-full max-w-[340px] shadow-[0_0_50px_2px_var(--blue-color)] md:h-[590px] md:max-w-[380px] xl:h-[700px] xl:max-w-[420px] min-[1750px]:h-[836px] min-[1750px]:max-w-[560px]`}
-				ref={parentCanvasRef}
-			></div>
-			<PlayerScore
-				flag="bottom"
-				userName={Userdata?.username}
-				displayName={Userdata?.display_name}
-				score={score.playerOne}
-				color={opponentPlayer.isRotate ? "#4FD6FF" : "#FF5269"}
-				profileImage={Userdata?.avatar_url}
-				startGame={startGame}
-			/>
+		<div
+			style={{ maxWidth: currentSize.width, maxHeight: currentSize.height }}
+			className={`${
+				opponentPlayer.isRotate ? "rotate-180" : ""
+			} absolute left-[50%] top-[50%] h-[90vh] w-[80vw] -translate-x-[50%] -translate-y-[50%]`}
+			ref={parentCanvasRef}
+		>
+			{startGame && (
+				<div
+					className={`
+				${opponentPlayer.isRotate ? "-rotate-180" : ""}
+				absolute left-[50%] top-[50%] flex aspect-[2.5/1] w-full -translate-x-[50%] -translate-y-[50%] flex-col items-center gap-[5%] px-[7%]`}
+				>
+					<PlayerScore
+						flag="top"
+						color={opponentPlayer.isRotate ? "#ff526990" : "#4fd6ff90"}
+						score={score.playerTwo}
+					/>
+					<PlayerScore
+						flag="bottom"
+						color={opponentPlayer.isRotate ? "#4fd6ff90" : "#ff526990"}
+						score={score.playerOne}
+					/>
+				</div>
+			)}
 		</div>
 	);
 };

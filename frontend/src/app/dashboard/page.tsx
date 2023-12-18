@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState ,useContext} from "react";
 import { getAuthUser } from "../utils/api";
 import { redirect, useRouter } from "next/navigation";
 import { User } from "../utils/types";
@@ -9,10 +9,17 @@ import "./page.css"
 import Boxes from "../components/Boxes";
 import RankingFriendsSwitch from "../components/RankingFriendsSwitch";
 import HistoryMatches from "../components/HistoryMatches";
+import { socketContext } from "../utils/context/socketContext";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../store";
+import { fetchGetRequestThunk } from "../store/requestSlice";
+import Image from "next/image";
 
 
 const Dashboard = () => {
-	
+
+
+
 	const [results, setResults] = useState({
 		WINS: 3,
 		LEVEL: 4,
@@ -21,27 +28,27 @@ const Dashboard = () => {
 
 	const [history_match, setHistoryMatch] = useState([
 		{
-			playerOne: "assets/rgatnaou.jpeg",
+			playerOne: "https://cdn.landesa.org/wp-content/uploads/default-user-image.png",
 			resultOne: "1",
-			playerTwo: 'assets/mjalloul.jpeg',
+			playerTwo: 'https://cdn.landesa.org/wp-content/uploads/default-user-image.png',
 			resultTwo: "0",
 			duration: "00:00:35",
 			date: "2023-05-10",
 			totalMatches: "33"
 		},
 		{
-			playerOne: "assets/rgatnaou.jpeg",
+			playerOne: "https://cdn.landesa.org/wp-content/uploads/default-user-image.png",
 			resultOne: "1",
-			playerTwo: 'assets/hamza.png',
+			playerTwo: 'https://cdn.landesa.org/wp-content/uploads/default-user-image.png',
 			resultTwo: "1",
 			duration: "00:01:01",
 			date: "2023-05-11",
 			totalMatches: "1"
 		},
 		{
-			playerOne: "assets/rgatnaou.jpeg",
+			playerOne: "https://cdn.landesa.org/wp-content/uploads/default-user-image.png",
 			resultOne: "1",
-			playerTwo: 'assets/soukaina.png',
+			playerTwo: 'https://cdn.landesa.org/wp-content/uploads/default-user-image.png',
 			resultTwo: "2",
 			duration: "00:00:10",
 			date: "2023-05-08",
@@ -57,7 +64,13 @@ const Dashboard = () => {
 
 					<div className="col-1">
 						<div className="play relative rounded-[54px]">
-							<img src="/assets/hand.png" className="thehand absolute  -top-[41px] -right-[9px] rounded-r-full w-[490px] animate-bounce " alt="" />
+						<Image
+  							src="/assets/hand.png"
+  							className="thehand absolute -top-[41px] -right-[9px] rounded-r-full w-[490px] h-[490px] animate-bounce"
+  							alt=""
+  							width={490}
+  							height={490}
+						/>
 							<button type="button" className="play-button ease-in duration-100 hover:scale-105">Play Now!</button>
 						</div>
 						<div className="boxes">
@@ -66,7 +79,7 @@ const Dashboard = () => {
 							<Boxes title="LOSSES" value={results.LOSSES} color="#FC7785"/>
 						</div>
 						<h1 className="mt-[20px]">History</h1>
-						<div className=" history-header mt-[20px]  w-full h-[40px] bg-[#79a9f28d] rounded-[40px] flex justify-between px-1 py-1 ">
+						<div className=" history-header mt-[20px] shadow-lg w-full h-[40px] bg-[#79a9f28d] rounded-[40px] flex justify-between px-1 py-1 ">
 								<div className="w-[23%] text-center ">
 								<h1>Players</h1>
 								</div>
@@ -102,16 +115,11 @@ const Dashboard = () => {
 
 						</div>
 
-
-						
-
 					</div>
-					
-					
 					
 					<div className="col-2">
 
-						<div className="rank-container overflow-hidden p-3">
+						<div className="rank-container overflow-hidden p-2">
 							   <RankingFriendsSwitch/>
 						</div>
 

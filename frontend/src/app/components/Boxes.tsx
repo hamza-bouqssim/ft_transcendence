@@ -4,7 +4,11 @@ const Boxes = ({
 	title,
 	value,
 	color,
-}: any) => {
+}: {
+	title: string;
+	value: string;
+	color: string;
+}) => {
 	return (
 		<div className="box-1" style={{ backgroundColor: color }}>
 			<h1>{title} </h1>

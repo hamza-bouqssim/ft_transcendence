@@ -2,10 +2,13 @@ import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faBell } from "@fortawesome/free-solid-svg-icons";
 import { LogoutButton, MenuButton } from "./Buttons";
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState ,useContext} from "react";
 import { getAuthUser, getlogout } from "../utils/api";
 import { useRouter } from "next/navigation";
 import { deleteCookie } from "cookies-next";
+import NotificationComponent from "./NotificationComponent";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { socketContext } from "../utils/context/socketContext";
 
 type Change = {
@@ -14,58 +17,90 @@ type Change = {
 };
 
 const TopRightBar = (props: Change) => {
-	const { Userdata, setUserdata } = useContext(socketContext);
-	useEffect(() => {
-		getAuthUser()
-			.then(({ data }) => {
-				setUserdata(data);
-			})
-			.catch((err) => {
-				console.log(err);
-			});
-	}, []);
+	const ToastError = (message: any) => {
+		toast.error(message, {
+		  position: toast.POSITION.TOP_RIGHT,
+		  autoClose: 5000,
+		  hideProgressBar: false,
+		  closeOnClick: true,
+		  pauseOnHover: true,
+		  draggable: true,
+		});
+	  };
+	
+	  const ToastSuccess = (message: any) => {
+		toast.success(message, {
+		  position: toast.POSITION.TOP_RIGHT,
+		  autoClose: 5000,
+		  hideProgressBar: false,
+		  closeOnClick: true,
+		  pauseOnHover: true,
+		  draggable: true,
+		});
+	  };
+	const {Userdata , setUserdata} = useContext(socketContext)
+    useEffect(() => {
+		getAuthUser().then(({ data }) => {
+			setUserdata(prevData => ({
+				...prevData,
+				...data,
+			}));
+		}).catch((err) => {
+			console.log(err);
+		});
+	}, [setUserdata]);
 	const router = useRouter();
-
+	const [notfication , setNotefication] = useState(false)
 	const logout = () => {
 		try {
 			getlogout();
 			deleteCookie("logged");
 			router.push("/", { scroll: false });
+			ToastSuccess(`Logout succefully `);
 		} catch (err) {
-			alert("failed to logout");
-			// console.log(err);
-		}
-	};
+			ToastError(`Failed to logout`);
 
+		}
+	}
+
+	
+	
 	return (
-		<div className="fixed right-0 top-6 z-10 flex h-12 w-64 items-center justify-end gap-2 rounded-l-3xl lg:right-7 min-[1750px]:h-14 min-[1750px]:w-80 min-[1750px]:gap-4">
-			<div className="relative">
+		<>
+		<ToastContainer />
+		<div className="fixed z-50 right-0 top-6  flex h-12 w-64 items-center justify-end gap-2 rounded-l-3xl lg:right-7 min-[1750px]:h-14 min-[1750px]:w-80 min-[1750px]:gap-4">
+			<div className="relative ">
+			<div onClick={() => {setNotefication(!notfication)}} className="relative">
 				<FontAwesomeIcon
 					icon={faBell}
 					className="left-0 cursor-pointer rounded-[50%] bg-[#ffffff38] p-3 hover:bg-[--pink-color] min-[1750px]:h-6 min-[1750px]:w-6"
-				/>
+					/>
 				<span className="absolute right-8 top-[-5px] rounded-2xl bg-[--pink-color] px-2 font-['Whitney_Bold']">
 					42
 				</span>
 			</div>
+			{
+				notfication && 
+
+				<NotificationComponent></NotificationComponent>
+				
+			}
+			</div>
 			<div className="flex h-full w-52 items-center justify-between rounded-l-3xl bg-[#ffffff38] pl-1 pr-4 lg:w-56 lg:rounded-3xl min-[1750px]:w-64">
-				{Userdata && Userdata.avatar_url && (
-					<Image
-						className="h-10 w-10 rounded-[50%] bg-black min-[1750px]:h-12 min-[1750px]:w-12"
-						key={0}
-						src={Userdata.avatar_url}
-						width={72}
-						height={51}
-						alt="user"
+			{Userdata && Userdata.avatar_url && (
+  				<Image
+    				className="h-10 w-10 rounded-[50%] bg-black min-[1750px]:h-12 min-[1750px]:w-12"
+    				key={0}
+    				src={Userdata.avatar_url}
+    				width={72}
+    				height={51}
+    				alt="user"
+  					
 					/>
 				)}
 				<div className="font-['Whitney_Bold'] leading-3">
-					<h6 className="text-sm min-[1750px]:text-lg">
-						{Userdata?.display_name}
-					</h6>
-					<span className="text-xs min-[1750px]:text-sm">
-						{Userdata?.username}
-					</span>
+					<h6 className="text-sm min-[1750px]:text-lg">{Userdata?.display_name}</h6>
+					<span className="text-xs min-[1750px]:text-sm">{Userdata?.username}</span>
 				</div>
 
 				<FontAwesomeIcon
@@ -86,6 +121,15 @@ const TopRightBar = (props: Change) => {
 				</div>
 			</div>
 		</div>
+			{
+			notfication && 
+				<div className=" opacity-100 backdrop-blur-md absolute z-10 left-0 right-0 bottom-0  top-0">
+
+					
+				</div>
+			}
+			</>
+
 	);
 };
 
