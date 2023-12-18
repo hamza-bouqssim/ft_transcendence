@@ -82,30 +82,43 @@ const ChatComponnent  = () =>{
 	
 
 
-    const getDisplayUser = (conversation : ConversationTypes) => {
-		let test; 
-			const userId = UsersAuth?.display_name;
-			
-			if(conversation.sender.display_name !== userId)
-			{
-				test = conversation.sender
-			}else
-				test = conversation.recipient;
-		return test;
-	}
+	  const getDisplayUser = (conversation: ConversationTypes) => {
+		let user;
+		const userId = UsersAuth?.display_name;
+	  
+		if (conversation.sender.display_name !== userId) {
+		  user = conversation.sender;
+		} else {
+		  user = conversation.recipient;
+		}
+	  
+		const truncatedDisplayName =
+		  user.display_name.length > 10
+			? `${user.display_name.substring(0, 10)}...`
+			: user.display_name;
+	  
+		return {
+		  ...user,
+		  display_name: truncatedDisplayName,
+		};
+	  };
 
 
 
-	const getDisplayLastMessage = (conversation : ConversationTypes) =>{
-
-		let lastMessage = null;
-		lastMessage = conversation.lastMessage;
-		if(lastMessage == null)
-			return null;
-		else
-			return lastMessage.content;
+	const getDisplayLastMessage = (conversation: ConversationTypes) => {
+		let lastMessage = conversation.lastMessage;
 		
-	}
+		if (lastMessage == null) {
+		  return null;
+		} else {
+		  // Limit the displayed characters to 10
+		  const truncatedContent = lastMessage.content.length > 10
+			? `${lastMessage.content.substring(0, 10)}...`
+			: lastMessage.content;
+	  
+		  return truncatedContent;
+		}
+	  };
 	
 	const isUnread = (conversationId: string) => {
 		return unreadConversations.has(`${conversationId}`)
@@ -186,15 +199,13 @@ const ChatComponnent  = () =>{
 						
 
 						return(
-							<div onClick={handleClick}  key={elem.id}  className={`cursor-pointer rounded-lg hover:bg-[#F2F3FD] ${
-								isUnread(elem.id) ? 'bg-rose-300' : ''
-							  } flex items-start justify-between px-2 py-3`}>
+							<div onClick={handleClick}  key={elem.id}  className={`cursor-pointer rounded-lg hover:bg-[#F2F3FD] flex items-start justify-between px-2 py-3`}>
 								<div className="flex items-center justify-start" key={elem.id}>
 								<Image src={getDisplayUser(elem)?.avatar_url} className="h-10 w-10 rounded-[50%] bg-black min-[1750px]:h-12 min-[1750px]:w-12" alt="Description of the image" width={60}   height={50} />
 									<div className="ml-4">
 					 					<span className="ConversationName">{getDisplayUser(elem)?.username} {getDisplayUser(elem)?.display_name}</span>
-										<span className="lastName">{getDisplayLastMessage(elem)}</span>
-
+										<span className="text-sm text-gray-400 font-light overflow-hidden h-5">{getDisplayLastMessage(elem)}</span>
+										
 					 				</div>
 								</div>
 								<div className="absolute right-5 p-4">

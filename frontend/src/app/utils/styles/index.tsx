@@ -412,21 +412,9 @@ export const MessagePannelHeaderStyle = styled.header `
 
 export const MessageContainerStyle = styled.div `
     box-sizing: border-box;
-    padding: 6px 0;
     display: flex;
     flex-direction: column-reverse;
-    overflow-y: scroll;
-    &::-webkit-scrollbar {
-        width: 8px;
-    }
-    &::-webkit-scrollbar-track {
-        background-color: #fff;
-    }
-    &::-webkit-scrollbar-thumb {
-        background-color: #fc7785;
-        width: 5px;
-        border-radius: 20px;
-    }
+   
 `;
 
 export const MessageInputFieldContainer = styled.div `

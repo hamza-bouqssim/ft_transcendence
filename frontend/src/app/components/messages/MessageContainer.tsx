@@ -70,28 +70,44 @@ const MessageContainer = () => {
 
        <>
         <ToastContainer />
-        <div className="h-[calc(100%-135px)]   overflow-auto py-3">
-            <MessageContainerStyle>
-                {messages && messages.map((m : messageTypes) =>(
-                    <MessageItemContainer key={m.id}>
-                        <Image src={m.sender?.avatar_url} className="h-10 w-10 rounded-[50%] bg-black " alt="Description of the image" width={60}   height={60} />
+        <div className="h-[calc(100%-130px)] no-scrollbar  overflow-y-auto  ">
+        <MessageContainerStyle>
+          {messages &&
+            messages.map((m: messageTypes) => (
+                <div className={`flex w-full mt-2 space-x-3 max-w-xs ${Userdata?.id === m.sender.id ? 'self-end' : 'self-start'} overflow-y-auto`} key={m.id}>                <Image
+                  src={m.sender?.avatar_url}
+                  className="h-10 w-10 rounded-[50%] bg-black "
+                  alt="Description of the image"
+                  width={60}
+                  height={60}
+                />
 
-                        <MessageItemDetails>
-                                <MessageItemHeader key={m.id}>
-                                    <span className="senderName" style={{color : Userdata?.id === m.sender.id ? '#8982a6' : '#778ba5'}}>
-                                        {m.sender.username}
-                                    </span>
-                                    <span className="time">
-                                        {formatRelative(new Date(m.createdAt), new Date())}
-                                    </span>
-                                    </MessageItemHeader>
-                                    <MessageItemContent>{m.content}</MessageItemContent>
-                        </MessageItemDetails>
+                <div className={`flex-1`}>
+                  <div className="flex gap-4	" key={m.id}>
+                    <span
+                      className="senderName"
+                      style={{
+                        color: Userdata?.id === m.sender.id ? '#8982a6' : '#778ba5',
+                      }}
+                    >
+                      {m.sender.username}
+                    </span>
+                    <span className="text-sm text-gray-800	">
+                      {formatRelative(new Date(m.createdAt), new Date())}
+                    </span>
+                  </div >
 
-            </MessageItemContainer>
-            ) )}
-            </MessageContainerStyle>
-
+                  <div
+                    className={`relative ml-3 text-sm bg-white py-2 px-4 shadow rounded-xl  ${
+                      Userdata?.id === m.sender.id ? 'bg-[#718baf] ' : 'bg-[#7093c5] '
+                    }`}
+                  >
+                    {m.content}
+                  </div>
+                </div>
+              </div>
+            ))}
+        </MessageContainerStyle>
         </div>
         {(isSenderBlocked && Userdata?.display_name === channel?.sender.display_name) || (isRecipientBlocked && Userdata?.display_name === channel?.recipient.display_name) ? (
           <button className="w-full p-4 py-3 bg-[#5B8CD3] px-4 mr-2 rounded-full" >
