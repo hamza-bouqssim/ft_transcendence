@@ -57,8 +57,7 @@ const MatchMaking = () => {
 			gameSocket.off("knowOpponent", handleKnowOpponent);
 			gameSocket.off("redirectUser", handleRedirectUser);
 		};
-	}, []);
-
+	}, [Userdata, gameSocket, mapIndex, router, setOpponentPlayer]);
 	return (
 		<>
 			{checkQueryValue() ? (

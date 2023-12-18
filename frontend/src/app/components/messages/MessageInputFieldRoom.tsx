@@ -44,7 +44,7 @@ const MessageInputFieldRoom: FC<props> = ({setMessage, Message}) => {
           socket.off('messageRome', handleOnMessage);
         }
       };
-    }, [channel.id, socket, pathname, setMessage]);
+    }, [channel?.id, socket, pathname, setMessage]);
 
   
     const sendMessage = async () => {
@@ -52,11 +52,11 @@ const MessageInputFieldRoom: FC<props> = ({setMessage, Message}) => {
             return
         if(pathname.includes("chat"))
         {
-            socket.emit("message.create", { participentsId: channel.id, content: content });
+            socket.emit("message.create", { participentsId: channel?.id, content: content });
         }
         else
         {
-            socket.emit("messageRome", { chatRoomId: channel.id, content: content });
+            socket.emit("messageRome", { chatRoomId: channel?.id, content: content });
         }
       setContent('');
     };
@@ -65,17 +65,17 @@ const MessageInputFieldRoom: FC<props> = ({setMessage, Message}) => {
 
     return (
       <>
-      { members.some((member: Member)=> member.user_id === Userdata.id && member.Status === "Member")?
+      { members.some((member: Member)=> member.user_id === Userdata?.id && member.Status === "Member")?
         <div className="flex items-center justify-between ">
          
             <CiImageOn className="text-[#5B8CD3] mr-5 " size={40}/>
             <div  className="w-full  flex items-center bg-[#F2F3FD]  rounded-full justify-between">
                 <input 
                 onFocus={() => {
-                  socket?.emit('Typing', { id:channel.id,userId:Userdata.id});
+                  socket?.emit('Typing', { id:channel?.id,userId:Userdata?.id});
                 }}
                 onBlur={() => {
-                  socket?.emit('leaveTyping', { id:channel.id,userId:Userdata.id});
+                  socket?.emit('leaveTyping', { id:channel?.id,userId:Userdata?.id});
                 }}
                 className="w-full p-4 py-3 bg-[#F2F3FD] rounded-full  focus:outline-none text-[#949494]" placeholder="Type a message" value={content}  onChange={(e) => setContent(e.target.value)}/>
                 <button onClick={sendMessage} className="bg-[#5B8CD3]  py-1 px-4 mr-2 rounded-full" type="submit"><LuSendHorizonal size={32} /></button>

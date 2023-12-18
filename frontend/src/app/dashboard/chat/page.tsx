@@ -42,9 +42,9 @@ const ConversationChannelPagechat = () => {
     socket.on('blockNotification', (data : any) =>{
       dispatch(fetchBlocksThunk());
       dispatch(fetchGetAllFriendsThunk());
-      // updateChannel(data);
-      dispatch(fetchMessagesThunk(channel?.id));
-
+      if (channel && channel.id) {
+        dispatch(fetchMessagesThunk(channel.id));
+      }
       
     })
     socket.on('debloqueNotification', (data : any)=>{
@@ -78,13 +78,16 @@ const ConversationChannelPagechat = () => {
 			updateChannel(data);
 			dispatch(fetchConversationThunk());
       updateChannel(data);
-			dispatch(fetchMessagesThunk(channel?.id));
-
+      if (channel && channel.id) {
+        dispatch(fetchMessagesThunk(channel.id));
+      }
 		  })
     socket.on('onMessage', (messages : messageTypes)=>{
 			dispatch(fetchConversationThunk());
 			updateChannel(messages.participents);
-      dispatch(fetchMessagesThunk(channel?.id));
+      if (channel && channel.id) {
+        dispatch(fetchMessagesThunk(channel.id));
+      }
 
 		
 		})
@@ -102,7 +105,7 @@ const ConversationChannelPagechat = () => {
 
       };
 		
-	  }, [socket, dispatch, channel?.id]);
+	  }, [socket, dispatch, channel?.id, channel, updateChannel]);
     return ( 
         <div className=" flex h-screen  xl:container xl:mx-auto">  
           <div className={`h-full  xl:p-10 xl"pl-5 xl:pr-2 ${!channel ? 'block w-full xl:w-[35%]  ' : 'hidden xl:block  xl:w-[35%] '}`}>

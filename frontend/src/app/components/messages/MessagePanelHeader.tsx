@@ -33,11 +33,11 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({ setUpdateRome, update
     const {Userdata} = useContext(socketContext)
     const goBack =() =>
     {
-        updateChannel("")
+        updateChannel(null)
     }
     useEffect(() => {
         const handleTyping = (typing: any) => {
-          if (typing.userId !== Userdata.id) {
+          if (typing.userId !== Userdata?.id) {
             setIsTyping(typing.status);
           }
         };
@@ -49,23 +49,23 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({ setUpdateRome, update
           socket.off('Typing', handleTyping);
           socket.off('leaveTyping', handleTyping);
         };
-      }, [Userdata.id, socket]);
+      }, [Userdata?.id, socket]);
 
     useEffect(() => {
         setUpdateRome(false)
     }, [channel, setUpdateRome])
 
     useEffect(() => {
-        dispatch(getAllMembers(channel.id))
+        dispatch(getAllMembers(channel?.id))
       }, [dispatch,channel])
 
     // Image src
-    const InfoRecipinet = () =>{
-        let test : User;
-        if(channel.recipient.display_name === Userdata.display_name){
-            test = channel.sender;
+    const InfoRecipient = () =>{
+        let test : User | undefined;
+        if(channel?.recipient.display_name === Userdata?.display_name){
+            test = channel?.sender;
         }else
-            test  = channel.recipient;
+            test  = channel?.recipient;
         return test;
 
     }
@@ -73,9 +73,9 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({ setUpdateRome, update
     return (<div className="flex items-center justify-between p-5  rounded-full text-black  bg-[#F2F3FD]">
             <div className="flex items-center">
                     <FaArrowLeft  onClick={goBack} className="mr-4 xl:hidden block" size={26}></FaArrowLeft>
-                    {channel.picture && <Image src={channel.picture} className="w-[50px] rounded-full" alt=""  width={30} height={30} />}
-                    {!channel.picture && channel.recipient.avatar_url && <Image src={InfoRecipinet().avatar_url} className="w-[50px] rounded-full" alt="" width={30} height={30} />}
-                    {channel.name && 
+                    {channel?.picture && <Image src={channel.picture} className="w-[50px] rounded-full" alt=""  width={30} height={30} />}
+                    {!channel?.picture &&  InfoRecipient()?.avatar_url  && <Image src={InfoRecipient()?.avatar_url} className="w-[50px] rounded-full" alt="" width={30} height={30} />}
+                    {channel?.name && 
                     <div>
                         <h1 className="ml-2">{channel.name }</h1>
                         {isTyping ? 
@@ -84,10 +84,13 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({ setUpdateRome, update
                         }
                     </div>
                     }
-                    {!channel.name && channel.recipient.display_name && <h1 className="ml-2">{InfoRecipinet().display_name }</h1>}
+                    {!channel?.name && channel?.recipient.display_name && <h1 className="ml-2">{InfoRecipient()?.display_name }</h1>}
             </div>
             {
-              pathname.includes('groups')  && channel.members.some((member : Member) => member.isAdmin && member.user_id === Userdata.id) ? (
+              pathname.includes('groups') &&
+              channel?.members &&
+              Userdata?.id &&
+              channel.members.some((member: Member) => member.isAdmin && member.user_id === Userdata.id) ? (
                      !updateRome ? (
                     <IoMdSettings
                         size={30}

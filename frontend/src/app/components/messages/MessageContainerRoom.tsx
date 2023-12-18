@@ -30,8 +30,9 @@ const MessageContainerRoom = () => {
         [oldId, socket, setOldId]
       );
       useEffect(() => {
-     
+    if(channel){
         const id = channel.id;
+        
         if (pathname.includes("chat")) {
           getConversationMessage(id)
             .then((data: any) => {
@@ -47,7 +48,9 @@ const MessageContainerRoom = () => {
             })
             .catch((err: any) => console.log(err));
         }
-      }, [channel.id, joinRoom, pathname]);
+    }
+        
+      }, [joinRoom, pathname, channel]);
       
       useEffect(() => {
         scrollRef.current?.scrollIntoView();

@@ -28,7 +28,7 @@ const CoversationSideBar = () => {
 				<button
 					onClick={()=>{
 						router.push("/dashboard/chat")
-						updateChannel("")
+						updateChannel(null)
 					}
 				}
 					className={`${(pathname.includes('chat')) ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-1/2`}>Chats
@@ -36,7 +36,7 @@ const CoversationSideBar = () => {
 				<button 
 					onClick={() =>{
 						router.push("/dashboard/groups")
-						updateChannel("")
+						updateChannel(null)
 					}
 				}
 					className={`${(pathname.includes('groups')) ? 'bg-[#5B8CD3]' : ''} rounded-full p-4 w-1/2`}>Group

@@ -55,10 +55,16 @@ const MessageContainer = () => {
         setOldId(id);
       };
     
-      const id = channel.id;
-      dispatch(fetchMessagesThunk(id));
-      joinRoom(id);
-    }, [dispatch, channel.id, oldId, socket, setOldId]);
+      // Check if channel is not null before accessing its properties
+      if (channel) {
+        const id = channel.id;
+    
+        if (id) {
+          dispatch(fetchMessagesThunk(id));
+          joinRoom(id);
+        }
+      }
+    }, [dispatch, channel, oldId, socket, setOldId]);
     
     return (
 
@@ -87,7 +93,7 @@ const MessageContainer = () => {
             </MessageContainerStyle>
 
         </div>
-        {(isSenderBlocked && Userdata?.display_name === channel.sender.display_name) || (isRecipientBlocked && Userdata?.display_name === channel.recipient.display_name) ? (
+        {(isSenderBlocked && Userdata?.display_name === channel?.sender.display_name) || (isRecipientBlocked && Userdata?.display_name === channel?.recipient.display_name) ? (
           <button className="w-full p-4 py-3 bg-[#5B8CD3] px-4 mr-2 rounded-full" >
             Unblock
           </button>

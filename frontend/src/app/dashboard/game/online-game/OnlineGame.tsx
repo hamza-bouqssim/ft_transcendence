@@ -1,5 +1,5 @@
 "use client";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import PlayerScore from "@/app/components/PlayerScore";
 import PongGame from "../utils/classes/PongGame";
@@ -28,16 +28,16 @@ const OnlineGame = ({ mapIndex }: any) => {
 	const { Userdata } = useContext<any>(socketContext);
 	const opponentPlayer = useAtomValue(OpponentData);
 	const setClearAtom = useSetAtom(OpponentData);
-	const clearAtomData = () => {
+	const clearAtomData = useCallback(() => {
 		setClearAtom(() => ({
-			opponent: {
-				username: "",
-				display_name: "",
-				avatar_url: "/assets/unknown.png",
-			},
-			isRotate: false,
+		  opponent: {
+			username: "",
+			display_name: "",
+			avatar_url: "/assets/unknown.png",
+		  },
+		  isRotate: false,
 		}));
-	};
+	  }, [setClearAtom]);
 
 	const [currentSize, setCurrentSize] = useState<{
 		width: number;
@@ -56,32 +56,36 @@ const OnlineGame = ({ mapIndex }: any) => {
 			width: getCurrentSizes(parentWidth, parentHeight)[0],
 			height: getCurrentSizes(parentWidth, parentHeight)[1],
 		});
-	}, []);
+	}, [currentSize]);
 
 	useEffect(() => {
 		console.log("online-game-score-useffect");
+	  
 		if (opponentPlayer.opponent.username === "") {
-			router.push("/dashboard/game");
-			return;
+		  router.push("/dashboard/game");
+		  return;
 		}
+	  
 		const updateScoreListener = (playersScore: any) => {
-			setScore({
-				...score,
-				playerOne: playersScore.yourScore,
-				playerTwo: playersScore.opponantScore,
-			});
+		  setScore((prevScore) => ({
+			...prevScore,
+			playerOne: playersScore.yourScore,
+			playerTwo: playersScore.opponantScore,
+		  }));
 		};
+	  
 		gameSocket.on("updateScore", updateScoreListener);
-		return () => void gameSocket.off("updateScore");
-	}, []);
+	  
+		return () => {
+		  gameSocket.off("updateScore");
+		};
+	  }, [gameSocket, opponentPlayer.opponent.username, router, setScore]);
 
 	useEffect(() => {
 		console.log("online-game-score-useffect2");
 
 		const handleLaunchGame = (payload: any) => {
-			console.log("from lauch game listern!!!!!!!!!!!!!!!!!!");
-			// opponentPlayer.current = payload.opponant;
-			// isRotate.current = payload.rotate;
+			
 			if (!pongRef.current) {
 				console.log("Create game!");
 				pongRef.current = new PongGame(
@@ -121,8 +125,7 @@ const OnlineGame = ({ mapIndex }: any) => {
 			pongRef.current?.clear();
 			clearAtomData();
 		};
-	}, []);
-
+	}, [Userdata?.display_name, clearAtomData, gameSocket, mapIndex, router]);
 	return (
 		<div
 			style={{ maxWidth: currentSize.width, maxHeight: currentSize.height }}

@@ -29,11 +29,11 @@ const ConversationChannelPage = () => {
 		})
     socket.on("delete",(payload:any) =>{
 			dispatch(getAllRooms())
-      updateChannel("")
+      updateChannel(null)
 		})
     socket.on("update",(payload:any) =>{
 			dispatch(getAllRooms())
-      updateChannel("")
+      updateChannel(null)
 		})
     return () => {
       socket.off("notification");
@@ -42,7 +42,7 @@ const ConversationChannelPage = () => {
     };
   
 
-	},[socket])
+	},[socket, dispatch, updateChannel])
     return ( 
             <div className=" flex h-screen  xl:container xl:mx-auto">
               <div className={`h-full  xl:p-10 xl"pl-5 xl:pr-2 ${!channel ? 'block w-full xl:w-[35%]  ' : 'hidden xl:block  xl:w-[35%] '}`}>
