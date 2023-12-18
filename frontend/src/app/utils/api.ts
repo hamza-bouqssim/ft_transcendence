@@ -19,7 +19,7 @@ export const getAuthUser = () => axios.get<User>(`http://localhost:8000/user/inf
 
 export const getConversation = () => axios.get(`http://localhost:8000/chat/findconversation`, config)
 
-export const createConversation = async (display_name : string) => axios.post(`http://localhost:8000/chat/conversation`,{display_name : display_name}, config)
+export const createConversation = async (display_name : string, message: string) => axios.post(`http://localhost:8000/chat/conversation`,{display_name : display_name, message: message}, config)
 export const getConversationMessage = (id : string) => axios.get(`http://localhost:8000/chat/messages/${id}`, config)
 export const markConversationAsRead = (id : string) => axios.get(`http://localhost:8000/chat/${id}/mark-as-read`, config);
 export const loginGoogle = () => axios.get(`http://localhost:8000/auth/google/login`, config)

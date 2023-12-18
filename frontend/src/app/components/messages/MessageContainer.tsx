@@ -98,8 +98,8 @@ const MessageContainer = () => {
                   </div >
 
                   <div
-                    className={`relative ml-3 text-sm bg-white py-2 px-4 shadow rounded-xl  ${
-                      Userdata?.id === m.sender.id ? 'bg-[#718baf] ' : 'bg-[#7093c5] '
+                    className={`relative ml-3 text-sm  py-2 px-4 shadow rounded-xl bg-[#7093c5]  ${
+                      Userdata?.display_name === m.sender.display_name ? 'bg-[#718baf] ' : 'bg-[#7093c5] '
                     }`}
                   >
                     {m.content}

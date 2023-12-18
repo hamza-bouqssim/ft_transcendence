@@ -166,7 +166,7 @@ export type CreateMessageParams = {
 
 export type CreateConversationParams ={
     display_name : string;
-    // message : string;
+    message : string;
 }
 
 export type CreateRequestParams = {

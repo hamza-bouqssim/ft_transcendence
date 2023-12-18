@@ -17,10 +17,10 @@ const initialState: ConversationsState = {
 
 // for create the conversation
 
-export const createConversationThunk = createAsyncThunk('conversations/create', async(display_name : string , { rejectWithValue })=>{
+export const createConversationThunk = createAsyncThunk('conversations/create', async(params: CreateConversationParams , { rejectWithValue })=>{
   try {
 
-    const response = await createConversation(display_name);
+    const response = await createConversation(params.display_name, params.message);
     
  
     if (!response.data.success)

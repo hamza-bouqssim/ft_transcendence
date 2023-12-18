@@ -45,7 +45,7 @@ const CoversationSideBar = () => {
 			<hr className="bg-[#DFDFDF] w-1/2 mx-auto mt-5"/>
 			{!newRooms && <ConversationSearch  ></ConversationSearch>}
 
-			{newRooms && pathname.includes('chat')  && <div className="flex items-center rounded-full justify-between w-3/ mb-4  mx-auto  bg-[#423d3d]">
+			{newRooms && pathname.includes('chat')  && <div className="flex items-center rounded-full justify-between w-3/ mb-4  mx-auto  bg-[#db808e8e]">
  				
  				<button 
  					onClick={()=>{setSelectUsers("online")}}
@@ -69,7 +69,7 @@ const CoversationSideBar = () => {
 
 			{!newRooms 
 				&&  pathname.includes('chat') 
-				&& <ChatComponnent/>
+				&& <ChatComponnent />
 			}
 			{!newRooms 
 				&&  pathname.includes('groups') 

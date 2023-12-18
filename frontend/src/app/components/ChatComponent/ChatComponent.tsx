@@ -172,68 +172,105 @@ const ChatComponnent  = () =>{
 	  }
   
 
-    return (
-        <div className="text-black  my-10 h-[calc(100%-200px)] overflow-auto ">
-			<ToastContainer />
-
-			{show &&  <CreateConversationModal   setShow={setShow} />   }
-
-		<div className="flex p-2 gap-px px-20  border-solid border-2 ">
-			<h1 className=" text-lg p-2 font-bold  text-blue-500">Private Messages</h1>
-			<button onClick={() => {setShow(!show)}} className=" absolute right-5 p-4 bg-[#fc7785] rounded-full" ><IoMdAdd /></button>
-		</div>
-			<div className="p-2">
-				{conversations.map(function(elem : ConversationTypes){
-					 const unreadCount = messagesUnread[elem.id] || 0;
-						function handleClick()
-						{
-							updateChannel(elem)
-							dispatch(fetchMessagesThunk(elem.id));
-							markConversationAsRead(elem.id);
-
-						}
-						function handleClickUser()
-						{
-							router.push(`/dashboard/${elem.recipientId}`)
-						}
-						
-
-						return(
-							<div onClick={handleClick}  key={elem.id}  className={`cursor-pointer rounded-lg hover:bg-[#F2F3FD] flex items-start justify-between px-2 py-3`}>
-								<div className="flex items-center justify-start" key={elem.id}>
-								<Image src={getDisplayUser(elem)?.avatar_url} className="h-10 w-10 rounded-[50%] bg-black min-[1750px]:h-12 min-[1750px]:w-12" alt="Description of the image" width={60}   height={50} />
-									<div className="ml-4">
-					 					<span className="ConversationName">{getDisplayUser(elem)?.username} {getDisplayUser(elem)?.display_name}</span>
-										<span className="text-sm text-gray-400 font-light overflow-hidden h-5">{getDisplayLastMessage(elem)}</span>
-										
-					 				</div>
-								</div>
-								<div className="absolute right-5 p-4">
-				          			<FontAwesomeIcon icon={faChevronDown} size="2x" className={`text-black transform cursor-pointer text-1xl duration-500 ease-in-out hover:text-[--pink-color] lg:text-3xl }`}
-					          				onClick={() => handleMenuClick(elem.id)}
-				         			 />
-      
-                					{openMenuId === elem.id &&
-                						<div className={`absolute  top-[-120px] left-2 h-[120px]  w-[200px] flex-col items-center justify-center gap-1 rounded-[15px] border-2 border-solid border-[#000000] bg-white font-['Whitney_Semibold'] `}>
-					        				<button className={`bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> handleClickUser()}>View profile</button>
-					        				<button className={` bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> deleteConversation(elem)}>Delete Chat</button>
-                  							<button className={` bg-[#EA7F87] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} value="Bloque" onClick={()=> handlleBloque(elem)}>Bloque</button>
-
-				        			</div>}	
-            					</div> 
-								<div className="text-black">
-									{new Date(elem.createdAt).toLocaleTimeString()}
-								</div>
-								
-							</div>
-							
-								
-						)
-					}) }
+	  return (
+		<>
+		  <ToastContainer />
+	
+		  {/* Conditionally render CreateConversationModal if show is true */}
+		  {show && <CreateConversationModal setShow={setShow} />}
+		  
+		  {/* Conditionally render conversations if show is false */}
+		  {!show && (
+			<div className="text-black my-10 h-[calc(100%-200px)] overflow-auto ">
+			  {/* Header Section */}
+			  <div className="flex p-2 gap-px px-20 border-solid border-2">
+				<h1 className="text-lg p-2 font-bold text-blue-500">Private Messages</h1>
+				<button onClick={() => setShow(!show)} className="absolute right-5 p-4 bg-[#fc7785] rounded-full">
+				  <IoMdAdd />
+				</button>
+			  </div>
+	
+			  {/* Conversations Section */}
+			  <div className="p-2">
+				{conversations.map((elem: ConversationTypes) => {
+				  const unreadCount = messagesUnread[elem.id] || 0;
+	
+				  // Function to handle clicking on a conversation
+				  function handleClick() {
+					updateChannel(elem);
+					dispatch(fetchMessagesThunk(elem.id));
+					markConversationAsRead(elem.id);
+				  }
+	
+				  // Function to handle clicking on a user
+				  function handleClickUser() {
+					router.push(`/dashboard/${elem.recipientId}`);
+				  }
+	
+				  return (
+					<div onClick={handleClick} key={elem.id} className={`cursor-pointer rounded-lg hover:bg-[#F2F3FD] flex items-start justify-between px-2 py-3`}>
+					  {/* User Information Section */}
+					  <div className="flex items-center justify-start" key={elem.id}>
+						<Image
+						  src={getDisplayUser(elem)?.avatar_url}
+						  className="h-10 w-10 rounded-[50%] bg-black min-[1750px]:h-12 min-[1750px]:w-12"
+						  alt="Description of the image"
+						  width={60}
+						  height={50}
+						/>
+						<div className="ml-4">
+						  <span className="ConversationName">{getDisplayUser(elem)?.username} {getDisplayUser(elem)?.display_name}</span>
+						  <span className="text-sm text-gray-400 font-light overflow-hidden h-5">{getDisplayLastMessage(elem)}</span>
+						</div>
+					  </div>
+	
+					  {/* Dropdown Menu Section */}
+					  <div className="absolute right-5 p-4">
+						<FontAwesomeIcon
+						  icon={faChevronDown}
+						  size="2x"
+						  className={`text-black transform cursor-pointer text-1xl duration-500 ease-in-out hover:text-[--pink-color] lg:text-3xl`}
+						  onClick={() => handleMenuClick(elem.id)}
+						/>
+	
+						{/* Display menu if openMenuId matches the conversation id */}
+						{openMenuId === elem.id && (
+						  <div className={`absolute top-[-120px] left-2 h-[120px] w-[200px] flex-col items-center justify-center gap-1 rounded-[15px] border-2 border-solid border-[#000000] bg-white font-['Whitney_Semibold']`}>
+							<button
+							  className={`bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`}
+							  onClick={() => handleClickUser()}
+							>
+							  View profile
+							</button>
+							<button
+							  className={`bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`}
+							  onClick={() => deleteConversation(elem)}
+							>
+							  Delete Chat
+							</button>
+							<button
+							  className={`bg-[#EA7F87] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`}
+							  value="Bloque"
+							  onClick={() => handlleBloque(elem)}
+							>
+							  Bloque
+							</button>
+						  </div>
+						)}
+					  </div>
+	
+					  {/* Timestamp Section */}
+					  <div className="text-black">
+						{new Date(elem.createdAt).toLocaleTimeString()}
+					  </div>
+					</div>
+				  );
+				})}
+			  </div>
 			</div>
-					
-			</div>
-    )
-}
+		  )}
+		</>
+	  );
+	};
 
 export default ChatComponnent;

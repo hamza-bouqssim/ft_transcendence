@@ -16,10 +16,10 @@ constructor(private  conversationService : ConversationsService , private eventE
 
 
 @Post('conversation')
- async CreateConversations(@Body() request: {display_name : string}, @Req() req, @Res() res){
+ async CreateConversations(@Body() request: {display_name : string, message : string}, @Req() req, @Res() res){
     try {
         const user =req.user
-        const returnValue = await this.conversationService.createConversations(user,  request.display_name);
+        const returnValue = await this.conversationService.createConversations(user,  request.display_name, request.message);
         return res.status(200).json({ success: true, response: returnValue });
     } catch (err) {
         return res.status(401).json({ success: false, message: err.message || 'An unexpected error occurred' });

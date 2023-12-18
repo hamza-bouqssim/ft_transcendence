@@ -19,7 +19,7 @@ export const InputFieldStyling = styled.input`
     font-family: 'Inter';
     font-size: 18px;
     width: 50rem;
-    padding: 10px;
+    padding: 4px;
     border-radius: 10px;
 
 `;
