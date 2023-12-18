@@ -1,4 +1,3 @@
-import { useAppSelector } from "@/redux_toolkit/hooks";
 import Image from "next/image";
 
 type PlayerCardProps = {

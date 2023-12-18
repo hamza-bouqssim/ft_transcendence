@@ -79,6 +79,7 @@ const BotGame = ({ mapIndex }: any) => {
 					pongRef.current.botScore === 7 ||
 					pongRef.current.playerScore === 7
 				) {
+					setStartGame((prev: any) => !prev);
 					pongRef.current.clear();
 					clearInterval(scoreInterval);
 					pongRef.current.playerScore === 7

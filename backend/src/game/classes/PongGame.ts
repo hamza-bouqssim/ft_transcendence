@@ -75,9 +75,8 @@ export class PongGame {
 	private posBottomPaddleX = this.defaultCanvasSizes.width / 2;
 	playerOneScore: number = 0;
 	playerTwoScore: number = 0;
-	private updateBallPosition: any;
-	private movePaddleInterval: any;
-
+	private updateBallPosition: NodeJS.Timeout;
+	private movePaddleInterval: NodeJS.Timeout;
 	private user1: string;
 	private user2: string;
 	private engine: Engine;
@@ -527,22 +526,14 @@ export class PongGame {
 	setBallVelocity() {
 		// Random Value Between A Range
 		// Math.floor(Math.random() * (max - min + 1)) + min;
-		let randomVelocity = Math.floor(Math.random() * 11) - 5;
 
-		if (randomVelocity >= 0 && randomVelocity < 3) randomVelocity = 3;
-		else if (randomVelocity >= -2 && randomVelocity <= 0) randomVelocity = -3;
+		const randomValue = Math.random() < 0.5 ? -5 : 5;
+		const yVelocity = this.lastDirection == 'top' ? -5 : 5;
 
-		if (this.lastDirection === 'top') {
-			this.currentBallVelocity = {
-				x: randomVelocity,
-				y: -4,
-			};
-		} else {
-			this.currentBallVelocity = {
-				x: randomVelocity,
-				y: 4,
-			};
-		}
+		this.currentBallVelocity = {
+			x: randomValue,
+			y: yVelocity,
+		};
 
 		Body.setVelocity(this.ball, {
 			x: this.currentBallVelocity.x,

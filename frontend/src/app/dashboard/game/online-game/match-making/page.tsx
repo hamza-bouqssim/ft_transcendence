@@ -1,7 +1,4 @@
 "use client";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUserGroup } from "@fortawesome/free-solid-svg-icons";
-import InviteField from "../../../../components/InviteField";
 import PlayerCard from "../../../../components/PlayerCard";
 import { ChangeContext } from "../../../layout";
 import { useEffect, useContext } from "react";
@@ -33,7 +30,6 @@ const MatchMaking = () => {
 	const [opponentPlayer, setOpponentPlayer] = useAtom(OpponentData);
 
 	useEffect(() => {
-
 		const handleRedirectUser = (payload: any) => {
 			if (Userdata?.display_name === payload.display_name)
 				router.push("/dashboard", { scroll: false });
