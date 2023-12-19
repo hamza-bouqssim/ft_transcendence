@@ -1,7 +1,6 @@
 import Swal from "sweetalert2";
 
-// export const ReloadPage = (router: any, e: BeforeUnloadEvent) => {
-// 	e.preventDefault();
+// export const ReloadPage = (router: any) => {
 // 	Swal.fire({
 // 		title: "Are You Sure?",
 // 		text: "U Wanna Leave Game?",

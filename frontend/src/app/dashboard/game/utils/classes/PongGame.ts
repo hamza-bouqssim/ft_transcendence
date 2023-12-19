@@ -490,8 +490,10 @@ class PongGame {
 	setBallVelocity = (): void => {
 		// Random Value Between A Range
 		// Math.floor(Math.random() * (max - min + 1)) + min;
+		let randomValue: number;
 
-		const randomValue = Math.random() < 0.5 ? -5 : 5;
+		if (this.chosenMapIndex === 1) randomValue = Math.random() < 0.5 ? -6 : 5;
+		else randomValue = Math.random() < 0.5 ? -5 : 5;
 
 		const yVelocity = this.lastDirection == "top" ? -5 : 5;
 
@@ -645,7 +647,15 @@ class PongGame {
 
 	updateBallVelocity = (): void => {
 		// Limit Velocity Value
-		if (this.currentBallVelocity.y === 10 || this.currentBallVelocity.y === -10)
+		if (
+			(this.currentBallVelocity.y === 6 || this.currentBallVelocity.y === -6) &&
+			this.chosenMapIndex === 1
+		)
+			return;
+		else if (
+			this.currentBallVelocity.y === 8 ||
+			this.currentBallVelocity.y === -8
+		)
 			return;
 		else if (this.lastDirection === "top") {
 			this.currentBallVelocity.y -= this.map(

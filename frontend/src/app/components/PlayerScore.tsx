@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 type PlayerScoreProps = {
 	flag: string;
 	// userName: string;
@@ -14,9 +12,9 @@ const PlayerScore = (props: PlayerScoreProps) => {
 	return (
 		<div
 			style={{ color: props.color }}
-			className={`flex h-1/2 w-full items-center ${
+			className={`score-box flex h-1/2 w-full items-center ${
 				props.flag === "top" ? "justify-end" : ""
-			} px-2 font-['Whitney_Semibold'] text-sm  min-[300px]:text-3xl md:text-5xl min-[1750px]:text-7xl`}
+			} px-2 font-['Whitney_Semibold'] `}
 		>
 			{props.score}
 		</div>
