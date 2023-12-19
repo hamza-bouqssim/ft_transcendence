@@ -227,8 +227,7 @@ const ChatComponnent  = () =>{
 					  {/* Dropdown Menu Section */}
 					  <div className="absolute right-5 p-4">
 						<FontAwesomeIcon
-						  icon={faChevronDown}
-						  size="2x"
+						  icon={faEllipsis}
 						  className={`text-black transform cursor-pointer text-1xl duration-500 ease-in-out hover:text-[--pink-color] lg:text-3xl`}
 						  onClick={() => handleMenuClick(elem.id)}
 						/>

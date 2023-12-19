@@ -42,6 +42,7 @@ const ConversationChannelPagechat = () => {
     socket.on('blockNotification', (data : any) =>{
       dispatch(fetchBlocksThunk());
       dispatch(fetchGetAllFriendsThunk());
+
       if (channel && channel.id) {
         dispatch(fetchMessagesThunk(channel.id));
       }
@@ -51,7 +52,6 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchBlocksThunk());
       dispatch(fetchGetAllFriendsThunk());
       
-        updateChannel(data);
       if(channel != null)
       {
         dispatch(fetchMessagesThunk(channel.id));
@@ -77,14 +77,12 @@ const ConversationChannelPagechat = () => {
     socket.on('deleteConversation', (data : ConversationTypes)=>{
 			updateChannel(data);
 			dispatch(fetchConversationThunk());
-      updateChannel(data);
       if (channel && channel.id) {
         dispatch(fetchMessagesThunk(channel.id));
       }
 		  })
     socket.on('onMessage', (messages : messageTypes)=>{
 			dispatch(fetchConversationThunk());
-			updateChannel(messages.participents);
       if (channel && channel.id) {
         dispatch(fetchMessagesThunk(channel.id));
       }

@@ -16,6 +16,7 @@ import {socketContext } from "@/app/utils/context/socketContext";
 import { SendRequestForm } from "../forms/SendRequestForm"
 import { FaCheck } from "react-icons/fa"
 import CreateSearchModal from "../ConversationSearch/Modal/CreateSearchModal"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 const CoversationSideBar = () => {
 	const [newRooms , setNewRooms]  = useState<boolean>(false)
 	const router = useRouter();
@@ -48,13 +49,17 @@ const CoversationSideBar = () => {
 			<hr className="bg-[#DFDFDF] w-1/2 mx-auto mt-5"/>
 			{!newRooms  && <div className={`search-container`}>
             {show  &&  <CreateSearchModal   setShow={setShow} />   }
-            <input
-                className={`rounded-l-lg text-black focus:outline-none bg-[#D9D9D9] bg-opacity-20 p-3 `}
-                placeholder="Find your friends"
-                onClick={() => {setShow(!show)}}
-            />
+		
+			{!show && <div className="flex items-center bg-gray-200 rounded-md">
+                <div className="pl-2">
+                    <svg className="fill-current text-gray-500 w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+						<path className="heroicon-ui" d="M16.32 14.9l5.39 5.4a1 1 0 0 1-1.42 1.4l-5.38-5.38a8 8 0 1 1 1.41-1.41zM10 16a6 6 0 1 0 0-12 6 6 0 0 0 0 12z" />
+                    </svg>
+                </div>
+                <input className="w-full rounded-md bg-gray-200 text-gray-700 leading-tight focus:outline-none py-2 px-2" id="search" type="text" placeholder="Search teams or members"  onClick={() => {setShow(!show)}}></input>
+            </div>}
             
-        </div>}
+        	</div>}
 
 			{newRooms && pathname.includes('chat') && !show  && <div className="flex items-center rounded-full justify-between w-3/ mb-4  mx-auto  bg-[#db808e8e]">
  				

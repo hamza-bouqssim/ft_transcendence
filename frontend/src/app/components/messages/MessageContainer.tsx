@@ -55,7 +55,6 @@ const MessageContainer = () => {
         setOldId(id);
       };
     
-      // Check if channel is not null before accessing its properties
       if (channel) {
         const id = channel.id;
     
@@ -90,7 +89,7 @@ const MessageContainer = () => {
                         color: Userdata?.id === m.sender.id ? '#8982a6' : '#778ba5',
                       }}
                     >
-                      {m.sender.username}
+                      {m.sender.display_name}
                     </span>
                     <span className="text-sm text-gray-800	">
                       {formatRelative(new Date(m.createdAt), new Date())}

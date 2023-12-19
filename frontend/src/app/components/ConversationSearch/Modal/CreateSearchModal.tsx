@@ -50,11 +50,9 @@ const CreateSearchModal:FC<props> = ({setShow}) => {
             }
         };
 
-        // Fetch search results when searchQuery changes
         if (searchQuery.trim() !== "") {
             fetchSearchResults();
         } else {
-            // Clear search results if the searchQuery is empty
             setSearchResults([]);
         }
 
@@ -81,8 +79,8 @@ const CreateSearchModal:FC<props> = ({setShow}) => {
         <div className="flex justify-center p-4 px-3 py-10">
             <div className="w-full max-w-md">
                 <div className="bg-white shadow-md rounded-lg px-3 py-2 mb-4">
-                    <div className="block text-gray-700 text-lg font-semibold py-2 px-2">
-                        Item List
+                    <div className="block text-gray-700 text-lg font-semibold py-7 px-2 items-center">
+                        Searching
                     </div>
                     <div className="flex items-center bg-gray-200 rounded-md">
                         <div className="pl-2">
@@ -110,7 +108,7 @@ const CreateSearchModal:FC<props> = ({setShow}) => {
                         
                     </div>
                     <div className="block bg-gray-200 text-sm text-right py-2 px-3 -mx-3 -mb-2 rounded-b-lg">
-                        <button className="hover:text-gray-600 text-gray-500 font-bold py-2 px-4">
+                        <button className="hover:text-gray-600 text-gray-500 font-bold py-2 px-4" onClick={() => {setShow(false)}}>
                             Cancel
                         </button>
                       
