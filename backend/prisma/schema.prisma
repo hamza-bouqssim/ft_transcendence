@@ -121,6 +121,7 @@ model NotificationGlobal {
   Sender_id String
   recipient_id String
   content String
+  type String
   vue Boolean @default(false)
   created_at   DateTime        @default(now())
   image_content String

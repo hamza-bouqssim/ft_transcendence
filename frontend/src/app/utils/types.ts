@@ -123,6 +123,7 @@ export type NotificationTypes = {
     id : string;
     content : string;
     image_content : String;
+    type: string;
 
 }
 

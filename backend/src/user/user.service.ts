@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { HttpException, HttpStatus, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { User } from 'src/gateway/User';
 import { findUserParams } from 'src/utils/types';
@@ -298,13 +298,14 @@ export class UserService {
       }
       // create notification
 
-      async createNotification(userSender: User, userRecipient: User, message: string) {
+      async createNotification(userSender: User, userRecipient: User, message: string, type: string) {
         const notification = await this.prisma.notificationGlobal.create({
             data: {
                 Sender: { connect: { id: userSender.id } },
                 recipient: { connect: { id: userRecipient.id } },
                 content: message,
                 image_content: userSender.avatar_url,
+                type: type,
             },
         });
     

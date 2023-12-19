@@ -27,6 +27,18 @@ constructor(private  conversationService : ConversationsService , private eventE
 
 }
 
+@Post('Create_conversation')
+ async Create_conversations(@Body() request: {display_name : string}, @Req() req, @Res() res){
+    try {
+        const user =req.user
+        const returnValue = await this.conversationService.create_conversations(user,  request.display_name);
+        return res.status(200).json({ success: true, response: returnValue });
+    } catch (err) {
+        return res.status(401).json({ success: false, message: err.message || 'An unexpected error occurred' });
+    }
+
+}
+
 @Get('findconversation')
 async  findConversation(@Req() req: Request){
     const user = req.user
@@ -64,6 +76,7 @@ async getUnreadMessages(@Body() request: {conversationId : string}) {
   const unreadMessages = await this.conversationService.findUnreadMessages(request.conversationId);
   return unreadMessages;
 }
+
 // delete conversation
 
 @Post('delete-conversation')

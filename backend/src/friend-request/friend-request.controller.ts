@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Body, Controller,  Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller,  Post, Req, Res, UseGuards, Get } from '@nestjs/common';
 import { FriendRequestService } from './friend-request.service';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'prisma/prisma.service';
@@ -67,6 +67,12 @@ export class FriendRequestController {
       return this.friendshipService.refusePLayRequest(request.requestId, user); 
 
     }
+    @Post('remove-friendship')
+    async remove_friendship(@Body() request: {display_name : string}, @Req() req){
+      const user = req.user;
+      return this.friendshipService.remove_friends(user.display_name, request.display_name);
+
+    }
     
 
     @Post('block-friend')
@@ -91,6 +97,15 @@ export class FriendRequestController {
     {
         const user = req.user;
         return this.friendshipService.unblock( user.id, request.friendIdToUnblock);
+    }
+
+    // count notification
+
+    @Get('notification_count')
+    async count_notification(@Req() req){
+      const user = req.user;
+      return this.friendshipService.count_notification(user.id);
+
     }
 
   

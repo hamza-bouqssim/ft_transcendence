@@ -55,6 +55,10 @@ export const pending_request_play = () => axios.get(`http://localhost:8000/user/
 
 export const getAllUsers = async () => axios.get(`http://localhost:8000/user/All-users`, config);
 
+//count number of the notification
+
+export const getNumberNotification = async () => axios.get(`http://localhost:8000/friend-request/notification_count`, config);
+
 export const AcceptRequest = async (id : string) => axios.post(`http://localhost:8000/friend-request/accept-request`, {requestId : id}, config);
 
 export const refuseRequest = async ( id: string) => axios.post(`http://localhost:8000/friend-request/refuse-request`, {requestId : id }, config);
@@ -71,6 +75,9 @@ export const dataUser = async (id_user: string) => axios.post(`http://localhost:
 export const getUnreadMessages = async (conversationId : string) => axios.post(`http://localhost:8000/chat/unread-messages`, {conversationId : conversationId}, config)
 
 
+
+
+export const removeFriendship = async (display_name : string) => axios.post(`http://localhost:8000/friend-request/remove-friendship`, {display_name : display_name}, config);
 //delete conversation
 
 export const deleteConversation = async (conversationId : string) => axios.post(`http://localhost:8000/chat/delete-conversation`, {conversationId : conversationId}, config)

@@ -6,14 +6,14 @@ import { NotificationTypes } from '../utils/types';
 import { Conversation, ConversationSideBarContainer, ConversationSideBarItem } from '../utils/styles';
 import Image from 'next/image';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck,faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faCheck,faTimes,faXmark } from "@fortawesome/free-solid-svg-icons";
 
 
 const NotificationComponent = () => {
 
     const dispatch = useDispatch<AppDispatch>();
     const { notification, status, error } = useSelector((state:any) => state.notification);
-
+    console.log("notification-->", notification);
     console.log("notification", notification);
     useEffect(() => {
         dispatch(fetchNotificationThunk());
@@ -43,11 +43,12 @@ const NotificationComponent = () => {
                             <div>
                                 <span className="text-black font-mono ">{elem.content}</span>
                             </div>
-                            {/* <div className=" absolute right-5 p-4 "> */}
-
-                            {/* <FontAwesomeIcon icon={faCheck}  className="text-black  transform cursor-pointer text-2xl duration-500 ease-in-out hover:text-[--pink-color] lg:text-3xl" />
-                            <FontAwesomeIcon icon={faXmark} className="text-black ml-4 transform cursor-pointer text-2xl duration-500 ease-in-out hover:text-[--pink-color] lg:text-3xl" /> */}
-                        {/* </div> */}
+                            {elem.type === 'request' && (
+                <div className="absolute right-5 ">
+                  <FontAwesomeIcon icon={faCheck} className=" bg-[#5B8CD3] p-2 top-20 rounded-full transform cursor-pointer  duration-500 ease-in-out hover:text-[--pink-color] lg:text-xl" />
+                  <FontAwesomeIcon icon={faTimes} className=" bg-[#5B8CD3] p-2 top-20 rounded-full ml-4 transform cursor-pointer  duration-500 ease-in-out hover:text-[--pink-color] lg:text-xl" />
+                </div>
+              )}
                         </div>
                     );
                 })}

@@ -3,13 +3,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faBell } from "@fortawesome/free-solid-svg-icons";
 import { LogoutButton, MenuButton } from "./Buttons";
 import { useEffect, useState ,useContext} from "react";
-import { getAuthUser, getlogout } from "../utils/api";
+import { getAuthUser, getNumberNotification, getlogout } from "../utils/api";
 import { useRouter } from "next/navigation";
 import { deleteCookie } from "cookies-next";
 import NotificationComponent from "./NotificationComponent";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { socketContext } from "../utils/context/socketContext";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch } from "../store";
+import { fetchCountNotification } from "../store/notificationSlice";
 
 type Change = {
 	menu: boolean;
@@ -17,6 +20,8 @@ type Change = {
 };
 
 const TopRightBar = (props: Change) => {
+	const dispatch = useDispatch<AppDispatch>();
+	const { notification, status, error, count  } = useSelector((state:any) => state.notification);
 	const ToastError = (message: any) => {
 		toast.error(message, {
 		  position: toast.POSITION.TOP_RIGHT,
@@ -40,6 +45,7 @@ const TopRightBar = (props: Change) => {
 	  };
 	const {Userdata , setUserdata} = useContext(socketContext)
     useEffect(() => {
+		dispatch(fetchCountNotification());
 		getAuthUser().then(({ data }) => {
 			setUserdata(prevData => ({
 				...prevData,
@@ -48,7 +54,7 @@ const TopRightBar = (props: Change) => {
 		}).catch((err) => {
 			console.log(err);
 		});
-	}, [setUserdata]);
+	}, [setUserdata, dispatch]);
 	const router = useRouter();
 	const [notfication , setNotefication] = useState(false)
 	const logout = () => {
@@ -63,7 +69,19 @@ const TopRightBar = (props: Change) => {
 		}
 	}
 
-	
+	// const [notificationCount, setNotificationCount] = useState(0);
+
+	// const fetchNotificationCount = () => {
+	// 	dispatch(fetchCountNotification())
+	// 	.unwrap()
+	// 	.then(({data}) => {
+	// 		setNotificationCount(data);
+		 
+	// 	}).catch((err : any)=>{
+	// 	console.log(err);
+	// 	}
+	// 	);
+	//   };
 	
 	return (
 		<>
@@ -76,7 +94,7 @@ const TopRightBar = (props: Change) => {
 					className="left-0 cursor-pointer rounded-[50%] bg-[#ffffff38] p-3 hover:bg-[--pink-color] min-[1750px]:h-6 min-[1750px]:w-6"
 					/>
 				<span className="absolute right-8 top-[-5px] rounded-2xl bg-[--pink-color] px-2 font-['Whitney_Bold']">
-					42
+				{count}				
 				</span>
 			</div>
 			{

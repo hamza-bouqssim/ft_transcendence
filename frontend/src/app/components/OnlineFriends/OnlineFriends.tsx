@@ -13,10 +13,10 @@ import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import { MenuButton, MenuButton2 } from "../Buttons";
 import { fetchBlockFriendThunk } from "@/app/store/blockSlice";
 import { useRouter } from "next/navigation";
-import { fetchGetAllFriendsThunk } from "@/app/store/friendsSlice";
+import { fetchGetAllFriendsThunk, fetchRemoveFriendship } from "@/app/store/friendsSlice";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { fetchConversationUserThunk } from "@/app/store/conversationSlice";
+import { createConversationThunk, fetchConversationUserThunk } from "@/app/store/conversationSlice";
 import { fetchMessagesThunk } from "@/app/store/messageSlice";
 import { fetchSendRequestPLay } from "@/app/store/requestSlice";
 
@@ -107,19 +107,20 @@ const OnlineFriends = () =>{
 						{
 							router.push(`/dashboard/${elem.id}`)
 						}
-            const handleSendMessage = async () =>
+            const handleRemoveFriendship= async () =>
             {
 
-                  dispatch(fetchConversationUserThunk(elem.display_name))
-                    .unwrap()
-                    .then(({data}) => {
-                      updateChannel(data);
-                      dispatch(fetchMessagesThunk(data.id));
+                 
+                try{
+                    const res =  dispatch(fetchRemoveFriendship(elem.display_name));
+                    ToastSuccess(`remove ${elem.display_name} from your list friends`);
 
-                  }).catch((err)=>{
-                      console.log(err);
-                  }
-                );
+
+                }catch(err : any){
+                  ToastError(`Error... while removing ${elem.display_name} from your list friends `);
+
+
+                }
 
             }
             const handlePLayingRequest = async(display_name : string) =>{
@@ -129,7 +130,7 @@ const OnlineFriends = () =>{
                   const errorMessage = response.payload.message;
                   ToastError(`Error: ${errorMessage}`);
                 } else {
-                  ToastSuccess("Friend request sent successfully");
+                  ToastSuccess("PLay request sent successfully");
     
                 }
               } catch (err: any) {
@@ -154,7 +155,7 @@ const OnlineFriends = () =>{
                 <div className={`absolute  top-[-200px] right-2 p-2 w-[200px] flex-col items-center justify-evenly rounded-[15px] border-2 border-solid border-[#000000] bg-white font-['Whitney_Semibold'] `}>
                   <button className={`bg-[#d9d9d9] text-black h-[30px] w-full rounded-[15px] my-1 hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> handleClick()}>see profile</button>
                   <button className={`bg-[#d9d9d9] text-black h-[30px] w-full rounded-[15px] my-1 hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> handlePLayingRequest(elem.display_name)}>Invite to play</button>
-                  <button className={` bg-[#d9d9d9] text-black h-[30px] w-full rounded-[15px] my-1 hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> handleSendMessage() }>send message</button>
+                  <button className={` bg-[#d9d9d9] text-black h-[30px] w-full rounded-[15px] my-1 hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> handleRemoveFriendship() }>Remove Friendship</button>
                   <button className={` bg-[#EA7F87] text-black h-[30px] w-full rounded-[15px] my-1 hover:bg-[rgba(0,0,0,.2)]`} value="Bloque" onClick={()=> handlleBloque(elem.id)}>Bloque</button>
 
               </div>}

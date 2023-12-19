@@ -121,7 +121,8 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
                 {
                     const message = `${userAdmin.user.display_name } Join you to ${data.name}`;
                     this.server.to(member.user_id).emit('notification', message);
-                    this.userService.createNotification( userAdmin.user,member.user, message);
+                    const type = "Join"
+                    this.userService.createNotification( userAdmin.user,member.user, message, type);
 
                 }             
             })
@@ -155,17 +156,27 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         sendFriendRequestNotification(data : any) {
             const message = `${data.friendData.user.display_name} send you request to be friends`;
             this.server.to(data.friendData.friends.id).emit('newFriendRequest', data);
-            this.userService.createNotification( data.friendData.user,data.friendData.friends, message);
+            const type = "request";
+            this.userService.createNotification( data.friendData.user,data.friendData.friends, message, type);
 
             
+        }
+        @OnEvent("requestPlay.created")
+        sendRequestToPLay(data : any){
+          
+            const message = `${data.requestToPlay.Sender.display_name} send you request to play`;
+            const type = "request";
+            this.server.to(data.requestToPlay.recipient.id).emit(`newRequestToPlay`,data);
+            this.userService.createNotification(data.requestToPlay.Sender, data.requestToPlay.recipient, message, type);
+
         }
 
         @OnEvent('requestAccept.created')
         AcceptFriendRequestNotification(data : any){
             const message = `${data.req.friends.display_name} accept your request`;
             this.server.emit('AcceptNotification', data);
-
-            this.userService.createNotification( data.req.friends,data.req.user, message);
+            const type = "AcceptRequest";
+            this.userService.createNotification( data.req.friends,data.req.user, message, type);
 
 
         }
@@ -180,7 +191,6 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         }
         @OnEvent('requestDebloque.created')
         debloqueNotification(data: any){
-            console.log("data-->", data.chatParticipents);
             this.server.emit('debloqueNotification', data.chatParticipents);
         }
         @OnEvent('online.created')
@@ -202,6 +212,12 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
 
         deleteConversation(data : any){
             this.server.emit('deleteConversation', data.conversation);
+
+        }
+
+        @OnEvent('deleteFriendship.created')
+        friendshipDelete(data : any){
+            this.server.emit('deleteFriendship', data.frienbdship);
 
         }
     

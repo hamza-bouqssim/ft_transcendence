@@ -13,10 +13,7 @@ import { fetchUsersThunk } from "@/app/store/usersSlice";
 import { fetchConversationThunk } from "@/app/store/conversationSlice";
 import { fetchMessagesThunk } from "@/app/store/messageSlice";
 import { ConversationTypes, messageTypes } from "@/app/utils/types";
-
-
-
-
+import { fetchCountNotification } from "@/app/store/notificationSlice";
 
 const ConversationChannelPagechat = () => { 
   const { updateChannel, channel } = useContext(socketContext);
@@ -30,10 +27,15 @@ const ConversationChannelPagechat = () => {
     socket.on('AcceptNotification', (data : any) => {
       dispatch(fetchGetRequestThunk());
       dispatch(fetchGetAllFriendsThunk());
+      dispatch(fetchCountNotification());
+
 
     });
 		socket.on('newFriendRequest', (data : any) => {
+      console.log("herererere");
 			dispatch(fetchGetRequestThunk());
+      dispatch(fetchCountNotification());
+
 		  });
     socket.on('RefuseNotification', (data : any) => {
       dispatch(fetchGetRequestThunk());
@@ -75,6 +77,9 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchConversationThunk());
 
     });
+    socket.on('deleteFriendship', (data : any)=>{
+      dispatch(fetchGetAllFriendsThunk());
+    })
     socket.on('deleteConversation', (data : ConversationTypes)=>{
 			updateChannel(data);
 			dispatch(fetchConversationThunk());
@@ -88,7 +93,6 @@ const ConversationChannelPagechat = () => {
         dispatch(fetchMessagesThunk(channel.id));
       }
 
-		
 		})
       return () => {
         socket.off('AcceptNotification');
@@ -101,6 +105,7 @@ const ConversationChannelPagechat = () => {
         socket.off('createConversation');
         socket.off('deleteConversation');
         socket.off('onMessage');
+        socket.off('deleteFriendship');
 
 
       };
@@ -115,7 +120,7 @@ const ConversationChannelPagechat = () => {
             <div className="bg-white xl:m-10  xl:mr-10 xl:ml-2 w-full xl:w-[65%]  xl:rounded-[20px] xl:mt-32">
                 <MessagePanel></MessagePanel> 
             </div>
-:
+          :
           <div className="xl:my-10 xl:mr-10  w-full xl:ml-2 xl:w-[65%]   xl:mt-32 hidden xl:flex items-center justify-center">Invit friend to new chat rome</div>
           }
           </div>

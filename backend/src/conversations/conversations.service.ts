@@ -66,6 +66,25 @@ export class ConversationsService  {
 
   }
 
+  async create_conversations(user : User, display_name : string){
+    let conversation;
+      const recipient = await this.userService.findByDisplayName(display_name)
+      if(!recipient)
+            throw new HttpException('User not found so cannot create Conversation' , HttpStatus.BAD_REQUEST)
+      
+      const Participent = await this.findParticipent(display_name, user);
+      if(!Participent)
+      {
+         conversation = await this.CreateParticipent(display_name, user);
+
+      }else{
+        throw new HttpException('This conversation alrighdy exist' , HttpStatus.BAD_REQUEST)
+
+      }
+      return conversation;
+
+  }
+
     async findConversationById(id : string)
     {
         return await this.prisma.chatParticipents.findUnique({
