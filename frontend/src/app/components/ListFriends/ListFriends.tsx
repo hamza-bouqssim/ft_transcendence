@@ -1,7 +1,7 @@
 import { AppDispatch } from "@/app/store";
 import { createConversationThunk, fetchConversationUserThunk } from "@/app/store/conversationSlice";
 import { getAllFriends } from "@/app/utils/api";
-import { Conversation, ConversationSideBarContainer, ConversationSideBarItem } from "@/app/utils/styles";
+import { Conversation, ConversationSideBarContainer, ConversationSideBarItem, IngameStyling, OflineStyling, OnlineStyling } from "@/app/utils/styles";
 import { CreateConversationParams, FriendsTypes } from "@/app/utils/types";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
@@ -19,6 +19,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { socketContext } from "@/app/utils/context/socketContext";
 import { fetchMessagesThunk } from "@/app/store/messageSlice";
 import { fetchSendRequestPLay } from "@/app/store/requestSlice";
+import { fetchUsersThunk } from "@/app/store/usersSlice";
 
 
 const ListFriends = () => {
@@ -65,9 +66,12 @@ const ListFriends = () => {
    
    
       const { friends, status, error } = useSelector((state:any) => state.friends);
-    
+      const { users, Userstatus, Usererror } = useSelector((state:any) => state.users);
+
       useEffect(() => {
         dispatch(fetchGetAllFriendsThunk());
+        dispatch(fetchUsersThunk());
+
       }, [dispatch]);
 
       const router = useRouter();
@@ -115,6 +119,22 @@ const ListFriends = () => {
           <ToastContainer />
 				<ConversationSideBarContainer>
 					{friends.map(function(elem : FriendsTypes){
+            const user = users.find((user: any) => user.id === elem.id);
+            const getStatusColor = () => {
+              if (user) {
+                switch (user.status) {
+                  case "online":
+                    return "green"; // Online status color
+                  case "offline":
+                    return "red"; // Offline status color
+                  case "inGame":
+                    return "blue"; // In-game status color
+                  default:
+                    return "black"; // Default color or any other status
+                }
+              }
+              return "black"; // Default color if user not found
+            };
             const handleSendMessage = async () =>
             {
 
@@ -153,8 +173,16 @@ const ListFriends = () => {
             }
 						return(
 							<ConversationSideBarItem key={elem.id}>
+                {/* <div
+                  className="absolute top-40 left-10  rounded-full w-6 h-6"
+                >                  {(getStatusColor() === "green") ? <OnlineStyling/>  : (getStatusColor() === "red") ? <OflineStyling/> : <IngameStyling/>}
+                </div> */}
+                <div className="flex">
                 <Image src={elem.avatar_url} className="h-14 w-14 rounded-[50%] bg-black " alt="Description of the image" width={60}   height={60} />
+                  {(getStatusColor() === "green") ? <OnlineStyling/>  : (getStatusColor() === "red") ? <OflineStyling/> : <IngameStyling/>}
 
+                </div>
+               
 								<div>
 					 				<span  className="ConversationName">{elem.username} {elem.display_name}</span>
 					 			</div>

@@ -242,6 +242,15 @@ export const OflineStyling = styled.div`
     margin-left: -1rem;
 `;
 
+export const IngameStyling = styled.div`
+
+    background-color: blue;
+    border-radius: 50%;
+    width : 12px;
+    height : 12px;
+    margin-left: -1rem;
+`;
+
 export const ConversationSideBarItem = styled.div `
 
     background-color: white ;

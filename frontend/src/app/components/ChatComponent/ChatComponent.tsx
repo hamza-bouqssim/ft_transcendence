@@ -219,7 +219,7 @@ const ChatComponnent  = () =>{
 						  height={50}
 						/>
 						<div className="ml-4">
-						  <span className="ConversationName">{getDisplayUser(elem)?.username} {getDisplayUser(elem)?.display_name}</span>
+						  <span className="ConversationName"> {getDisplayUser(elem)?.display_name}</span>
 						  <span className="text-sm text-gray-400 font-light overflow-hidden h-5">{getDisplayLastMessage(elem)}</span>
 						</div>
 					  </div>

@@ -163,6 +163,8 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         @OnEvent('requestAccept.created')
         AcceptFriendRequestNotification(data : any){
             const message = `${data.req.friends.display_name} accept your request`;
+            this.server.emit('AcceptNotification', data);
+
             this.userService.createNotification( data.req.friends,data.req.user, message);
 
 

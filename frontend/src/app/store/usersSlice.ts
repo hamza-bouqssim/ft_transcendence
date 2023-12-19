@@ -19,7 +19,6 @@ const initialState: UsersState = {
 export const fetchUsersThunk = createAsyncThunk('users/fetchUsersThunk', async (_,{rejectWithValue} ) => {
     try{
       const response = await getAllUsers();
-      console.log("response here-->", response.data);
       return response.data;
 
     }catch(error : any){

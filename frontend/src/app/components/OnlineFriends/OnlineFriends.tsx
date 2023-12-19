@@ -92,13 +92,17 @@ const OnlineFriends = () =>{
       return user && user.status === 'online';
     };
 
+    const onlineFriends = friends.filter((friend: FriendsTypes) => {
+      const user = users.find((user: any) => user.id === friend.id);
+      return user && user.status === 'online'; });
+
     return (
         <div className="text-black  my-10 h-[calc(100%-200px)] overflow-auto ">
          <ToastContainer />
         <Conversation>
 
 				<ConversationSideBarContainer>
-					{friends.map(function(elem : FriendsTypes){
+					{onlineFriends.map(function(elem : FriendsTypes){
             function handleClick()
 						{
 							router.push(`/dashboard/${elem.id}`)

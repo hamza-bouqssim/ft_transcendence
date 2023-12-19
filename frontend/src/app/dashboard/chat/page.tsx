@@ -70,6 +70,7 @@ const ConversationChannelPagechat = () => {
 
 
     });
+
 		socket.on('createConversation', (data : any)=>{
       dispatch(fetchConversationThunk());
 
@@ -100,6 +101,7 @@ const ConversationChannelPagechat = () => {
         socket.off('createConversation');
         socket.off('deleteConversation');
         socket.off('onMessage');
+
 
       };
 		
