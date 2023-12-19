@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Body, Controller, Get, Param,  Post,  Req,  Res,  UnauthorizedException, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Param,  Post, Delete, Req,  Res,  UnauthorizedException, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UserService } from './user.service';
 // import { JwtService } from '@nestjs/jwt';
 // import { PrismaService } from 'prisma/prisma.service';
@@ -204,6 +204,16 @@ export class UserController {
       const user = req.user;
       const notifications = await this.userService.notificationCreate(user);
       return notifications;
+    }
+
+    @Delete('delete-account')
+    @UseGuards(AuthGuard('jwt'))
+    async delete_account(@Req() req, @Res() res)
+    {
+      const user = req.user;
+      await this.userService.deleteAccount(user.id);
+      res.clearCookie('token');
+      return res.redirect('http://localhost:3000/signIn');
     }
      
     

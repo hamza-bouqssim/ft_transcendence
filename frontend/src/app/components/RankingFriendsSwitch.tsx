@@ -1,10 +1,11 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState ,useEffect} from 'react'
 import InviteField from './InviteField';
 import { faCheck, faPlus  } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import RankedFriends from './RankedFriends';
 import Image from 'next/image';
 import { socketContext } from '../utils/context/socketContext';
+import { getRanking } from '../utils/api';
 
 const RankingFriendsSwitch = () => {
     const [showRank, setShowRank] = useState(false);
@@ -48,41 +49,21 @@ const RankingFriendsSwitch = () => {
       setShowSendReqCompo(false);
       setClickedButton('user');
     }
-    const [players, setPlayers] = useState([
-      {
-        "rank": 1,
-        "username": "rgatnaou",
-        "picture": "https://cdn.landesa.org/wp-content/uploads/default-user-image.png"
-      },
-      {
-        "rank": 2,
-        "username": "ykhadiri",
-        "picture": "https://cdn.landesa.org/wp-content/uploads/default-user-image.png"
-      },
-      {
-        "rank": 3,
-        "username": "souchen",
-        "picture": "https://cdn.landesa.org/wp-content/uploads/default-user-image.png"
-      },
-
-      {
-        "rank": 4,
-        "username": "mjalloul",
-        "picture": "https://cdn.landesa.org/wp-content/uploads/default-user-image.png"
-      },
-      {
-        "rank": 5,
-        "username": "abdollah",
-        "picture": "https://cdn.landesa.org/wp-content/uploads/default-user-image.png"
-      },
-      {
-        "rank": 6,
-        "username": "redone",
-        "picture": "https://cdn.landesa.org/wp-content/uploads/default-user-image.png"
-      }
-    ]);
+    const [players, setPlayers] = useState([]);
 
     const {Userdata} = useContext(socketContext);
+    useEffect(() => {
+      const fetchGameStates = async () => {
+        try {
+          const response = await getRanking();
+          setPlayers(response.data);
+        } catch (error) {
+        console.log("Error fetching match history:", error);
+        }
+      };
+      
+      fetchGameStates();
+      }, [Userdata?.id]);
   
   return (
     <div className='flex flex-col items-center gap-2 pt-5 pb-10 bg-white w-full h-full rounded-[70px] overflow-hidden'>
@@ -117,16 +98,16 @@ const RankingFriendsSwitch = () => {
 
           
           <div className='w-[110px] rounded-full bg-gray-100 h-[110px] border-solid border-4 border-amber-900 overflow-hidden'>
-          <Image src={players[1]?.picture} className='w-[110px] h-[110px] rounded-full ' alt="Description of the image" width={60}   height={60} />
+          <Image src={players[1]?.picture} className='w-[110px] h-[110px] rounded-full ' alt="Description of the image" width={250}   height={250} />
           </div>
 
          
           <div className='w-[140px] rounded-full bg-gray-100 h-[140px] top-0 absolute border-solid border-4 border-amber-500 overflow-hidden hover:bg-black'>
-          <Image src={players[0]?.picture}  className='w-[140px] h-[140px] rounded-full ' alt="Description of the image" width={60}   height={60} />
+          <Image src={players[0]?.picture}  className='w-[140px] h-[140px] rounded-full ' alt="Description of the image" width={250}   height={250} />
           </div>
           
           <div className='w-[110px] rounded-full bg-gray-100 h-[110px] border-solid border-4 border-gray-700 overflow-hidden'>
-          <Image src={players[2]?.picture}  className='w-[110px] h-[110px] rounded-full ' alt="Description of the image" width={60}   height={60} />
+          <Image src={players[2]?.picture}  className='w-[110px] h-[110px] rounded-full ' alt="Description of the image" width={250}   height={250} />
           </div>
 
           <div className='absolute  w-[50%] mt-[150px] top-2 text-black'>

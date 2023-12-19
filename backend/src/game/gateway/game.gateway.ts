@@ -239,13 +239,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			delete this.mapPong[game.user1.id];
 			this.queueGame = this.queueGame.filter(
 				(game) => game.socket1.user.sub != user1,
-				// await this.gameservice.createTwoMatchHistory(
-				// 	user1,
-				// 	user2,
-				// 	score1,
-				// 	score2,
-				// 	duration,
-				// ),
+				await this.gameservice.createTwoMatchHistory(
+					user1,
+					user2,
+					score1,
+					score2,
+					duration,
+				),
 			);
 		}
 	}

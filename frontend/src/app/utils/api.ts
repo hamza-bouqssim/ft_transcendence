@@ -162,7 +162,22 @@ export const getAllMembersApi =(id:string) =>
 }
 
 export const getMatchHistory = (id: string) =>{
-  const response = API.get("/game/myhistory", {id});
+  const response = API.post("/game/myhistory", {userId:id});
   return response;
+}
+
+export const getStates = (id: string) =>{
+  const response = API.post("/game/myresult", {userId:id});
+  return response;
+}
+
+export const getRanking = () =>{
+  const response = API.get("/game/ranking");
+  return response;
+}
+
+export const deleteAccount = () => {
+  const responce = API.delete("/user/delete-account");
+  return responce;
 }
 

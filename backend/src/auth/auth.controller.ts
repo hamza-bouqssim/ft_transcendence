@@ -7,6 +7,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
 import { SignAuthDto } from './dto/signIn.dto';
 import { TwoFactorAuthenticationService } from 'src/two-factor-authentication/two-factor-authentication.service';
+import { GameService } from 'src/game/game.service';
 
 
 @Controller('auth')
@@ -15,6 +16,7 @@ export class AuthController {
         private authService: AuthService,
         private jwtService: JwtService,
         private readonly twofactorAuth:TwoFactorAuthenticationService,
+        private readonly gameState:GameService
         ){}
 
     @Post('signin')
@@ -27,6 +29,7 @@ export class AuthController {
         {
             const token = this.jwtService.sign(payload);
             res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
+            
             return res.send({success:true, message:"new user"});
         }
         
@@ -64,6 +67,7 @@ export class AuthController {
         {
             const token = this.jwtService.sign(payload);
             res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
+            this.gameState.createStateGame(user.id);
             return res.redirect("http://localhost:3000/dashboard/settings");
         }
 
@@ -96,6 +100,7 @@ export class AuthController {
         {
             const token = this.jwtService.sign(payload);
             res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
+            this.gameState.createStateGame(user.id);
             return res.redirect("http://localhost:3000/dashboard/settings");
         }
         

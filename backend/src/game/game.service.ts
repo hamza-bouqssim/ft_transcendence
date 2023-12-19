@@ -61,12 +61,13 @@ export class GameService {
 	}
 
 	async createStateGame(userId: string) {
-		const state = await this.prisma.stateGame.create({
+		// const state = 
+		await this.prisma.stateGame.create({
 			data: {
 				user: { connect: { id: userId } },
 			},
 		});
-		return state;
+		// return state;
 	}
 
 	async deleteStateGame(userId: string) {

@@ -7,7 +7,6 @@ import { socketContext } from "../utils/context/socketContext";
 
 const MyAccount = () => {
 	const {Userdata,setUserdata} = useContext(socketContext);
-
 	const newAPI = axios.create();
 
 	const [src, setSrc] = useState<string>("/assets/user2.jpeg");

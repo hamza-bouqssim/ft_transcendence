@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState ,useContext} from "react";
-import { getAuthUser, getMatchHistory } from "../utils/api";
+import { getAuthUser, getMatchHistory, getStates } from "../utils/api";
 import { redirect, useRouter } from "next/navigation";
 import { User } from "../utils/types";
 import { getSession } from "next-auth/react";
@@ -9,30 +9,52 @@ import "./page.css"
 import Boxes from "../components/Boxes";
 import RankingFriendsSwitch from "../components/RankingFriendsSwitch";
 import HistoryMatches from "../components/HistoryMatches";
-import { socketContext } from "../utils/context/socketContext";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../store";
 import { fetchGetRequestThunk } from "../store/requestSlice";
 import Image from "next/image";
+import { socketContext } from "../utils/context/socketContext";
 
 
 const Dashboard = () => {
 
-	const {UserData, SetUserData} = useContext(socketContext);
+	const {Userdata} = useContext(socketContext);
+	console.log("usere daattaa", Userdata?.id);
 
-	const [results, setResults] = useState({
-		WINS: 3,
-		LEVEL: 4,
-		LOSSES: 1
-	});
+	
+	const [results, setResults] = useState({});
 
 	const [history_match, setHistoryMatch] = useState([]);
-
 	useEffect(() => {
-		getMatchHistory(UserData?.id).then((res) => {
-			console.log("%$#@%$@%#%$@%$@ ---: ", res)
-		}).catch(() => console.log("Error"));
-	}, []);
+		const fetchMatchHistory = async () => {
+		  try {
+			if (Userdata?.id) {
+			  const response = await getMatchHistory(Userdata.id);
+			  setHistoryMatch(response.data);
+			}
+		  } catch (error) {
+			console.log("Error fetching match history:", error);
+		  }
+		};
+	  
+		fetchMatchHistory();
+	  }, [Userdata?.id]);
+
+	  useEffect(() => {
+		const fetchGameStates = async () => {
+		  try {
+			if (Userdata?.id) {
+			  const response = await getStates(Userdata.id);
+			  setResults(response.data);
+			}
+		  } catch (error) {
+			console.log("Error fetching match history:", error);
+		  }
+		};
+	  
+		fetchGameStates();
+	  }, [Userdata?.id]);
+	  
 
 	return (
 		<div>
@@ -53,9 +75,9 @@ const Dashboard = () => {
 							<button type="button" className="play-button ease-in duration-100 hover:scale-105">Play Now!</button>
 						</div>
 						<div className="boxes">
-							<Boxes title="WINS" value={results.WINS} color="#6A67F3"/>
-							<Boxes title="RANK" value={results.LEVEL} color="#498CDA"/>
-							<Boxes title="LOSSES" value={results.LOSSES} color="#FC7785"/>
+							<Boxes title="WINS" value={results.win} color="#6A67F3"/>
+							<Boxes title="RANK" value={results.level} color="#498CDA"/>
+							<Boxes title="LOSSES" value={results.lose} color="#FC7785"/>
 						</div>
 						<h1 className="mt-[20px]">History</h1>
 						<div className=" history-header mt-[20px] shadow-lg w-full h-[40px] bg-[#79a9f28d] rounded-[40px] flex justify-between px-1 py-1 ">
@@ -88,7 +110,7 @@ const Dashboard = () => {
 									playerTwo={_history.playerTwo} 
 									duration={_history.duration} 
 									date={_history.date} 
-									totalMatches={_history.totalMatches}/>
+									totalMatches={_history.totalMatch}/>
 								))
 							}
 
