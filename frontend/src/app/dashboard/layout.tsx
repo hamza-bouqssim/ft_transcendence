@@ -78,9 +78,12 @@ export default function RootLayout({
 			`/bot-game/maps/0`,
 			`/bot-game/maps/1`,
 			`/bot-game/maps/2`,
+			`online-game/match-making/0/`,
+			`online-game/match-making/1/`,
+			`online-game/match-making/2/`,
 		];
 
-		return validPaths.some((path) => pathName.endsWith(path));
+		return validPaths.some((path) => pathName.includes(path));
 	};
 
 	return (

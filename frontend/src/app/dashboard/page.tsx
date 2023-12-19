@@ -22,13 +22,6 @@ const Dashboard = () => {
 		LOSSES: 1,
 	});
 
-	const { Userdata } = useContext(socketContext);
-
-	console.log("User:", Userdata);
-	// useEffect(()=>{
-
-	// })
-
 	const [history_match, setHistoryMatch] = useState([
 		{
 			playerOne:
@@ -73,10 +66,11 @@ const Dashboard = () => {
 						<div className="play relative rounded-[54px]">
 							<Image
 								src="/assets/hand.png"
-								className="thehand absolute -right-[9px] -top-[41px] h-[490px] w-[490px] animate-bounce rounded-r-full"
+								className="thehand absolute -right-[9px] -top-[41px] animate-bounce rounded-r-full"
 								alt=""
 								width={490}
 								height={490}
+								priority
 							/>
 							<button
 								type="button"
