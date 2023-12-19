@@ -36,6 +36,7 @@ export class GameController {
 			}
 		  })
 		);
+		console.log(modifiedHistory);
 		return modifiedHistory;
 	  } catch (error) {
 		console.log(error);

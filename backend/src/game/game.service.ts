@@ -255,6 +255,7 @@ export class GameService {
 				duration: true,
 			},
 		});
+		console.log(history);
 		return history;
 	}
 

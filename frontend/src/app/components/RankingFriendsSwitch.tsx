@@ -97,9 +97,15 @@ const RankingFriendsSwitch = () => {
       {
         showuser && (
           <div className='pt-[10px]  flex justify-center items-center flex-col relative w-full h-[75%] rounded-[50px] text-black animate-bounce'>
-            <Image src={players[2]?.picture}  className='w-[110px] h-[110px] rounded-full ' alt="Description of the image" width={60}   height={60} />
-            <h1>{Userdata?.display_name}</h1>
-            <h5>@{Userdata?.username}</h5>
+            {Userdata?.avatar_url && <Image src={Userdata?.avatar_url}  
+            className='w-[130px] h-[130px] shadow-lg rounded-full ' 
+            alt="Description of the image" 
+            width="250"  
+            height="250"
+            priority={true}
+            />}
+            <h1>{Userdata?.username}</h1>
+            <h5>@{Userdata?.display_name}</h5>
           </div>
         )}
 

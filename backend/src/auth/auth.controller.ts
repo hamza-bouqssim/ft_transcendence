@@ -14,7 +14,7 @@ export class AuthController {
     constructor (
         private authService: AuthService,
         private jwtService: JwtService,
-        private readonly twofactorAuth:TwoFactorAuthenticationService
+        private readonly twofactorAuth:TwoFactorAuthenticationService,
         ){}
 
     @Post('signin')
@@ -22,18 +22,25 @@ export class AuthController {
     {
         const user = await this.authService.signIn(dto);
         const payload = {sub: user.id, email: user.email};
+
+        if(user.first_time)
+        {
+            const token = this.jwtService.sign(payload);
+            res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
+            return res.send({success:true, message:"new user"});
+        }
         
         if(user.tfa_enabled)
         {
             const token = this.jwtService.sign(payload);
             res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
-            return res.redirect("http://localhost:3000/signIn/verify-two-factor");
+            return res.send({success:false, message:"tfa enabled"});
         }
 
         const token = this.jwtService.sign(payload)
         res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
 
-        return res.status(200).json("signIn succefully")
+        return res.send({signed:true, message:"Signed Successfully"});
         
     }
 

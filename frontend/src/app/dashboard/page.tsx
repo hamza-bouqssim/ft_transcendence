@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState ,useContext} from "react";
-import { getAuthUser } from "../utils/api";
+import { getAuthUser, getMatchHistory } from "../utils/api";
 import { redirect, useRouter } from "next/navigation";
 import { User } from "../utils/types";
 import { getSession } from "next-auth/react";
@@ -18,7 +18,7 @@ import Image from "next/image";
 
 const Dashboard = () => {
 
-
+	const {UserData, SetUserData} = useContext(socketContext);
 
 	const [results, setResults] = useState({
 		WINS: 3,
@@ -26,35 +26,13 @@ const Dashboard = () => {
 		LOSSES: 1
 	});
 
-	const [history_match, setHistoryMatch] = useState([
-		{
-			playerOne: "https://cdn.landesa.org/wp-content/uploads/default-user-image.png",
-			resultOne: "1",
-			playerTwo: 'https://cdn.landesa.org/wp-content/uploads/default-user-image.png',
-			resultTwo: "0",
-			duration: "00:00:35",
-			date: "2023-05-10",
-			totalMatches: "33"
-		},
-		{
-			playerOne: "https://cdn.landesa.org/wp-content/uploads/default-user-image.png",
-			resultOne: "1",
-			playerTwo: 'https://cdn.landesa.org/wp-content/uploads/default-user-image.png',
-			resultTwo: "1",
-			duration: "00:01:01",
-			date: "2023-05-11",
-			totalMatches: "1"
-		},
-		{
-			playerOne: "https://cdn.landesa.org/wp-content/uploads/default-user-image.png",
-			resultOne: "1",
-			playerTwo: 'https://cdn.landesa.org/wp-content/uploads/default-user-image.png',
-			resultTwo: "2",
-			duration: "00:00:10",
-			date: "2023-05-08",
-			totalMatches: "4"
-		},
-	])
+	const [history_match, setHistoryMatch] = useState([]);
+
+	useEffect(() => {
+		getMatchHistory(UserData?.id).then((res) => {
+			console.log("%$#@%$@%#%$@%$@ ---: ", res)
+		}).catch(() => console.log("Error"));
+	}, []);
 
 	return (
 		<div>
@@ -66,10 +44,11 @@ const Dashboard = () => {
 						<div className="play relative rounded-[54px]">
 						<Image
   							src="/assets/hand.png"
-  							className="thehand absolute -top-[41px] -right-[9px] rounded-r-full w-[490px] h-[490px] animate-bounce"
+  							className="thehand absolute  -top-[41px] -right-[9px] rounded-r-full w-[490px] animate-bounce"
   							alt=""
-  							width={490}
-  							height={490}
+  							width="500"
+  							height="500"
+							priority={true}
 						/>
 							<button type="button" className="play-button ease-in duration-100 hover:scale-105">Play Now!</button>
 						</div>

@@ -161,3 +161,8 @@ export const getAllMembersApi =(id:string) =>
   return response;
 }
 
+export const getMatchHistory = (id: string) =>{
+  const response = API.get("/game/myhistory", {id});
+  return response;
+}
+
