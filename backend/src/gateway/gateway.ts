@@ -156,7 +156,7 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         sendFriendRequestNotification(data : any) {
             const message = `${data.friendData.user.display_name} send you request to be friends`;
             this.server.emit('newFriendRequest', data);
-            const type = "request";
+            const type = "requestFriend";
             this.userService.createNotification( data.friendData.user,data.friendData.friends, message, type);
 
             
@@ -165,7 +165,7 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         sendRequestToPLay(data : any){
           
             const message = `${data.requestToPlay.Sender.display_name} send you request to play`;
-            const type = "request";
+            const type = "requestPLay";
             this.server.to(data.requestToPlay.recipient.id).emit(`newRequestToPlay`,data);
             this.userService.createNotification(data.requestToPlay.Sender, data.requestToPlay.recipient, message, type);
 

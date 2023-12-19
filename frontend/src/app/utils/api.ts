@@ -77,7 +77,6 @@ export const dataUser = async (id_user: string) => axios.post(`http://localhost:
 export const getUnreadMessages = async (conversationId : string) => axios.post(`http://localhost:8000/chat/unread-messages`, {conversationId : conversationId}, config)
 
 
-
 export const removeFriendship = async (display_name : string) => axios.post(`http://localhost:8000/friend-request/remove-friendship`, {display_name : display_name}, config);
 //delete conversation
 
