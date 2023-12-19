@@ -6,7 +6,7 @@ import MessagePanel from "@/app/components/messages/MessagePanel";
 import {socketContext } from "@/app/utils/context/socketContext";
 import { useDispatch } from "react-redux"
 import { AppDispatch } from "@/app/store"
-import { fetchGetRequestThunk } from "@/app/store/requestSlice";
+import { fetchGetRequestThunk, fetchNumberPending } from "@/app/store/requestSlice";
 import { fetchGetAllFriendsThunk } from "@/app/store/friendsSlice";
 import { fetchBlocksThunk } from "@/app/store/blockSlice";
 import { fetchUsersThunk } from "@/app/store/usersSlice";
@@ -28,17 +28,21 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchGetRequestThunk());
       dispatch(fetchGetAllFriendsThunk());
       dispatch(fetchCountNotification());
+      dispatch(fetchNumberPending());
+
 
 
     });
 		socket.on('newFriendRequest', (data : any) => {
-      console.log("herererere");
 			dispatch(fetchGetRequestThunk());
+      dispatch(fetchNumberPending());
       dispatch(fetchCountNotification());
 
 		  });
     socket.on('RefuseNotification', (data : any) => {
       dispatch(fetchGetRequestThunk());
+      dispatch(fetchNumberPending());
+
 
     })
     socket.on('blockNotification', (data : any) =>{

@@ -69,19 +69,7 @@ const TopRightBar = (props: Change) => {
 		}
 	}
 
-	// const [notificationCount, setNotificationCount] = useState(0);
 
-	// const fetchNotificationCount = () => {
-	// 	dispatch(fetchCountNotification())
-	// 	.unwrap()
-	// 	.then(({data}) => {
-	// 		setNotificationCount(data);
-		 
-	// 	}).catch((err : any)=>{
-	// 	console.log(err);
-	// 	}
-	// 	);
-	//   };
 	
 	return (
 		<>

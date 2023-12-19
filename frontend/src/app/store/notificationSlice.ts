@@ -38,10 +38,14 @@ export const NotificationSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(fetchNotificationThunk.pending, (state, action) => {
-          state.status = 'loading';
+          
+      state.status = 'loading';
+      
     }).addCase(fetchNotificationThunk.fulfilled, (state : any, action : any) => {
-          state.status = 'success';
+     
+      state.status = 'success';
           state.notification = action.payload;
+
     }).addCase(fetchNotificationThunk.rejected, (state : any, action) => {
    
           state.status = 'failed';
@@ -51,12 +55,11 @@ export const NotificationSlice = createSlice({
           state.status = 'loading';
     }).addCase(fetchCountNotification.fulfilled, (state : any, action : any) => {
           state.status = 'success';      
-          state.count = action.payload; // Assuming action.payload contains the count value
+          state.count = action.payload;
     }).addCase(fetchCountNotification.rejected, (state : any, action) => {
-
         state.status = 'failed';
 
-})
+    })
   
   }
 });

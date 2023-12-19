@@ -58,6 +58,8 @@ export const getAllUsers = async () => axios.get(`http://localhost:8000/user/All
 //count number of the notification
 
 export const getNumberNotification = async () => axios.get(`http://localhost:8000/friend-request/notification_count`, config);
+export const getNumberPending = async () => axios.get(`http://localhost:8000/user/count-pending`, config);
+
 
 export const AcceptRequest = async (id : string) => axios.post(`http://localhost:8000/friend-request/accept-request`, {requestId : id}, config);
 
@@ -73,7 +75,6 @@ export const dataUser = async (id_user: string) => axios.post(`http://localhost:
 
 
 export const getUnreadMessages = async (conversationId : string) => axios.post(`http://localhost:8000/chat/unread-messages`, {conversationId : conversationId}, config)
-
 
 
 

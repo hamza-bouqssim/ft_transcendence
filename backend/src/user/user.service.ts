@@ -171,6 +171,14 @@ export class UserService {
         })
 
     }
+    async CountPendingRequests(userId: string): Promise<number> {
+        const pendingRequests = await this.prisma.friend.count({
+          where: { friend_id: userId, status: 'PENDING' },
+        });
+      
+        return pendingRequests;
+      }
+      
 
     async blockedFriends(userId: string) {
         const blockedUsers = await this.prisma.blockList.findMany({

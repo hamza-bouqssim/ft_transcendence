@@ -17,6 +17,9 @@ import { SendRequestForm } from "../forms/SendRequestForm"
 import { FaCheck } from "react-icons/fa"
 import CreateSearchModal from "../ConversationSearch/Modal/CreateSearchModal"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { useDispatch, useSelector } from "react-redux"
+import { AppDispatch } from "@/app/store"
+import { fetchNumberPending } from "@/app/store/requestSlice"
 const CoversationSideBar = () => {
 	const [newRooms , setNewRooms]  = useState<boolean>(false)
 	const router = useRouter();
@@ -24,7 +27,12 @@ const CoversationSideBar = () => {
  	const [selectUsers, setSelectUsers] = useState<string>("online");     
 	const {channel ,updateChannel} = useContext(socketContext);
 	const [show, setShow] = useState<any>(false);
-
+	const dispatch = useDispatch<AppDispatch>();
+	const { request, status, error, countRequest  } = useSelector((state:any) => state.request);
+	console.log("count pend here", countRequest);
+	useEffect(()=>{
+		dispatch(fetchNumberPending());
+	},[dispatch]);
 	
     return (
 		<div className="w-full h-full relative p-2  xl:rounded-[20px] pt-4 bg-white">
@@ -68,16 +76,21 @@ const CoversationSideBar = () => {
  					className={`${(selectUsers ==='online') ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-1/2`}>Online
  				</button>
  				<button
- 					onClick={()=>{setSelectUsers("allFriends")}} className={`${(selectUsers ==='allFriends') ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-1/2`}>Friends
+ 					onClick={()=>{setSelectUsers("allFriends")}} className={`${(selectUsers ==='allFriends') ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-24`}>Friends
  				</button>
+				<div >
  				<button
- 					onClick={()=>{setSelectUsers("EnAttent")}} className={`${(selectUsers ==='EnAttent') ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-1/2`}>Pending
+ 					onClick={()=>{setSelectUsers("EnAttent")}} className={`${(selectUsers ==='EnAttent') ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-24`}>Pending
  				</button>
+				 <span className="absolute right-40  rounded-2xl bg-[--pink-color] px-2 font-['Whitney_Bold']">
+					{countRequest}				
+				</span>
+				</div>
  				<button
- 					onClick={()=>{setSelectUsers("Bloques")}} className={`${(selectUsers ==='Bloques') ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-1/2`}>Bloques
+ 					onClick={()=>{setSelectUsers("Bloques")}} className={`${(selectUsers ==='Bloques') ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-24`}>Bloques
  				</button>
 				 <button
- 					onClick={()=>{setSelectUsers("Add")}} className={`${(selectUsers ==='Add') ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-1/2`}> Add
+ 					onClick={()=>{setSelectUsers("Add")}} className={`${(selectUsers ==='Add') ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-24`}> Add
  				</button>
  			</div>}
 			
