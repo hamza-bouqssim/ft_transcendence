@@ -6,6 +6,7 @@ import { kick } from './kick'
 import { Member } from './Member'
 import { Ban } from './Ban'
 import { Mut } from './Mut'
+import { useDispatch, useSelector } from 'react-redux';
 import { FaChevronDown } from "react-icons/fa6";
 import {
   Accordion,
@@ -15,55 +16,114 @@ import {
 } from "@/components/ui/accordion"
 import { HiOutlineLogout } from "react-icons/hi";
 import Button from '../Button/Button'
+import { quitMember } from '@/app/store/memberSlice'
+import { getAllRooms } from '@/app/store/roomsSlice'
+import { Owner } from './Owner'
 
 
 export const InfoGroups = () => {
-  console.log("hi")
   const { updateChannel,channel} = useContext(socketContext);
   const {Userdata} = useContext(socketContext)
+  const dispatch = useDispatch();
+  const { members,status,error} = useSelector((state:any) => state.member);
+  const [valide,setValide] =useState(false)
+
+  const handelQuitRoom=()=>
+  {
+    dispatch(quitMember(channel.id)).then((res:any)=>{
+      updateChannel("")
+      dispatch(getAllRooms())
+    })
+  }
+
   return (
-    <div className="p-1  h-full">
-        <div className=" p-2 h-full  relative overflow-auto  rounded-xl  text-black  bg-[#E0E3FF] no-scrollbar">
-          <div className="">
-            <p>Joined Pong Since</p>
-            <p>2023-07-12</p>
-          </div>
-          <Accordion type="single" collapsible>
-              <AccordionItem value="item-1">
-                <AccordionTrigger>Members</AccordionTrigger>
-                <AccordionContent>
-                  <Member></Member>
-                </AccordionContent>
-              </AccordionItem>
-              {channel.members.some(member => member.isAdmin && member.user_id === Userdata.id) &&
-              
-            <>
-           <AccordionItem value="item-2">
-                <AccordionTrigger>Ban</AccordionTrigger>
-                <AccordionContent>
-                  <Ban></Ban>
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="item-3">
-                <AccordionTrigger>Mut</AccordionTrigger>
-                <AccordionContent>
-                  <Mut></Mut>
-                </AccordionContent>
-              </AccordionItem>
-            </>
-          }
-            </Accordion>
-            
-          <div className=" absolute  mx-auto left-0 right-0 bottom-0">
-            { channel.members.some(member => member.isAdmin && member.user_id === Userdata.id) ? null 
-                :
-                <button className="flex items-center mx-auto  text-[--pink-color] py-4 px-4 rounded-full ">
-                  Quitte Rome
-                  <HiOutlineLogout size={26}  className="ml-2"></HiOutlineLogout>
-                </button>  
+    <>
+      <div className="p-1  h-full">
+          <div className=" p-2 h-full  relative overflow-auto  rounded-xl  text-black  bg-[#E0E3FF] no-scrollbar">
+            <div className="">
+              <p>Joined Pong Since</p>
+              <p>2023-07-12</p>
+            </div>
+            <Accordion type="single" collapsible>
+                <AccordionItem value="item-5">
+                  <AccordionTrigger>Owner</AccordionTrigger>
+                  <AccordionContent>
+                    <Owner></Owner>
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="item-4">
+                  <AccordionTrigger>Admin</AccordionTrigger>
+                  <AccordionContent>
+                    <Ban></Ban>
+                  </AccordionContent>
+                </AccordionItem>  
+                <AccordionItem value="item-1">
+                  <AccordionTrigger>Members</AccordionTrigger>
+                  <AccordionContent>
+                    <Member></Member>
+                  </AccordionContent>
+                </AccordionItem>
+                {members?.some(member => member.Status === "Owner" && member.user_id === Userdata.id) &&
+                
+              <>
+                <AccordionItem value="item-2">
+                  <AccordionTrigger>Ban</AccordionTrigger>
+                  <AccordionContent>
+                    <Ban></Ban>
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="item-3">
+                  <AccordionTrigger>Mut</AccordionTrigger>
+                  <AccordionContent>
+                    <Mut></Mut>
+                  </AccordionContent>
+                </AccordionItem>
+              </>
             }
+              </Accordion>
+              
+            <div className=" absolute  mx-auto left-0 right-0 bottom-0">
+              {
+                <button onClick={()=>{setValide(true)}}  className=" flex items-center justify-center rounded-full py-2 px-4 bg-[--pink-color] hover:drop-shadow-md mx-auto mb-3 text-white  ">
+                  <h1>Quitte Rome</h1> 
+                    <HiOutlineLogout size={26}  className="ml-2"></HiOutlineLogout>
+                  </button>  
+              }
+            </div>
+          </div> 
+      </div>
+      {valide &&  
+      <>
+        <div className="absolute left-0 right-0 bottom-0 top-0 bg-[#2e2f54d9]">
+
+        </div>
+        <div className="absolute left-0 right-0 bottom-0 p-5  z-50 drop-shadow-md top-0 bg-[#ffff] w-[500px] rounded-2xl h-[300px] m-auto">
+          <div className="relative h-full ">
+            <p className="text-[20px] pt-5 pl-5 text-black">Quitter le groupe  {channel.name}</p>
+            <p className="mt-2 text-black  pl-5" > Seulement les admins du groupe sauront que vous avez quitté le groupe.</p>
+            <div  className="absolute right-0 bottom-0  flex flex-col  items-end">
+              <button onClick={()=>{setValide(false)}} className="rounded-full py-2 px-4 text-[--pink-color] mb-4 w-fit  border border-[--pink-color] hover:drop-shadow-md  ">Cancel</button>   
+              <button onClick={handelQuitRoom} className=" flex items-center justify-center rounded-full py-2 px-4 bg-[--pink-color] hover:drop-shadow-md  ">
+              
+                Quitter le groupe
+                {status === 'loading'   ?   <div className="flex items-center justify-center ml-3">
+                  <div
+                  className=" text-[white]   h-5 w-5 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                  role="status">
+                  <span
+                  className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+                  >Loading...</span>
+                  </div>
+                  </div> 
+              :   null  
+            }
+            </button>
+            </div>
           </div>
-        </div> 
-    </div>
+        </div>
+      </>
+      
+    }
+    </>
   )
 }

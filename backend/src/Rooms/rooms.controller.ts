@@ -58,7 +58,7 @@ export class RoomsController {
       const update = await this.roomsService.updateRooms(data.data,id);
       this.eventEmitter.emit(
         'order.update',
-        update
+        update,id
       );
       return res.status(200).json({data: update });
     } catch (error) {
@@ -67,23 +67,23 @@ export class RoomsController {
 
   }
 
-  @Post("/deleteRooms")
-  @UseGuards(AuthGuard("jwt"))
-  async deleteRooms(@Body() deleteChatRoom: DeleteChatRoom, @Res() res: any, @Req() req)
-  {
-    try {
-      const {id}=req.user
-      const deleteRome = await this.roomsService.deleteRooms(deleteChatRoom,id);
-      this.eventEmitter.emit(
-        'order.delete',
-        deleteRome
-      );
-      return res.status(200).json({data: deleteRome });
-    } catch (error) {
-      return res.status(500).json({ error: error});
-    }
+  // @Post("/deleteRooms")
+  // @UseGuards(AuthGuard("jwt"))
+  // async deleteRooms(@Body() deleteChatRoom: DeleteChatRoom, @Res() res: any, @Req() req)
+  // {
+  //   try {
+  //     const {id}=req.user
+  //     const deleteRome = await this.roomsService.deleteRooms(deleteChatRoom,id);
+  //     this.eventEmitter.emit(
+  //       'order.delete',
+  //       deleteRome
+  //     );
+  //     return res.status(200).json({data: deleteRome });
+  //   } catch (error) {
+  //     return res.status(500).json({ error: error});
+  //   }
 
-  }
+  // }
 
 
   @Post("/getConversation")
@@ -182,13 +182,17 @@ export class RoomsController {
     }
 
   }
-  @Post("/QuitRoom")
+  @Post("/quitRoom")
   @UseGuards(AuthGuard("jwt"))
   async quitRoom(@Res() res: any,@Req() req , @Body() RoomId:RoomId)
   {
     try {
       const {id}=req.user
       const response = await this.roomsService.quitRoom(id,RoomId);
+      this.eventEmitter.emit(
+        'order.updateMember',
+        RoomId
+      );
       return res.status(200).json({data: response });
     } catch (error) {
       return res.status(500).json({ error: error});
@@ -196,13 +200,13 @@ export class RoomsController {
     
   }
   
-  @Post("/makeOwner")
+  @Post("/makeAdmin")
   @UseGuards(AuthGuard("jwt"))
-  async makeOwner(@Res() res: any,@Req() req , @Body() memberUpdate:Member)
+  async makeAdmin(@Res() res: any,@Req() req , @Body() memberUpdate:Member)
   {
     try {
       const {id}=req.user
-      const update = await this.roomsService.makeOwner(id,memberUpdate);
+      const update = await this.roomsService.makeAdmin(id,memberUpdate);
       return res.status(200).json({data: update });
     } catch (error) {
       return res.status(500).json({ error: error});

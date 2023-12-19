@@ -161,3 +161,10 @@ export const getAllMembersApi =(id:string) =>
   return response;
 }
 
+export const quitRoom =(id:string) =>
+{
+  const response = API.post("/rooms/quitRoom",{id})
+  return response;
+}
+
+

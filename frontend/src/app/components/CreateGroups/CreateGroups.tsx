@@ -1,6 +1,6 @@
 "use client"
 import React, { useState,useContext,useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch,useSelector } from 'react-redux';
 import { createRooms } from  '@/app/store/roomsSlice' // Update with the correct path
 import {BiImageAdd} from 'react-icons/bi'
 import {FaCheck} from 'react-icons/fa'
@@ -23,9 +23,10 @@ const CreatGroups: React.FC<CreateGroupsProps> = ({ setNewRooms }) => {
   const [groupPrivacy, setGroupPrivacy] = useState('Public'); // Default to Public, you can change this based on your logic
   const [groupPassword, setGroupPassword] = useState('');
   const [grouImage,setGroupImage] = useState("")
-  const [error , setError] = useState("");
+  const [errorin , setError] = useState("");
   const { updateChannel,channel} = useContext(socketContext);
   const [idUserAdd,setIdUserAdd] = useState([]);
+  const { rooms,status,error} = useSelector((state:any) => state.room);
 
   const handleCreateGroup = () => {
         if ((groupPrivacy === "Protected" &&  !groupPassword)) {
@@ -61,7 +62,7 @@ const CreatGroups: React.FC<CreateGroupsProps> = ({ setNewRooms }) => {
 
     return (
         <div className="p-2 pt-4  h-[calc(100%-150px)]  overflow-auto no-scrollbar ">
-            {error && <p  className=" bg-[#EA7F87] rounded-lg p-[10px]  w-full text-center">{error}</p>}
+            {errorin && <p  className=" bg-[#EA7F87] rounded-lg p-[10px]  w-full text-center">{errorin}</p>}
             <label className="mt-5 flex items-center justify-center" htmlFor="imagroupe">
                 <Image src="" alt=""  width={30} height={30}/>
                 <div className="bg-[#EFEFEF] p-10 rounded-full">
@@ -124,8 +125,19 @@ const CreatGroups: React.FC<CreateGroupsProps> = ({ setNewRooms }) => {
 
 				<div className="absolute  right-5 bottom-20 md:bottom-4  flex items-center">
 					<button onClick={()=>{setNewRooms(false)}} className="text-[#5B8CD3] mr-4">Cancel</button>
-					<button onClick={handleCreateGroup} className=" bg-[#5B8CD3] p-4 rounded-full "><FaCheck />
+					<button onClick={handleCreateGroup} className=" bg-[#5B8CD3] p-4 rounded-full ">
+          {status === 'loading'   ?   <div className="flex items-center justify-center ">
+                  <div
+                  className=" text-[white]   h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                  role="status">
+                  <span
+                  className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+                  >Loading...</span>
+                  </div>
+                  </div> 
+              :   <FaCheck />  }
 					</button>
+    
 				</div>   
         </div>
     )

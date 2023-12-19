@@ -16,6 +16,7 @@ import {Provider as ReduxProvider, useDispatch, useSelector} from 'react-redux'
 import { fetchMessagesThunk } from "@/app/store/messageSlice";
 import { fetchConversationThunk } from "@/app/store/conversationSlice";
 import { getAllRooms } from "@/app/store/roomsSlice";
+import { getAllMembers } from "@/app/store/memberSlice";
 
 
 const ConversationChannelPage = () => {
@@ -35,10 +36,16 @@ const ConversationChannelPage = () => {
 			dispatch(getAllRooms())
       updateChannel("")
 		})
+    socket.on("updateMember",(payload:any) =>{
+      console.log(payload)
+			dispatch(getAllMembers(payload.roomId))
+      dispatch(getAllRooms())
+		})
     return () => {
       socket.off("notification");
       socket.off("delete");
       socket.off("update");
+      socket.off("updateMember");
     };
   
 

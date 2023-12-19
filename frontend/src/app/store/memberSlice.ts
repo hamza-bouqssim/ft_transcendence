@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { getAllMembersApi } from '../utils/api';
+import { getAllMembersApi, quitRoom } from '../utils/api';
 
 interface Member {
   id: string;
@@ -41,6 +41,16 @@ export const getAllMembers = createAsyncThunk('members/getAllMembers', async (ro
   }
 });
 
+export const quitMember = createAsyncThunk('members/quitMember', async (roomId: string, { rejectWithValue }) => {
+  try {
+    console.log(roomId)
+    const response = await quitRoom(roomId);
+    return response.data;
+  } catch (error) {
+    return rejectWithValue(error.message || 'Failed to quit members');
+  }
+});
+
 const membersSlice = createSlice({
   name: 'members',
   initialState: initialStateMember,
@@ -57,7 +67,20 @@ const membersSlice = createSlice({
       .addCase(getAllMembers.rejected, (state: any, action: PayloadAction<string>) => {
         state.status = 'failed';
         state.error = action.payload;
-      });
+      })
+      .addCase(quitMember.pending, (state: any) => {
+        state.status = 'loading';
+      })
+      .addCase(quitMember.fulfilled, (state: any, action: PayloadAction<Member[]>) => {
+        state.status = 'succeeded';
+        state.members = state.members.filter((member:Member) => member.id !== action.payload.data);
+      })
+      .addCase(quitMember.rejected, (state: any, action: PayloadAction<string>) => {
+        state.status = 'failed';
+        state.error = action.payload;
+      })
+
+      
   },
 });
 

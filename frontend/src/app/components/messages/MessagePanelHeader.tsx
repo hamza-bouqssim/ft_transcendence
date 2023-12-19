@@ -53,7 +53,7 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({ setUpdateRome, update
         dispatch(getAllMembers(channel.id))
       }, [dispatch,channel])
 
-    
+    console.log(members)
     return (<div className="flex items-center justify-between p-5  rounded-full text-black  bg-[#F2F3FD]">
             <div className="flex items-center">
                     <FaArrowLeft  onClick={goBack} className="mr-4 xl:hidden block" size={26}></FaArrowLeft>
@@ -71,8 +71,11 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({ setUpdateRome, update
                     {!channel.name && channel.recipient.display_name && <h1 className="ml-2">{channel.recipient.display_name }</h1>}
             </div>
             {
-              pathname.includes('groups')  && channel.members.some(member => member.isAdmin && member.user_id === Userdata.id) ? (
-                     !updateRome ? (
+                pathname.includes('groups') &&
+                members?.some(
+                    member => (member.Status==="Owner" || member.Status === "Admin") && member.user_id === Userdata.id
+                ) ? (
+                    !updateRome ? (
                     <IoMdSettings
                         size={30}
                         onClick={() => {
@@ -90,7 +93,7 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({ setUpdateRome, update
                     ></IoClose>
                     )
                 ) : null
-                } 
+            }
         </div>)
 }
 

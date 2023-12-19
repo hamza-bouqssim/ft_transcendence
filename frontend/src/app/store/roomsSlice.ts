@@ -66,16 +66,7 @@ export const updateRooms = createAsyncThunk('rooms/updateRooms', async (data: Ro
   }
 });
 
-export const deleteRooms = createAsyncThunk('rooms/deleteRooms', async (id: string) => {
-  try
-  {
-    const response = await deleteRoomsApi(id);
-    return response.data;
-  }catch(error)
-  {
-    return error
-  }
-});
+
 
 const roomSlice = createSlice({
   name: 'room',
@@ -95,11 +86,24 @@ const roomSlice = createSlice({
         state.error = action.payload;
         
       })
+      .addCase(createRooms.pending, (state:any) => {
+        state.status = 'loading';
+      })
       .addCase(createRooms.fulfilled, (state:any, action:any) => {
+        state.status = 'succeeded';
         const newRoom = action.payload;
         state.rooms.push(newRoom);
       })
+      .addCase(createRooms.rejected, (state:any, action:any) => {;
+        state.status = 'failed';
+        state.error = action.payload;
+        
+      }).
+      addCase(updateRooms.pending, (state:any) => {
+        state.status = 'loading';
+      })
       .addCase(updateRooms.fulfilled, (state:any, action: PayloadAction<Room>) => {
+        state.status = 'succeeded';
         const updateData = action.payload.data
         console.log(updateData)
         const index = state.rooms.findIndex((room: Room) => room.id === updateData.id);
@@ -107,13 +111,11 @@ const roomSlice = createSlice({
           state.rooms[index] = action.payload.data;
         }
       })
-      .addCase(deleteRooms.fulfilled, (state:any, action: PayloadAction<Room>) => {
-        const deletedRoom = action.payload.data;
-        const index = state.rooms.findIndex((room:Room) => room.id === deletedRoom.id);
-        if (index !== -1) {
-          state.rooms.splice(index, 1);
-        }
-      });
+      .addCase(updateRooms.rejected, (state:any, action:any) => {;
+        state.status = 'failed';
+        state.error = action.payload;
+        
+      })
   },
 });
 
