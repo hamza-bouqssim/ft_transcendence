@@ -13,7 +13,7 @@ import { GameService } from '../game.service';
 import { PrismaService } from 'prisma/prisma.service';
 import { AuthenticatedSocket } from 'src/utils/interfaces';
 import { PongGame } from '../classes/PongGame';
-import {EventEmitter2, OnEvent} from  '@nestjs/event-emitter';
+import {EventEmitter2} from  '@nestjs/event-emitter';
 
 export type GameQ = {
 	indexMap: number;

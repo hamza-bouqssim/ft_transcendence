@@ -207,6 +207,10 @@ export class FriendRequestService {
                 vue: true,
             },
         });
+        this.eventEmitter.emit('requestAcceptPlay.created', {
+            req_play
+          });
+    
         
         return {message: 'Accept request to play succesfully'};
 
@@ -304,7 +308,7 @@ export class FriendRequestService {
         });
         
 
-        this.eventEmitter.emit('requestRefuse.created', {
+        this.eventEmitter.emit('requestRefusePlay.created', {
             RefuseruserId: req.senderId,
           });
     
