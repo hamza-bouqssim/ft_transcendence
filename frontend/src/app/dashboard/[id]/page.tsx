@@ -2,7 +2,6 @@
 
 import { getMatchHistory, getStates, getUserInfos } from '@/app/utils/api';
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import Boxes from '@/app/components/Boxes';
 import HistoryMatches from '@/app/components/HistoryMatches';
 import RankingFriendsSwitch from '@/app/components/RankingFriendsSwitch';
@@ -15,6 +14,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
   const [results, setResults] = useState({});
   const [history_match, setHistoryMatch] = useState([]);
   const [userinfo, setUserInfo] = useState("");
+  const [showMessageBlock, setShowMessageBlock] = useState(false);
   
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -70,7 +70,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 				<div className="row">
 
 					<div className="col-1">
-						<div className="play relative rounded-[54px]">
+						<div className="play relative rounded-[54px] relative">
 						<Image
   							src="/assets/hand.png"
   							className="thehand absolute  -top-[41px] -right-[9px] rounded-r-full w-[490px] animate-bounce"
@@ -79,7 +79,22 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
   							height="500"
 							priority={true}
 						/>
-							<h1 className="play-button drop-shadow-md">{userinfo.display_name}</h1>
+							<div className="flex justify-center items-center gap-4 align-center absolute top-[50%] -translate-y-[50%] left-10">
+								<button className="px-4 h-12 bg-[--purple-color] rounded-2xl shadow-xl hover:scale-105 hover:duration-175 ease-in-out hover:bg-[--blue-color]">Send Request</button>
+								<button className="px-4 h-12 bg-[--purple-color] rounded-2xl shadow-xl hover:scale-105 hover:duration-175 ease-in-out hover:bg-[--blue-color]" onClick={() => setShowMessageBlock(true)}>Send Message</button>
+								<button className="px-4 h-12 bg-[--purple-color] rounded-2xl shadow-xl hover:scale-105 hover:duration-175 ease-in-out hover:bg-[--pink-color]">Block</button>
+							</div>
+							{showMessageBlock && 
+							<>
+								<div className="fixed left-0 z-10 top-0 bottom-0 right-0  p-10 rounded-[60px] w-full h-full bg-[#00000095] backdrop-blur-md opacity-100">
+								<div className="w-[380px] h-[280px] z-30 bg-white absolute top-0 left-0 bottom-0 right-0 m-auto rounded-[20px] overflow-hidden">
+									<h2 className="text-black">Send Message to {userinfo.display_name}</h2>
+								</div>
+								{/* Content of the div */}
+								</div>
+							</>
+							}
+
 						</div>
 						<div className="boxes">
 							<Boxes title="WINS" value={results?.win} color="#6A67F3"/>

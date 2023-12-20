@@ -49,11 +49,6 @@ const Form = ({ img }: FormProps) => {
 			setMessage(displayNameResponse.data.message);
 			setSuccess(displayNameResponse.data.success)
 		}
-		// else if(displayNameResponse.data.success &&  Userdata.first_time == false)
-		// {
-		// 	setMessage(displayNameResponse.data.message);
-		// 	setSuccess(displayNameResponse.data.success);
-		// }
 	  });
 	  await changeUserName(_username);
 	  await changePhoto(Userdata.avatar_url);

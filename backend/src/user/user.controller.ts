@@ -114,14 +114,15 @@ export class UserController {
     @UseGuards(AuthGuard('jwt'))
     async blockedFriends(@Req() req)
     {     
-     const user = req.user
+      const user = req.user
       return await this.userService.blockedFriends(user.id);
     }
+
     @Get('All-users')
     @UseGuards(AuthGuard('jwt'))
     async allUsers(@Req() req)
     {
-     const user = req.user
+      const user = req.user
       return await this.userService.allUsers(user.id);
     }
     @Post('search')

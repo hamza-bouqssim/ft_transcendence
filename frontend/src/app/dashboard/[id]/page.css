@@ -38,6 +38,7 @@
     margin-bottom: 50px;
     margin-left: 60px;
 }
+
 .container .row .col-1 .boxes{
     display: flex;
     justify-content: space-between;
