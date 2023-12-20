@@ -1,7 +1,5 @@
-/* eslint-disable prettier/prettier */
-import { Body, Controller, Get, Param,  Post,  Req,  Res,   UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param,  Post, Delete, Req,  Res,  UnauthorizedException, UploadedFile, UseGuards, UseInterceptors, Query} from '@nestjs/common';
 import { UserService } from './user.service';
-
 import { AuthGuard } from '@nestjs/passport';
 import { PrismaService } from 'prisma/prisma.service';
 @Controller('user')
@@ -41,7 +39,6 @@ export class UserController {
           await this.userService.changeDisplayedName(user.email, request.newDisplayName);
         return res.status(200).json({ success: true, message: "Updated Successfully"});
       }catch(error){
-        // throw new Error('Failed to update the displayed name');
         return res.send({ success: false, message: error.message || 'An unexpected error occurred' });
 
       }
@@ -59,9 +56,6 @@ export class UserController {
       }
     }
 
-
-  
-    
     @Post('changePhoto')
     @UseGuards(AuthGuard('jwt'))
     async changePhoto(@Req() req, @Res() res, @Body() request: {avatar: string})
@@ -127,14 +121,15 @@ export class UserController {
     @UseGuards(AuthGuard('jwt'))
     async blockedFriends(@Req() req)
     {     
-     const user = req.user
+      const user = req.user
       return await this.userService.blockedFriends(user.id);
     }
+
     @Get('All-users')
     @UseGuards(AuthGuard('jwt'))
     async allUsers(@Req() req)
     {
-     const user = req.user
+      const user = req.user
       return await this.userService.allUsers(user.id);
     }
     @Post('search')
@@ -159,10 +154,9 @@ export class UserController {
 
     @Post('get_user')
     @UseGuards(AuthGuard('jwt'))
-    async getUserId(@Body() request: {id_user : string}){
+    async getUserId(@Body() request: {id_user : string}, @Res() res){
       const user =  await this.userService.userInfo(request.id_user);
-      return user;
-
+      res.status(200).json(user);
     }
 
     @Get('notification')
@@ -171,6 +165,16 @@ export class UserController {
       const user = req.user;
       const notifications = await this.userService.notificationCreate(user);
       return notifications;
+    }
+
+    @Delete('delete-account')
+    @UseGuards(AuthGuard('jwt'))
+    async delete_account(@Req() req, @Res() res)
+    {
+      const user = req.user;
+      await this.userService.deleteAccount(user.id);
+      res.clearCookie('token');
+      return res.redirect('http://localhost:3000/signIn');
     }
      
     

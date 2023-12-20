@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { promises } from 'dns';
 import { PrismaService } from 'prisma/prisma.service';
+
+
 
 @Injectable()
 export class GameService {
@@ -10,11 +13,11 @@ export class GameService {
 			where: {
 				id: id,
 			},
-			// select: {
-			// 	id: true,
-			// 	username: true,
-			// 	avatar_url: true,
-			// },
+			select: {
+				id: true,
+				display_name: true,
+				avatar_url: true,
+			},
 		});
 		return user;
 	}
@@ -25,7 +28,7 @@ export class GameService {
 		return Math.round(newLevel * 100) / 100;
 	}
 
-	rating(playerRank: number, opponentRank: number, outcome: number) {
+	rating(playerRank: number, opponentRank: number, outcome: number) : number{
 		let k: number;
 		if (playerRank > 2400) k = 16;
 		else if (playerRank > 2100 && playerRank <= 2400) k = 24;
@@ -61,13 +64,16 @@ export class GameService {
 	}
 
 	async createStateGame(userId: string) {
-		const state = await this.prisma.stateGame.create({
+		// const state = 
+		await this.prisma.stateGame.create({
 			data: {
 				user: { connect: { id: userId } },
 			},
 		});
-		return state;
+		// return state;
 	}
+
+	async createStateGame1(userIdOne: string, userIdTwo: string) {}
 
 	async deleteStateGame(userId: string) {
 		const deleteState = await this.prisma.stateGame.delete({
@@ -96,9 +102,14 @@ export class GameService {
 		date: number,
 	) {
 		try {
-			const duration = this.convertDuration(Date.now() - date);
+			// let state: any;
+			// let state2: any;
+			const endDate = new Date();
+			const duration = this.convertDuration(date);
 			const state = await this.getStateGame(userIdOne);
 			const state2 = await this.getStateGame(userIdTwo);
+			// if (!state) state = await this.createStateGame(userIdOne);
+			// if (!state2) state2 = await this.createStateGame(userIdTwo);
 			const result1 = resultOne > resultTwo ? 1 : 0;
 			const result2 = resultTwo > resultOne ? 1 : 0;
 
@@ -228,7 +239,7 @@ export class GameService {
 	// 	return modifiedRanking;
 	// }
 
-	async history_matches(userId: string) {
+	async history_matches(userId: string){
 		const history = await this.prisma.match_History.findMany({
 			where: {
 				OR: [{ playerOne: userId }, { playerTwo: userId }],
@@ -270,11 +281,17 @@ export class GameService {
 		return totalMatch;
 	}
 
-	convertDuration(date: number) {
-		const seconds = Math.floor(date / 1000);
-		const minutes = Math.floor(seconds / 60);
-		const hours = Math.floor(minutes / 60);
-		// return ??:??:??
-		return `${hours}:${minutes % 60}:${seconds % 60}`;
+	convertDuration(date: number): string {
+		console.log('date', date);
+
+		const hours = Math.floor(date / 3600000);
+		const minutes = Math.floor((date % 3600000) / 60000);
+		const seconds = Math.floor(((date % 3600000) % 60000) / 1000);
+
+		let duration;
+		duration = (hours < 10 ? '0' + hours : hours) + ':';
+		duration += (minutes < 10 ? '0' + minutes : minutes) + ':';
+		duration += seconds < 10 ? '0' + seconds : seconds;
+		return duration;
 	}
 }

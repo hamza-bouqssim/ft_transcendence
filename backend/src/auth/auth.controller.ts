@@ -7,6 +7,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
 import { SignAuthDto } from './dto/signIn.dto';
 import { TwoFactorAuthenticationService } from 'src/two-factor-authentication/two-factor-authentication.service';
+import { GameService } from 'src/game/game.service';
 
 
 @Controller('auth')
@@ -14,7 +15,8 @@ export class AuthController {
     constructor (
         private authService: AuthService,
         private jwtService: JwtService,
-        private readonly twofactorAuth:TwoFactorAuthenticationService
+        private readonly twofactorAuth:TwoFactorAuthenticationService,
+        private readonly gameState:GameService
         ){}
 
     @Post('signin')
@@ -22,18 +24,26 @@ export class AuthController {
     {
         const user = await this.authService.signIn(dto);
         const payload = {sub: user.id, email: user.email};
+
+        if(user.first_time)
+        {
+            const token = this.jwtService.sign(payload);
+            res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
+            this.gameState.createStateGame(user.id);
+            return res.send({success:true, message:"new user"});
+        }
         
         if(user.tfa_enabled)
         {
             const token = this.jwtService.sign(payload);
             res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
-            return res.redirect("http://localhost:3000/signIn/verify-two-factor");
+            return res.send({success:false, message:"tfa enabled"});
         }
 
         const token = this.jwtService.sign(payload)
         res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
 
-        return res.status(200).json("signIn succefully")
+        return res.send({signed:true, message:"Signed Successfully"});
         
     }
 
@@ -57,6 +67,7 @@ export class AuthController {
         {
             const token = this.jwtService.sign(payload);
             res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
+            this.gameState.createStateGame(user.id);
             return res.redirect("http://localhost:3000/dashboard/settings");
         }
 
@@ -89,6 +100,7 @@ export class AuthController {
         {
             const token = this.jwtService.sign(payload);
             res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
+            this.gameState.createStateGame(user.id);
             return res.redirect("http://localhost:3000/dashboard/settings");
         }
         

@@ -9,6 +9,7 @@ import { JwtModule ,JwtService} from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { TwoFactorAuthenticationService } from 'src/two-factor-authentication/two-factor-authentication.service';
 import { TwoFactorAuthenticationModule } from 'src/two-factor-authentication/two-factor-authentication.module';
+import { GameService } from 'src/game/game.service';
 
 
 @Module({
@@ -24,7 +25,8 @@ import { TwoFactorAuthenticationModule } from 'src/two-factor-authentication/two
     FortyTwoStrategy,
     GoogleStrategy,
     JwtStrategy,
-    TwoFactorAuthenticationService
+    TwoFactorAuthenticationService,
+    GameService
   ],
   controllers: [AuthController],
 

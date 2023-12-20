@@ -1,7 +1,11 @@
+import { deleteAccount } from "../utils/api";
+
 type PopUpProps = {
 	setShow: (show: boolean) => void;
 };
-
+// const deleting = async () => {
+// 	await deleteAccount().then((res) => console.log(res));
+// }
 const PopUp = ({ setShow }: PopUpProps) => {
 	return (
 		<div className="absolute inset-0 grid w-full place-content-center backdrop-blur-sm">
@@ -15,7 +19,7 @@ const PopUp = ({ setShow }: PopUpProps) => {
 					Are you sure you want to delete your account ?
 				</h1>
 				<div className="flex w-full justify-center gap-6 px-16 text-[13px] font-bold text-white md:text-[20px]">
-					<button className="w-full rounded-[20px] bg-[#EA7F87] px-5 py-3 ">
+					<button className="w-full rounded-[20px] bg-[#EA7F87] px-5 py-3 " >
 						Yes
 					</button>
 					<button
