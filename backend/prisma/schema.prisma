@@ -33,7 +33,9 @@ model User {
   display_name String @unique
   avatar_url String
   two_factor_auth String
+  first_time Boolean @default(true)
   two_factor_secret_key String
+  tfa_enabled Boolean @default(false)
   friend Friend[] @relation("UserToFriend")
   friends Friend[] @relation("Friend")
   senderOfChatParticipents ChatParticipents[] @relation("sender")
@@ -46,17 +48,13 @@ model User {
   senderOfmessage Message[] @relation("senderMessage")
   blockUserOne    blockList[] @relation("userOne")
   blockUserTwo    blockList[] @relation("userTwo")
-  player1 Pong_match[]  @relation("player1")
-  player2 Pong_match[]  @relation("player2")
   Member  Member[]
   blockingUsers       BlockUser[] @relation("blockingUsers")
   blockedByUsers      BlockUser[] @relation("blockedByUsers")
   messageRome  MessageRome[]
   StateGame                   StateGame?
-  Achievement                 Achievement[]
   MatchHistory1               Match_History[]    @relation("playerOne")
   MatchHistory2               Match_History[]    @relation("playerTow")
-  queue                       Queue[]
 
 }
 
@@ -116,59 +114,6 @@ model Session {
   expiresAt DateTime
 }
 
-model StateGame {
-  id            String @id @default(uuid())
-  user_id       String @unique
-  win           Int    @default(0)
-  lose          Int    @default(0)
-  level         Float  @default(0.0)
-  numberOfMatch Int    @default(0)
-  rank          Int    @default(-1)
-  user          User   @relation(fields: [user_id], references: [id])
-}
-
-model Achievement {
-  id      String @id @default(uuid())
-  user_id String 
-  content String
-  type    String
-  picture String
-  win     Int
-  lose    Int
-  level   Float
-  user    User   @relation(fields: [user_id], references: [id])
-}
-
-model Pong_match {
-  id           String          @id @default(uuid())
-  player1_id   String          
-  player2_id   String          
-  created_at   DateTime        @default(now())
-  updated_at   DateTime        @updatedAt
-  event        EventType       @default(UNPROCESSED)
-  playerOne    User            @relation("player1", fields: [player1_id], references: [id])
-  playerTwo    User            @relation("player2", fields: [player2_id], references: [id])
-  matchHistory Match_History[]
-}
-
-model Match_History {
-  id              String     @id @default(uuid())
-  playerOne       String
-  playerTwo       String
-  playerOne_score Int
-  playerTwo_score Int
-  matchId         String
-  playerone       User       @relation("playerOne", fields: [playerOne], references: [id])
-  playertwo       User       @relation("playerTow", fields: [playerTwo], references: [id])
-  match           Pong_match @relation(fields: [matchId], references: [id])
-}
-
-model Queue {
-  id        String   @id @default(uuid())
-  userId    String   @unique
-  user      User     @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now())
-}
 
 
 model NotificationGlobal {
@@ -244,5 +189,29 @@ model blockList{
   userOne User @relation("userOne",fields: [userOneId], references: [id])
   userTwo User @relation("userTwo", fields: [userTwoId], references: [id])
 }
+
+model Match_History {
+  id         String   @id @default(uuid())
+  playerOne  String
+  playerTwo  String
+  resultOne  Int
+  resultTwo  Int
+  createdAt  DateTime @default(now())
+  playerone  User     @relation("playerOne", fields: [playerOne], references: [id])
+  playertwo  User     @relation("playerTow", fields: [playerTwo], references: [id])
+  duration   String   @default("00:00:00")
+}
+
+model StateGame {
+  id         String @id @default(uuid())
+  user_id    String @unique
+  totalMatch Int    @default(0)
+  win        Int    @default(0)
+  lose       Int    @default(0)
+  level      Float  @default(0.00)
+  rating     Int    @default(1200)
+  user       User   @relation(fields: [user_id], references: [id])
+}
+
 
 

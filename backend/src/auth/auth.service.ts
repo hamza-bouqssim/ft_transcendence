@@ -7,12 +7,14 @@ import * as bcrypt from 'bcrypt';
 import { LocalAuthDto } from './dto/local.auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { SignAuthDto } from './dto/signIn.dto';
+import { TwoFactorAuthenticationService } from 'src/two-factor-authentication/two-factor-authentication.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
+    private readonly twofactorAuth:TwoFactorAuthenticationService
   ) {}
 
     async signIn(dto: SignAuthDto) {
@@ -26,18 +28,12 @@ export class AuthService {
         throw new UnauthorizedException('Incorrect user!');
       }
       
-      
       const checkPass = await bcrypt.compare(dto.password, user.password);
       if (!checkPass) {
         throw new UnauthorizedException('Incorrect Password!');
       }
- 
-      const payload = {sub: user.id, email: user.email};
-      const token = this.jwtService.sign(payload)
-    if (!token) {
-      throw new ForbiddenException();
-    }
-    return token;
+      
+      return user;
  
   }        
    
@@ -118,12 +114,12 @@ export class AuthService {
       return user;
     }
 
-    async generateNickname(email: string) :Promise<string>{
-      const username = email.split('@')[0];
-      const cleanedUsername = username.replace(/[^a-zA-Z0-9]/g, '');
-      const nickname = cleanedUsername.length > 0 ? cleanedUsername : 'defaultNickname';
-      return nickname;
-    }
+    // async generateNickname(email: string) :Promise<string>{
+    //   const username = email.split('@')[0];
+    //   const cleanedUsername = username.replace(/[^a-zA-Z0-9]/g, '');
+    //   const nickname = cleanedUsername.length > 0 ? cleanedUsername : 'defaultNickname';
+    //   return nickname;
+    // }
 
 
 

@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Injectable,HttpStatus,HttpException } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
-import { RoomId,Member ,DeleteChatRoom,UpdateChatRoom,CreateChatRoom,getAllRooms ,CreateMessageRoom} from "src/Rooms/dto/rooms.dto";
+import { RoomId,Member,JoinRooms ,DeleteChatRoom,UpdateChatRoom,CreateChatRoom,getAllRooms ,CreateMessageRoom} from "src/Rooms/dto/rooms.dto";
 import * as bcrypt from 'bcrypt';
 
 
@@ -26,6 +26,7 @@ export class RoomsService {
       },
     });
     if (!memberInfo || memberInfo.length === 0) {
+      console.log("sdfdsfdsf")
       throw new HttpException("No members found for the given user in any chat room.", HttpStatus.BAD_REQUEST);
     }
   
@@ -86,6 +87,7 @@ export class RoomsService {
     {
       hashedPassword = await bcrypt.hash(data.password, 10);
     }
+
     const chatRoom = await this.prisma.chatRoom.create({
       data: {
         name: data.name,
@@ -237,38 +239,25 @@ export class RoomsService {
     return !!member;
   }
 
-  async addMemberToRooms()
-  {
-
-  }
-
-  async makeOwner()
-  {
-
-  }
-
- 
-  async deleteOwner()
-  {
-
-  }
-
-
+  
+  
+  
+  
   async allMember(id:string, roomId:RoomId) 
   {
     const userRole = await this.prisma.member.findFirst({
       where: {
           user_id: id,
           chatRoomId: roomId.id,
-      },
-      select: {
-        isAdmin: true,
-      },
-    });
-
-    let members;
-
-    if (userRole?.isAdmin) {
+        },
+        select: {
+          isAdmin: true,
+        },
+      });
+      
+      let members;
+      
+      if (userRole?.isAdmin) {
       members = await this.prisma.member.findMany({
         where: {
           chatRoomId: roomId.id,
@@ -308,7 +297,7 @@ export class RoomsService {
     }
     return members;
   }
-
+  
   async banMember(id: string, memberUpdate: Member) {
     const userRole = await this.prisma.member.findFirst({
       where: {
@@ -316,13 +305,13 @@ export class RoomsService {
         chatRoomId: memberUpdate.id,
       },
     });
-
+    
     if (!userRole?.isAdmin) {
       throw new HttpException("User is not an admin in the room", HttpStatus.BAD_REQUEST);
     }
     const userRole1 = await this.prisma.member.findFirst({
       where: {
-        user_id: memberUpdate.id,
+        user_id: memberUpdate.userId,
         chatRoomId: memberUpdate.id,
       },
     });
@@ -343,12 +332,12 @@ export class RoomsService {
         Status: "Ban",
       },
     });
-
+    
     return updatedMember;
   }
-
-
-
+  
+  
+  
   async mutMember(id: string, memberUpdate: Member)
   {
     const userRole = await this.prisma.member.findFirst({
@@ -357,20 +346,23 @@ export class RoomsService {
         chatRoomId: memberUpdate.id,
       },
     });
+    console.log(memberUpdate)
 
+    
     if (!userRole?.isAdmin) {
       throw new HttpException("User is not an admin in the room", HttpStatus.BAD_REQUEST);
     }
     const userRole1 = await this.prisma.member.findFirst({
       where: {
-        user_id: memberUpdate.id,
+        user_id: memberUpdate.userId,
         chatRoomId: memberUpdate.id,
       },
     });
+    console.log(userRole1)
     if (userRole1?.isAdmin) {
       throw new HttpException("can t Mut owner in the room", HttpStatus.BAD_REQUEST);
     }
-
+    
     const userMut = await this.prisma.member.findFirst({
       where: {
         user_id: memberUpdate.userId,
@@ -385,13 +377,13 @@ export class RoomsService {
         Status: "Mut",
       },
     });
-
+    
     return updatedMember;
-
+    
   }
-
+  
   //modifier 
-
+  
   async kickMember(id: string, memberUpdate: Member)
   {
     const userRole = await this.prisma.member.findFirst({
@@ -400,20 +392,20 @@ export class RoomsService {
         chatRoomId: memberUpdate.id,
       },
     });
-
+    
     if (!userRole?.isAdmin) {
       throw new HttpException("User is not an admin in the room", HttpStatus.BAD_REQUEST);
     }
     const userRole1 = await this.prisma.member.findFirst({
       where: {
-        user_id: memberUpdate.id,
+        user_id: memberUpdate.userId,
         chatRoomId: memberUpdate.id,
       },
     });
     if (userRole1?.isAdmin) {
       throw new HttpException("can t kick owner in the room", HttpStatus.BAD_REQUEST);
     }
-
+    
     const userkick = await this.prisma.member.findFirst({
       where: {
         user_id: memberUpdate.userId,
@@ -428,9 +420,9 @@ export class RoomsService {
         Status: "kick",
       },
     });
-
+    
     return updatedMember;
-
+    
   }
   async Member(id: string, memberUpdate: Member)
   {
@@ -440,11 +432,11 @@ export class RoomsService {
         chatRoomId: memberUpdate.id,
       },
     });
-
+    
     if (!userRole?.isAdmin) {
       throw new HttpException("User is not an admin in the room", HttpStatus.BAD_REQUEST);
     }
-
+    
     const userkick = await this.prisma.member.findFirst({
       where: {
         user_id: memberUpdate.userId,
@@ -459,23 +451,264 @@ export class RoomsService {
         Status: "Member",
       },
     });
-
+    
     return updatedMember;
-
-  }
-
-
-  async isMember()
-  {
-
-  }
-
-  
-  async joinRooms()
-  {
-
+    
   }
   
+  async makeOwner(id: string, memberUpdate: Member) {
+    const callerRole = await this.prisma.member.findFirst({
+      where: {
+        user_id: id,
+        chatRoomId: memberUpdate.id,
+      },
+    });
+  
+    if (!callerRole?.isAdmin) {
+      throw new HttpException("User is not an admin in the room", HttpStatus.BAD_REQUEST);
+    }
+  
+    const userToUpdate = await this.prisma.member.findFirst({
+      where: {
+        user_id: memberUpdate.userId,
+        chatRoomId: memberUpdate.id,
+      },
+    });
+  
+    if (!userToUpdate) {
+      throw new HttpException("The specified user is not a member in the room", HttpStatus.BAD_REQUEST);
+    }
+  
+    if (userToUpdate.isAdmin) {
+      throw new HttpException("The specified user is already an admin in the room", HttpStatus.BAD_REQUEST);
+    }
+  
+    const updatedUser = await this.prisma.member.update({
+      where: {
+        id: userToUpdate.id,
+      },
+      data: {
+        isAdmin: true,
+      },
+    });
+  
+    return updatedUser;
+  }
+
+
+  async quitRoom(iduser: string, roomId: RoomId) {
+    const room = await this.prisma.chatRoom.findFirst({
+      where: {
+        id: roomId.id,
+      },
+    });
+  
+    const user = await this.prisma.member.findFirst({
+      where: {
+        user_id: iduser,
+        chatRoomId: roomId.id,
+      },
+    });
+  
+    if (!room || !user) {
+      throw new HttpException("Room or user not found", HttpStatus.NOT_FOUND);
+    }
+  
+    if (user.isAdmin) {
+      const oldOwner = await this.prisma.member.findFirst({
+        where: {
+          chatRoomId: roomId.id,
+          user_id: { not: user.id },
+        },
+      });
+  
+      if (oldOwner && !oldOwner.isAdmin) {
+        await this.prisma.member.update({
+          where: {
+            id: oldOwner.id,
+          },
+          data: {
+            isAdmin: true,
+          },
+        });
+      }
+    }
+  
+    await this.prisma.member.delete({
+      where: {
+        id: user.id,
+      },
+    });
+
+    const remainingMembers = await this.prisma.member.count({
+      where: {
+        chatRoomId: roomId.id,
+      },
+    });
+  
+    if (remainingMembers === 0) {
+      await this.prisma.messageRome.deleteMany({
+        where: { chatRoomId: roomId.id },
+      });
+      await this.prisma.chatRoom.delete({
+        where: {
+          id: roomId.id,
+        },
+      });
+    }
+  
+    return "delete user is success";
+  }
+  
+
+  async addMemberToRooms(iduser: string, memberUpdate: Member) {
+
+    const isAdmin = await this.prisma.member.findFirst({
+      where: {
+        user_id: iduser,
+        isAdmin: true,
+      },
+    });
+  
+    if (!isAdmin) {
+      throw new HttpException('User is not an admin', HttpStatus.UNAUTHORIZED);
+    }
+  
+    const room = await this.prisma.chatRoom.findUnique({
+      where: {
+        id: memberUpdate.id,
+      },
+    });
+  
+    if (!room) {
+      throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
+    }
+  
+    const existingMember = await this.prisma.member.findFirst({
+      where: {
+        user_id: memberUpdate.userId,
+        chatRoomId: memberUpdate.id,
+      },
+    });
+  
+    if (existingMember) {
+      throw new HttpException('User is already a member of the room', HttpStatus.CONFLICT);
+    }
+
+    await this.prisma.member.create({
+      data: {
+        user: {
+          connect: {
+            id: memberUpdate.userId,
+          },
+        },
+        chatRoom: {
+          connect: {
+            id: memberUpdate.id,
+          },
+        },
+        isAdmin:false
+      },
+    });
+
+    return 'Member added to the room successfully';
+  }
+  
+  
+  async joinRooms(id: string, joinRooms: JoinRooms) {
+
+
+    const isRoom = await this.prisma.chatRoom.findFirst({
+      where: {
+        id: joinRooms.id,
+      },
+        select: {
+          password: true,
+        },
+    });
+
+
+    if (!isRoom) {
+      throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
+    }
+
+    console.log(isRoom)
+    const isMember = await this.prisma.member.findFirst({
+      where: {
+        user_id: id,
+        chatRoomId: joinRooms.id,
+      },
+    });
+
+
+    if (isMember) {
+      if (isMember.Status !== 'kick') {
+        throw new HttpException('User is already a member of the room', HttpStatus.CONFLICT);
+      } else {
+        if (joinRooms.Privacy === 'Protected' && !(await bcrypt.compare(joinRooms.password, isRoom.password))) {
+          throw new HttpException('Incorrect password for the protected room', HttpStatus.UNAUTHORIZED);
+        }
+        await this.prisma.member.update({
+          where: {
+            id: isMember.id,
+          },
+          data: {
+            Status: 'Member',
+          },
+        });
+      }
+    } else {
+      if (joinRooms.Privacy === 'Protected'  && !(await bcrypt.compare(joinRooms.password, isRoom.password))) {
+        throw new HttpException('Incorrect password for the protected room', HttpStatus.UNAUTHORIZED);
+      }
+      await this.prisma.member.create({
+        data: {
+          user: {
+            connect: {
+              id: id,
+            },
+          },
+          chatRoom: {
+            connect: {
+              id: joinRooms.id,
+            },
+          },
+          isAdmin: false,
+        },
+      });
+    }
+
+    return 'Join to room success';
+  }
+
+
+ async findRoom(id: string) {
+  const allRooms = await this.prisma.chatRoom.findMany({
+    where: {
+      Privacy: {
+        in: ['Public', 'Protected'],
+      },
+      members: {
+        every: {
+          OR: [
+            {
+              user_id: {
+                not: id,
+              },
+            },
+            {
+              user_id: id,
+              Status: 'kick',
+            },
+          ],
+        },
+      },
+    },
+  });
+
+  return allRooms;
+}
+
 
 
   async getAllFreind(id: string) {
@@ -547,4 +780,3 @@ export class RoomsService {
 
 
 }
-

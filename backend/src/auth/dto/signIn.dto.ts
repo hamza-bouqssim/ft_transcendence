@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import {  IsNotEmpty, IsString } from "class-validator";
+import {  IsAlphanumeric, IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class SignAuthDto {
 
@@ -11,4 +11,9 @@ export class SignAuthDto {
     @IsString()
     @IsNotEmpty()
     password: string;
+
+    @IsAlphanumeric()
+    @IsNotEmpty()
+    @IsOptional()
+    code?: string
 }

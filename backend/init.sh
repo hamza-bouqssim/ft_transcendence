@@ -6,7 +6,7 @@ do
 done
 
 
-npx priscreatyeMessagecreatyeMessagecreatyeMessagecreatyeMessagema migrate dev --name dev --preview-feature
+npx prisma migrate dev --name dev --preview-feature
 npx prisma generate
 # npx prisma db seed 
 exec "$@"

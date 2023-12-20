@@ -112,6 +112,42 @@ export const getAllRoomsApi = () =>{
     return response;  
 }
 
+export const generateQrcode=() =>{
+    const response = API.get("/two-factor-authentication/2fa/generate")
+    return response;
+}
+
+export const verifyCode = async (code : string) => {
+    const res = API.post("/two-factor-authentication/2fa/verify", {code})
+    return res;
+}
+
+export const confirm = async (code : string) => {
+    const res = API.post("/two-factor-authentication/2fa/confirm", {code})
+    return res;
+}
+export const disable2Fa = async () => {
+    const res = API.post("/two-factor-authentication/2fa/disable");
+    return res;
+}
+
+export const changePhoto = async (avatar: string) => {
+    const res = API.post("/user/changePhoto", {avatar})
+    return res;
+}
+
+export const firstTime = async () => {
+    const res = API.post("/user/first_time");
+    return res;
+}
+
+
+// export const uploadToCloud = async () => {
+//     const formData = new FormData();
+    
+//     const res = API.post(`https://api.cloudinary.com/v1_1/dnbhh3qxj/image/upload`, formData);
+//     return res;
+// }
 
 export const getConversationMessageRoom = (id:string) =>{
   const response = API.post("/rooms/getConversation",{id})
