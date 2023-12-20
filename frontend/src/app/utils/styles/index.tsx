@@ -254,7 +254,7 @@ export const IngameStyling = styled.div`
 export const ConversationSideBarItem = styled.div `
 
     background-color: white ;
-    padding: 9px;
+    /* padding: 9px; */
     display: flex;
     align-items: center;
     height: 100%;

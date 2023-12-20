@@ -64,33 +64,33 @@ const CoversationSideBar = () => {
 						<path className="heroicon-ui" d="M16.32 14.9l5.39 5.4a1 1 0 0 1-1.42 1.4l-5.38-5.38a8 8 0 1 1 1.41-1.41zM10 16a6 6 0 1 0 0-12 6 6 0 0 0 0 12z" />
                     </svg>
                 </div>
-                <input className="w-full rounded-md bg-gray-200 text-gray-700 leading-tight focus:outline-none py-2 px-2" id="search" type="text" placeholder="Search teams or members"  onClick={() => {setShow(!show)}}></input>
+                <div className="w-[80%] rounded-md bg-gray-200 text-gray-700 leading-tight focus:outline-none py-2 px-2" id="search" onClick={() => {setShow(!show)}}>Search teams or members</div>
             </div>}
             
         	</div>}
 
-			{newRooms && pathname.includes('chat') && !show  && <div className="flex items-center rounded-full justify-between w-3/ mb-4  mx-auto  bg-[#db808e8e]">
+			{newRooms && pathname.includes('chat') && !show  && <div className="flex  my-3 items-center overflow-x-auto no-scrollbar text-black justify-between w-3/ mb-4  mx-auto ">
  				
  				<button 
  					onClick={()=>{setSelectUsers("online")}}
- 					className={`${(selectUsers ==='online') ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-1/2`}>Online
+ 					className={`${(selectUsers ==='online') ? 'border-[#5B8CD3] border-b-4' : ''} p-3  px-6`}>Online
  				</button>
  				<button
- 					onClick={()=>{setSelectUsers("allFriends")}} className={`${(selectUsers ==='allFriends') ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-24`}>Friends
+ 					onClick={()=>{setSelectUsers("allFriends")}} className={`${(selectUsers ==='allFriends') ? 'border-[#5B8CD3] border-b-4' : ''} p-3  px-6 `}>Friends
  				</button>
-				<div >
- 				<button
- 					onClick={()=>{setSelectUsers("EnAttent")}} className={`${(selectUsers ==='EnAttent') ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-24`}>Pending
- 				</button>
-				 <span className="absolute right-40  rounded-2xl bg-[--pink-color] px-2 font-['Whitney_Bold']">
-					{countRequest}				
-				</span>
+				<div className="relative ">
+					<button
+						onClick={()=>{setSelectUsers("EnAttent")}} className={`${(selectUsers ==='EnAttent') ? 'border-[#5B8CD3] border-b-4' : ''} p-3  px-6`}>Pending
+					</button>
+					<span className="absolute -right-[2px] -top[8px]  rounded-full text-white bg-[--pink-color] px-2 font-['Whitney_Bold']">
+						{countRequest}				
+					</span>
 				</div>
  				<button
- 					onClick={()=>{setSelectUsers("Bloques")}} className={`${(selectUsers ==='Bloques') ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-24`}>Bloques
+ 					onClick={()=>{setSelectUsers("Bloques")}} className={`${(selectUsers ==='Bloques') ? 'border-[#5B8CD3] border-b-4' : ''} p-3  px-6 `}>Bloques
  				</button>
 				 <button
- 					onClick={()=>{setSelectUsers("Add")}} className={`${(selectUsers ==='Add') ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-24`}> Add
+ 					onClick={()=>{setSelectUsers("Add")}} className={`${(selectUsers ==='Add') ? 'border-[#5B8CD3] border-b-4' : ''} p-3  px-6 `}> Add
  				</button>
  			</div>}
 			

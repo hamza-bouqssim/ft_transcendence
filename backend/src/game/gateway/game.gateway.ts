@@ -68,14 +68,17 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 	async handleDisconnect(socket: AuthenticatedSocket) {
-		console.log('Connection closed1');
 		socket.leave(`@${socket.user.sub}`);
+		const user = socket.user.sub;
 		const game = this.getQueueGame(socket.user.sub);
 		if (socket.user) {
 			const newStatus = await this.prisma.user.update({
 				where: { id: socket.user.sub },
 				data: { status: 'online' },
+
 			});
+			this.eventEmitter.emit('Ingameoffline.created', { user });
+
 		}
 
 		const userId = socket.user.sub;
@@ -289,12 +292,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 
-	@OnEvent('Ingame.created')
-	handleOnlineEvent(payload: { userId: string }) {
-		console.log("entere here")
-		console.log(payload.userId);
-	  this.server.emit('Ingame', `This user ${payload} is InGame`);
-	}
+	
 }
 
 

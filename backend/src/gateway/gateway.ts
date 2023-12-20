@@ -220,6 +220,19 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
             this.server.emit('deleteFriendship', data.frienbdship);
 
         }
+
+        @OnEvent('Ingame.created')
+	    handleIngameEvent(payload: { userId: string }) {
+		    console.log("entere here gameee");
+		    console.log(payload.userId);
+	        this.server.emit('Ingame', `This user ${payload} is InGame`);
+    	}
+
+        @OnEvent('Ingameoffline.created')
+        handleIngameOffline(payload : {userId : string}){
+            this.server.emit('IngameOffline', `This user ${payload} is InGame`);
+
+        }
     
         
         

@@ -186,7 +186,7 @@ const ChatComponnent  = () =>{
 			  <div className="flex p-2 gap-px px-20 border-solid border-2">
 				<h1 className="text-lg p-2 font-bold text-blue-500">Private Messages</h1>
 				<button onClick={() => setShow(!show)} className="absolute right-5 p-4 bg-[#fc7785] rounded-full">
-				  <IoMdAdd />
+				  <IoMdAdd className="text-white" />
 				</button>
 			  </div>
 	
@@ -233,7 +233,7 @@ const ChatComponnent  = () =>{
 						/>
 	
 						{openMenuId === elem.id && (
-                			<div className={`absolute  top-[-200px] right-3 p-2 w-[200px] flex-col items-center justify-evenly rounded-[15px] border-2 border-solid border-[#000000] bg-white font-['Whitney_Semibold'] `}>
+                			<div className={`absolute z-10 -top-[115px] right-3 p-2 w-[200px] flex-col items-center justify-evenly rounded-[15px] border-2 border-solid border-[#000000] bg-white font-['Whitney_Semibold'] `}>
 							<button
 							  className={`bg-[#d9d9d9] text-black h-[30px] w-full rounded-[15px] my-1 hover:bg-[rgba(0,0,0,.2)]`}
 							  onClick={() => handleClickUser()}

@@ -48,7 +48,7 @@ export const bloqueFriend = async (id : string) => axios.post(`http://localhost:
 
 export const SendRequest =  async (data : CreateRequestParams) => await axios.post(`http://localhost:8000/friend-request/send-request`,data,  config);
 
-export const sendRequestPlay = async (display_name : string) => await axios.post(`http://localhost:8000/friend-request/send-request-play`, {dislay_name : display_name}, config);
+export const sendRequestPlay = async (display_name : string) => await axios.post(`http://localhost:8000/friend-request/send-request-play`, {display_name : display_name}, config);
 export const acceptRequestToPlay = async (requestId : string) => await axios.post(`http://localhost:8000/friend-request/accept_request_play`, {requestId : requestId}, config);
 export const refusePLayRequest = async (requestId : string) => await axios.post(`http://localhost:8000/friend-request/refuse-request-play`, {requestId : requestId}, config)
 export const pending_request_play = () => axios.get(`http://localhost:8000/user/pending-request-play`, config);

@@ -76,6 +76,14 @@ const ConversationChannelPagechat = () => {
 
 
     });
+    socket.on('Ingame',  (data: any)=>{
+      dispatch(fetchUsersThunk())
+      dispatch(fetchGetAllFriendsThunk());
+    })
+    socket.on('IngameOffline', (data: any)=>{
+      dispatch(fetchUsersThunk())
+      dispatch(fetchGetAllFriendsThunk());
+    })
 
 		socket.on('createConversation', (data : any)=>{
       dispatch(fetchConversationThunk());
@@ -110,6 +118,8 @@ const ConversationChannelPagechat = () => {
         socket.off('deleteConversation');
         socket.off('onMessage');
         socket.off('deleteFriendship');
+        socket.off('Ingame');
+        socket.off('IngameOffline');
 
 
       };

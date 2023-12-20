@@ -95,11 +95,11 @@ const OnlineFriends = () =>{
     const onlineFriends = friends.filter((friend: FriendsTypes) => {
       const user = users.find((user: any) => user.id === friend.id);
       return user && user.status === 'online'; });
-
+      
     return (
-        <div className="text-black  my-10 h-[calc(100%-200px)] overflow-auto ">
+        <div className="text-black mt-[10px] h-[calc(100%-200px)] overflow-auto ">
          <ToastContainer />
-        <Conversation>
+        <div>
 
 				<ConversationSideBarContainer>
 					{onlineFriends.map(function(elem : FriendsTypes){
@@ -124,6 +124,8 @@ const OnlineFriends = () =>{
 
             }
             const handlePLayingRequest = async(display_name : string) =>{
+              console.log("elem-->", elem);
+              console.log("display----->", display_name);
               try { 
                 const response= await dispatch(fetchSendRequestPLay(display_name));
                 if (response.payload && response.payload.message) {
@@ -152,8 +154,7 @@ const OnlineFriends = () =>{
 				          />
       
                 {openMenuId === elem.id &&
-                <div className={`absolute  top-[-200px] right-2 p-2 w-[200px] flex-col items-center justify-evenly rounded-[15px] border-2 border-solid border-[#000000] bg-white font-['Whitney_Semibold'] `}>
-                  <button className={`bg-[#d9d9d9] text-black h-[30px] w-full rounded-[15px] my-1 hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> handleClick()}>see profile</button>
+              <div className={`absolute z-10 -top-[157px] right-3 p-2 w-[200px] flex-col items-center justify-evenly rounded-[15px] border-2 border-solid border-[#000000] bg-white font-['Whitney_Semibold'] `}>                  <button className={`bg-[#d9d9d9] text-black h-[30px] w-full rounded-[15px] my-1 hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> handleClick()}>see profile</button>
                   <button className={`bg-[#d9d9d9] text-black h-[30px] w-full rounded-[15px] my-1 hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> handlePLayingRequest(elem.display_name)}>Invite to play</button>
                   <button className={` bg-[#d9d9d9] text-black h-[30px] w-full rounded-[15px] my-1 hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> handleRemoveFriendship() }>Remove Friendship</button>
                   <button className={` bg-[#EA7F87] text-black h-[30px] w-full rounded-[15px] my-1 hover:bg-[rgba(0,0,0,.2)]`} value="Bloque" onClick={()=> handlleBloque(elem.id)}>Bloque</button>
@@ -166,7 +167,7 @@ const OnlineFriends = () =>{
 						)
 					}) }
 				</ConversationSideBarContainer>
-			</Conversation>
+			</div>
         </div>
            
     )

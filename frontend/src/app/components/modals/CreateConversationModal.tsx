@@ -76,41 +76,21 @@ const CreateConversationModal: FC<props> = ({ setShow }) => {
    
     return (
 
-        <form className=" py-6 flex flex-col justify-center sm:py-12" onSubmit={handleSubmit(onSubmit)}>
+        <form className="border border-[--pink-color] py-6 flex flex-col gap-5 justify-center sm:py-5 shadow-[0_0_50px_rgba(0,0,0,.3)] w-full mt-[90px] rounded-2xl h-[55%] p-5" onSubmit={handleSubmit(onSubmit)}>
+				<MdClose  className="relative py-2 cursor-pointer bg-[--blue-color] rounded-full ml-2 -mt-[25px] mb-2" size={35} color="white"  onClick={() => setShow(false)}/>
 
-			<div className="relative py-3 sm:max-w-xl sm:mx-auto">
-				<div
-					className="absolute inset-0 bg-gradient-to-r from-blue-300 to-blue-400 shadow-lg transform -skew-y-6 sm:skew-y-0 sm:-rotate-6 sm:rounded-3xl">
-
+					<input  {...register('display_name', {required: 'display_name is required'})} type="text" className="rounded-xl h-10 w-full px-5 border border-[--pink-color] border-gray-300 text-gray-900 focus:outline-none focus:borer-rose-600 " placeholder="Display name" />
+			
+					<textarea  {...register('message', {required: 'message is required'})} className="resize-none rounded-xl w-full h-[170px] px-5 py-3 no-scrollbar border border-[--pink-color] border-gray-300 text-gray-900 focus:outline-none focus:borer-rose-600" placeholder="Your message" />
+				
+				<div className="relative">
+					<button  className="bg-[--blue-color] hover:bg-[--pink-color] ease-in-out duration-300 text-white py-2 w-full rounded-xl">Create</button>
 				</div>
-				<MdClose  className="relative py-2 cursor-pointer" size={40} color="red"  onClick={() => setShow(false)}/>
 
-			<div className="relative px-4 py-10 bg-white shadow-lg sm:rounded-3xl sm:p-20">
+		
 
-				<div className="max-w-md mx-auto">
-					<div>
-
-						<h1 className="text-xl font-semibold text-black">Create a conversation</h1>
-					</div>
-					<div className="divide-y divide-gray-200">
-					<div className="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
-						<div className="relative">
-							<input  {...register('display_name', {required: 'display_name is required'})} type="text" className="peer placeholder-transparent h-10 w-full border-b-2 border-gray-300 text-gray-900 focus:outline-none focus:borer-rose-600" placeholder="Email address" />
-							<label  className="absolute left-0 -top-3.5 text-gray-600 text-sm peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-440 peer-placeholder-shown:top-2 transition-all peer-focus:-top-3.5 peer-focus:text-gray-600 peer-focus:text-sm">Display Name</label>
-						</div>
-						<div className="relative">
-							<input {...register('message', {required: 'message is required'})} type="text" className="peer placeholder-transparent h-10 w-full border-b-2 border-gray-300 text-gray-900 focus:outline-none focus:borer-rose-600" placeholder="Password" />
-							<label  className="absolute left-0 -top-3.5 text-gray-600 text-sm peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-440 peer-placeholder-shown:top-2 transition-all peer-focus:-top-3.5 peer-focus:text-gray-600 peer-focus:text-sm">Message</label>
-						</div>
-						<div className="relative">
-							<button  className="bg-blue-500 text-white rounded-md px-2 py-1">Create</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</form >
+			
+			</form >
     )
     
 }

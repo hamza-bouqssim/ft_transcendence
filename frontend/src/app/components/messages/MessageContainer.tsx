@@ -1,6 +1,6 @@
 import {MessageContainerStyle, MessageItemAvatar, MessageItemContainer, MessageItemContent, MessageItemDetails, MessageItemHeader} from "@/app/utils/styles"
 import { ConversationTypes, User, messageTypes } from "@/app/utils/types";
-import { FC, useEffect, useState,useContext } from "react";
+import { FC, useEffect, useState,useContext, useRef } from "react";
 import {formatRelative} from 'date-fns'
 import { getAuthUser } from "@/app/utils/api";
 import MessageInputField from "./MessageInputField";
@@ -47,6 +47,7 @@ const MessageContainer = () => {
     const {Userdata} = useContext(socketContext);
     const dispatch = useDispatch<AppDispatch>();
     const { messages, status, error , isSenderBlocked , isRecipientBlocked} = useSelector((state:any) => state.messages);
+    const scrollRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
       const joinRoom = (id: string) => {
@@ -64,6 +65,9 @@ const MessageContainer = () => {
         }
       }
     }, [dispatch, channel, oldId, socket, setOldId]);
+    useEffect(() => {
+      scrollRef.current?.scrollIntoView();
+    }, [messages]);
     
     return (
 
@@ -107,6 +111,8 @@ const MessageContainer = () => {
               </div>
             ))}
         </MessageContainerStyle>
+        <div ref={scrollRef}></div>
+
         </div>
         {(isSenderBlocked && Userdata?.display_name === channel?.sender.display_name) || (isRecipientBlocked && Userdata?.display_name === channel?.recipient.display_name) ? (
           <button className="w-full p-4 py-3 bg-[#5B8CD3] px-4 mr-2 rounded-full" >
