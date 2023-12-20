@@ -11,6 +11,7 @@ const extractCookie = (req: Request): string | null => {
   }
   if(req.body && req.body.token)
     return req.body.token;
+
   return null;
 }
 

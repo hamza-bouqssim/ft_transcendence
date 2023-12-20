@@ -14,14 +14,14 @@ export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
-    private readonly twofactorAuth:TwoFactorAuthenticationService
+    private readonly twofactorAuth:TwoFactorAuthenticationService,
   ) {}
 
     async signIn(dto: SignAuthDto) {
 
       if(!dto.email || !dto.password)
       {
-        throw new UnauthorizedException('You Missed Entering some required fields !');
+        throw new UnauthorizedException('You Missed Entering some required fields!');
       }
       const user = await this.prisma.user.findUnique({ where: { email: dto.email } });
       if (!user) {
@@ -67,7 +67,7 @@ export class AuthService {
             two_factor_secret_key: "",
           },
         });
-       
+        
        return createNewUser;
     }
     
@@ -88,7 +88,6 @@ export class AuthService {
     }
 
     async validateUser(dto: AuthDto) {
-      console.log(dto)
       const user = await this.prisma.user.findUnique({ where: { email: dto.email } });
       if (user) return user;
     
@@ -103,8 +102,6 @@ export class AuthService {
           two_factor_secret_key: "",
         },
       });
-      console.log(createNewUser)
-    
       return createNewUser;
     }
 

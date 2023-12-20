@@ -20,8 +20,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { useDispatch, useSelector } from "react-redux"
 import { AppDispatch } from "@/app/store"
 import { fetchNumberPending } from "@/app/store/requestSlice"
+import { FiSearch } from "react-icons/fi";
+import { IoChatbubbleOutline } from "react-icons/io5";
+import { SerachGroup } from "../SeachGroup/SerachGroup"
+
 const CoversationSideBar = () => {
 	const [newRooms , setNewRooms]  = useState<boolean>(false)
+	const [search,setSearch] = useState<boolean>(false)
 	const router = useRouter();
 	const pathname = usePathname()
  	const [selectUsers, setSelectUsers] = useState<string>("online");     
@@ -55,6 +60,9 @@ const CoversationSideBar = () => {
 				</button>
 			</div>
 			<hr className="bg-[#DFDFDF] w-1/2 mx-auto mt-5"/>
+
+
+			
 			{!newRooms  && <div className={`search-container`}>
             {show  &&  <CreateSearchModal   setShow={setShow} />   }
 		
@@ -94,30 +102,50 @@ const CoversationSideBar = () => {
  				</button>
  			</div>}
 			
-			{newRooms &&  ((pathname.includes('chat')  && selectUsers === 'online')  ? <OnlineFriends/> :  (pathname.includes('chat') && selectUsers === 'allFriends') ? <ListFriends/> : ( pathname.includes('chat') && selectUsers === 'EnAttent') ? <SendRequest/> :( pathname.includes('chat') && selectUsers === 'Bloques') ? <FriendsBloque/> : ( pathname.includes('chat') && selectUsers === 'Add') ? <SendRequestForm/> : <></> )}
+			{newRooms 
+				&&  ((pathname.includes('chat')  
+				&& selectUsers === 'online')  ? <OnlineFriends/> :  (pathname.includes('chat') 
+				&& selectUsers === 'allFriends') ? <ListFriends/> : ( pathname.includes('chat') 
+				&& selectUsers === 'EnAttent') ? <SendRequest/> :( pathname.includes('chat') 
+				&& selectUsers === 'Bloques') ? <FriendsBloque/> : ( pathname.includes('chat') 
+				&& selectUsers === 'Add') ? <SendRequestForm/> : <></> )}
+			{newRooms 
+				&& (pathname.includes('chat')
+				? <div className="text-black">
+					<div className="absolute right-5  bottom-5 flex items-center">
+						<button onClick={()=>{setNewRooms(false)}} className="text-[#5B8CD3] mr-4">Cancel</button>
+						<button onClick={()=>{setNewRooms(false)}} className=" bg-[#5B8CD3] p-4 rounded-full "><FaCheck />
+						</button>
+					</div>
+				</div> 
+				: <CreatGroups setNewRooms={setNewRooms} ></CreatGroups> )
+			}
+
+
+
 
 			{!newRooms 
 				&&  pathname.includes('chat')  && !show
 				&& <ChatComponnent />
 			}
-			{!newRooms 
-				&&  pathname.includes('groups')  && !show
-				&& <GroupsManagement/>
+
+ 			{ pathname.includes('groups')  && !newRooms &&
+				(search  ? <SerachGroup/> : <GroupsManagement/>  )   
 			}
-			{newRooms 
-				&& (pathname.includes('chat')
-				? <div className="text-black"></div> 
-				: <CreatGroups setNewRooms={setNewRooms} ></CreatGroups> )
-			}
-			{!newRooms  ?
-				<button onClick={()=>{setNewRooms(true)}} className="absolute right-5 p-4 bottom-5 bg-[#5B8CD3] rounded-full "><IoMdAdd />
-				</button>
-				: null		
-				// <div className="absolute right-5  bottom-5 flex items-center">
-				// 	<button onClick={()=>{setNewRooms(false)}} className="text-[#5B8CD3] mr-4">Cancel</button>
-				// 	<button onClick={()=>{setNewRooms(false)}} className=" bg-[#5B8CD3] p-4 rounded-full "><FaCheck />
-				// 	</button>
-				// </div>
+
+			{!newRooms  ? 
+				<div className="absolute right-5  bottom-5  md:bottom-4  flex flex-col">
+					{ search ?
+						<button onClick={()=>{setSearch(false)}} className="p-4 mb-2 bg-[#5B8CD3] rounded-full "><IoChatbubbleOutline  />
+						</button> :
+						<button onClick={()=>{setSearch(true)}} className="p-4 mb-2 bg-[#5B8CD3] rounded-full "><FiSearch />
+						</button> 
+					}
+					<button onClick={()=>{setNewRooms(true)}} className="p-4 bg-[#5B8CD3] rounded-full "><IoMdAdd />
+					</button>
+				</div>
+				: 			
+				null
 			
 			}
 		</div>

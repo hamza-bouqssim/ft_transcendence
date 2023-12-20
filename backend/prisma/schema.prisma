@@ -158,8 +158,7 @@ model Member {
   id          String @id @default(uuid())
   user_id     String
   chatRoomId  String
-  isAdmin     Boolean
-  Status      String @default("Member") //Ban // Mut
+  Status      String @default("Member") //Ban // Mut // Admin // owner
   user        User        @relation(fields: [user_id], references: [id])
   chatRoom    ChatRoom    @relation(fields: [chatRoomId], references: [id])
 }

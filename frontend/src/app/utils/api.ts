@@ -148,14 +148,6 @@ export const firstTime = async () => {
     return res;
 }
 
-
-// export const uploadToCloud = async () => {
-//     const formData = new FormData();
-    
-//     const res = API.post(`https://api.cloudinary.com/v1_1/dnbhh3qxj/image/upload`, formData);
-//     return res;
-// }
-
 export const getConversationMessageRoom = (id:string) =>{
   const response = API.post("/rooms/getConversation",{id})
   return response;
@@ -165,6 +157,64 @@ export const getConversationMessageRoom = (id:string) =>{
 export const getAllMembersApi =(id:string) =>
 {
   const response = API.post("/rooms/allMember",{id})
+  return response;
+}
+
+export const quitRoom =(id:string) =>
+{
+  const response = API.post("/rooms/quitRoom",{id})
+  return response;
+}
+
+
+export const makeAdmin =(id:string ,userId:string) =>
+{
+  const response = API.post("/rooms/makeAdmin",{id,userId})
+  return response;
+}
+export const Member =(id:string ,userId:string) =>
+{
+  const response = API.post("/rooms/Member",{id,userId})
+  return response;
+}
+export const kickMember =(id:string ,userId:string) =>
+{
+  const response = API.post("/rooms/kickMember",{id,userId})
+  return response;
+}
+export const mutMember =(id:string ,userId:string) =>
+{
+  const response = API.post("/rooms/mutMember",{id,userId})
+  return response;
+}
+export const banMember =(id:string ,userId:string) =>
+{
+  const response = API.post("/rooms/banMember",{id,userId})
+  return response;
+}
+
+export const getMatchHistory = (id: string) =>{
+  const response = API.post("/game/myhistory", {userId:id});
+  return response;
+}
+
+export const getStates = (id: string) =>{
+  const response = API.post("/game/myresult", {userId:id});
+  return response;
+}
+
+export const getRanking = () =>{
+  const response = API.get("/game/ranking");
+  return response;
+}
+
+export const deleteAccount = () => {
+  const response = API.delete("/user/delete-account");
+  return response;
+}
+
+export const getUserInfos = (id:string) => {
+  const response = API.post("/user/get_user", {id_user:id});
   return response;
 }
 

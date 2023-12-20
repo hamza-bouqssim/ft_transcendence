@@ -87,11 +87,11 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({ setUpdateRome, update
                     {!channel?.name && channel?.recipient.display_name && <h1 className="ml-2">{InfoRecipient()?.display_name }</h1>}
             </div>
             {
-              pathname.includes('groups') &&
-              channel?.members &&
-              Userdata?.id &&
-              channel.members.some((member: Member) => member.isAdmin && member.user_id === Userdata.id) ? (
-                     !updateRome ? (
+                pathname.includes('groups') &&
+                members?.some(
+                    member => (member.Status==="Owner" || member.Status === "Admin") && member.user_id === Userdata.id
+                ) ? (
+                    !updateRome ? (
                     <IoMdSettings
                         size={30}
                         onClick={() => {
@@ -109,7 +109,7 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({ setUpdateRome, update
                     ></IoClose>
                     )
                 ) : null
-                } 
+            }
         </div>)
 }
 

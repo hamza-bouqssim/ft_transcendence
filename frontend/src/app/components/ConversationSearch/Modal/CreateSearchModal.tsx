@@ -1,4 +1,4 @@
-import { OverlayStyle, OverlayStyleSearching } from "@/app/utils/styles"
+import { OverlayStyle, OverlayStyleSearching, SearchResultStyling } from "@/app/utils/styles"
 import { CreateConversationForm } from "../../forms/CreateConversationForm"
 import { Dispatch, FC, createRef, useEffect, useState } from "react"
 import { MdClose } from "react-icons/md"
@@ -12,11 +12,14 @@ import { useDispatch } from "react-redux"
 import { useForm } from "react-hook-form"
 
 type props = {
-   setShow : Dispatch<React.SetStateAction<Boolean>>;
-};
+    setShow : Dispatch<React.SetStateAction<Boolean>>;
+ };
+
+ const CreateSearchModal:FC<props> = ({setShow}) => {
+    const ref = createRef<HTMLDivElement>() ;
+    // const [show, setShow] = useState<any>(false);
 
 
-const CreateSearchModal:FC<props> = ({setShow}) => {
     const {register, handleSubmit, formState: { errors }} = useForm<CreateConversationParams>();
     const dispatch = useDispatch<useAppDispatch();
 
@@ -57,7 +60,6 @@ const CreateSearchModal:FC<props> = ({setShow}) => {
         }
 
     }, [searchQuery]);
-    const ref = createRef<HTMLDivElement>();
     useEffect(() => {
         const handleKeyDown = (e : KeyboardEvent) => e.key === 'Escape' && setShow(false);
         window.addEventListener('keydown', handleKeyDown);
@@ -72,6 +74,37 @@ const CreateSearchModal:FC<props> = ({setShow}) => {
             console.log('close Modal');
         }
     };
+    useEffect(() => {
+        // Define a function to fetch search results
+        const fetchSearchResults = async () => {
+            try {
+                const response = await fetch(`http://localhost:8000/user/search`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ displayName: searchQuery }),
+                });
+
+                 
+                if (response.ok) 
+                {
+                    const data = await response.json();
+                    setSearchResults(data);
+                }
+            } catch (error) {
+                console.error("Error fetching search results:", error);
+            }
+        };
+
+        if (searchQuery.trim() !== "") {
+            fetchSearchResults();
+        } else {
+            setSearchResults([]);
+        }
+
+    }, [searchQuery]);
+
    
   
     return (
