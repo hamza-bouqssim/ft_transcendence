@@ -12,18 +12,10 @@ const ConversationSearch = () => {
     
     return (
         <div className={`search-container ${styles.searchContainer}`}>
-<<<<<<< HEAD
-            {show &&  
-            <>
-            <div className=" opacity-100 bg-[#ffffff93] absolute z-10 left-0 right-0 bottom-0  top-0">
-
-            </div>
-                <CreateSearchModal  setShow={setShow}/>   
-            </>}
-
-=======
+            
             {/* {show &&  <CreateSearchModal   setShow={setShow} />   } */}
->>>>>>> 457a9c58d013db8f775f87b608be651d3cc9c772
+
+            {show &&  <CreateSearchModal   setShow={setShow} />   }
             <input
                 className={`rounded-l-lg text-black focus:outline-none bg-[#D9D9D9] bg-opacity-20 p-3 ${styles.input}`}
                 placeholder="Find your friends"

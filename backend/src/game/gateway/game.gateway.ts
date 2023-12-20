@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import {
 	MessageBody,
 	SubscribeMessage,
@@ -7,11 +8,12 @@ import {
 	OnGatewayConnection,
 	ConnectedSocket,
 } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
+import { Server} from 'socket.io';
 import { GameService } from '../game.service';
 import { PrismaService } from 'prisma/prisma.service';
 import { AuthenticatedSocket } from 'src/utils/interfaces';
 import { PongGame } from '../classes/PongGame';
+import {EventEmitter2, OnEvent} from  '@nestjs/event-emitter';
 
 export type GameQ = {
 	indexMap: number;
@@ -25,8 +27,10 @@ export type GameQ = {
 };
 
 @WebSocketGateway({
-	origin: ['http://localhost:3000'],
-	credentials: true,
+	cors:{
+        origin:['http://localhost:3000'],
+        credentials : true,
+    },
 	namespace: '/game',
 })
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -44,30 +48,37 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	constructor(
 		private readonly gameservice: GameService,
 		private readonly prisma: PrismaService,
+		private readonly eventEmitter: EventEmitter2,
 	) {}
 	// sleep = async (ms: number) =>
 	// 	new Promise((resolve) => setTimeout(resolve, ms));
 
 	async handleConnection(socket: AuthenticatedSocket, ...args: any[]) {
-		console.log('connect1   ...');
-		console.log('socket', socket.user.sub);
+	
+		const userId = socket.user.sub;
 		if (socket.user) {
+			console.log("connnectt herere");
 			const newStatus = await this.prisma.user.update({
 				where: { id: socket.user.sub },
 				data: { status: 'ingame' },
 			});
+			this.eventEmitter.emit('Ingame.created', { userId });
+
 		}
 	}
 
 	async handleDisconnect(socket: AuthenticatedSocket) {
-		console.log('Connection closed1');
 		socket.leave(`@${socket.user.sub}`);
+		const user = socket.user.sub;
 		const game = this.getQueueGame(socket.user.sub);
 		if (socket.user) {
 			const newStatus = await this.prisma.user.update({
 				where: { id: socket.user.sub },
 				data: { status: 'online' },
+
 			});
+			this.eventEmitter.emit('Ingameoffline.created', { user });
+
 		}
 
 		const userId = socket.user.sub;
@@ -279,4 +290,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 		this.mapPong[game.user1.id].handleKeyDown(data);
 	}
+
+
+	
 }
+
+

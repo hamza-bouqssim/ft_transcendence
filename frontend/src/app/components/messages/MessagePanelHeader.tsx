@@ -11,11 +11,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getAllMembers } from "@/app/store/memberSlice";
 import { HiOutlineLogout } from "react-icons/hi";
 import Image from "next/image";
+import { User } from "@/app/utils/types";
 
 
 interface MessagePanelHeaderProps {
     setUpdateRome: (value: boolean) => void;
     updateRome: boolean;
+}
+
+interface Member {
+  isAdmin: boolean; 
+  user_id: string; 
 }
 const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({ setUpdateRome, updateRome }) => {
     const pathname = usePathname()
@@ -25,15 +31,15 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({ setUpdateRome, update
     const socket = useContext(socketContext).socket
     const { updateChannel,channel} = useContext(socketContext);
     const {Userdata} = useContext(socketContext)
-    console.log("hi")
     const goBack =() =>
     {
-        updateChannel("")
+        updateChannel(null)
     }
     useEffect(() => {
-        const handleTyping = (typing) => {
-            if(typing.userId!==Userdata.id)
-                setIsTyping(typing.status);
+        const handleTyping = (typing: any) => {
+          if (typing.userId !== Userdata?.id) {
+            setIsTyping(typing.status);
+          }
         };
       
         socket.on('Typing', handleTyping);
@@ -43,23 +49,33 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({ setUpdateRome, update
           socket.off('Typing', handleTyping);
           socket.off('leaveTyping', handleTyping);
         };
-      }, []);
+      }, [Userdata?.id, socket]);
 
     useEffect(() => {
         setUpdateRome(false)
-    }, [channel])
+    }, [channel, setUpdateRome])
 
     useEffect(() => {
-        dispatch(getAllMembers(channel.id))
+        dispatch(getAllMembers(channel?.id))
       }, [dispatch,channel])
 
+    // Image src
+    const InfoRecipient = () =>{
+        let test : User | undefined;
+        if(channel?.recipient.display_name === Userdata?.display_name){
+            test = channel?.sender;
+        }else
+            test  = channel?.recipient;
+        return test;
+
+    }
     
     return (<div className="flex items-center justify-between p-5  rounded-full text-black  bg-[#F2F3FD]">
             <div className="flex items-center">
                     <FaArrowLeft  onClick={goBack} className="mr-4 xl:hidden block" size={26}></FaArrowLeft>
-                    {channel.picture && <Image src={channel.picture} className="w-[50px] rounded-full" alt=""  width={30} height={30} />}
-                    {!channel.picture && channel.recipient.avatar_url && <Image src={channel.recipient.avatar_url} className="w-[50px] rounded-full" alt="" width={30} height={30} />}
-                    {channel.name && 
+                    {channel?.picture && <Image src={channel.picture} className="w-[50px] rounded-full" alt=""  width={30} height={30} />}
+                    {!channel?.picture &&  InfoRecipient()?.avatar_url  && <Image src={InfoRecipient()?.avatar_url} className="w-[50px] rounded-full" alt="" width={30} height={30} />}
+                    {channel?.name && 
                     <div>
                         <h1 className="ml-2">{channel.name }</h1>
                         {isTyping ? 
@@ -68,10 +84,13 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({ setUpdateRome, update
                         }
                     </div>
                     }
-                    {!channel.name && channel.recipient.display_name && <h1 className="ml-2">{channel.recipient.display_name }</h1>}
+                    {!channel?.name && channel?.recipient.display_name && <h1 className="ml-2">{InfoRecipient()?.display_name }</h1>}
             </div>
             {
-              pathname.includes('groups')  && channel.members.some(member => member.isAdmin && member.user_id === Userdata.id) ? (
+              pathname.includes('groups') &&
+              channel?.members &&
+              Userdata?.id &&
+              channel.members.some((member: Member) => member.isAdmin && member.user_id === Userdata.id) ? (
                      !updateRome ? (
                     <IoMdSettings
                         size={30}

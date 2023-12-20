@@ -40,17 +40,35 @@ export type chat = {
       };
       
 
+export type Member = {
 
+        isAdmin: boolean; 
+        user_id: string; 
+      
+} 
 
 
 export type   ConversationTypes= {
     id : string;
+    picture : string;
+    name : string;
+    members : Member;
     sender : User;
     recipient : User;
     createdAt : string;
     recipientId : string;
     senderId : string;
     lastMessage: MessageType;
+}
+
+export type GroupChannel = {
+    
+    id : string;
+    picture : string;
+    members : Member;
+    name : string;
+    sender : User;
+    recipient : User;
 }
 
 export type AcceptRequestParams ={
@@ -105,6 +123,7 @@ export type NotificationTypes = {
     id : string;
     content : string;
     image_content : String;
+    type: string;
 
 }
 
@@ -148,7 +167,7 @@ export type CreateMessageParams = {
 
 export type CreateConversationParams ={
     display_name : string;
-    // message : string;
+    message : string;
 }
 
 export type CreateRequestParams = {

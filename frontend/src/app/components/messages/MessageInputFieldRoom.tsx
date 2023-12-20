@@ -14,7 +14,10 @@ type props = {
     Message : any[];
     setMessage :Dispatch<React.SetStateAction<any>>   
 }
-
+interface Member {
+  user_id: string; 
+  Status: string;  
+}
 const MessageInputFieldRoom: FC<props> = ({setMessage, Message}) => {
     const pathname = usePathname();
     const socket = useContext(socketContext).socket;
@@ -22,19 +25,18 @@ const MessageInputFieldRoom: FC<props> = ({setMessage, Message}) => {
     const [content, setContent] = useState('');
     const {Userdata} = useContext(socketContext)
     const { members, status, error } = useSelector((state:any) => state.member);
-    console.log("hi")
+  
     useEffect(() => {
       const handleOnMessage = (message: any) => {
         setMessage((prevMessages: messageTypes[]) => [...prevMessages, message]);
-        console.log('Received message:', message);
       };
-  
+    
       if (pathname.includes('chat')) {
         socket.on('onMessage', handleOnMessage);
       } else {
         socket.on('messageRome', handleOnMessage);
       }
-  
+    
       return () => {
         if (pathname.includes('chat')) {
           socket.off('onMessage', handleOnMessage);
@@ -42,7 +44,7 @@ const MessageInputFieldRoom: FC<props> = ({setMessage, Message}) => {
           socket.off('messageRome', handleOnMessage);
         }
       };
-    }, [channel.id, socket]);
+    }, [channel?.id, socket, pathname, setMessage]);
 
   
     const sendMessage = async () => {
@@ -50,31 +52,30 @@ const MessageInputFieldRoom: FC<props> = ({setMessage, Message}) => {
             return
         if(pathname.includes("chat"))
         {
-            console.log("here")
-            socket.emit("message.create", { participentsId: channel.id, content: content });
+            socket.emit("message.create", { participentsId: channel?.id, content: content });
         }
         else
         {
-            socket.emit("messageRome", { chatRoomId: channel.id, content: content });
+            socket.emit("messageRome", { chatRoomId: channel?.id, content: content });
         }
       setContent('');
     };
-
+   
 
 
     return (
       <>
-      { members.some(member => member.user_id === Userdata.id && member.Status === "Member")?
+      { members.some((member: Member)=> member.user_id === Userdata?.id && member.Status === "Member")?
         <div className="flex items-center justify-between ">
          
             <CiImageOn className="text-[#5B8CD3] mr-5 " size={40}/>
             <div  className="w-full  flex items-center bg-[#F2F3FD]  rounded-full justify-between">
                 <input 
                 onFocus={() => {
-                  socket?.emit('Typing', { id:channel.id,userId:Userdata.id});
+                  socket?.emit('Typing', { id:channel?.id,userId:Userdata?.id});
                 }}
                 onBlur={() => {
-                  socket?.emit('leaveTyping', { id:channel.id,userId:Userdata.id});
+                  socket?.emit('leaveTyping', { id:channel?.id,userId:Userdata?.id});
                 }}
                 className="w-full p-4 py-3 bg-[#F2F3FD] rounded-full  focus:outline-none text-[#949494]" placeholder="Type a message" value={content}  onChange={(e) => setContent(e.target.value)}/>
                 <button onClick={sendMessage} className="bg-[#5B8CD3]  py-1 px-4 mr-2 rounded-full" type="submit"><LuSendHorizonal size={32} /></button>

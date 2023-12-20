@@ -1,16 +1,15 @@
 import { OverlayStyle, OverlayStyleSearching, SearchResultStyling } from "@/app/utils/styles"
 import { CreateConversationForm } from "../../forms/CreateConversationForm"
-import { Dispatch, FC, createRef, useEffect, useRef, useState } from "react"
+import { Dispatch, FC, createRef, useEffect, useState } from "react"
 import { MdClose } from "react-icons/md"
 import { createConversation } from "@/app/utils/api"
 import { CreateSearchForm } from "../../forms/CreateSearchForm"
 import { ModalContainer, ModalContentBody, ModalHeader } from "../../modals"
 import { ModalContainerSearching, ModalContentBodySearching, ModalHeaderSearching } from "."
-import { UsersTypes } from "@/app/utils/types"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons"
-
-
+import { CreateConversationParams, UsersTypes } from "@/app/utils/types"
+import { useAppDispatch } from "@/redux_toolkit/hooks"
+import { useDispatch } from "react-redux"
+import { useForm } from "react-hook-form"
 
 type props = {
     setShow : Dispatch<React.SetStateAction<Boolean>>;
@@ -20,8 +19,47 @@ type props = {
     const ref = createRef<HTMLDivElement>() ;
     // const [show, setShow] = useState<any>(false);
 
+
+    const {register, handleSubmit, formState: { errors }} = useForm<CreateConversationParams>();
+    const dispatch = useDispatch<useAppDispatch();
+
+    const onSubmit = async  (data : CreateConversationParams) => {
+      
+
+
+    }
+
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState<UsersTypes[]>([]);
+
+    useEffect(() => {
+        // Define a function to fetch search results
+        const fetchSearchResults = async () => {
+            try {
+                const response = await fetch(`http://localhost:8000/user/search`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ displayName: searchQuery }),
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setSearchResults(data);
+                }
+            } catch (error) {
+                console.error("Error fetching search results:", error);
+            }
+        };
+
+        if (searchQuery.trim() !== "") {
+            fetchSearchResults();
+        } else {
+            setSearchResults([]);
+        }
+
+    }, [searchQuery]);
     useEffect(() => {
         const handleKeyDown = (e : KeyboardEvent) => e.key === 'Escape' && setShow(false);
         window.addEventListener('keydown', handleKeyDown);
@@ -67,30 +105,52 @@ type props = {
 
     }, [searchQuery]);
 
-    const devRef : HTMLDivElement = useRef
    
+  
     return (
-
-        <div className="bg-gradient-to-b from-[#2E2F54] via-[#3B5282] to-[#2E2F54] rounded-3xl flex gap-1 flex-col items-center py-5 z-10 fixed top-[50%] px-[1%] left-[50%] -translate-x-[50%] -translate-y-[50%] w-[600px] aspect-[3/2]">
-            <div>
-                <MdClose size={30} color="white"  onClick={() => setShow(false)}/>
-            </div>
-            <input  placeholder="Find your friends" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}type="text" className="w-[99%] h-[80px] text-black px-4  text-2xl" />
-            <div className="bg-red-200 w-full relative rounded-2xl ">
-            <div className=" py-10 rounded-2xl  w-full flex flex-col gap-1 overflow-auto" >
-                            {searchResults.map((user) => (
-                        //<div key={user.id} ref={devRef} className=" text-[--pink-color] text-xl font-['Whitney_Semibold'] p-2 hover:bg-[rgba(255,255,255,0.4)] cursor-pointer" onMouseMove={() => setTopValue()} >
-                        <div  key={user.id}>
-                            {user.display_name}
-                       
+        <div className="w-full max-w-screen-xl mx-auto px-6">
+        <div className="flex justify-center p-4 px-3 py-10">
+            <div className="w-full max-w-md">
+                <div className="bg-white shadow-md rounded-lg px-3 py-2 mb-4">
+                    <div className="block text-gray-700 text-lg font-semibold py-7 px-2 items-center">
+                        Searching
+                    </div>
+                    <div className="flex items-center bg-gray-200 rounded-md">
+                        <div className="pl-2">
+                            <svg className="fill-current text-gray-500 w-6 h-6" xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24">
+                                <path className="heroicon-ui"
+                                    d="M16.32 14.9l5.39 5.4a1 1 0 0 1-1.42 1.4l-5.38-5.38a8 8 0 1 1 1.41-1.41zM10 16a6 6 0 1 0 0-12 6 6 0 0 0 0 12z" />
+                            </svg>
                         </div>
-                ))}
-            </div >
-                <FontAwesomeIcon icon={faArrowRight} className={`absolute z-10  -left-[65px] text-[--pink-color] text-3xl font-bold `} />
-                <FontAwesomeIcon icon={faArrowLeft} className="absolute z-10 -right-[65px] text-3xl font-bold text-[--pink-color]" />
+                        <input
+                            className="w-full rounded-md bg-gray-200 text-gray-700 leading-tight focus:outline-none py-2 px-2"
+                            id="search" type="text" placeholder="Search teams or members" value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}/>
+                    </div>
+                    <div className="py-3 text-sm">
+                    {searchResults.map((user) => (
+                        <div  key="user.id" className="flex justify-start cursor-pointer text-gray-700 hover:text-blue-400 hover:bg-blue-100 rounded-md px-2 py-2 my-2">
+                            <span className="bg-gray-400 h-2 w-2 m-2 rounded-full"></span>
+                                    <div className="flex-grow font-medium px-2">
+                                        {user.display_name}
+                                    </div>
+                           
+                        </div>
+                         ))}
+                        
+                    </div>
+                    <div className="block bg-gray-200 text-sm text-right py-2 px-3 -mx-3 -mb-2 rounded-b-lg">
+                        <button className="hover:text-gray-600 text-gray-500 font-bold py-2 px-4" onClick={() => {setShow(false)}}>
+                            Cancel
+                        </button>
+                      
+                    </div>
+                </div>
             </div>
         </div>
-    )
+    </div>
+    );
     
 }
 

@@ -36,7 +36,7 @@ export const getAllMembers = createAsyncThunk('members/getAllMembers', async (ro
   try {
     const response = await getAllMembersApi(roomId);
     return response.data;
-  } catch (error) {
+  } catch (error : any) {
     return rejectWithValue(error.message || 'Failed to fetch members');
   }
 });

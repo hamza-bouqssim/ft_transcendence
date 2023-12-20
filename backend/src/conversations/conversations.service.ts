@@ -14,7 +14,7 @@ export class ConversationsService  {
 
     }
 
-    async createConversations(user : User  ,display_name : string) {
+    async createConversations(user : User  ,display_name : string, message : string) {
      let conversation;
       const recipient = await this.userService.findByDisplayName(display_name)
       if(!recipient)
@@ -29,12 +29,59 @@ export class ConversationsService  {
         throw new HttpException('This conversation alrighdy exist' , HttpStatus.BAD_REQUEST)
 
       }
+      const messageCreate = await this.prisma.message.create({
+        data: {
+          content : message,
+          sender: {
+            connect: { id: user.id },
+          },
+          participents: {
+            connect: { id: conversation.id },
+          },
+        },
+        include: {
+          sender: true,
+          participents: {
+            include: {
+              sender: true,
+              recipient: true,
+            },
+          },
+        },
+      });
+    
+      // Update the conversation with the last message
+      await this.prisma.chatParticipents.update({
+        where: { id: conversation.id },
+        data: {
+          lastMessageId: messageCreate.id,
+        },
+      });
       this.eventEmitter.emit('createConversation.created', {
         conversation
       });
       // this.userService.notificationMessage( conversation., messages.participents.recipientId);
 
       return {message : 'Conversation create succefully'}
+
+  }
+
+  async create_conversations(user : User, display_name : string){
+    let conversation;
+      const recipient = await this.userService.findByDisplayName(display_name)
+      if(!recipient)
+            throw new HttpException('User not found so cannot create Conversation' , HttpStatus.BAD_REQUEST)
+      
+      const Participent = await this.findParticipent(display_name, user);
+      if(!Participent)
+      {
+         conversation = await this.CreateParticipent(display_name, user);
+
+      }else{
+        throw new HttpException('This conversation alrighdy exist' , HttpStatus.BAD_REQUEST)
+
+      }
+      return conversation;
 
   }
 
