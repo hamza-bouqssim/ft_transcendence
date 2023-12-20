@@ -50,7 +50,6 @@ export class FriendRequestController {
       const user = req.user;
       return this.friendshipService.acceptRequestToPlay(request.requestId, user);
 
-
     }
 
 

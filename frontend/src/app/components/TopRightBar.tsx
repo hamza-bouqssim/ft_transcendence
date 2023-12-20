@@ -2,7 +2,7 @@ import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faBell } from "@fortawesome/free-solid-svg-icons";
 import { LogoutButton, MenuButton } from "./Buttons";
-import { useEffect, useState ,useContext} from "react";
+import { useEffect, useState ,useContext, useRef} from "react";
 import { getAuthUser, getNumberNotification, getlogout } from "../utils/api";
 import { useRouter } from "next/navigation";
 import { deleteCookie } from "cookies-next";
@@ -68,7 +68,26 @@ const TopRightBar = (props: Change) => {
 
 		}
 	}
-
+	const menuRef = useRef(null);
+	const handleDocumentClick = (event : any) => {
+		console.log(notfication)
+		if (menuRef.current && !menuRef.current.contains(event.target)) {
+			setNotefication(false);
+		}
+	
+	  };
+	
+	  useEffect(() => {
+		  if (notfication) {
+			  document.addEventListener('click', handleDocumentClick);
+		  } else {
+			  document.removeEventListener('click', handleDocumentClick);
+		  }
+	
+		  return () => {
+			  document.removeEventListener('click', handleDocumentClick);
+		  };
+	  }, [notfication]);
 
 	
 	return (
@@ -76,7 +95,7 @@ const TopRightBar = (props: Change) => {
 		<ToastContainer />
 		<div className="fixed z-50 right-0 top-6  flex h-12 w-64 items-center justify-end gap-2 rounded-l-3xl lg:right-7 min-[1750px]:h-14 min-[1750px]:w-80 min-[1750px]:gap-4">
 			<div className="relative ">
-			<div onClick={() => {setNotefication(!notfication)}} className="relative">
+			<div onClick={() => {setNotefication(true)}} className="relative">
 				<FontAwesomeIcon
 					icon={faBell}
 					className="left-0 cursor-pointer rounded-[50%] bg-[#ffffff38] p-3 hover:bg-[--pink-color] min-[1750px]:h-6 min-[1750px]:w-6"
@@ -87,8 +106,10 @@ const TopRightBar = (props: Change) => {
 			</div>
 			{
 				notfication && 
+				<div ref={menuRef} >
+					<NotificationComponent ></NotificationComponent>
 
-				<NotificationComponent></NotificationComponent>
+				</div>
 				
 			}
 			</div>
