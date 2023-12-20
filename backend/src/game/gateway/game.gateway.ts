@@ -285,7 +285,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			const score1 = this.mapPong[game.user1.id].playerOneScore;
 			const score2 = this.mapPong[game.user1.id].playerTwoScore;
 			// delete this.mapPong[game.user1.id];
-			if (!this.mapPong[game.user1.id]) console.log('zpi');
+			// if (!this.mapPong[game.user1.id]) console.log('test');
 			console.log(
 				this.mapPong[game.user1.id].playerOneScore,
 				this.mapPong[game.user1.id].playerTwoScore,
@@ -294,22 +294,22 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			delete this.mapPong[game.user1.id];
 			this.queueGame = this.queueGame.filter(
 				(game) => game.socket1.user.sub != user1,
-				await this.gameservice.createTwoMatchHistory(
-					user1,
-					user2,
-					score1,
-					score2,
-					duration,
-				),
+			);
+			this.QueueInvite = this.QueueInvite.filter(
+				(game) => game.socket1.user.sub != user1,
+			);
+			await this.gameservice.createTwoMatchHistory(
+				user1,
+				user2,
+				score1,
+				score2,
+				duration,
 			);
 		}
 	}
 	// End Queue---------------------------------------
 	@SubscribeMessage('launchGameRequest')
-	handleLaunchGameRequest(
-		@MessageBody() gameData: any,
-		@ConnectedSocket() socket: AuthenticatedSocket,
-	) {
+	handleLaunchGameRequest(@ConnectedSocket() socket: AuthenticatedSocket) {
 		const game = this.getQueueGame(socket.user.sub);
 		const invite = this.getQueueInvite(socket.user.sub);
 		if (!game || invite) return;

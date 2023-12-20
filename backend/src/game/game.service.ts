@@ -276,10 +276,7 @@ export class GameService {
 		return totalMatch;
 	}
 
-	//80 -> 01:20
-	//80/60
-
-	convertDuration(date: number) {
+	convertDuration(date: number): string {
 		console.log('date', date);
 
 		const hours = Math.floor(date / 3600000);

@@ -112,21 +112,9 @@ export class PongGame {
 				this.handleVerticalObstacles();
 				break;
 		}
-		console.log(
-			this.gameGatway.emitToUser1InGame(
-				this.user1,
-				{ rotate: false, opponant: this.user2 },
-				'launchGame',
-			),
-		);
-		console.log(
-			this.gameGatway.emitToUser2InGame(
-				this.user2,
-				{ rotate: true, opponant: this.user1 },
-				'launchGame',
-			),
-		);
 
+		this.gameGatway.emitToUser1InGame(this.user1, {}, 'launchGame');
+		this.gameGatway.emitToUser2InGame(this.user2, {}, 'launchGame');
 		this.handlePaddleMove();
 		this.startGame();
 	}

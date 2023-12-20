@@ -84,10 +84,8 @@ const OnlineGame = ({ mapIndex }: any) => {
 	useEffect(() => {
 		console.log("online-game-score-useffect2");
 
-		const handleLaunchGame = (payload: any) => {
+		const handleLaunchGame = () => {
 			console.log("from lauch game listern!!!!!!!!!!!!!!!!!!");
-			// opponentPlayer.current = payload.opponant;
-			// isRotate.current = payload.rotate;
 			if (!pongRef.current) {
 				console.log("Create game!");
 				pongRef.current = new PongGame(
@@ -107,11 +105,7 @@ const OnlineGame = ({ mapIndex }: any) => {
 			// pongRef.current?.clear();
 		};
 		setTimeout(() => {
-			gameSocket.emit("launchGameRequest", {
-				mapIndex: mapIndex,
-				width: parentCanvasRef.current?.getBoundingClientRect().width,
-				height: parentCanvasRef.current?.getBoundingClientRect().height,
-			});
+			gameSocket.emit("launchGameRequest");
 			setStartGame((prev: any) => !prev);
 		}, 3000);
 		console.log("setup launchGame event!");
