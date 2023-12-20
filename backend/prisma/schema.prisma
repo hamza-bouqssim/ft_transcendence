@@ -197,6 +197,7 @@ model Match_History {
   playerTwo  String
   resultOne  Int
   resultTwo  Int
+  totalMatch Int    @default(0)
   createdAt  DateTime @default(now())
   playerone  User     @relation("playerOne", fields: [playerOne], references: [id])
   playertwo  User     @relation("playerTow", fields: [playerTwo], references: [id])
@@ -206,7 +207,6 @@ model Match_History {
 model StateGame {
   id         String @id @default(uuid())
   user_id    String @unique
-  totalMatch Int    @default(0)
   win        Int    @default(0)
   lose       Int    @default(0)
   level      Float  @default(0.00)

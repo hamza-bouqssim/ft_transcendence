@@ -1,4 +1,12 @@
-import { Controller, Post, Get, Delete, Body, UseGuards , Res} from '@nestjs/common';
+import {
+	Controller,
+	Post,
+	Get,
+	Delete,
+	Body,
+	UseGuards,
+	Res,
+} from '@nestjs/common';
 import { GameService } from './game.service';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -8,39 +16,39 @@ export class GameController {
 
 	@Post('myhistory')
 	@UseGuards(AuthGuard('jwt'))
-	async getMyHistory(@Body() request: {userId: string}, @Res() res) {
-	  try {
-		const history = await this.gameService.history_matches(request.userId);
-		const modifiedHistory = await Promise.all(
-		history.map(async (entry) => {
-			if (entry.playerOne == request.userId) {
-			  return {
-				playerOne: entry.playerone.avatar_url,
-				playerTwo: entry.playertwo.avatar_url,
-				resultOne: entry.resultOne,
-				resultTwo: entry.resultTwo,
-				date: entry.createdAt.toISOString().split('T')[0],
-				duration: entry.duration,
-				totalMatch: await this.gameService.totalMatch(entry.playerOne, entry.playerTwo),
-			  };
-			} else {
-			  return {
-				playerOne: entry.playertwo.avatar_url,
-				playerTwo: entry.playerone.avatar_url,
-				resultOne: entry.resultTwo,
-				resultTwo: entry.resultOne,
-				date: entry.createdAt.toISOString().split('T')[0],
-				duration: entry.duration,
-				totalMatch: await this.gameService.totalMatch(entry.playerOne, entry.playerTwo),
-			  };
-			}
-		  })
-		);
-		
-		res.status(200).json(modifiedHistory);
-	  } catch (error) {
-		console.log(error);
-		return {};
+	async getMyHistory(@Body() request: { userId: string }, @Res() res) {
+		try {
+			const history = await this.gameService.history_matches(request.userId);
+			const modifiedHistory = await Promise.all(
+				history.map(async (entry) => {
+					if (entry.playerOne == request.userId) {
+						return {
+							playerOne: entry.playerone.avatar_url,
+							playerTwo: entry.playertwo.avatar_url,
+							resultOne: entry.resultOne,
+							resultTwo: entry.resultTwo,
+							date: entry.createdAt.toISOString().split('T')[0],
+							duration: entry.duration,
+							totalMatch: entry.totalMatch,
+						};
+					} else {
+						return {
+							playerOne: entry.playertwo.avatar_url,
+							playerTwo: entry.playerone.avatar_url,
+							resultOne: entry.resultTwo,
+							resultTwo: entry.resultOne,
+							date: entry.createdAt.toISOString().split('T')[0],
+							duration: entry.duration,
+							totalMatch: entry.totalMatch,
+						};
+					}
+				}),
+			);
+
+			res.status(200).json(modifiedHistory);
+		} catch (error) {
+			console.log(error);
+			return {};
 		}
 	}
 
@@ -50,7 +58,7 @@ export class GameController {
 		try {
 			const rating = await this.gameService.getRanks();
 			const modifiedRank = rating.map((entry, index) => ({
-				rank:index + 1,
+				rank: index + 1,
 				rating: entry.rating,
 				username: entry.user.username,
 				picture: entry.user.avatar_url,
@@ -58,18 +66,17 @@ export class GameController {
 			return modifiedRank;
 		} catch (error) {
 			console.log(error);
-			return {}; 
+			return {};
 		}
 	}
 
 	@Post('myresult')
 	@UseGuards(AuthGuard('jwt'))
-	async getMyState(@Body() request: {userId: string}, @Res() res) {
-		try{
+	async getMyState(@Body() request: { userId: string }, @Res() res) {
+		try {
 			const results = await this.gameService.getResult(request.userId);
 			return res.status(200).json(results);
-		}
-		catch(error){
+		} catch (error) {
 			console.log(error);
 			return {};
 		}

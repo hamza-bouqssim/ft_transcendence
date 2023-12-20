@@ -43,7 +43,6 @@ export class GameService {
 	async updateStateGame(
 		win: number,
 		lose: number,
-		totalMatch: number,
 		userId: string,
 		rating: number,
 	) {
@@ -55,7 +54,6 @@ export class GameService {
 			data: {
 				win,
 				lose,
-				totalMatch,
 				level: level,
 				rating: rating,
 			},
@@ -72,7 +70,6 @@ export class GameService {
 		});
 		// return state;
 	}
-
 	async createStateGame1(userIdOne: string, userIdTwo: string) {}
 
 	async deleteStateGame(userId: string) {
@@ -102,14 +99,10 @@ export class GameService {
 		date: number,
 	) {
 		try {
-			// let state: any;
-			// let state2: any;
 			const endDate = new Date();
 			const duration = this.convertDuration(date);
 			const state = await this.getStateGame(userIdOne);
 			const state2 = await this.getStateGame(userIdTwo);
-			// if (!state) state = await this.createStateGame(userIdOne);
-			// if (!state2) state2 = await this.createStateGame(userIdTwo);
 			const result1 = resultOne > resultTwo ? 1 : 0;
 			const result2 = resultTwo > resultOne ? 1 : 0;
 
@@ -118,14 +111,12 @@ export class GameService {
 			await this.updateStateGame(
 				state.win + result1,
 				state.lose + result2,
-				state.totalMatch + 1,
 				userIdOne,
 				rating,
 			);
 			await this.updateStateGame(
 				state2.win + result2,
 				state2.lose + result1,
-				state2.totalMatch + 1,
 				userIdTwo,
 				rating2,
 			);
@@ -149,12 +140,14 @@ export class GameService {
 		resultTwo: number,
 		duration: string,
 	) {
+		const totalMatch = await this.totalMatch(userIdOne, userIdTwo) + 1;
 		const match = await this.prisma.match_History.create({
 			data: {
 				playerOne: userIdOne,
 				playerTwo: userIdTwo,
 				resultOne: resultOne,
 				resultTwo: resultTwo,
+				totalMatch,
 				duration,
 			},
 		});
@@ -264,6 +257,7 @@ export class GameService {
 				resultTwo: true,
 				createdAt: true,
 				duration: true,
+				totalMatch:true,
 			},
 		});
 		return history;

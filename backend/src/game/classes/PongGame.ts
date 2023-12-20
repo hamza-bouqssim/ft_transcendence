@@ -1,4 +1,4 @@
-import { GameGateway } from '../gateway/game.gateway';
+import { GameGateway, KeyEventPayload } from '../gateway/game.gateway';
 import {
 	Bodies,
 	Composite,
@@ -75,14 +75,13 @@ export class PongGame {
 	private posBottomPaddleX = this.defaultCanvasSizes.width / 2;
 	playerOneScore: number = 0;
 	playerTwoScore: number = 0;
-	private updateBallPosition: any;
-	private movePaddleInterval: any;
-
+	private updateBallPosition: NodeJS.Timeout;
+	private movePaddleInterval: NodeJS.Timeout;
 	private user1: string;
 	private user2: string;
 	private engine: Engine;
 	private runner: Runner;
-	private handleCollisionStart = (e: any): void => {};
+	private handleCollisionStart = (e): void => {};
 	private mapIndex: number;
 
 	constructor(
@@ -113,21 +112,9 @@ export class PongGame {
 				this.handleVerticalObstacles();
 				break;
 		}
-		console.log(
-			this.gameGatway.emitToUser1InGame(
-				this.user1,
-				{ rotate: false, opponant: this.user2 },
-				'launchGame',
-			),
-		);
-		console.log(
-			this.gameGatway.emitToUser2InGame(
-				this.user2,
-				{ rotate: true, opponant: this.user1 },
-				'launchGame',
-			),
-		);
 
+		this.gameGatway.emitToUser1InGame(this.user1, {}, 'launchGame');
+		this.gameGatway.emitToUser2InGame(this.user2, {}, 'launchGame');
 		this.handlePaddleMove();
 		this.startGame();
 	}
@@ -388,7 +375,7 @@ export class PongGame {
 		]);
 	}
 
-	handleKeyDown(data: any) {
+	handleKeyDown(data: KeyEventPayload) {
 		// if (!this.game) return;
 
 		let movingLeft: boolean;
@@ -490,9 +477,9 @@ export class PongGame {
 				this.ball.position,
 				'updateBallPosition',
 			);
-			// this.calcScore();
-			this.handleDetectCollision();
+			this.calcScore();
 		}, 15);
+		this.handleDetectCollision();
 	}
 
 	resetToDefaultPosition() {
@@ -516,33 +503,27 @@ export class PongGame {
 		// 	y: this.defaultCanvasSizes.height - 30,
 		// });
 
-		this.gameGatway.emitToGame(
-			this.user1,
-			this.user2,
-			{},
-			'resetDefaultPosition',
-		);
+		// this.gameGatway.emitToGame(
+		// 	this.user1,
+		// 	this.user2,
+		// 	{},
+		// 	'resetDefaultPosition',
+		// );
 	}
 
 	setBallVelocity() {
 		// Random Value Between A Range
 		// Math.floor(Math.random() * (max - min + 1)) + min;
-		let randomVelocity = Math.floor(Math.random() * 11) - 5;
+		let randomValue: number;
 
-		if (randomVelocity >= 0 && randomVelocity < 3) randomVelocity = 3;
-		else if (randomVelocity >= -2 && randomVelocity <= 0) randomVelocity = -3;
+		if (this.mapIndex === 1) randomValue = Math.random() < 0.5 ? -6 : 5;
+		else randomValue = Math.random() < 0.5 ? -5 : 5;
+		const yVelocity = this.lastDirection == 'top' ? -5 : 5;
 
-		if (this.lastDirection === 'top') {
-			this.currentBallVelocity = {
-				x: randomVelocity,
-				y: -4,
-			};
-		} else {
-			this.currentBallVelocity = {
-				x: randomVelocity,
-				y: 4,
-			};
-		}
+		this.currentBallVelocity = {
+			x: randomValue,
+			y: yVelocity,
+		};
 
 		Body.setVelocity(this.ball, {
 			x: this.currentBallVelocity.x,
@@ -559,8 +540,14 @@ export class PongGame {
 
 	updateBallVelocity() {
 		// Limit Velocity Value
+		console.log('Before velocity update:', this.currentBallVelocity.y);
 		if (this.currentBallVelocity.y === 10 || this.currentBallVelocity.y === -10)
 			return;
+		// else if (
+		// 	this.currentBallVelocity.y === 8 ||
+		// 	this.currentBallVelocity.y === -8
+		// )
+		// 	return;
 		else {
 			if (this.lastDirection === 'top') this.currentBallVelocity.y -= 1;
 			else this.currentBallVelocity.y += 1;
@@ -577,6 +564,7 @@ export class PongGame {
 				'setBallVelocity',
 			);
 		}
+		console.log('After velocity update:', this.currentBallVelocity.y);
 	}
 
 	emitScore() {
@@ -612,7 +600,7 @@ export class PongGame {
 	}
 
 	handleDetectCollision() {
-		this.handleCollisionStart = (e: any): void => {
+		this.handleCollisionStart = (e): void => {
 			const pairs = e.pairs[0];
 
 			if (pairs.bodyA === this.topPaddle || pairs.bodyB === this.topPaddle) {
@@ -629,7 +617,7 @@ export class PongGame {
 
 		Events.on(this.engine, 'collisionStart', this.handleCollisionStart);
 
-		this.calcScore();
+		// this.calcScore();
 	}
 
 	calcScore() {
