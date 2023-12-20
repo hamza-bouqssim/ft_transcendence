@@ -6,7 +6,7 @@ const Boxes = ({
 	color,
 }: {
 	title: string;
-	value: number;
+	value: string;
 	color: string;
 }) => {
 	return (

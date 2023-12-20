@@ -7,7 +7,7 @@ import { Services } from 'src/utils/constants';
 import {Inject} from '@nestjs/common'
 import {EventEmitter2, OnEvent} from  '@nestjs/event-emitter';
 import { PrismaService } from 'prisma/prisma.service';
-import { CreateMessageRoom, RoomId ,CreateChatRoom} from 'src/Rooms/dto/rooms.dto';
+import { CreateMessageRoom, RoomId} from 'src/Rooms/dto/rooms.dto';
 import { RoomsService } from 'src/Rooms/rooms.service';
 import { ConversationsService } from 'src/conversations/conversations.service';
 import { UserService } from 'src/user/user.service';
@@ -121,14 +121,15 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
                 {
                     const message = `${userAdmin.user.display_name } Join you to ${data.name}`;
                     this.server.to(member.user_id).emit('notification', message);
-                    this.userService.createNotification( userAdmin.user,member.user, message);
-
+                    const type = "Join";
+                    const requestId = data.members.id;
+                    this.userService.createNotification( userAdmin.user,member.user, message, type, requestId);
                 }             
             })
         }
         @OnEvent("order.update")
-         async onNotificationupdate(data:any) {
-            const update = await this.prisma.chatRoom.findUnique({
+         async onNotificationupdate(data:any,id:string) {
+            const member = await this.prisma.chatRoom.findUnique({
                 where: { id: data.id },
                 include:{
                   members:{
@@ -138,13 +139,27 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
                   }
                 }
             })
-            update.members.map((member) => {
-            if(!member.isAdmin)
-            {
-                this.server.to(member.user_id).emit('update', "");
-            }             
+            member.members.map((member) => {
+                if(member.user_id !== id)
+                    this.server.to(member.user_id).emit('update', "");         
             })
         }
+        @OnEvent("order.updateMember")
+        async onNotificationupdatemember(RoomId:string,id:string,types:string) {
+           const member = await this.prisma.chatRoom.findUnique({
+               where: { id: RoomId },
+               include:{
+                 members:{
+                   include:{
+                     user:true
+                   }
+                 }
+               }
+           })
+           member?.members.map((member) => {
+                this.server.to(member.user_id).emit('updateMember', {roomId:RoomId,idUserleave:id,types:types});         
+           })
+       }
         @OnEvent("order.delete")
          async onNotificationdelete(data:any) {
             data.members.map((member) => {
@@ -154,16 +169,33 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         @OnEvent("request.created")
         sendFriendRequestNotification(data : any) {
             const message = `${data.friendData.user.display_name} send you request to be friends`;
-            this.server.to(data.friendData.friends.id).emit('newFriendRequest', data);
-            this.userService.createNotification( data.friendData.user,data.friendData.friends, message);
+            this.server.emit('newFriendRequest', data);
+            const type = "requestFriend";
+            const requestId = data.friendData.id;
+
+            this.userService.createNotification( data.friendData.user,data.friendData.friends, message, type, requestId);
 
             
+        }
+        @OnEvent("requestPlay.created")
+        sendRequestToPLay(data : any){
+          
+            const message = `${data.requestToPlay.Sender.display_name} send you request to play`;
+            const type = "requestPLay";
+            const requestId = data.requestToPlay.id;
+            console.log("requestId-->", requestId);
+            this.server.to(data.requestToPlay.recipient.id).emit(`newRequestToPlay`,data);
+            this.userService.createNotification(data.requestToPlay.Sender, data.requestToPlay.recipient, message, type, requestId);
+
         }
 
         @OnEvent('requestAccept.created')
         AcceptFriendRequestNotification(data : any){
             const message = `${data.req.friends.display_name} accept your request`;
-            this.userService.createNotification( data.req.friends,data.req.user, message);
+            this.server.emit('AcceptNotification', data);
+            const type = "AcceptRequest";
+            const requestId = data.req.id;
+            this.userService.createNotification( data.req.friends,data.req.user, message, type, requestId);
 
 
         }
@@ -178,7 +210,6 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         }
         @OnEvent('requestDebloque.created')
         debloqueNotification(data: any){
-            console.log("data-->", data.chatParticipents);
             this.server.emit('debloqueNotification', data.chatParticipents);
         }
         @OnEvent('online.created')
@@ -200,6 +231,25 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
 
         deleteConversation(data : any){
             this.server.emit('deleteConversation', data.conversation);
+
+        }
+
+        @OnEvent('deleteFriendship.created')
+        friendshipDelete(data : any){
+            this.server.emit('deleteFriendship', data.frienbdship);
+
+        }
+
+        @OnEvent('Ingame.created')
+	    handleIngameEvent(payload: { userId: string }) {
+		    console.log("entere here gameee");
+		    console.log(payload.userId);
+	        this.server.emit('Ingame', `This user ${payload} is InGame`);
+    	}
+
+        @OnEvent('Ingameoffline.created')
+        handleIngameOffline(payload : {userId : string}){
+            this.server.emit('IngameOffline', `This user ${payload} is InGame`);
 
         }
     

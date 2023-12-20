@@ -1,4 +1,4 @@
-import { useState ,useContext} from "react";
+import { useState ,useContext, useEffect} from "react";
 import PopUp from "./popUp";
 import Swal from "sweetalert2";
 import { socketContext } from "../utils/context/socketContext";
@@ -15,41 +15,59 @@ const Form = ({ img }: FormProps) => {
 	const {Userdata, setUserdata} : any = useContext(socketContext);
 
 	const router = useRouter();
-	console.log("user data form",Userdata);
+	// console.log("user data form",Userdata);
 	const [display2fa,setDisplay2fa] = useState(false);
 	const [show, setShow] = useState<boolean>(false);
 	const [_username, setUsername] = useState("");
 	const [_display_name, setDisplayname] = useState("");
 	const [message, setMessage] = useState("");
 	const [success, setSuccess] = useState(true);
+	useEffect(() => {
+		// Set initial values from Userdata only if the state is empty
+		if (!_username) {
+		  setUsername(Userdata?.username || "");
+		}
+		if (!_display_name) {
+		  setDisplayname(Userdata?.display_name || "");
+		}
+	  }, [Userdata]);
 
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+	e.preventDefault();
 
-	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
-		await changeDisplayedName(_display_name).then((res) => {
-			// if(res.data.success == false)
-			// {
-				setMessage(res.data.message);
-				setSuccess(res.data.success);
-
-			// }
-		})
+	if (!_username.trim() || !_display_name.trim()) {
+	  setMessage("Please fill in all fields");
+	  setSuccess(false);
+	  return;
+	}
+  
+	try {
+	  await changeDisplayedName(_display_name).then((displayNameResponse) => {
+		if(displayNameResponse.data.success == false &&  Userdata.first_time == false)
+		{
+			setMessage(displayNameResponse.data.message);
+			setSuccess(displayNameResponse.data.success)
+		}
+	  });
+	  await changeUserName(_username);
+	  await changePhoto(Userdata.avatar_url);
+	  if (success)
+	  		setUserdata((prevUserData: any) => ({...prevUserData, username: _username, display_name: _display_name, first_time: false,}));
+	  if(Userdata.first_time)
+	  {
 		
-		.catch((e) =>{
-			
-			setMessage(e.data.message);
-			setSuccess(e.data.success);
-			console.log("error:", e.response.data.message);
-		})
-		changeUserName(_username).then(result => console.log("res",result))
-		await changePhoto(Userdata.avatar_url).then((result) => console.log(result));
-		setUserdata({...Userdata, username: _username, display_name: _display_name, first_time:false});
-		await firstTime().then(rslt => console.log(rslt));
-		if(Userdata.first_time)
-			router.push('/dashboard');
-	};
+		  await firstTime();
+		  router.push('/dashboard');
+	  }
+	} catch (error) {
+	  console.error("error:", error);
+	  setMessage("Error saving");
+	  setSuccess(false);
+	}
+  };
 
+	
 	const closeQrForm : () => void = () => {
 		setDisplay2fa(false);
 	}

@@ -15,6 +15,7 @@ import { PongGame } from '../classes/PongGame';
 import { ne } from '@faker-js/faker';
 import { type } from 'os';
 import Matter, { Vector } from 'matter-js';
+import {EventEmitter2} from  '@nestjs/event-emitter';
 
 type User = {
 	id: string;
@@ -26,10 +27,11 @@ type InvitePayload = {
 	opponentId: string;
 };
 
-type KeyEventPayload = {
+export type KeyEventPayload = {
 	state: string;
 	key: string;
-}
+	display_name:string;
+};
 
 type JoinPayload = {
 	indexMap: string;
@@ -89,32 +91,37 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	constructor(
 		private readonly gameservice: GameService,
 		private readonly prisma: PrismaService,
+		private readonly eventEmitter: EventEmitter2,
 	) {}
+	
 	// sleep = async (ms: number) =>
 	// 	new Promise((resolve) => setTimeout(resolve, ms));
 
 	async handleConnection(socket: AuthenticatedSocket) {
 		console.log('connect1   ...');
 		console.log('socket', socket.user.sub);
+		const userId = socket.user.sub;
 		if (socket.user) {
 			const newStatus = await this.prisma.user.update({
 				where: { id: socket.user.sub },
 				data: { status: 'ingame' },
 			});
+			this.eventEmitter.emit('Ingame.created', { userId });
 		}
 	}
 
 	async handleDisconnect(socket: AuthenticatedSocket) {
 		console.log('Connection closed1');
 		socket.leave(`@${socket.user.sub}`);
+		const userId = socket.user.sub;
 		if (socket.user) {
 			const newStatus = await this.prisma.user.update({
 				where: { id: socket.user.sub },
 				data: { status: 'online' },
 			});
-		}
+			this.eventEmitter.emit('Ingameoffline.created', { userId });
 
-		const userId = socket.user.sub;
+		}
 		const queue = this.getQueueWaiting(userId);
 		if (queue) {
 			this.queueWaiting = this.queueWaiting.filter(
@@ -355,7 +362,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			game.launch = true;
 			return;
 		}
-
+		game.duration = new Date();
 		this.mapPong[game.user1.id] = new PongGame(this, game);
 	}
 
@@ -370,3 +377,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		this.mapPong[game.user1.id].handleKeyDown(data);
 	}
 }
+
+
+	

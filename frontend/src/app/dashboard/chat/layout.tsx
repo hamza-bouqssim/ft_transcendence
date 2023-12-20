@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import CoversationSideBar from "@/app/components/CoversationSideBar/ConversationSideBar";
 // import './styles.css'
 import { Provider } from "react-redux";

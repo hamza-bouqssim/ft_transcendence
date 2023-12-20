@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Body, Controller,  Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller,  Post, Req, Res, UseGuards, Get } from '@nestjs/common';
 import { FriendRequestService } from './friend-request.service';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'prisma/prisma.service';
@@ -18,7 +18,7 @@ export class FriendRequestController {
     async sendRequest(@Body() request: { display_name: string }, @Req() req, @Res() res) {
         try {
           const user = req.user;
-          const returnvalue = await this.friendshipService.sendRequest(request.display_name, user.display_name);
+          const returnvalue = await this.friendshipService.sendRequest(user.display_name, request.display_name, );
           return res.status(200).json({ success: true, response: returnvalue });
         } catch (err) {
           return res.status(401).json({ success: false, message: err.message || 'An unexpected error occurred' });
@@ -50,7 +50,6 @@ export class FriendRequestController {
       const user = req.user;
       return this.friendshipService.acceptRequestToPlay(request.requestId, user);
 
-
     }
 
 
@@ -65,6 +64,12 @@ export class FriendRequestController {
     async refuseRequestPlay(@Body() request: {requestId : string}, @Req() req){
       const user = req.user;
       return this.friendshipService.refusePLayRequest(request.requestId, user); 
+
+    }
+    @Post('remove-friendship')
+    async remove_friendship(@Body() request: {display_name : string}, @Req() req){
+      const user = req.user;
+      return this.friendshipService.remove_friends(user.display_name, request.display_name);
 
     }
     
@@ -91,6 +96,15 @@ export class FriendRequestController {
     {
         const user = req.user;
         return this.friendshipService.unblock( user.id, request.friendIdToUnblock);
+    }
+
+    // count notification
+
+    @Get('notification_count')
+    async count_notification(@Req() req){
+      const user = req.user;
+      return this.friendshipService.count_notification(user.id);
+
     }
 
   

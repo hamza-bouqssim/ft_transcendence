@@ -13,10 +13,10 @@ import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import { MenuButton, MenuButton2 } from "../Buttons";
 import { fetchBlockFriendThunk } from "@/app/store/blockSlice";
 import { useRouter } from "next/navigation";
-import { fetchGetAllFriendsThunk } from "@/app/store/friendsSlice";
+import { fetchGetAllFriendsThunk, fetchRemoveFriendship } from "@/app/store/friendsSlice";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { fetchConversationUserThunk } from "@/app/store/conversationSlice";
+import { createConversationThunk, fetchConversationUserThunk } from "@/app/store/conversationSlice";
 import { fetchMessagesThunk } from "@/app/store/messageSlice";
 import { fetchSendRequestPLay } from "@/app/store/requestSlice";
 
@@ -92,40 +92,47 @@ const OnlineFriends = () =>{
       return user && user.status === 'online';
     };
 
+    const onlineFriends = friends.filter((friend: FriendsTypes) => {
+      const user = users.find((user: any) => user.id === friend.id);
+      return user && user.status === 'online'; });
+      
     return (
-        <div className="text-black  my-10 h-[calc(100%-200px)] overflow-auto ">
+        <div className="text-black mt-[10px] h-[calc(100%-200px)] overflow-auto ">
          <ToastContainer />
-        <Conversation>
+        <div>
 
 				<ConversationSideBarContainer>
-					{friends.map(function(elem : FriendsTypes){
+					{onlineFriends.map(function(elem : FriendsTypes){
             function handleClick()
 						{
 							router.push(`/dashboard/${elem.id}`)
 						}
-            const handleSendMessage = async () =>
+            const handleRemoveFriendship= async () =>
             {
 
-                  dispatch(fetchConversationUserThunk(elem.display_name))
-                    .unwrap()
-                    .then(({data}) => {
-                      updateChannel(data);
-                      dispatch(fetchMessagesThunk(data.id));
+                 
+                try{
+                    const res =  dispatch(fetchRemoveFriendship(elem.display_name));
+                    ToastSuccess(`remove ${elem.display_name} from your list friends`);
 
-                  }).catch((err)=>{
-                      console.log(err);
-                  }
-                );
+
+                }catch(err : any){
+                  ToastError(`Error... while removing ${elem.display_name} from your list friends `);
+
+
+                }
 
             }
             const handlePLayingRequest = async(display_name : string) =>{
+              console.log("elem-->", elem);
+              console.log("display----->", display_name);
               try { 
                 const response= await dispatch(fetchSendRequestPLay(display_name));
                 if (response.payload && response.payload.message) {
                   const errorMessage = response.payload.message;
                   ToastError(`Error: ${errorMessage}`);
                 } else {
-                  ToastSuccess("Friend request sent successfully");
+                  ToastSuccess("PLay request sent successfully");
     
                 }
               } catch (err: any) {
@@ -147,13 +154,12 @@ const OnlineFriends = () =>{
 				          />
       
                 {openMenuId === elem.id &&
-                <div className={`absolute  top-[-120px] left-2 h-[120px]  w-[200px] flex-col items-center justify-center gap-1 rounded-[15px] border-2 border-solid border-[#000000] bg-white font-['Whitney_Semibold'] `}>
-					        <button className={`bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> handleClick()}>see profile</button>
-                  <button className={`bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> handlePLayingRequest(elem.display_name)}>Invite to play</button>
-					        <button className={` bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> handleSendMessage() }>send message</button>
-                  <button className={` bg-[#EA7F87] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} value="Bloque" onClick={()=> handlleBloque(elem.id)}>Bloque</button>
+              <div className={`absolute z-10 -top-[157px] right-3 p-2 w-[200px] flex-col items-center justify-evenly rounded-[15px] border-2 border-solid border-[#000000] bg-white font-['Whitney_Semibold'] `}>                  <button className={`bg-[#d9d9d9] text-black h-[30px] w-full rounded-[15px] my-1 hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> handleClick()}>see profile</button>
+                  <button className={`bg-[#d9d9d9] text-black h-[30px] w-full rounded-[15px] my-1 hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> handlePLayingRequest(elem.display_name)}>Invite to play</button>
+                  <button className={` bg-[#d9d9d9] text-black h-[30px] w-full rounded-[15px] my-1 hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> handleRemoveFriendship() }>Remove Friendship</button>
+                  <button className={` bg-[#EA7F87] text-black h-[30px] w-full rounded-[15px] my-1 hover:bg-[rgba(0,0,0,.2)]`} value="Bloque" onClick={()=> handlleBloque(elem.id)}>Bloque</button>
 
-				        </div>}
+              </div>}
             </div>               
                    
 							</ConversationSideBarItem>
@@ -161,7 +167,7 @@ const OnlineFriends = () =>{
 						)
 					}) }
 				</ConversationSideBarContainer>
-			</Conversation>
+			</div>
         </div>
            
     )

@@ -5,9 +5,11 @@ import { UserCredentialsParams } from "../utils/types";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { deleteCookie } from "cookies-next";
-import LogOut from "./LogOut";
 
 export const GoogleSignInButton = () => {
+
+	
+
 	const router = useRouter();
 	const {
 		register,
@@ -75,6 +77,7 @@ export const SignButton = (props: any) => {
 };
 
 export const MenuButton = (props: any) => {
+	
 	return (
 		<button
 			className={`h-[35px] w-[225px] ${props.background} ${
@@ -86,6 +89,7 @@ export const MenuButton = (props: any) => {
 	);
 };
 export const MenuButton2 = (props: any) => {
+	
 	return (
 		<button
 			className={`h-[35px] w-[197px] ${props.background}
@@ -97,16 +101,15 @@ export const MenuButton2 = (props: any) => {
 };
 export const LogoutButton = (props: any) => {
 	const router = useRouter();
-	const logoutFunction = async () => {
+	const logoutFunction =  async () =>{
 		try {
 			window.location.href = "http://localhost:8000/auth/logout";
 		} catch (err) {
 			alert("failed to logout");
 		}
-	};
+	}
 	return (
-		<button
-			onClick={LogOut}
+		<button onClick={logoutFunction}
 			className={`h-[35px] w-[225px] ${props.background} ${
 				props.value === "Logout" ? "text-white" : "text-black"
 			} rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`}
@@ -116,20 +119,20 @@ export const LogoutButton = (props: any) => {
 	);
 };
 
-export const GoToProfileBtn = (props: any) => {
+export const GoToProfileBtn = (props : any) =>{
 	const router = useRouter();
 
-	const handleFunction = () => {
+	const handleFunction = () =>{
 		router.push("/dashboard", { scroll: false });
-	};
+
+	}
 	return (
-		<button
-			onClick={handleFunction}
+		<button onClick={handleFunction}
 			className={`h-[35px] w-[225px] ${props.background} ${
 				props.value === "Logout" ? "text-white" : "text-black"
 			} rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`}
 		>
 			{props.value}
 		</button>
-	);
-};
+	)
+}

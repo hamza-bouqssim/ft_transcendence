@@ -1,5 +1,5 @@
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { DebloqueUser, bloqueFriend, getAllFriends, getBloques } from '../utils/api';
+import { DebloqueUser, bloqueFriend, getAllFriends, getBloques, removeFriendship } from '../utils/api';
 import { FriendsTypes } from '../utils/types';
 
 
@@ -30,6 +30,11 @@ export const fetchGetAllFriendsThunk = createAsyncThunk('friends/fetchGetAllFrie
 }
 })
 
+export const fetchRemoveFriendship =  createAsyncThunk('removeFriend',  async (display_name : string, { rejectWithValue } ) =>{
+  const response = await  removeFriendship(display_name);
+  return response;
+})
+
 
 const friendsSlice = createSlice({
   name: 'friends',
@@ -49,6 +54,14 @@ const friendsSlice = createSlice({
       .addCase(fetchGetAllFriendsThunk.rejected, (state: any, action : any) => {;
         state.status = 'failed';
         state.error = action.payload;
+      }) .addCase(fetchRemoveFriendship.pending, (state : any) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchRemoveFriendship.fulfilled, (state : any, action : any) => {
+        state.status = 'success';
+      })
+      .addCase(fetchRemoveFriendship.rejected, (state: any, action : any) => {;
+        state.status = 'failed';
       })
      
   },

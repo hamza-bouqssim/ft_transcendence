@@ -1,36 +1,28 @@
-"use client"
-import { io } from "socket.io-client";
-import { createContext } from "react";
+import { createContext, Dispatch, SetStateAction } from "react";
+import { io, Socket } from "socket.io-client";
+import { ConversationTypes, GroupChannel, User } from "../types";
+
+
+
+type SocketContextValue = {
+  socket: Socket;
+  updateChannel: (newAddress: GroupChannel| ConversationTypes | null) => void;
+  channel:GroupChannel | ConversationTypes | null;
+  oldId: any; 
+  setOldId: Dispatch<SetStateAction<any>>; 
+  Userdata: User | null; 
+  setUserdata: Dispatch<SetStateAction<User | null>>; 
+};
 
 export const socket = io("http://localhost:8000/chat", {
      withCredentials: true,
 });
-
-export const socketContext = createContext(socket);
-
-
-// import { createContext, useContext } from "react";
-// import { io, Socket } from "socket.io-client";
-
-// // Define the type for the socket context
-// interface SocketContextType {
-//   socket: Socket;
-//   Userdata: any;
-// //   updateChannel: (newChannel: string) => void;
-// //   channel: string; // Define the channel property
-// }
-
-// // Create the socket instance
-// export const socket = io("http://localhost:8000/chat", {
-//   withCredentials: true,
-// });
-
-// // Create the context with the specified type and set a default value
-// export const socketContext = createContext<SocketContextType>({
-//   socket,
-//   Userdata: null,
-// //   updateChannel: (newChannel: any) => {
-// //     // Implement the logic to update the channel
-// //   },
-// //   channel: "", // Provide an initial value for the channel
-// });
+export const socketContext = createContext<SocketContextValue>({
+  socket,
+  updateChannel: () => {}, // Provide a default function if needed
+  channel: null,
+  oldId: null,
+  setOldId: () => {}, // Provide a default function if needed
+  Userdata: null,
+  setUserdata: () => {}, // Provide a default function if needed
+});

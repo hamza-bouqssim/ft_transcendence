@@ -16,7 +16,7 @@ export class FriendRequestService {
         }
 
     }
-    async sendRequest(friendDisplay_name: string, _Display_name:string){
+    async sendRequest( _Display_name:string, friendDisplay_name: string){
 
         const user = await this.prisma.user.findFirst({where: {display_name: _Display_name}});
         const _friendDisplay_name = await this.prisma.user.findFirst({where: {display_name: friendDisplay_name}});
@@ -26,6 +26,8 @@ export class FriendRequestService {
             throw new HttpException('User Not Found !', HttpStatus.BAD_REQUEST)
 
         }
+        console.log("display_name-->", _Display_name);
+        console.log("reci display_name-->", friendDisplay_name);
         if(friendDisplay_name === _Display_name)
         {
             throw new HttpException('You cant send request to your self!', HttpStatus.BAD_REQUEST)
@@ -99,7 +101,6 @@ export class FriendRequestService {
     async sendRequestPlay(senderDisplay_name: string, recipientDisplay_name : string ){
         const user = await this.prisma.user.findFirst({where: {display_name: senderDisplay_name}});
         const recipientUser = await this.prisma.user.findFirst({where: {display_name: recipientDisplay_name}});
-        
         if(!user || !recipientUser)
         {
             throw new HttpException('User Not Found!', HttpStatus.BAD_REQUEST)
@@ -107,6 +108,28 @@ export class FriendRequestService {
         if(senderDisplay_name === recipientDisplay_name)
         {
             throw new HttpException('You cant send request to your self!', HttpStatus.BAD_REQUEST)
+        }
+
+
+
+
+         const alrighdyfriend = await this.prisma.friend.findFirst(
+            {
+                where: {
+                    OR: [
+                        { 
+                            user_id: user?.id,
+                            friend_id: recipientUser?.id 
+                        },
+                        {
+                            user_id: recipientUser?.id,
+                            friend_id: user?.id 
+                        },
+                      ],
+            }});
+        if(!alrighdyfriend)
+        {
+            throw new HttpException('This is not your friend,  you cant play with !', HttpStatus.BAD_REQUEST)
         }
 
         const requestAlreadySent = await this.prisma.requestPlay.findFirst(
@@ -118,26 +141,11 @@ export class FriendRequestService {
                       ],
                 }
         });
-
         if(requestAlreadySent)
         {
             throw new HttpException('Request Already Sent !', HttpStatus.BAD_REQUEST)
         }
-        // console.log("display user-->", user.id);
-        // console.log("display rci-->", recipientUser.id);
-        // const alrighdyfriend = await this.prisma.friend.findFirst(
-        //     {
-        //         where: {
-        //             OR: [
-        //                 { user_id: user.id, friend_id: recipientUser.id, status: "ACCEPTED"},
-        //                 {user_id: recipientUser.id, friend_id: user.id , status: "ACCEPTED" },
-        //               ],
-        //     }});
-
-        // if(!alrighdyfriend)
-        // {
-        //     throw new HttpException('This is not your friend,  you cant play with !', HttpStatus.BAD_REQUEST)
-        // }
+      
         const BlockedFriends = await this.prisma.blockList.findFirst(
             {
                     where: {
@@ -172,8 +180,8 @@ export class FriendRequestService {
 
 
     }
-    // accepted request to play
-    async acceptRequestToPlay(requestId: string, userId: string){
+    
+    async acceptRequestToPlay(requestId: string, user: User){
         const req_play = await this.prisma.requestPlay.findFirst({
             where: {
                 id : requestId
@@ -186,11 +194,20 @@ export class FriendRequestService {
         if(!req_play)
             throw new HttpException("The request doesn't exist!", HttpStatus.BAD_REQUEST)
 
-        if(req_play.senderId != userId)
+        if(req_play.senderId != user.id)
             throw new HttpException("You are not the person who send this request", HttpStatus.BAD_REQUEST)
 
         
         await this.prisma.friend.update({where: {id: requestId}, data: {status: 'ACCEPTED'}});
+        await this.prisma.notificationGlobal.updateMany({
+            where: {
+                recipient_id: user.id,
+            },
+            data: {
+                vue: true,
+            },
+        });
+        
         return {message: 'Accept request to play succesfully'};
 
 
@@ -217,10 +234,20 @@ export class FriendRequestService {
        
 
         await this.prisma.friend.update({where: {id: requestId}, data: {status: 'ACCEPTED'}});
+        await this.prisma.notificationGlobal.updateMany({
+            where: {
+                recipient_id: user.id,
+            },
+            data: {
+                vue: true,
+            },
+        });
         
         this.eventEmitter.emit('requestAccept.created', {
            req
           });
+
+
         
         return {message: 'Friend request accepted'};
     }
@@ -238,6 +265,15 @@ export class FriendRequestService {
         }
     
         await this.prisma.friend.delete({ where: { id: requestId } });
+        await this.prisma.notificationGlobal.updateMany({
+            where: {
+                recipient_id: user.id,
+            },
+            data: {
+                vue: true,
+            },
+        });
+        
 
         this.eventEmitter.emit('requestRefuse.created', {
             RefuseruserId: req.friend_id,
@@ -258,6 +294,15 @@ export class FriendRequestService {
 
         }
         await this.prisma.requestPlay.delete({ where: { id: requestId } });
+        await this.prisma.notificationGlobal.updateMany({
+            where: {
+                recipient_id: user.id,
+            },
+            data: {
+                vue: true,
+            },
+        });
+        
 
         this.eventEmitter.emit('requestRefuse.created', {
             RefuseruserId: req.senderId,
@@ -304,6 +349,20 @@ export class FriendRequestService {
         if (friendship) {
             await this.prisma.friend.delete({
                 where: { id: friendship.id },
+            });
+        }
+        const friendshipPlay = await this.prisma.requestPlay.findFirst({
+            where: {
+                OR: [
+                    { senderId: senderId, recipientId: recipientId, status: { in: ['ACCEPTED', 'PENDING'] } },
+                    { senderId: recipientId, recipientId: senderId, status: { in: ['ACCEPTED', 'PENDING'] } },
+                  ],
+                },
+              });
+            
+        if (friendshipPlay) {
+            await this.prisma.requestPlay.delete({
+                where: { id: friendshipPlay.id },
             });
         }
         await this.prisma.blockList.create({
@@ -429,6 +488,52 @@ export class FriendRequestService {
             },
           });
 
+    }
+    async remove_friends(userDisplay_name : string, Refusedisplay_name : string){
+        const user = await this.prisma.user.findFirst({where: {display_name: userDisplay_name}});
+        const refuseUser = await this.prisma.user.findFirst({where: {display_name: Refusedisplay_name}});
+        
+        if(!user || !refuseUser)
+        {
+            throw new HttpException('User Not Found!', HttpStatus.BAD_REQUEST)
+        }
+        const friendship = await this.prisma.friend.findFirst(
+            {
+                where: {
+                    OR: [
+                        { user_id: user.id, friend_id: refuseUser.id, status: "ACCEPTED"},
+                        {user_id: refuseUser.id, friend_id: user.id , status: "ACCEPTED" },
+                      ],
+            }});
+
+        if(!friendship)
+        {
+            throw new HttpException('This is not your friend,  To refuse the friendship!', HttpStatus.BAD_REQUEST)
+        }
+
+        if (friendship) {
+            await this.prisma.friend.delete({
+                where: { id: friendship.id },
+            });
+        }
+        this.eventEmitter.emit('deleteFriendship.created', {
+            friendship
+          });
+        
+
+        return {message: "Delete the frienbdship"};
+
+
+    }
+    async count_notification(user_id : string){
+
+        const unreadCount = await this.prisma.notificationGlobal.count({
+            where: {
+              recipient_id:user_id,
+              vue : false,
+            },
+          });
+          return unreadCount
     }
     
 }

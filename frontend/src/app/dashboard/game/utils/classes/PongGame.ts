@@ -515,6 +515,13 @@ class PongGame {
 			),
 		};
 
+		if (this.currentBallVelocity.y < 1) {
+			this.currentBallVelocity = {
+				x: this.map(10, 0, this.defaultCanvasSizes.width, 0, this.divWidth),
+				y: this.map(10, 0, this.defaultCanvasSizes.height, 0, this.divHeight),
+			};
+		}
+
 		Body.setVelocity(this.ball!, {
 			x: this.currentBallVelocity.x,
 			y: this.currentBallVelocity.y,
@@ -648,14 +655,15 @@ class PongGame {
 
 	updateBallVelocity = (): void => {
 		// Limit Velocity Value
+		console.log("Before velocity update:", this.currentBallVelocity.y);
+		// console.log("Before velocity update:", this.currentBallVelocity.x);
+		const x = this.currentBallVelocity.x;
+
+		// ... rest of your code ...
+
 		if (
-			(this.currentBallVelocity.y === 6 || this.currentBallVelocity.y === -6) &&
-			this.chosenMapIndex === 1
-		)
-			return;
-		else if (
-			this.currentBallVelocity.y === 8 ||
-			this.currentBallVelocity.y === -8
+			this.currentBallVelocity.y >= 10 ||
+			(this.currentBallVelocity.y < 0 && this.currentBallVelocity.y >= -10)
 		)
 			return;
 		else if (this.lastDirection === "top") {
@@ -675,11 +683,14 @@ class PongGame {
 				this.divHeight,
 			);
 		}
+		if (x === this.currentBallVelocity.x)
+			this.currentBallVelocity.x = this.ball!.velocity.x + 1;
 
 		Body.setVelocity(this.ball!, {
-			x: this.ball!.velocity.x,
+			x: this.currentBallVelocity.x,
 			y: this.currentBallVelocity.y,
 		});
+		console.log("After velocity update:", this.currentBallVelocity.y);
 	};
 
 	moveBotPaddle = (): void => {

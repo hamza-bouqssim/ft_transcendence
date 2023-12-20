@@ -59,11 +59,12 @@ interface Room {
       dispatch(getAllRooms())
     }, [dispatch]);
     console.log("hi")
-    if (status =="loading") {
+    if (status.get =="loading" || status.get =="idle") {
+      console.log("loading")
       return(
         <div className="flex items-center justify-center mt-40">
         <div
-              className=" text-[#5B8CD3]   h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+              className=" text-[#5B8CD3]   h-8 w-8 animate-spin rounded-full border-3 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
               role="status">
               <span
                 className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
@@ -71,14 +72,14 @@ interface Room {
             </div></div>)
     }
     
-    if (status === 'failed') {
+    if (status.get === 'failed') {
       return <div className="text-gray-500 mt-10 text-center ">{error} </div>;
     }
 
     return (
-      <div className="text-black  pb-2 pt-5 h-[calc(100%-100px)] overflow-auto  no-scrollbar">
+      <div className="text-black  pb-2 pt-5 h-[calc(100%-74px)] overflow-auto  no-scrollbar">
         {rooms && [...rooms].sort(compareRooms)?.map((data: Room) => (
-          <div key={data.id} onClick={() =>{updateChannel(data) ; }}  className="cursor-pointer rounded-lg hover:bg-[#F2F3FD] flex items-center justify-between px-2 py-3">
+          <div key={data.id} onClick={() =>{updateChannel(data) ; }}  className="cursor-pointer rounded-[10px] hover:bg-[#F2F3FD] flex items-center justify-between px-2 py-3">
             <div className="flex items-center justify-start">
                 <Image className="w-16 h-16  bg-cover rounded-full" src={data.picture} alt="" height={30} width={30}/>
                 <div className="ml-4">
@@ -91,7 +92,7 @@ interface Room {
 
           </div>
         ))}
-        <div className="md:h-16 h-28">
+        <div className="md:h-32 h-32">
 
         </div>
       </div>

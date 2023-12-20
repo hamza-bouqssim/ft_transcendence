@@ -8,7 +8,8 @@ import { socket, socketContext } from "../utils/context/socketContext";
 import { store } from "../store";
 import { Socket } from "socket.io-client";
 import { usePathname } from "next/navigation";
-import { ConversationTypes, User } from "../utils/types";
+import { ConversationTypes, GroupChannel, User } from "../utils/types";
+import { Group } from "three";
 
 export const SideBarContext: any = createContext<any>(null);
 export const ChangeContext: React.Context<any> = createContext(null);
@@ -21,37 +22,33 @@ interface Room {
 	id: string;
 	name: string;
 	Privacy: string;
-	password: string;
+	password:string;
 	picture: string;
 	createdAt: string;
 	updatedAt: string;
 	members: {
-		isAdmin: boolean;
+	  isAdmin: boolean;
 	};
 }
 
 function AppWithProviders({ children }: PropsWithChildren & Props) {
-	const [channel, setChannel] = useState<User | ConversationTypes | null>(null); // Initial value
-	const [oldId, setOldId] = useState(null);
-	const [Userdata, setUserdata] = useState<User | null>(null);
-	const updateChannel = (newAddress: User | ConversationTypes | null) => {
-		setChannel(newAddress);
+	const [channel, setChannel] = useState<GroupChannel | ConversationTypes |null>(null); // Initial value
+	const[oldId,setOldId] = useState(null);
+	const[Userdata,setUserdata] = useState<User |  null>(null);
+	const updateChannel = (newAddress:GroupChannel | ConversationTypes| null) => {
+	  setChannel(newAddress);
 	};
 	return (
-		<Provider store={store}>
-			<socketContext.Provider
-				value={{
-					socket,
-					updateChannel,
-					channel,
-					oldId,
-					setOldId,
-					Userdata,
-					setUserdata,
-				}}
-			>
-				{children}
-			</socketContext.Provider>
+		<Provider store={store} >
+			<socketContext.Provider 
+				value={{socket,
+						updateChannel,
+						channel,
+						oldId,
+						setOldId,
+						Userdata,
+						setUserdata
+					}}>{children}</socketContext.Provider>
 		</Provider>
 	);
 }
@@ -86,12 +83,13 @@ export default function RootLayout({
 		return validPaths.some((path) => pathName.includes(path));
 	};
 
+	 
 	return (
 		<html lang="en">
 			<body>
 				<div className="flex h-screen w-full text-white">
 					<AppWithProviders socket={socket}>
-						{shouldHide() ? null : (
+					{shouldHide() ? null : (
 							<SideBar
 								sideBar={change.sideBar}
 								onClick={() =>
@@ -117,6 +115,10 @@ export default function RootLayout({
 								}
 							/>
 						)}
+
+					{/* <div className="mt-[70px] h-[85%] w-full lg:flex lg:items-center lg:justify-evenly min-[1750px]:ml-72 min-[1750px]:mt-[90px] min-[1750px]:w-[86%]">
+						{children}
+					</div> */}
 
 						<ChangeContext.Provider value={changeValues}>
 							<div className="h-full w-full">{children}</div>

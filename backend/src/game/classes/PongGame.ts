@@ -1,4 +1,4 @@
-import { GameGateway } from '../gateway/game.gateway';
+import { GameGateway, KeyEventPayload } from '../gateway/game.gateway';
 import {
 	Bodies,
 	Composite,
@@ -81,7 +81,7 @@ export class PongGame {
 	private user2: string;
 	private engine: Engine;
 	private runner: Runner;
-	private handleCollisionStart = (e: any): void => {};
+	private handleCollisionStart = (e): void => {};
 	private mapIndex: number;
 
 	constructor(
@@ -375,7 +375,7 @@ export class PongGame {
 		]);
 	}
 
-	handleKeyDown(data: any) {
+	handleKeyDown(data: KeyEventPayload) {
 		// if (!this.game) return;
 
 		let movingLeft: boolean;
@@ -540,16 +540,14 @@ export class PongGame {
 
 	updateBallVelocity() {
 		// Limit Velocity Value
-		if (
-			(this.currentBallVelocity.y === 6 || this.currentBallVelocity.y === -6) &&
-			this.mapIndex === 1
-		)
+		console.log('Before velocity update:', this.currentBallVelocity.y);
+		if (this.currentBallVelocity.y === 10 || this.currentBallVelocity.y === -10)
 			return;
-		else if (
-			this.currentBallVelocity.y === 8 ||
-			this.currentBallVelocity.y === -8
-		)
-			return;
+		// else if (
+		// 	this.currentBallVelocity.y === 8 ||
+		// 	this.currentBallVelocity.y === -8
+		// )
+		// 	return;
 		else {
 			if (this.lastDirection === 'top') this.currentBallVelocity.y -= 1;
 			else this.currentBallVelocity.y += 1;
@@ -566,6 +564,7 @@ export class PongGame {
 				'setBallVelocity',
 			);
 		}
+		console.log('After velocity update:', this.currentBallVelocity.y);
 	}
 
 	emitScore() {
@@ -601,7 +600,7 @@ export class PongGame {
 	}
 
 	handleDetectCollision() {
-		this.handleCollisionStart = (e: any): void => {
+		this.handleCollisionStart = (e): void => {
 			const pairs = e.pairs[0];
 
 			if (pairs.bodyA === this.topPaddle || pairs.bodyB === this.topPaddle) {
