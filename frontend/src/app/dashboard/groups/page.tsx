@@ -1,5 +1,5 @@
 "use client"
-
+import { ToastContainer, toast } from 'react-toastify';
 import CoversationSideBar from "@/app/components/CoversationSideBar/ConversationSideBar";
 import { ConversationChannelStyle, Page} from "@/app/utils/styles";
 import { useContext, useEffect, useState , PropsWithChildren} from "react";
@@ -16,12 +16,14 @@ import {Provider as ReduxProvider, useDispatch, useSelector} from 'react-redux'
 import { fetchMessagesThunk } from "@/app/store/messageSlice";
 import { fetchConversationThunk } from "@/app/store/conversationSlice";
 import { getAllRooms } from "@/app/store/roomsSlice";
+import { getAllMembers } from "@/app/store/memberSlice";
 
 
 const ConversationChannelPage = () => {
   const {channel ,updateChannel} = useContext(socketContext);
   const socket = useContext(socketContext).socket
   const dispatch= useDispatch<AppDispatch>();
+  const {Userdata} = useContext(socketContext)
 
 	useEffect(()=>{
 		socket.on("notification",(payload:any) =>{
@@ -35,15 +37,26 @@ const ConversationChannelPage = () => {
 			dispatch(getAllRooms())
       updateChannel(null)
 		})
+    socket.on("updateMember",(payload:any) =>{
+			dispatch(getAllMembers(payload.roomId))
+      dispatch(getAllRooms())
+      if(payload.types==="Ban" && Userdata?.id === payload.idUserleave)
+      {  
+        socket.emit("leaveToRoom", {id: payload.roomId});
+      }
+      
+		})
     return () => {
       socket.off("notification");
       socket.off("delete");
       socket.off("update");
+      socket.off("updateMember");
     };
   
 
-	},[socket, dispatch, updateChannel])
+	},[socket,Userdata])
     return ( 
+      <>
             <div className=" flex h-screen  xl:container xl:mx-auto">
               <div className={`h-full  xl:p-10 xl"pl-5 xl:pr-2 ${!channel ? 'block w-full xl:w-[35%]  ' : 'hidden xl:block  xl:w-[35%] '}`}>
                 <CoversationSideBar />
@@ -53,9 +66,12 @@ const ConversationChannelPage = () => {
                     <MessagePanel></MessagePanel> 
                 </div>
 :
-              <div className="xl:my-10 xl:mr-10  w-full xl:ml-2 xl:w-[65%]   xl:mt-32 hidden xl:flex items-center justify-center">Invit friend to new chat rome</div>
+<div className="xl:my-10 xl:mr-10  w-full xl:ml-2 xl:w-[65%]   xl:mt-32 hidden xl:flex items-center justify-center">Invit friend to new chat rome</div>
               }
               </div>
+              <ToastContainer />
+              </>
+
      );
 }
  

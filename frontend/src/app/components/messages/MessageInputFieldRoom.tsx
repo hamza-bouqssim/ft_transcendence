@@ -60,17 +60,22 @@ const MessageInputFieldRoom: FC<props> = ({setMessage, Message}) => {
         }
       setContent('');
     };
-   
-
+    const handleEnter =(event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault(); 
+        sendMessage();   
+      }
+    }
 
     return (
       <>
-      { members.some((member: Member)=> member.user_id === Userdata?.id && member.Status === "Member")?
+      { members.some(member => member.user_id === Userdata.id && member.Status !== "Mut")?
         <div className="flex items-center justify-between ">
          
             <CiImageOn className="text-[#5B8CD3] mr-5 " size={40}/>
             <div  className="w-full  flex items-center bg-[#F2F3FD]  rounded-full justify-between">
                 <input 
+                onKeyPress={handleEnter}
                 onFocus={() => {
                   socket?.emit('Typing', { id:channel?.id,userId:Userdata?.id});
                 }}

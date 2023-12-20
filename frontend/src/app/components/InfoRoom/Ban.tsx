@@ -2,8 +2,9 @@ import { getAllMembers } from '@/app/store/memberSlice';
 import { socketContext } from '@/app/utils/context/socketContext';
 import React ,{useContext,useEffect} from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { CiMenuKebab } from "react-icons/ci";
+import { MdOutlineMoreVert } from "react-icons/md";
 import Image from 'next/image';
+import ListUser from './ListUser';
 
 export const Ban = () => {
   const { members, status, error } = useSelector((state:any) => state.member);
@@ -12,9 +13,9 @@ export const Ban = () => {
 
   if (status =="loading") {
     return(
-      <div className="flex items-center justify-center mt-40">
+      <div className="flex items-center justify-center mt-5">
       <div
-            className=" text-[#5B8CD3]   h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+            className=" text-[#5B8CD3]   h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
             role="status">
             <span
               className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
@@ -28,24 +29,19 @@ export const Ban = () => {
 
   return (
     <div>
-       <div>
-        {members.map((user) => (
-        user.Status === 'Ban' ? (
-          <div key={user.id} className="flex items-center justify-between relative">
-            <div className="flex items-center my-1">
-              <div>
-                <Image src={user.user.avatar_url} alt="" className="w-10 rounded-full" width={30} height={30}/>
-              </div>
-              <div className="text-[13px] flex flex-col justify-center ml-2">
-                <h1>{user.user.username}</h1>
-                <h1>{user.user.display_name}</h1>
-              </div>
-            </div>
-            <CiMenuKebab onClick={() => {}} />
-          </div>
-        ) : null
-      ))}
-    </div>
+      {members && members.length > 0 ? (
+        members.map((member) => (
+          (member.Status === 'Ban') ? (
+            <ListUser key={member.id} member={member} />
+          ) : null
+        ))
+      ) : (
+        <div>Not found</div>
+      )}
+      
+      {members && !members.some(member => member.Status === 'Ban') && (
+        <div className="text-[14px] mt-3 text-center text-gray-400 ">No one is in 'Ban'</div>
+      )}
     </div>
   );
 }

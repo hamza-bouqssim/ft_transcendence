@@ -115,21 +115,19 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
 
         @OnEvent("order.created")
          async onNotificationCreate(data:any) {
-             const userAdmin = data.members.find((userAdmin) => userAdmin.isAdmin)
-            data.members.map((member) => {
-                if(!member.isAdmin)
-                {
-                    const message = `${userAdmin.user.display_name } Join you to ${data.name}`;
-                    this.server.to(member.user_id).emit('notification', message);
-                    const type = "Join"
-                    this.userService.createNotification( userAdmin.user,member.user, message, type);
-
-                }             
+             const owner = data.members.find((owner) => owner.Status === "Owner")
+            data.members.map((member) => {          
+            if(member.Status !== "Owner")
+            {
+                const message = `${owner.user.display_name } Join you to ${data.name}`;
+                this.server.to(member.user_id).emit('notification', message);
+                const type = "Join"
+                this.userService.createNotification( owner.user,member.user, message, type);            }
             })
         }
         @OnEvent("order.update")
-         async onNotificationupdate(data:any) {
-            const update = await this.prisma.chatRoom.findUnique({
+         async onNotificationupdate(data:any,id:string) {
+            const member = await this.prisma.chatRoom.findUnique({
                 where: { id: data.id },
                 include:{
                   members:{
@@ -139,13 +137,27 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
                   }
                 }
             })
-            update.members.map((member) => {
-            if(!member.isAdmin)
-            {
-                this.server.to(member.user_id).emit('update', "");
-            }             
+            member.members.map((member) => {
+                if(member.user_id !== id)
+                    this.server.to(member.user_id).emit('update', "");         
             })
         }
+        @OnEvent("order.updateMember")
+        async onNotificationupdatemember(RoomId:string,id:string,types:string) {
+           const member = await this.prisma.chatRoom.findUnique({
+               where: { id: RoomId },
+               include:{
+                 members:{
+                   include:{
+                     user:true
+                   }
+                 }
+               }
+           })
+           member?.members.map((member) => {
+                this.server.to(member.user_id).emit('updateMember', {roomId:RoomId,idUserleave:id,types:types});         
+           })
+       }
         @OnEvent("order.delete")
          async onNotificationdelete(data:any) {
             data.members.map((member) => {

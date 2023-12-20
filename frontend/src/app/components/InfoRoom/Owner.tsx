@@ -6,12 +6,11 @@ import { MdOutlineMoreVert } from "react-icons/md";
 import Image from 'next/image';
 import ListUser from './ListUser';
 
-export const Mut = () => {
+export const Owner = () => {
   const { members, status, error } = useSelector((state:any) => state.member);
   const { channel } = useContext(socketContext);
-  const dispatch = useDispatch();
-
   console.log("hi")
+
   if (status =="loading") {
     return(
       <div className="flex items-center justify-center mt-5">
@@ -28,22 +27,14 @@ export const Mut = () => {
     return <div className="text-gray-500 mt-10 text-center ">{error} </div>;
   }
 
-
   return (
-    <div>
-      {members && members.length > 0 ? (
-        members.map((member) => (
-          ( member.Status === 'Mut'  ) ? (
-            <ListUser key={member.id} member={member} />
-          ) : null
-        ))
-      ) : (
-        <div>Not found</div>
-      )}
-      
-      {members && !members.some(member => member.Status === 'Mut') && (
-        <div className="text-[14px] mt-3 text-center text-gray-400 ">No one is in 'Mut'</div>
-      )}
+    <div >
+      {members && members.map((member) => (
+        (member.Status === 'Owner') ? (
+          <ListUser key={member.id} member={member} />
+        ) : null
+      ))}
+      {(!members || members.length === 0) && <div>Not found</div>}
     </div>
   );
 }

@@ -112,15 +112,16 @@ export class AuthController {
 
 
 
-    // @Post('isAuth')
-    // @UseGuards(AuthGuard('jwt'))
-    // async isAuthentication( @Req() request, @Res() res,@Body() body) {
-    //   try {
-    //     let user = await this.authService.findUser(request.user.auth_id) 
-    //     return res.json({ isAuth: true , user :user});
-    //   } catch (error) {
-    //     return res.json({ isAuth: false });
-    //   }
-    // }
+    @Post('isAuth')
+    @UseGuards(AuthGuard('jwt'))
+    async isAuthentication( @Req() request, @Res() res,@Body() body) {
+      try {
+        console.log(request.user)
+        let user = await this.authService.findUser(request.user.id) 
+        return res.status(200).json({ isAuth: true});
+      } catch (error) {
+        return res.status(401).json({ isAuth: false });
+      }
+    }
 
 }
