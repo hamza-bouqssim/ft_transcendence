@@ -57,17 +57,18 @@ const OnlineGame = ({ mapIndex }: any) => {
 			height: getCurrentSizes(parentWidth, parentHeight)[1],
 		});
 
-		//TODO: don't forget to clear Evene
+		//TODO: don't forget to clear Event
 
-		window.addEventListener("popstate", () => {
-			router.push("/dashboard/game/", { scroll: false });
-		});
+		
 	}, []);
 
 	useEffect(() => {
 		console.log("online-game-score-useffect");
+		window.addEventListener("popstate", () => {
+			router.push("/dashboard/game/", { scroll: false });
+		});
 		if (opponentPlayer.opponent.username === "") {
-			router.push("/dashboard/game", { scroll: false });
+			router.push("/dashboard/game/", { scroll: false });
 			return;
 		}
 		const updateScoreListener = (playersScore: any) => {

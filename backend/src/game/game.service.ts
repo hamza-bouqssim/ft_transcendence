@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { promises } from 'dns';
 import { PrismaService } from 'prisma/prisma.service';
+
+
 
 @Injectable()
 export class GameService {
@@ -10,11 +13,11 @@ export class GameService {
 			where: {
 				id: id,
 			},
-			// select: {
-			// 	id: true,
-			// 	username: true,
-			// 	avatar_url: true,
-			// },
+			select: {
+				id: true,
+				display_name: true,
+				avatar_url: true,
+			},
 		});
 		return user;
 	}
@@ -25,7 +28,7 @@ export class GameService {
 		return Math.round(newLevel * 100) / 100;
 	}
 
-	rating(playerRank: number, opponentRank: number, outcome: number) {
+	rating(playerRank: number, opponentRank: number, outcome: number) : number{
 		let k: number;
 		if (playerRank > 2400) k = 16;
 		else if (playerRank > 2100 && playerRank <= 2400) k = 24;
@@ -234,7 +237,7 @@ export class GameService {
 	// 	return modifiedRanking;
 	// }
 
-	async history_matches(userId: string) {
+	async history_matches(userId: string){
 		const history = await this.prisma.match_History.findMany({
 			where: {
 				OR: [{ playerOne: userId }, { playerTwo: userId }],

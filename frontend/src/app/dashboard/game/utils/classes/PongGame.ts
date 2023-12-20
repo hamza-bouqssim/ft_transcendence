@@ -8,6 +8,7 @@ import {
 	Events,
 	Render,
 	Runner,
+	Vector,
 	World,
 } from "matter-js";
 
@@ -439,7 +440,7 @@ class PongGame {
 	};
 
 	moveOnlineModeBall = (): void => {
-		this.handleSetVelocity = (data: any) => {
+		this.handleSetVelocity = (data: Vector) => {
 			// this.setBallVelocity();
 			Body.setVelocity(this.ball!, {
 				x: this.map(data.x, 0, this.defaultCanvasSizes.width, 0, this.divWidth),
@@ -453,7 +454,7 @@ class PongGame {
 			});
 		};
 
-		this.handleSetPosition = (data: any) => {
+		this.handleSetPosition = (data: Vector) => {
 			Body.setPosition(this.ball!, {
 				x: this.map(data.x, 0, this.defaultCanvasSizes.width, 0, this.divWidth),
 				y: this.map(

@@ -46,7 +46,6 @@ export class GameController {
 		return modifiedHistory;
 	  } catch (error) {
 		console.log(error);
-		return {};
 		}
 	}
 
@@ -64,7 +63,6 @@ export class GameController {
 			return modifiedRank;
 		} catch (error) {
 			console.log(error);
-			return {};
 		}
 	}
 
@@ -77,7 +75,6 @@ export class GameController {
 		}
 		catch(error){
 			console.log(error);
-			return {};
 		}
 	}
 
