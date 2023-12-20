@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Delete, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Get, Delete, Body, UseGuards, Req } from '@nestjs/common';
 import { GameService } from './game.service';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -8,31 +8,38 @@ export class GameController {
 
 	@Get('myhistory')
 	@UseGuards(AuthGuard('jwt'))
-	async getMyHistory(@Body('userId') userId: string) {
+	async getMyHistory(@Req() req) {
 	  try {
+		const userId = req.user.id;
 		const history = await this.gameService.history_matches(userId);
 		const modifiedHistory = await Promise.all(
 		history.map(async (entry) => {
 			if (entry.playerOne == userId) {
-			  return {
-				playerOne: entry.playerone.avatar_url,
-				playerTwo: entry.playertwo.avatar_url,
-				resultOne: entry.resultOne,
-				resultTwo: entry.resultTwo,
-				date: entry.createdAt.toISOString(),
-				duration: entry.duration,
-				totalMatch: await this.gameService.totalMatch(entry.playerOne, entry.playerTwo),
-			  };
+				return {
+					playerOne: entry.playerone.avatar_url,
+					playerTwo: entry.playertwo.avatar_url,
+					resultOne: entry.resultOne,
+					resultTwo: entry.resultTwo,
+					date: entry.createdAt.toISOString().split('T')[0],
+					duration: entry.duration,
+					totalMatch: await this.gameService.totalMatch(
+						entry.playerOne,
+						entry.playerTwo,
+					),
+				};
 			} else {
-			  return {
-				playerOne: entry.playertwo.avatar_url,
-				playerTwo: entry.playerone.avatar_url,
-				resultOne: entry.resultTwo,
-				resultTwo: entry.resultOne,
-				date: entry.createdAt.toISOString().split('T')[0],
-				duration: entry.duration,
-				totalMatch: await this.gameService.totalMatch(entry.playerOne, entry.playerTwo),
-			  };
+				return {
+					playerOne: entry.playertwo.avatar_url,
+					playerTwo: entry.playerone.avatar_url,
+					resultOne: entry.resultTwo,
+					resultTwo: entry.resultOne,
+					date: entry.createdAt.toISOString().split('T')[0],
+					duration: entry.duration,
+					totalMatch: await this.gameService.totalMatch(
+						entry.playerOne,
+						entry.playerTwo,
+					),
+				};
 			}
 		  })
 		);
@@ -63,7 +70,8 @@ export class GameController {
 
 	@Get('myresult')
 	@UseGuards(AuthGuard('jwt'))
-	async getMyState(@Body('userId') userId: string) {
+	async getMyState(@Req() req) {
+		const userId = req.user.id;
 		try{
 			return await this.gameService.getResult(userId);
 		}
