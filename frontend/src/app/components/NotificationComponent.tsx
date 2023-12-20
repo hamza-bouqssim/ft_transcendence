@@ -7,7 +7,7 @@ import { Conversation, ConversationSideBarContainer, ConversationSideBarItem } f
 import Image from 'next/image';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck,faTimes,faXmark } from "@fortawesome/free-solid-svg-icons";
-import { fetchAcceptRequestPlay } from '../store/requestSlice';
+import { fetchAcceptFriendRequestThunk, fetchAcceptRequestPlay, fetchREfuseFriendRquestThunk, fetchRefuseRequestPlay } from '../store/requestSlice';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { request } from 'https';
@@ -51,8 +51,52 @@ const NotificationComponent = () => {
 
         }
       };
+      const handleClickAcceptRequest = async (id : string) => {
+        try {
+         
+          await dispatch(fetchAcceptFriendRequestThunk(id));
+          ToastSuccess("You are accepting the request !");
+
+        } catch (error) {
+          ToastError(`Error accepting friend request: ${error}`);
+
+        }
+      };
+
+      const handleClickRefuseRequest = async (id : string) =>{
+        try{
+          await dispatch(fetchREfuseFriendRquestThunk(id));
+          ToastSuccess("You are refusing the request");
 
 
+        }catch(error){
+          ToastError(`Error refusing friend request, ${error}`);
+        }
+      }
+
+      const handleClickAcceptPLay = async (id : string) =>{
+        try {
+         
+            await dispatch(fetchAcceptRequestPlay(id));
+            ToastSuccess("You are accepting the request to play!");
+  
+          } catch (error) {
+            ToastError(`Error accepting friend request to play: ${error}`);
+  
+          }
+      }
+
+      const handleClickRefusePLay = async (id : string) =>{
+        try {
+         
+            await dispatch(fetchRefuseRequestPlay(id));
+            ToastSuccess("You are refusing the request to play !");
+  
+          } catch (error) {
+            ToastError(`Error refusing friend request to play: ${error}`);
+  
+          }
+      }
       return (
         
         <div className='absolute  rounded-2xl p-3 pt-12 top-15 right-5 border-white border-2 z-50 bg-gradient-to-b from-[#2E2F54] via-[#3B5282] to-[#2E2F54] w-[500px] h-[500px] overflow-auto no-scrollbar'>
@@ -61,7 +105,6 @@ const NotificationComponent = () => {
             <div className='  justify-between  py-1 items-center gap-1 my-3'>
                 <h1 className='text-white text-2xl -ml-[12px] pl-4 flex items-center py-3 bg-gradient-to-b from-[#2E2F54] via-[#3B5282] to-[#2E2F54] fixed z-10 w-[497px] -mt-[64px]  rounded-t-2xl'>Notifications</h1>
                 {notification.map(function(elem: NotificationTypes) {
-                    console.log("notif-->", elem.type)
                     return (
                             
                         <div className=' px-2 flex items-center gap-3 my-2 hover:bg-[#6967f36c] border border-[--pink-color] py-2 rounded-[20px]' key={elem.id}>
@@ -87,8 +130,8 @@ const NotificationComponent = () => {
                                  }
                                 {(elem.type === 'requestFriend') && (
                                     <div className="absolute flex gap-3">
-                                        <FontAwesomeIcon icon={faCheck} className=" bg-[#5B8CD3] w-4 h-4 p-1 rounded-full cursor-pointer  duration-500  hover:text-[--pink-color] " />
-                                        <FontAwesomeIcon icon={faTimes} className=" bg-[#5B8CD3] w-4 h-4 p-1  rounded-full cursor-pointer  duration-500  hover:text-[--pink-color] " />
+                                        <FontAwesomeIcon icon={faCheck} className=" bg-[#5B8CD3] w-4 h-4 p-1 rounded-full cursor-pointer  duration-500  hover:text-[--pink-color] " onClick={()=> handleClickAcceptRequest(elem.requestId)}/>
+                                        <FontAwesomeIcon icon={faTimes} className=" bg-[#5B8CD3] w-4 h-4 p-1  rounded-full cursor-pointer  duration-500  hover:text-[--pink-color] " onClick={()=>handleClickRefuseRequest(elem.requestId)}/>
                                     </div>
                                 )}
                             </div>

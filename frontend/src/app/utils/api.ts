@@ -46,7 +46,7 @@ export const DebloqueUser = async (id : string) => axios.post(`http://localhost:
 export const bloqueFriend = async (id : string) => axios.post(`http://localhost:8000/friend-request/block-friend`, {friendIdToBlock : id}, config);
 
 
-export const SendRequest =  async (data : CreateRequestParams) => await axios.post(`http://localhost:8000/friend-request/send-request`,data,  config);
+export const SendRequest =  async (display_name : string) => await axios.post(`http://localhost:8000/friend-request/send-request`,{display_name : display_name},  config);
 
 export const sendRequestPlay = async (display_name : string) => await axios.post(`http://localhost:8000/friend-request/send-request-play`, {display_name : display_name}, config);
 export const acceptRequestToPlay = async (requestId : string) => await axios.post(`http://localhost:8000/friend-request/accept_request_play`, {requestId : requestId}, config);

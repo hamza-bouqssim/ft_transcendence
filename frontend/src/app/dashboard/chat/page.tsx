@@ -13,7 +13,7 @@ import { fetchUsersThunk } from "@/app/store/usersSlice";
 import { fetchConversationThunk } from "@/app/store/conversationSlice";
 import { fetchMessagesThunk } from "@/app/store/messageSlice";
 import { ConversationTypes, messageTypes } from "@/app/utils/types";
-import { fetchCountNotification } from "@/app/store/notificationSlice";
+import { fetchCountNotification, fetchNotificationThunk } from "@/app/store/notificationSlice";
 
 const ConversationChannelPagechat = () => { 
   const { updateChannel, channel } = useContext(socketContext);
@@ -29,6 +29,10 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchGetAllFriendsThunk());
       dispatch(fetchCountNotification());
       dispatch(fetchNumberPending());
+      dispatch(fetchNotificationThunk());
+      dispatch(fetchCountNotification());
+
+
 
 
 
@@ -37,11 +41,17 @@ const ConversationChannelPagechat = () => {
 			dispatch(fetchGetRequestThunk());
       dispatch(fetchNumberPending());
       dispatch(fetchCountNotification());
+      dispatch(fetchNotificationThunk());
+
 
 		  });
     socket.on('RefuseNotification', (data : any) => {
       dispatch(fetchGetRequestThunk());
       dispatch(fetchNumberPending());
+      dispatch(fetchNotificationThunk());
+      dispatch(fetchCountNotification());
+
+
 
 
     })
@@ -135,7 +145,7 @@ const ConversationChannelPagechat = () => {
                 <MessagePanel></MessagePanel> 
             </div>
           :
-          <div className="xl:my-10 xl:mr-10  w-full xl:ml-2 xl:w-[65%]   xl:mt-32 hidden xl:flex items-center justify-center">Invit friend to new chat rome</div>
+          <div className="xl:my-10 xl:mr-10  w-full xl:ml-2 xl:w-[65%]   xl:mt-32 hidden xl:flex items-center justify-center">Invite friend to new chat room</div>
           }
           </div>
 

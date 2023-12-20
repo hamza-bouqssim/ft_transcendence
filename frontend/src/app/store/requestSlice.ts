@@ -33,7 +33,7 @@ export const fetchGetRequestThunk = createAsyncThunk('request/fetchGetRequestThu
 
 export const fetchRequestThunk = createAsyncThunk('request/create', async (data: CreateRequestParams, { rejectWithValue }) => {
   try {
-    const response = await SendRequest(data);
+    const response = await SendRequest(data.display_name);
     if (!response.data.success) {
       throw new Error(response.data.error);
     }

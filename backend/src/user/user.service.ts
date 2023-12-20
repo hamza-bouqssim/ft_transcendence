@@ -306,7 +306,7 @@ export class UserService {
       }
       // create notification
 
-      async createNotification(userSender: User, userRecipient: User, message: string, type: string) {
+      async createNotification(userSender: User, userRecipient: User, message: string, type: string, requestId : string) {
         const notification = await this.prisma.notificationGlobal.create({
             data: {
                 Sender: { connect: { id: userSender.id } },
@@ -314,6 +314,7 @@ export class UserService {
                 content: message,
                 image_content: userSender.avatar_url,
                 type: type,
+                requestId: requestId,
             },
         });
     
@@ -321,17 +322,18 @@ export class UserService {
     }
     async notificationCreate(user : User){
 
-        await this.prisma.notificationGlobal.updateMany({
-            where: {
-                recipient_id: user.id,
-            },
-            data: {
-                vue: true,
-            },
-        });
+        // await this.prisma.notificationGlobal.updateMany({
+        //     where: {
+        //         recipient_id: user.id,
+        //     },
+        //     data: {
+        //         vue: true,
+        //     },
+        // });
         const notifications = await this.prisma.notificationGlobal.findMany({
             where: {
                 recipient_id: user.id,
+                vue: false,
             },
             include: {
                 Sender: true, // Corrected syntax: remove the semicolon and use a comma
