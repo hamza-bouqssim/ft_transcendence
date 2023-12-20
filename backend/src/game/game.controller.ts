@@ -19,7 +19,7 @@ export class GameController {
 				playerTwo: entry.playertwo.avatar_url,
 				resultOne: entry.resultOne,
 				resultTwo: entry.resultTwo,
-				date: entry.createdAt.toISOString(),
+				date: entry.createdAt.toISOString().split('T')[0],
 				duration: entry.duration,
 				totalMatch: await this.gameService.totalMatch(entry.playerOne, entry.playerTwo),
 			  };

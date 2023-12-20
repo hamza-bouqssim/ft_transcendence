@@ -68,6 +68,9 @@ export class GameService {
 		});
 		return state;
 	}
+	async createStateGame1(userIdOne: string, userIdTwo: string) {
+	
+	}
 
 	async deleteStateGame(userId: string) {
 		const deleteState = await this.prisma.stateGame.delete({
@@ -96,9 +99,16 @@ export class GameService {
 		date: number,
 	) {
 		try {
-			const duration = this.convertDuration(Date.now() - date);
-			const state = await this.getStateGame(userIdOne);
-			const state2 = await this.getStateGame(userIdTwo);
+			let state :any;
+			let state2 :any;
+			const endDate = new Date();
+			const duration = this.convertDuration(date);
+			state = await this.getStateGame(userIdOne);
+			state2 = await this.getStateGame(userIdTwo);
+			if(!state)
+				state =	await this.createStateGame(userIdOne);
+			if(!state2)
+				state2 = await this.createStateGame(userIdTwo);
 			const result1 = resultOne > resultTwo ? 1 : 0;
 			const result2 = resultTwo > resultOne ? 1 : 0;
 
@@ -270,11 +280,20 @@ export class GameService {
 		return totalMatch;
 	}
 
+	//80 -> 01:20
+	//80/60
+
 	convertDuration(date: number) {
-		const seconds = Math.floor(date / 1000);
-		const minutes = Math.floor(seconds / 60);
-		const hours = Math.floor(minutes / 60);
+		console.log("date",date);
+
+		const hours = Math.floor(date / 3600000);
+		const minutes = Math.floor((date % 3600000) / 60000);
+		const seconds = Math.floor(((date % 3600000) % 60000) / 1000);
 		// return ??:??:??
-		return `${hours}:${minutes % 60}:${seconds % 60}`;
+		let duration
+		duration = (hours < 10 ? "0" + hours : hours) + ":";
+		duration += (minutes < 10 ? "0" + minutes : minutes) + ":";
+		duration += (seconds < 10 ? "0" + seconds : seconds);
+		return duration;
 	}
 }
