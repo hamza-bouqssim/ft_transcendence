@@ -1,4 +1,5 @@
 "use client"
+import { ToastContainer, toast } from 'react-toastify';
 import React, { useState,useContext,useEffect } from 'react';
 import { useDispatch,useSelector } from 'react-redux';
 import { createRooms } from  '@/app/store/roomsSlice' // Update with the correct path
@@ -30,18 +31,17 @@ const CreatGroups: React.FC<CreateGroupsProps> = ({ setNewRooms }) => {
 
   const handleCreateGroup = () => {
         if ((groupPrivacy === "Protected" &&  !groupPassword)) {
-          // Handle the case where both groupName and groupPassword are required for Protected groups
-          setError("Password are required for a Protected group.");
+          toast.error("Password are required for a Protected group.")
           return;
         }
         if(!groupName)
         {
-            setError("Group Name  are required.");
+          toast.error("Group Name  are required.");
             return;
         }
         if(!groupPrivacy)
         {
-            setError("Group Privacy are required.");
+          toast.error("Group Privacy are required.");
             return;
         }
         
@@ -54,12 +54,20 @@ const CreatGroups: React.FC<CreateGroupsProps> = ({ setNewRooms }) => {
           };
       
           dispatch(createRooms(newGroupData)).then(response => {
-           setNewRooms(false)
+            if(response.error)
+            {
+              console.log(response)
+              toast.error(response.payload)
+            }
+            else
+            {
+              toast.success("asdsadsadas")
+              setNewRooms(false)
+            }
           }).catch(error => {
-            console.error('Error creating room:', error);
+            toast.success(error)
           });       
   };
-
     return (
         <div className="p-2 pt-4  h-[calc(100%-150px)]  overflow-auto no-scrollbar ">
             {errorin && <p  className=" bg-[#EA7F87] rounded-lg p-[10px]  w-full text-center">{errorin}</p>}

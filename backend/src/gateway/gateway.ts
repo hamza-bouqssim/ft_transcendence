@@ -143,9 +143,9 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
             })
         }
         @OnEvent("order.updateMember")
-        async onNotificationupdatemember(RoomId:RoomId) {
+        async onNotificationupdatemember(RoomId:string,id:string,types:string) {
            const member = await this.prisma.chatRoom.findUnique({
-               where: { id: RoomId.id },
+               where: { id: RoomId },
                include:{
                  members:{
                    include:{
@@ -155,7 +155,7 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
                }
            })
            member?.members.map((member) => {
-                this.server.to(member.user_id).emit('updateMember', {roomId:RoomId.id});         
+                this.server.to(member.user_id).emit('updateMember', {roomId:RoomId,idUserleave:id,types:types});         
            })
        }
         @OnEvent("order.delete")

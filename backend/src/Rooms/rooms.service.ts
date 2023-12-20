@@ -123,6 +123,7 @@ export class RoomsService {
 
   async updateRooms(data:UpdateChatRoom,id:string)
   {
+    console.log(id)
     const existingChatRoom = await this.prisma.chatRoom.findUnique({
       where: { id: data.id },
       include: {
@@ -142,13 +143,23 @@ export class RoomsService {
         },
       },
     });
-    
+    const ChatRoomName = await this.prisma.chatRoom.findUnique({
+      where: { name: data.name },
+    });
+    console.log(existingChatRoom)
+
+    if(ChatRoomName.name === data.name)
+    {
+      console.log("yes")
+      throw new HttpException(`Room with name ${data.name} already exists`, HttpStatus.BAD_REQUEST);
+    }
+
     if (!existingChatRoom) {
-      throw new Error(`Chat room with ID ${data.id} not found.`);
+      throw new HttpException(`Chat room with ID ${data.id} not found.`, HttpStatus.BAD_REQUEST);
     }
 
     if (!existingChatRoom.members.length) {
-      throw new Error(`User  is not an admin for the chat room.`);
+      throw new HttpException(`User  is not an admin for the chat room.`, HttpStatus.BAD_REQUEST);
     }
     let hashedPassword;
     if(data.Privacy ==='Protected' && data.password)
@@ -186,64 +197,6 @@ export class RoomsService {
 
   }
 
-
-  // async deleteRooms(deleteChatRoom:DeleteChatRoom,id:string)
-  // {
-  //   const chatRoom = await this.prisma.chatRoom.findUnique({
-  //     where: { id: deleteChatRoom.id },
-  //     include: {
-  //       members: {
-  //         where: {
-  //           user_id: id,
-  //           Status: true,
-  //         },
-  //       },
-  //     },
-  //   });
-  //   if (!chatRoom) {
-  //     throw new Error(`Chat room with ID ${deleteChatRoom.id} not found.`);
-  //   }
-
-  //   if (!chatRoom.members.length) {
-  //     throw new Error(`User  is not an admin for the chat room.`);
-  //   }
-  //   const ChatRoom = await this.prisma.chatRoom.findUnique({
-  //     where: { id: deleteChatRoom.id },
-  //     include:{
-  //       members:{
-  //         include:{
-  //           user:true
-  //         }
-  //       }
-  //     }
-  //   });
-
-  //   await this.prisma.member.deleteMany({
-  //     where: { chatRoomId: deleteChatRoom.id },
-  //   });
-  //   await this.prisma.messageRome.deleteMany({
-  //     where: { chatRoomId: deleteChatRoom.id },
-  //   });
-  //   const deletedChatRoom = await this.prisma.chatRoom.delete({
-  //     where: { id: deleteChatRoom.id },
-  //   });
-
-  //   return ChatRoom;
-  // }
-
-
-  //member mangment 
-
-  // async isOwner(id: string, roomId: RoomId): Promise<boolean> {
-  //   const member = await this.prisma.member.findFirst({
-  //     where: {
-  //       user_id:id,
-  //       chatRoomId: roomId.id,
-  //       owner: true,
-  //     },
-  //   });
-  //   return !!member;
-  // }
 
   
   
@@ -521,7 +474,7 @@ export class RoomsService {
         where: {
           chatRoomId: roomId.id,
           user_id: { not: user.id },
-          Status: { in: ["Admin", "Member"] },
+          Status: { in: ["Admin", "Member","Ban","Mut"] },
         },
       });
   
@@ -536,12 +489,14 @@ export class RoomsService {
         });
       }
     }
-  
-    await this.prisma.member.delete({
-      where: {
-        id: user.id,
-      },
-    });
+    if(user?.Status !== 'Ban')
+    {
+        await this.prisma.member.delete({
+          where: {
+            id: user.id,
+          },
+        });
+    }
   
     const remainingMembers = await this.prisma.member.count({
       where: {

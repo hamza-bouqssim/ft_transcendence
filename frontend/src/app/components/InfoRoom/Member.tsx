@@ -31,12 +31,19 @@ export const Member = () => {
 
   return (
     <div>
-      {members && members.map((member) => (
-        (member.Status === 'Member' || member.Status === 'Mut') ? (
-          <ListUser key={member.id} member={member} />
-        ) : null
-      ))}
-      {(!members || members.length === 0) && <div>Not found</div>}
+      {members && members.length > 0 ? (
+        members.map((member) => (
+          (member.Status === 'Member' || member.Status === 'Mut'  ) ? (
+            <ListUser key={member.id} member={member} />
+          ) : null
+        ))
+      ) : (
+        <div>Not found</div>
+      )}
+      
+      {members && !members.some(member => member.Status === 'Member') && (
+        <div className="text-[14px] mt-3 text-center text-gray-400 ">No one is in 'Member'</div>
+      )}
     </div>
   );
 }

@@ -15,8 +15,13 @@ import { useContext } from "react";
 import {socketContext } from "@/app/utils/context/socketContext";
 import { SendRequestForm } from "../forms/SendRequestForm"
 import { FaCheck } from "react-icons/fa"
+import { FiSearch } from "react-icons/fi";
+import { IoChatbubbleOutline } from "react-icons/io5";
+import { SerachGroup } from "../SeachGroup/SerachGroup"
+
 const CoversationSideBar = () => {
 	const [newRooms , setNewRooms]  = useState<boolean>(false)
+	const [search,setSearch] = useState<boolean>(false)
 	const router = useRouter();
 	const pathname = usePathname()
  	const [selectUsers, setSelectUsers] = useState<string>("online");     
@@ -43,38 +48,41 @@ const CoversationSideBar = () => {
 				</button>
 			</div>
 			<hr className="bg-[#DFDFDF] w-1/2 mx-auto mt-5"/>
-			{!newRooms && <ConversationSearch  ></ConversationSearch>}
 
-			{newRooms && pathname.includes('chat')  && <div className="flex items-center rounded-full justify-between w-3/ mb-4  mx-auto  bg-[#423d3d]">
+
+
+
+			{newRooms && pathname.includes('chat')  && <div className="flex items-center overflow-x-auto  no-scrollbar   rounded-full justify-between w-3/ mb-4  mx-auto  bg-[#423d3d]">
  				
  				<button 
  					onClick={()=>{setSelectUsers("online")}}
- 					className={`${(selectUsers ==='online') ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-1/2`}>Online
+ 					className={`${(selectUsers ==='online') ? 'bg-[#5B8CD3]' : ''} p-4 rounded-fullmohamed
+Ownermohamed
+Owner`}>Online
  				</button>
  				<button
- 					onClick={()=>{setSelectUsers("allFriends")}} className={`${(selectUsers ==='allFriends') ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-1/2`}>Friends
+ 					onClick={()=>{setSelectUsers("allFriends")}} className={`${(selectUsers ==='allFriends') ? 'bg-[#5B8CD3]' : ''} p-4 rounded-fullmohamed
+Ownermohamed
+Owner`}>Friends
  				</button>
  				<button
- 					onClick={()=>{setSelectUsers("EnAttent")}} className={`${(selectUsers ==='EnAttent') ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-1/2`}>Pending
+ 					onClick={()=>{setSelectUsers("EnAttent")}} className={`${(selectUsers ==='EnAttent') ? 'bg-[#5B8CD3]' : ''} p-4 rounded-fullmohamed
+Ownermohamed
+Owner`}>Pending
  				</button>
  				<button
- 					onClick={()=>{setSelectUsers("Bloques")}} className={`${(selectUsers ==='Bloques') ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-1/2`}>Bloques
+ 					onClick={()=>{setSelectUsers("Bloques")}} className={`${(selectUsers ==='Bloques') ? 'bg-[#5B8CD3]' : ''} p-4 rounded-fullmohamed
+Ownermohamed
+Owner`}>Bloques
  				</button>
 				 <button
- 					onClick={()=>{setSelectUsers("Add")}} className={`${(selectUsers ==='Add') ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-1/2`}> Add
+ 					onClick={()=>{setSelectUsers("Add")}} className={`${(selectUsers ==='Add') ? 'bg-[#5B8CD3]' : ''} p-4 rounded-fullmohamed
+Ownermohamed
+Owner`}> Add
  				</button>
  			</div>}
 			
 			{newRooms &&  ((pathname.includes('chat')  && selectUsers === 'online')  ? <OnlineFriends/> :  (pathname.includes('chat') && selectUsers === 'allFriends') ? <ListFriends/> : ( pathname.includes('chat') && selectUsers === 'EnAttent') ? <SendRequest/> :( pathname.includes('chat') && selectUsers === 'Bloques') ? <FriendsBloque/> : ( pathname.includes('chat') && selectUsers === 'Add') ? <SendRequestForm/> : <></> )}
-
-			{!newRooms 
-				&&  pathname.includes('chat') 
-				&& <ChatComponnent/>
-			}
-			{!newRooms 
-				&&  pathname.includes('groups') 
-				&& <GroupsManagement/>
-			}
 			{newRooms 
 				&& (pathname.includes('chat')
 				? <div className="text-black">
@@ -86,9 +94,30 @@ const CoversationSideBar = () => {
 				</div> 
 				: <CreatGroups setNewRooms={setNewRooms} ></CreatGroups> )
 			}
-			{!newRooms  ?
-				<button onClick={()=>{setNewRooms(true)}} className="absolute right-5 p-4 bottom-20 md:bottom-4 bg-[#5B8CD3] rounded-full "><IoMdAdd />
-				</button>
+
+
+
+
+			{!newRooms 
+				&&  pathname.includes('chat') 
+				&& <ChatComponnent/>
+			}
+
+			{!newRooms 
+				&& ( pathname.includes('groups') && search  ? <SerachGroup/> : <GroupsManagement/>  )   
+			}
+
+			{!newRooms  ? 
+				<div className="absolute right-5  bottom-5  md:bottom-4  flex flex-col">
+					{ search ?
+						<button onClick={()=>{setSearch(false)}} className="p-4 mb-2 bg-[#5B8CD3] rounded-full "><IoChatbubbleOutline  />
+						</button> :
+						<button onClick={()=>{setSearch(true)}} className="p-4 mb-2 bg-[#5B8CD3] rounded-full "><FiSearch />
+						</button> 
+					}
+					<button onClick={()=>{setNewRooms(true)}} className="p-4 bg-[#5B8CD3] rounded-full "><IoMdAdd />
+					</button>
+				</div>
 				: 			
 				null
 			

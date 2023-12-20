@@ -65,9 +65,6 @@ const MessageInputFieldRoom: FC<props> = ({setMessage, Message}) => {
         sendMessage();   
       }
     }
-  
-
-
 
     return (
       <>

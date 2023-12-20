@@ -39,17 +39,13 @@ const UpdateComponent = () => {
   }, [channel]);
 
 const handleUpdate = () => {
-
-  dispatch(updateRooms(olddata)).then(response => {
-    updateChannel(response.meta.arg)
-  }).catch(error => {
-    console.error('Error creating room:', error);
-  });       
+  dispatch(updateRooms(olddata))
 };
 
 
   return (
     <div className=" h-[calc(100%-90px)] mt-5 overflow-auto no-scrollbar  relative">
+      {error && <div>{error}</div>}
         <div className="flex items-center justify-center mt-7 ">
           <div className="bg-[#F2F3FD] p-4 rounded-full  w-auto mx-auto flex items-center justify-center">
             <Image className="bg-cover w-20 h-20  rounded-full" src={olddata?.picture} alt="" height={30} width={30} />

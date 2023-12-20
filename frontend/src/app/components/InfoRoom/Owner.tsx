@@ -28,7 +28,7 @@ export const Owner = () => {
   }
 
   return (
-    <div>
+    <div >
       {members && members.map((member) => (
         (member.Status === 'Owner') ? (
           <ListUser key={member.id} member={member} />

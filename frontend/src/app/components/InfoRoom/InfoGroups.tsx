@@ -1,5 +1,5 @@
 "use client"
-import React ,{useContext,useState} from 'react'
+import React ,{useContext,useState,useRef,useEffect} from 'react'
 import {MdEdit} from 'react-icons/md'
 import { socketContext } from '@/app/utils/context/socketContext'
 import { kick } from './kick'
@@ -19,6 +19,7 @@ import Button from '../Button/Button'
 import { quitMember } from '@/app/store/memberSlice'
 import { getAllRooms } from '@/app/store/roomsSlice'
 import { Owner } from './Owner'
+import { Admin } from './Admin'
 
 
 export const InfoGroups = () => {
@@ -35,10 +36,31 @@ export const InfoGroups = () => {
       dispatch(getAllRooms())
     })
   }
+  
+  const menuRef = useRef(null);
+  
+  const handleDocumentClick = (event) => {
+    if (menuRef.current && !menuRef.current.contains(event.target)) {
+      setValide(null);
+    }
+
+  };
+
+  useEffect(() => {
+      if (valide) {
+          document.addEventListener('click', handleDocumentClick);
+      } else {
+          document.removeEventListener('click', handleDocumentClick);
+      }
+
+      return () => {
+          document.removeEventListener('click', handleDocumentClick);
+      };
+  }, [valide,]);
 
   return (
     <>
-      <div className="p-1  h-full">
+      <div className="p-1  h-full  ">
           <div className=" p-2 h-full  relative overflow-auto  rounded-xl  text-black  bg-[#E0E3FF] no-scrollbar">
             <div className="">
               <p>Joined Pong Since</p>
@@ -51,10 +73,10 @@ export const InfoGroups = () => {
                     <Owner></Owner>
                   </AccordionContent>
                 </AccordionItem>
-                <AccordionItem value="item-4">
+                <AccordionItem  value="item-4">
                   <AccordionTrigger>Admin</AccordionTrigger>
                   <AccordionContent>
-                    <Ban></Ban>
+                    <Admin></Admin>
                   </AccordionContent>
                 </AccordionItem>  
                 <AccordionItem value="item-1">
@@ -82,8 +104,8 @@ export const InfoGroups = () => {
             }
               </Accordion>
               
-            <div className=" absolute  mx-auto left-0 right-0 bottom-0">
-              {
+            <div className=" absolute z-0 mx-auto left-0 right-0 bottom-0">
+              {  members?.some(member => member.Status !== "Ban" && member.user_id === Userdata.id) &&
                 <button onClick={()=>{setValide(true)}}  className=" flex items-center justify-center rounded-full py-2 px-4 bg-[--pink-color] hover:drop-shadow-md mx-auto mb-3 text-white  ">
                   <h1>Quitte Rome</h1> 
                     <HiOutlineLogout size={26}  className="ml-2"></HiOutlineLogout>
@@ -94,10 +116,10 @@ export const InfoGroups = () => {
       </div>
       {valide &&  
       <>
-        <div className="absolute left-0 right-0 bottom-0 top-0 bg-[#2e2f54d9]">
+        <div className="fixed left-0 right-0 bottom-0 top-0 bg-[#2e2f54d9]">
 
         </div>
-        <div className="absolute left-0 right-0 bottom-0 p-5  z-50 drop-shadow-md top-0 bg-[#ffff] w-[500px] rounded-2xl h-[300px] m-auto">
+        <div ref={menuRef} className="fixed left-0 right-0 bottom-0 p-5  z-50 drop-shadow-md top-0 bg-[#ffff] w-[500px] rounded-2xl h-[300px] m-auto">
           <div className="relative h-full ">
             <p className="text-[20px] pt-5 pl-5 text-black">Quitter le groupe  {channel.name}</p>
             <p className="mt-2 text-black  pl-5" > Seulement les admins du groupe sauront que vous avez quitté le groupe.</p>

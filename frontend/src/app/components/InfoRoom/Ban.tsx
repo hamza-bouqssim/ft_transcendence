@@ -30,13 +30,17 @@ export const Ban = () => {
   return (
     <div>
       {members && members.length > 0 ? (
-        members
-          .filter((member) => member.Status === 'Member' || member.Status === 'Mut')
-          .map((filteredMember) => (
-            <ListUser key={filteredMember.id} member={filteredMember} />
-          ))
+        members.map((member) => (
+          (member.Status === 'Ban') ? (
+            <ListUser key={member.id} member={member} />
+          ) : null
+        ))
       ) : (
         <div>Not found</div>
+      )}
+      
+      {members && !members.some(member => member.Status === 'Ban') && (
+        <div className="text-[14px] mt-3 text-center text-gray-400 ">No one is in 'Ban'</div>
       )}
     </div>
   );

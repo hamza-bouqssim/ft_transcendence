@@ -20,7 +20,7 @@ const NotificationComponent = () => {
       }, [dispatch]);
 
       return (
-        <div className='absolute  rounded-2xl p-3 top-15 right-5 z-50 bg-[#fff] w-[500px] h-[500px] overflow-auto no-scrollbar'>
+        <div className='absolute  rounded-2xl p-3 top-15 right-5 z-50 bg-[#fff] w-[400px] h-[400px] overflow-auto no-scrollbar'>
             <div className='  justify-between  py-1 bg-white     items-center gap-1 my-3'>
                 <h1 className='text-black text-2xl pl-2 pb-3'>Notification</h1>
                 {notification.map(function(elem: NotificationTypes) {

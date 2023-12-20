@@ -123,7 +123,7 @@ const TopRightBar = (props: Change) => {
 		</div>
 			{
 			notfication && 
-				<div className=" opacity-100 backdrop-blur-md absolute z-10 left-0 right-0 bottom-0  top-0">
+				<div className=" opacity-100 bg-[#2e2f54d9] absolute z-10 left-0 right-0 bottom-0  top-0">
 
 					
 				</div>

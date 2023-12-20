@@ -9,6 +9,7 @@ export const InfoRoom = () => {
   return (
     <div  className="bg-[#F2F3FD] w-full h-full rounded-2xl ">
         {pathname.includes("groups") ? <InfoGroups/> : <InfoChat/> }
+        
     </div>
   )
 }

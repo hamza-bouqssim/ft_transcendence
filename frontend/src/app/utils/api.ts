@@ -168,3 +168,30 @@ export const quitRoom =(id:string) =>
 }
 
 
+export const makeAdmin =(id:string ,userId:string) =>
+{
+  const response = API.post("/rooms/makeAdmin",{id,userId})
+  return response;
+}
+export const Member =(id:string ,userId:string) =>
+{
+  const response = API.post("/rooms/Member",{id,userId})
+  return response;
+}
+export const kickMember =(id:string ,userId:string) =>
+{
+  const response = API.post("/rooms/kickMember",{id,userId})
+  return response;
+}
+export const mutMember =(id:string ,userId:string) =>
+{
+  const response = API.post("/rooms/mutMember",{id,userId})
+  return response;
+}
+export const banMember =(id:string ,userId:string) =>
+{
+  const response = API.post("/rooms/banMember",{id,userId})
+  return response;
+}
+
+
