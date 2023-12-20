@@ -141,14 +141,6 @@ export const firstTime = async () => {
     return res;
 }
 
-
-// export const uploadToCloud = async () => {
-//     const formData = new FormData();
-    
-//     const res = API.post(`https://api.cloudinary.com/v1_1/dnbhh3qxj/image/upload`, formData);
-//     return res;
-// }
-
 export const getConversationMessageRoom = (id:string) =>{
   const response = API.post("/rooms/getConversation",{id})
   return response;
@@ -177,7 +169,12 @@ export const getRanking = () =>{
 }
 
 export const deleteAccount = () => {
-  const responce = API.delete("/user/delete-account");
-  return responce;
+  const response = API.delete("/user/delete-account");
+  return response;
+}
+
+export const getUserInfos = (id:string) => {
+  const response = API.post("/user/get_user", {id_user:id});
+  return response;
 }
 

@@ -1,16 +1,7 @@
-/* eslint-disable prettier/prettier */
-import { Body, Controller, Get, Param,  Post, Delete, Req,  Res,  UnauthorizedException, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Param,  Post, Delete, Req,  Res,  UnauthorizedException, UploadedFile, UseGuards, UseInterceptors, Query} from '@nestjs/common';
 import { UserService } from './user.service';
-// import { JwtService } from '@nestjs/jwt';
-// import { PrismaService } from 'prisma/prisma.service';
-// import { whichWithAuthenticated } from './utils/auth-utils';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { v4 as uuidv4 } from 'uuid';
-import * as path from 'path';
 import { AuthGuard } from '@nestjs/passport';
 import { PrismaService } from 'prisma/prisma.service';
-import { Request } from 'express';
 @Controller('user')
 export class UserController {
 
@@ -48,7 +39,6 @@ export class UserController {
         const updated = await this.userService.changeDisplayedName(user.email, request.newDisplayName);
         return res.status(200).json({ success: true, message: "Updated Successfully"});
       }catch(error){
-        // throw new Error('Failed to update the displayed name');
         return res.send({ success: false, message: error.message || 'An unexpected error occurred' });
 
       }
@@ -66,42 +56,6 @@ export class UserController {
       }
     }
 
-
-    // @Post('changeAvatar')
-    // @UseGuards(AuthGuard('jwt'))
-    // @UseInterceptors(FileInterceptor('file', {
-    //   storage: diskStorage({
-    //     destination: 'src/uploads',
-    //     filename: (req, file, callback) => {
-    //       const filename: string = path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
-    //       const extension: string = path.parse(file.originalname).ext;
-    //       callback(null, `${filename}${extension}`);
-    //     },
-    //   }),
-    //   fileFilter: (req, file, _callback) => {
-    //     if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
-    //       _callback(null, true);//accept that type
-    //     }
-    //     else {
-    //       _callback(new UnauthorizedException('Only JPEG and PNG files are allowed'), false); // refuse somthing else like .pdf ...etc
-    //     }
-    //   },
-    //   limits: {
-    //     fileSize: 1024 * 1024, // still don't know why this don't work !!!!!!!!! figure it out !
-    //   },
-    // }))
-    // async changeAvatar(@Req() req, @UploadedFile() file: Express.Multer.File)
-    // {
-    //   try {
-    //    const user = req.user
-    //     const imagePath = file.path;
-    //     const updatedAvatar = this.userService._changeAvatar(user.email, imagePath);
-    //     return updatedAvatar;
-    //   } catch (error) {
-    //     throw new Error('Failed to update the Avatar');
-    //   }
-    // }
-    
     @Post('changePhoto')
     @UseGuards(AuthGuard('jwt'))
     async changePhoto(@Req() req, @Res() res, @Body() request: {avatar: string})
@@ -192,10 +146,9 @@ export class UserController {
 
     @Post('get_user')
     @UseGuards(AuthGuard('jwt'))
-    async getUserId(@Body() request: {id_user : string}){
+    async getUserId(@Body() request: {id_user : string}, @Res() res){
       const user =  await this.userService.userInfo(request.id_user);
-      return user;
-
+      res.status(200).json(user);
     }
 
     @Get('notification')

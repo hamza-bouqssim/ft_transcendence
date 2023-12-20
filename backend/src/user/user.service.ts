@@ -283,19 +283,21 @@ export class UserService {
         return processedFriends;
       }
 
-      async userInfo(user_id : string){
-
+    async userInfo(user_id: string) {
+      
         const user = await this.prisma.user.findUnique({
-            where: { id: user_id},
-            
-            
-          });
-          if (!user) {
-            throw new NotFoundException('User not found');
-          }
-          return user;
-
+          where: { id: user_id },
+        });
+      
+        if (!user) {
+          throw new NotFoundException('User not found');
+        }
+      
+        return user;
       }
+      
+      
+
       // create notification
 
       async createNotification(userSender: User, userRecipient: User, message: string) {

@@ -19,7 +19,6 @@ import { socketContext } from "../utils/context/socketContext";
 const Dashboard = () => {
 
 	const {Userdata} = useContext(socketContext);
-	console.log("usere daattaa", Userdata?.id);
 
 	
 	const [results, setResults] = useState({});
@@ -128,12 +127,12 @@ const Dashboard = () => {
 							<div className="achievements">
 								<h1>Achievements</h1>
 								<div className="my-achv">
-									<div className="my"></div>
-									<div className="my"></div>
-									<div className="my"></div>
-									<div className="my"></div>
-									<div className="my"></div>
-									<div className="my"></div>
+								<div className="my"><Image className={`my ease-in duration-100 hover:scale-105 ${results.win < 0 ? 'grayscale blur-[3px]':'grayscale-0' }` } src="/assets/first.jpg" width="200" height="200"/></div>
+								<div className="my"><Image className={`my ease-in duration-100 hover:scale-105 ${results.win < 2 ? 'grayscale blur-[3px]':'grayscale-0' }` } src="/assets/second.jpg" width="200" height="200"/></div>
+								<div className="my"><Image className={`my ease-in duration-100 hover:scale-105 ${results.win < 4 ? 'grayscale blur-[3px]':'grayscale-0' }`} src="/assets/third.jpg" width="200" height="200"/></div>
+								<div className="my"><Image className={`my ease-in duration-100 hover:scale-105 ${results.win < 6 ? 'grayscale blur-[3px]':'grayscale-0' }` } src="/assets/fourth.jpg" width="200" height="200"/></div>
+								<div className="my"><Image className={`my ease-in duration-100 hover:scale-105 ${results.win < 8 ? 'grayscale blur-[3px]':'grayscale-0' }` } src="/assets/fifth.jpg" width="200" height="200"/></div>
+								<div className="my"><Image className={`my ease-in duration-100 hover:scale-105 ${results.win < 12 ? 'grayscale blur-[3px]':'grayscale-0' }` } src="/assets/sixth.jpg" width="200" height="200"/></div>
 									
 								</div>
 							</div>

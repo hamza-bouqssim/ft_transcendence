@@ -5,9 +5,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import RankedFriends from './RankedFriends';
 import Image from 'next/image';
 import { socketContext } from '../utils/context/socketContext';
-import { getRanking } from '../utils/api';
+import { getRanking, getUserInfos } from '../utils/api';
 
-const RankingFriendsSwitch = () => {
+const RankingFriendsSwitch = ({userId}) => {
     const [showRank, setShowRank] = useState(false);
     const [showFriends, setShowFriends] = useState(false);
     const [showSendReqCompo, setShowSendReqCompo] = useState(false);
@@ -52,6 +52,24 @@ const RankingFriendsSwitch = () => {
     const [players, setPlayers] = useState([]);
 
     const {Userdata} = useContext(socketContext);
+    const [userinfo, setUserInfo] = useState("");
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        if (userId) {
+          const response = await getUserInfos(userId);
+          console.log("BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA======> ",response);
+          setUserInfo(response.data);
+        }
+      } catch (error) {
+        console.log('Error fetching user information:', error);
+      }
+    };
+
+    fetchUserInfo();
+  }, [userId]);
+
     useEffect(() => {
       const fetchGameStates = async () => {
         try {
@@ -75,7 +93,7 @@ const RankingFriendsSwitch = () => {
 
       </div>
 
-      {
+      {/* {
         showuser && (
           <div className='pt-[10px]  flex justify-center items-center flex-col relative w-full h-[75%] rounded-[50px] text-black animate-bounce'>
             {Userdata?.avatar_url && <Image src={Userdata?.avatar_url}  
@@ -88,7 +106,46 @@ const RankingFriendsSwitch = () => {
             <h1>{Userdata?.username}</h1>
             <h5>@{Userdata?.display_name}</h5>
           </div>
-        )}
+        )} */}
+
+      {showuser && (
+        <div className='pt-[10px]  flex justify-center items-center flex-col relative w-full h-[75%] rounded-[50px] text-black animate-bounce'>
+          {userId ? (
+            <>
+              {userinfo.avatar_url && (
+                <Image
+                  src={userinfo.avatar_url}
+                  className='w-[130px] h-[130px] shadow-lg rounded-full'
+                  alt="Description of the image"
+                  width="250"
+                  height="250"
+                  priority={true}
+                />
+              )}
+              <h1>{userinfo.username}</h1>
+              <h5>@{userinfo.display_name}</h5>
+            </>
+          ) : (
+            // Render user information from Userdata
+            <>
+              {Userdata?.avatar_url && (
+                <Image
+                  src={Userdata?.avatar_url}
+                  className='w-[130px] h-[130px] shadow-lg rounded-full'
+                  alt="Description of the image"
+                  width="250"
+                  height="250"
+                  priority={true}
+                />
+              )}
+              <h1>{Userdata?.username}</h1>
+              <h5>@{Userdata?.display_name}</h5>
+            </>
+          )}
+        </div>
+      )}
+
+        
 
 
       {showRank && (
