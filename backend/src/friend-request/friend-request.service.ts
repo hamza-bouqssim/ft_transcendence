@@ -16,7 +16,7 @@ export class FriendRequestService {
         }
 
     }
-    async sendRequest(friendDisplay_name: string, _Display_name:string){
+    async sendRequest( _Display_name:string, friendDisplay_name: string){
 
         const user = await this.prisma.user.findFirst({where: {display_name: _Display_name}});
         const _friendDisplay_name = await this.prisma.user.findFirst({where: {display_name: friendDisplay_name}});
@@ -26,6 +26,8 @@ export class FriendRequestService {
             throw new HttpException('User Not Found !', HttpStatus.BAD_REQUEST)
 
         }
+        console.log("display_name-->", _Display_name);
+        console.log("reci display_name-->", friendDisplay_name);
         if(friendDisplay_name === _Display_name)
         {
             throw new HttpException('You cant send request to your self!', HttpStatus.BAD_REQUEST)
@@ -179,7 +181,7 @@ export class FriendRequestService {
 
     }
     
-    async acceptRequestToPlay(requestId: string, userId: string){
+    async acceptRequestToPlay(requestId: string, user: User){
         const req_play = await this.prisma.requestPlay.findFirst({
             where: {
                 id : requestId
@@ -192,11 +194,20 @@ export class FriendRequestService {
         if(!req_play)
             throw new HttpException("The request doesn't exist!", HttpStatus.BAD_REQUEST)
 
-        if(req_play.senderId != userId)
+        if(req_play.senderId != user.id)
             throw new HttpException("You are not the person who send this request", HttpStatus.BAD_REQUEST)
 
         
         await this.prisma.friend.update({where: {id: requestId}, data: {status: 'ACCEPTED'}});
+        await this.prisma.notificationGlobal.updateMany({
+            where: {
+                recipient_id: user.id,
+            },
+            data: {
+                vue: true,
+            },
+        });
+        
         return {message: 'Accept request to play succesfully'};
 
 
@@ -223,10 +234,20 @@ export class FriendRequestService {
        
 
         await this.prisma.friend.update({where: {id: requestId}, data: {status: 'ACCEPTED'}});
+        await this.prisma.notificationGlobal.updateMany({
+            where: {
+                recipient_id: user.id,
+            },
+            data: {
+                vue: true,
+            },
+        });
         
         this.eventEmitter.emit('requestAccept.created', {
            req
           });
+
+
         
         return {message: 'Friend request accepted'};
     }
@@ -244,6 +265,15 @@ export class FriendRequestService {
         }
     
         await this.prisma.friend.delete({ where: { id: requestId } });
+        await this.prisma.notificationGlobal.updateMany({
+            where: {
+                recipient_id: user.id,
+            },
+            data: {
+                vue: true,
+            },
+        });
+        
 
         this.eventEmitter.emit('requestRefuse.created', {
             RefuseruserId: req.friend_id,
@@ -264,6 +294,15 @@ export class FriendRequestService {
 
         }
         await this.prisma.requestPlay.delete({ where: { id: requestId } });
+        await this.prisma.notificationGlobal.updateMany({
+            where: {
+                recipient_id: user.id,
+            },
+            data: {
+                vue: true,
+            },
+        });
+        
 
         this.eventEmitter.emit('requestRefuse.created', {
             RefuseruserId: req.senderId,
@@ -491,6 +530,7 @@ export class FriendRequestService {
         const unreadCount = await this.prisma.notificationGlobal.count({
             where: {
               recipient_id:user_id,
+              vue : false,
             },
           });
           return unreadCount

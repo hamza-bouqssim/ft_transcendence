@@ -124,6 +124,7 @@ export type NotificationTypes = {
     content : string;
     image_content : String;
     type: string;
+    requestId : string;
 
 }
 

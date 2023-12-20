@@ -115,14 +115,16 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
 
         @OnEvent("order.created")
          async onNotificationCreate(data:any) {
-             const owner = data.members.find((owner) => owner.Status === "Owner")
-            data.members.map((member) => {          
-            if(member.Status !== "Owner")
-            {
-                const message = `${owner.user.display_name } Join you to ${data.name}`;
-                this.server.to(member.user_id).emit('notification', message);
-                const type = "Join"
-                this.userService.createNotification( owner.user,member.user, message, type);            }
+             const userAdmin = data.members.find((userAdmin) => userAdmin.isAdmin)
+            data.members.map((member) => {
+                if(!member.isAdmin)
+                {
+                    const message = `${userAdmin.user.display_name } Join you to ${data.name}`;
+                    this.server.to(member.user_id).emit('notification', message);
+                    const type = "Join";
+                    const requestId = data.members.id;
+                    this.userService.createNotification( userAdmin.user,member.user, message, type, requestId);
+                }             
             })
         }
         @OnEvent("order.update")
@@ -169,7 +171,9 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
             const message = `${data.friendData.user.display_name} send you request to be friends`;
             this.server.emit('newFriendRequest', data);
             const type = "requestFriend";
-            this.userService.createNotification( data.friendData.user,data.friendData.friends, message, type);
+            const requestId = data.friendData.id;
+
+            this.userService.createNotification( data.friendData.user,data.friendData.friends, message, type, requestId);
 
             
         }
@@ -178,8 +182,10 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
           
             const message = `${data.requestToPlay.Sender.display_name} send you request to play`;
             const type = "requestPLay";
+            const requestId = data.requestToPlay.id;
+            console.log("requestId-->", requestId);
             this.server.to(data.requestToPlay.recipient.id).emit(`newRequestToPlay`,data);
-            this.userService.createNotification(data.requestToPlay.Sender, data.requestToPlay.recipient, message, type);
+            this.userService.createNotification(data.requestToPlay.Sender, data.requestToPlay.recipient, message, type, requestId);
 
         }
 
@@ -188,7 +194,8 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
             const message = `${data.req.friends.display_name} accept your request`;
             this.server.emit('AcceptNotification', data);
             const type = "AcceptRequest";
-            this.userService.createNotification( data.req.friends,data.req.user, message, type);
+            const requestId = data.req.id;
+            this.userService.createNotification( data.req.friends,data.req.user, message, type, requestId);
 
 
         }

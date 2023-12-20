@@ -70,10 +70,10 @@ const SendRequest  = () => {
       };
 
       const handleClickRefuseRequest = async (id : string) =>{
+        
         try{
           await dispatch(fetchREfuseFriendRquestThunk(id));
           ToastSuccess("You are refusing the request");
-
 
         }catch(error){
           ToastError(`Error refusing friend request, ${error}`);
