@@ -18,8 +18,6 @@ const RightBarUsers = (props: Change) => {
 
 	return (
 		<div >
-			
-
 				<FontAwesomeIcon icon={faChevronDown} className={`transform cursor-pointer text-black  }`}
 					onClick={props.onClick}
 				/>

@@ -19,7 +19,7 @@ export const InputFieldStyling = styled.input`
     font-family: 'Inter';
     font-size: 18px;
     width: 50rem;
-    padding: 10px;
+    padding: 4px;
     border-radius: 10px;
 
 `;
@@ -242,17 +242,28 @@ export const OflineStyling = styled.div`
     margin-left: -1rem;
 `;
 
+export const IngameStyling = styled.div`
+
+    background-color: blue;
+    border-radius: 50%;
+    width : 12px;
+    height : 12px;
+    margin-left: -1rem;
+`;
+
 export const ConversationSideBarItem = styled.div `
 
-
-    padding: 9px 2px;
+    background-color: white ;
+    /* padding: 9px; */
     display: flex;
     align-items: center;
     height: 100%;
     gap: 20px;
-    border-bottom: 1px solid #1e1b34;
+    margin: 10px 0;
+    /* border-bottom: 1px solid #1e1b34; */
     box-sizing: border-box;
 
+    
 `;
 
 export const ModalContentBodyStyle = styled.div `
@@ -410,21 +421,9 @@ export const MessagePannelHeaderStyle = styled.header `
 
 export const MessageContainerStyle = styled.div `
     box-sizing: border-box;
-    padding: 6px 0;
     display: flex;
     flex-direction: column-reverse;
-    overflow-y: scroll;
-    &::-webkit-scrollbar {
-        width: 8px;
-    }
-    &::-webkit-scrollbar-track {
-        background-color: #fff;
-    }
-    &::-webkit-scrollbar-thumb {
-        background-color: #fc7785;
-        width: 5px;
-        border-radius: 20px;
-    }
+   
 `;
 
 export const MessageInputFieldContainer = styled.div `

@@ -8,6 +8,6 @@ export class createMessageDto {
     content : string;
 
     @IsNotEmpty()
-    @IsNumber()
+    @IsString()
     participentsId : string;
 }

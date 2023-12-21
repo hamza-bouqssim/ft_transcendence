@@ -12,11 +12,16 @@ help:
 	@echo "  prune           - prune all"
 
 
-build:
+build: 
 	docker-compose build
 
+build-up: build
+	docker-compose up
+
 up:
-	docker-compose up 
+	docker-compose up
+stop:
+	docker-compose stop
 
 down:
 	docker-compose down
@@ -32,8 +37,9 @@ bash-postgres:
 
 remove-images:
 	docker-compose down --rmi all
+
 remove-volumes:
-	docker-compose down -v
+	docker compose down -v
 
 prune: down 
 	docker system prune -a  

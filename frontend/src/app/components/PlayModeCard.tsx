@@ -1,3 +1,4 @@
+"use client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRobot, faEarthAmericas } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
@@ -14,8 +15,8 @@ const PlayModeCard = ({ flag }: any) => {
 			<Link
 				href={
 					flag === "bot"
-						? "/dashboard/game/bot_game"
-						: "/dashboard/game/online_game"
+						? "/dashboard/game/bot-game/maps"
+						: "/dashboard/game/online-game/maps"
 				}
 				className="w-[80%] rounded-3xl bg-[--pink-color] py-3 text-center font-['Whitney_Bold'] text-sm duration-100 ease-in-out hover:bg-[--purple-color] min-[940px]:py-4 min-[940px]:text-xl"
 			>

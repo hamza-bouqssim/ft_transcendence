@@ -20,35 +20,41 @@ enum Result {
 }
 
 enum EventType {
-  BALL_HIT
-  SCORE
   UNPROCESSED
+  FINAL
 }
 
 model User {
   id String @id @default(uuid())
   username String 
+  status String @default("offline")
   email String @unique
   password String
   display_name String @unique
   avatar_url String
   two_factor_auth String
+  first_time Boolean @default(true)
   two_factor_secret_key String
-  rank String
+  tfa_enabled Boolean @default(false)
   friend Friend[] @relation("UserToFriend")
   friends Friend[] @relation("Friend")
   senderOfChatParticipents ChatParticipents[] @relation("sender")
   recipientOfChatParticipents ChatParticipents[] @relation("recipient")
+  senderNotif NotificationGlobal[] @relation("sender")
+  recipientNotif NotificationGlobal[] @relation("recipient")
+  senderPlay requestPlay[] @relation("sender_playing")
+  recipientPlay requestPlay[] @relation("recipient_playing")
+  senderNotifMessage NotificationMessage[] @relation("senderMessage")
   senderOfmessage Message[] @relation("senderMessage")
-  RecipientOfmessage Message[] @relation("recipientMessage")
-  notifications Notification[]
-  player1 Pong_match[] @relation("player1")
-  player2 Pong_match[] @relation("player2")
-  matchEvent match_events[] @relation("match_event")
+  blockUserOne    blockList[] @relation("userOne")
+  blockUserTwo    blockList[] @relation("userTwo")
   Member  Member[]
   blockingUsers       BlockUser[] @relation("blockingUsers")
   blockedByUsers      BlockUser[] @relation("blockedByUsers")
   messageRome  MessageRome[]
+  StateGame                   StateGame?
+  MatchHistory1               Match_History[]    @relation("playerOne")
+  MatchHistory2               Match_History[]    @relation("playerTow")
 
 }
 
@@ -74,59 +80,63 @@ model Friend {
 
 model ChatParticipents {
   id          String      @id @default(uuid())
-  sender      User     @relation("sender", fields: [senderId], references: [id])
   senderId    String
-  recipient   User     @relation("recipient", fields: [recipientId], references: [id])
   recipientId String
-  messages    Message[] @relation("participentsMessages")
-  lastMessage Message?   @relation("lastMessageSent", fields: [lastMessageId], references: [id])
+  vue         Boolean     @default(false)
+  unreadMessageCount Int  @default(0)
   lastMessageId String?
-  createdAt DateTime @default(now())
-
+  createdAt   DateTime    @default(now())
+  recipient   User        @relation("recipient", fields: [recipientId], references: [id])
+  messages    Message[]   @relation("participentsMessages")
+  lastMessage Message?    @relation("lastMessageSent", fields: [lastMessageId], references: [id])
+  sender      User        @relation("sender", fields: [senderId], references: [id])
 }
-
-
 
 model Message {
   id String @id @default(uuid())
+  vue Boolean  @default(false)
   content String?
-  sender User @relation("senderMessage", fields: [senderId], references: [id])
   senderId String
-  recipient User @relation("recipientMessage", fields: [recipientId], references: [id])
-  recipientId String
-  participents ChatParticipents @relation("participentsMessages", fields: [participentsId], references: [id])
   participentsId String
-  lastMessageFor ChatParticipents[] @relation("lastMessageSent")
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  lastMessageFor ChatParticipents[] @relation("lastMessageSent")
+  participents ChatParticipents @relation("participentsMessages", fields: [participentsId], references: [id])
+  sender User @relation("senderMessage", fields: [senderId], references: [id])
 }
 
-model Notification {
+
+
+
+model Session {
   id String @id @default(uuid())
-  user_id String
+  sid String @unique
+  data String
+  expiresAt DateTime
+}
+
+
+
+model NotificationGlobal {
+  id String @id @default(uuid())
+  Sender_id String
+  recipient_id String
+  requestId String
   content String
-  user User @relation(fields: [user_id], references: [id])
+  type String
+  vue Boolean @default(false)
+  created_at   DateTime        @default(now())
+  image_content String
+  Sender User @relation("sender",fields: [Sender_id], references: [id])
+  recipient User @relation("recipient",fields: [recipient_id], references: [id])
+
 }
 
-model match_events {
+model NotificationMessage{
   id String @id @default(uuid())
-  match_id String
-  player_id String
-  event_type EventType @default(UNPROCESSED)
-  timestamp DateTime
-  match Pong_match @relation("pong_match", fields: [match_id], references: [id])
-  user User @relation("match_event", fields: [player_id], references: [id])
-}
-
-model Pong_match {
-  id String @id @default(uuid())
-  player1_id String
-  player2_id String
-  created_at DateTime
-  updated_at DateTime
-  playerOne User @relation("player1", fields: [player1_id], references: [id])
-  playerTwo User @relation("player2", fields: [player2_id], references: [id])
-  matchEvents match_events[] @relation("pong_match")
+  roomId String
+  userId String
+  number Int @default(0)
+  UserId User @relation("senderMessage",fields: [userId], references: [id])
 }
 
 
@@ -141,13 +151,14 @@ model ChatRoom {
   updatedAt DateTime @updatedAt
   members   Member[]
   messageRome  MessageRome[]
+
 }
 
 model Member {
   id          String @id @default(uuid())
   user_id     String
   chatRoomId  String
-  isAdmin     Boolean
+  Status      String @default("Member") //Ban // Mut // Admin // owner
   user        User        @relation(fields: [user_id], references: [id])
   chatRoom    ChatRoom    @relation(fields: [chatRoomId], references: [id])
 }
@@ -162,11 +173,46 @@ model MessageRome{
   chatRoom    ChatRoom    @relation(fields: [chatRoomId], references: [id])
 
 }
-
-
-model Session {
+model requestPlay{
   id String @id @default(uuid())
-  sid String @unique
-  data String
-  expiresAt DateTime
+  senderId   String
+  recipientId String
+  Sender User @relation("sender_playing",fields: [senderId], references: [id])
+  recipient User @relation("recipient_playing",fields: [recipientId], references: [id])
+  createdAt   DateTime @default(now())
+  status Status @default(PENDING)  
 }
+
+model blockList{
+  id String @id @default(uuid())
+  userOneId String
+  userTwoId String
+  userOne User @relation("userOne",fields: [userOneId], references: [id])
+  userTwo User @relation("userTwo", fields: [userTwoId], references: [id])
+}
+
+model Match_History {
+  id         String   @id @default(uuid())
+  playerOne  String
+  playerTwo  String
+  resultOne  Int
+  resultTwo  Int
+  totalMatch Int    @default(0)
+  createdAt  DateTime @default(now())
+  playerone  User     @relation("playerOne", fields: [playerOne], references: [id])
+  playertwo  User     @relation("playerTow", fields: [playerTwo], references: [id])
+  duration   String   @default("00:00:00")
+}
+
+model StateGame {
+  id         String @id @default(uuid())
+  user_id    String @unique
+  win        Int    @default(0)
+  lose       Int    @default(0)
+  level      Float  @default(0.00)
+  rating     Int    @default(1200)
+  user       User   @relation(fields: [user_id], references: [id])
+}
+
+
+

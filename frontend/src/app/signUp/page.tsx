@@ -1,4 +1,4 @@
-	"use client";
+"use client";
 import PingPong from "../components/PingPong";
 import {
 	GithubSignInButton,
@@ -9,6 +9,7 @@ import Link from "next/link";
 import SignUpForm from "../components/SignUpForm";
 
 const SignUp = () => {
+	
 	return (
 		<PingPong>
 			<div className="custom-shape absolute transition-all duration-700 ease-in-out sm:left-[15%] md:bg-white md:px-8 md:py-8">

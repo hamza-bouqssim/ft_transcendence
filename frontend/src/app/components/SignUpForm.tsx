@@ -16,12 +16,35 @@ import SignInForm from "./SignInForm";
 import { createUserParams } from "../utils/types";
 import { postRegisterUser } from "../utils/api";
 import { useRouter } from "next/navigation";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const SignUpForm = forwardRef((_props: any, ref: any) => {
+	const ToastError = (message: any) => {
+		toast.error(message, {
+		  position: toast.POSITION.TOP_RIGHT,
+		  autoClose: 5000,
+		  hideProgressBar: false,
+		  closeOnClick: true,
+		  pauseOnHover: true,
+		  draggable: true,
+		});
+	  };
+	
+	  const ToastSuccess = (message: any) => {
+		toast.success(message, {
+		  position: toast.POSITION.TOP_RIGHT,
+		  autoClose: 5000,
+		  hideProgressBar: false,
+		  closeOnClick: true,
+		  pauseOnHover: true,
+		  draggable: true,
+		});
+	  };
 	const [show, setShow] = useState<boolean>(false),
 		faEyeRef = useRef<SVGSVGElement>(null),
 		faEyeSlashRef = useRef<SVGSVGElement>(null);
-
+		
 	type FormData = {
 		email: string;
 		password: string;
@@ -36,18 +59,28 @@ const SignUpForm = forwardRef((_props: any, ref: any) => {
 	const router = useRouter();
 
 	const onSubmit = async (data: createUserParams) => {
-		// console.log(data);
 		try {
 			await postRegisterUser(data);
-			alert(`Welcome ${data.username}`);
+			ToastSuccess(`Welcome ${data.username}`);
 			router.push("/signIn", { scroll: false });
-		} catch (err) {
-			// console.log(err);
+		} catch (err :  any) {
+			if (err.response) {
+			
+				const errorMessage = err.response.data.message;
+			  ToastError(`Failed to login: ${errorMessage}`);
+			  } else if (err.request) 
+			  {
+				ToastError(`No response from the server`);
+  
+			  } else {
+				ToastError(`Error in request setup`);
+			  }
 		}
 	};
 
 	return (
 		<div ref={ref} className="">
+			<ToastContainer />
 			<form
 				action=""
 				className="relative flex h-full w-full flex-col items-center justify-center gap-3 sm:gap-4"

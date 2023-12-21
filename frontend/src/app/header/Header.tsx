@@ -13,8 +13,31 @@ import { getAuthUser, getlogout } from "../utils/api";
 import { User } from "../utils/types";
 import { useRouter } from "next/navigation";
 import { deleteCookie } from "cookies-next";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Header = () => {
+	const ToastError = (message: any) => {
+		toast.error(message, {
+		  position: toast.POSITION.TOP_RIGHT,
+		  autoClose: 5000,
+		  hideProgressBar: false,
+		  closeOnClick: true,
+		  pauseOnHover: true,
+		  draggable: true,
+		});
+	  };
+	
+	  const ToastSuccess = (message: any) => {
+		toast.success(message, {
+		  position: toast.POSITION.TOP_RIGHT,
+		  autoClose: 5000,
+		  hideProgressBar: false,
+		  closeOnClick: true,
+		  pauseOnHover: true,
+		  draggable: true,
+		});
+	  };
 	const [ user, setUser] = useState<User | undefined>();
     const [loading, setLoading] = useState<boolean>(false);
     const controller = new AbortController();
@@ -23,7 +46,7 @@ const Header = () => {
             getAuthUser().then(({data}) => {
                 setUser(data);
                 setLoading(false)})
-            .catch((err)=> { setLoading(false);});
+            .catch((err)=> {console.log(err); setLoading(false);});
     },[])
 	const navRef = useRef<HTMLDivElement>(null),
 		barsIconRef = useRef<HTMLDivElement>(null),
@@ -54,13 +77,17 @@ const Header = () => {
 			deleteCookie('logged');
 			setUser(data);
 			router.push("/", { scroll: false });
+			ToastSuccess("Logout succeffuly");
+
 		} catch (err) {
-			alert("failed to logout");
+			ToastError("failed to logout");
+			console.log(err);
 		}
 	}
 
 	return (
 		<header className="px-[15%] py-[59px]">
+			    <ToastContainer />
 			<section className="flex items-center justify-between">
 				<div>
 					<Image

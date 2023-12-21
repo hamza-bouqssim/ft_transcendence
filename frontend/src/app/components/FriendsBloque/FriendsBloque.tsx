@@ -6,56 +6,60 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { MenuButton2 } from "../Buttons";
-import { fetchBlocksThunk, fetchDebloqueUserThunk } from "@/app/store/requestSlice";
-import { useDispatch } from "react-redux";
+import { fetchBlocksThunk, fetchDebloqueUserThunk } from "@/app/store/blockSlice";
+import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/app/store";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const FriendsBloque = () =>{
+  const ToastError = (message: any) => {
+		toast.error(message, {
+		  position: toast.POSITION.TOP_RIGHT,
+		  autoClose: 5000,
+		  hideProgressBar: false,
+		  closeOnClick: true,
+		  pauseOnHover: true,
+		  draggable: true,
+		});
+	  };
+	
+	  const ToastSuccess = (message: any) => {
+		toast.success(message, {
+		  position: toast.POSITION.TOP_RIGHT,
+		  autoClose: 5000,
+		  hideProgressBar: false,
+		  closeOnClick: true,
+		  pauseOnHover: true,
+		  draggable: true,
+		});
+	  };
+
     const [bloques, setBloques] = useState<BloquesTypes[]>([]);
+    const dispatch = useDispatch<AppDispatch>();
+    const { friendsBlock , status, error } = useSelector((state:any) => state.friendsBlock);
    
-
-
     useEffect(() => {
-          getBloques()
-            .then(({ data }) => {
-                console.log(data);
-              setBloques(data);
-            })
-            .catch((err) => console.log(err));
-        
-      }, []);
-      const dispatch = useDispatch<AppDispatch>();
-
-
-      useEffect (() => {
-        dispatch(fetchBlocksThunk())
-        .unwrap()
-        .then(({data}) => {
-          // console.log("data here-->",data);
-          setBloques(data);
-        }).catch((err)=>{
-          console.log(err);
-        }
-        );
-      },)
+      dispatch(fetchBlocksThunk())
+    }, [dispatch]);
+ 
 
       const handleDebloque = async (id: string) => {
-        console.log("id friend is -->", id);
       
         try {
           await dispatch(fetchDebloqueUserThunk(id));
-            alert("You have Deblocked this friend successfully");
+            ToastSuccess("You have Deblocked this friend successfully");
+
         } catch (error) {
-          console.error("Error blocking friend:", error);
-            alert("Failed to Deblock the friend. Please try again."); // Show an alert for error handling
+          ToastError("Failed to Deblock the friend. Please try again.");
+
         }
       };
 
       const handleFunction = (Bloques :  BloquesTypes) => {
             let ourBloques;
-            console.log("bloques");
-            ourBloques = bloques.display_name;
+            ourBloques = Bloques.display_name;
             return ourBloques;
 
       }
@@ -66,19 +70,19 @@ const FriendsBloque = () =>{
     };
     return (
         <Conversation>
-
+        <ToastContainer />
 				<ConversationSideBarContainer>
-					{bloques.map(function(elem){
+					{friendsBlock.map(function(elem : BloquesTypes){
 						return(
-							<ConversationSideBarItem key={elem.user.id}>
-              <Image src={elem.user.avatar_url} className="h-14 w-14 rounded-[50%] bg-black " alt="Description of the image" width={60}   height={60} />
+							<ConversationSideBarItem key={elem.id}>
+              <Image src={elem.avatar_url} className="h-14 w-14 rounded-[50%] bg-black " alt="Description of the image" width={60}   height={60} />
 
 							
 					 				<span  className="ConversationName">{handleFunction(elem)}</span>
 					 			
                  
 
-                  <FontAwesomeIcon icon={faUserMinus} onClick={()=>{handleDebloque(elem.user.id)}} className={`text-black  cursor-pointer text-xl duration-500 ease-in-out hover:text-[--pink-color] absolute right-5 p-4  rounded-full  `}/>      
+                  <FontAwesomeIcon icon={faUserMinus} onClick={()=>{handleDebloque(elem.id)}} className={`text-black  cursor-pointer text-xl duration-500 ease-in-out hover:text-[--pink-color] absolute right-5 p-4  rounded-full  `}/>      
                 
          
 							</ConversationSideBarItem>

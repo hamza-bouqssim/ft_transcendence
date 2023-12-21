@@ -1,26 +1,55 @@
 import { AppDispatch } from "@/app/store";
-import { createConversationThunk } from "@/app/store/conversationSlice";
+import { createConversationThunk, fetchConversationUserThunk } from "@/app/store/conversationSlice";
 import { getAllFriends } from "@/app/utils/api";
-import { Conversation, ConversationSideBarContainer, ConversationSideBarItem } from "@/app/utils/styles";
+import { Conversation, ConversationSideBarContainer, ConversationSideBarItem, IngameStyling, OflineStyling, OnlineStyling } from "@/app/utils/styles";
 import { CreateConversationParams, FriendsTypes } from "@/app/utils/types";
-
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useContext, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { MenuButton, MenuButton2 } from "../Buttons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-// import { faBars } from "@fortawesome/free-solid-svg-icons";
-import '@fortawesome/fontawesome-svg-core/styles.css';
 import { faChevronDown, faEllipsis} from "@fortawesome/free-solid-svg-icons";
 import RightBarUsers from "../RightBarUsers";
 import Image from "next/image";
-import { fetchBlockFriendThunk, fetchGetAllFriends } from "@/app/store/requestSlice";
+import { fetchBlockFriendThunk } from "@/app/store/blockSlice";
+import { fetchGetAllFriendsThunk, fetchRemoveFriendship } from "@/app/store/friendsSlice";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { socketContext } from "@/app/utils/context/socketContext";
+import { fetchMessagesThunk } from "@/app/store/messageSlice";
+import { fetchSendRequestPLay } from "@/app/store/requestSlice";
+import { fetchUsersThunk } from "@/app/store/usersSlice";
 
 
 const ListFriends = () => {
+  const ToastError = (message: any) => {
+		toast.error(message, {
+		  position: toast.POSITION.TOP_RIGHT,
+		  autoClose: 5000,
+		  hideProgressBar: false,
+		  closeOnClick: true,
+		  pauseOnHover: true,
+		  draggable: true,
+		});
+	  };
+	
+	  const ToastSuccess = (message: any) => {
+		toast.success(message, {
+		  position: toast.POSITION.TOP_RIGHT,
+		  autoClose: 5000,
+		  hideProgressBar: false,
+		  closeOnClick: true,
+		  pauseOnHover: true,
+		  draggable: true,
+		});
+	  };
 
 
     const [Friends, setFriends] = useState<FriendsTypes[]>([]);
+    const { updateChannel, channel } = useContext(socketContext);
+
+    const dispatch = useDispatch<AppDispatch>();
+    const [openMenuId, setOpenMenuId] = useState<string | null>(null);
     const [change, setChange] = useState<{
       sideBar: boolean;
       chatBox: boolean;
@@ -33,56 +62,129 @@ const ListFriends = () => {
 
 
   
-      useEffect (() => {
-        dispatch(fetchGetAllFriends())
-        .unwrap()
-        .then(({data}) => {
-          setFriends(data);
-        }).catch((err)=>{
-          console.log(err);
-        }
-        );
-      },)
+   
+   
+      const { friends, status, error } = useSelector((state:any) => state.friends);
+      const { users, Userstatus, Usererror } = useSelector((state:any) => state.users);
+
+      useEffect(() => {
+        dispatch(fetchGetAllFriendsThunk());
+        dispatch(fetchUsersThunk());
+
+      }, [dispatch]);
 
       const router = useRouter();
-    // console.log("friends here", Friends);
-      const handleFunction = (friends : FriendsTypes) =>{
+       const handleFunction = (friends : FriendsTypes) =>{
 
         let display_name ;
         display_name  = friends.display_name;
         return display_name;
 
       }
-      const dispatch = useDispatch<AppDispatch>();
-        const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+     
       const handleMenuClick = (friendId: string) => {
           setOpenMenuId(openMenuId === friendId ? null : friendId);
       };
 
       const handlleBloque = async (id: string) => {
-        console.log("id friend is -->", id);
       
         try {
-          await dispatch(fetchBlockFriendThunk(id));
-            alert("You have blocked this friend successfully");
-        } catch (error) {
-          console.error("Error blocking friend:", error);
-            alert("Failed to block the friend. Please try again."); // Show an alert for error handling
+          const res = await dispatch(fetchBlockFriendThunk(id));
+          if (res.payload && typeof res.payload === 'object') {
+          const responseData = res.payload as { data?: { response?: { message?: string } } };
+          const message = responseData.data?.response?.message;
+          if (message) {
+            ToastSuccess(message);
+    
+          }else {
+            const responseData = res.payload as {message?: string};
+            const message = responseData.message;
+            if(message)
+            ToastError(message);
+          }
         }
+      
+        } catch (error) {
+          
+          ToastError("Failed to block this friend. Please try again.");
+      
+        }
+
       };
       
      
     return (
-        <Conversation>
-
+        <div className="mt-[10px]">
+          <ToastContainer />
 				<ConversationSideBarContainer>
-					{Friends.map(function(elem){
+					{friends.map(function(elem : FriendsTypes){
+            const user = users.find((user: any) => user.id === elem.id);
+            const getStatusColor = () => {
+              if (user) {
+                switch (user.status) {
+                  case "online":
+                    return "green"; // Online status color
+                  case "offline":
+                    return "red"; // Offline status color
+                  case "inGame":
+                    return "blue"; // In-game status color
+                  default:
+                    return "black"; // Default color or any other status
+                }
+              }
+              return "black"; // Default color if user not found
+            };
+            const handleRemoveFriendship= async () =>
+            {
+
+                 
+                try{
+                    const res =  dispatch(fetchRemoveFriendship(elem.display_name));
+                    ToastSuccess(`remove ${elem.display_name} from your list friends`);
+
+
+                }catch(err : any){
+                  ToastError(`Error... while removing ${elem.display_name} from your list friends `);
+
+
+                }
+
+            }
+
+            const handlePLayingRequest = async(display_name : string) =>{
+              console.log("display_name here-->", display_name);
+              try { 
+                const response= await dispatch(fetchSendRequestPLay(display_name));
+                if (response.payload && response.payload.message) {
+                  const errorMessage = response.payload.message;
+                  ToastError(`Error: ${errorMessage}`);
+                } else {
+                  ToastSuccess("PLay request sent successfully");
+                  router.push(`/dashboard/game/online-game/maps`);
+    
+                }
+              } catch (err: any) {
+                ToastError(`Error: ${err.message || 'An unexpected error occurred'}!`);
+    
+              }
+             
+
+            }
+            function handleClick()
+            {
+              router.push(`/dashboard/${elem.id}`)
+            }
 						return(
 							<ConversationSideBarItem key={elem.id}>
+            
+                <div className="flex">
                 <Image src={elem.avatar_url} className="h-14 w-14 rounded-[50%] bg-black " alt="Description of the image" width={60}   height={60} />
+                  {(getStatusColor() === "green") ? <OnlineStyling/>  : (getStatusColor() === "red") ? <OflineStyling/> : <IngameStyling/>}
 
+                </div>
+               
 								<div>
-					 				<span  className="ConversationName">{elem.username} {elem.display_name}</span>
+					 				<span  className="ConversationName">{elem.display_name}</span>
 					 			</div>
                    
   
@@ -92,19 +194,19 @@ const ListFriends = () => {
 				          />
       
                 {openMenuId === elem.id &&
-                <div className={`absolute  top-10 left-2 h-[120px]  w-[200px] flex-col items-center justify-center gap-1 rounded-[15px] border-2 border-solid border-[#000000] bg-white font-['Whitney_Semibold'] `}>
-					        <button className={`bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`}>see profile</button>
-					        <button className={` bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`}>send message</button>
-                  <button className={` bg-[#EA7F87] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} value="Bloque" onClick={()=> handlleBloque(elem.id)}>Bloque</button>
+              <div className={`absolute z-10 -top-[157px] right-3 p-2 w-[200px] flex-col items-center justify-evenly rounded-[15px] border-2 border-solid border-[#000000] bg-white font-['Whitney_Semibold'] `}>                  <button className={`bg-[#d9d9d9] text-black h-[30px] w-full rounded-[15px] my-1 hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> handleClick()}>View profile</button>
+                  <button className={`bg-[#d9d9d9] text-black h-[30px] w-full rounded-[15px] my-1 hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> handlePLayingRequest(elem.display_name)}>Invite To Play</button>
+                  <button className={` bg-[#d9d9d9] text-black h-[30px] w-full rounded-[15px] my-1 hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> handleRemoveFriendship() }>Remove Friendship</button>
+                  <button className={` bg-[#EA7F87] text-black h-[30px] w-full rounded-[15px] my-1 hover:bg-[rgba(0,0,0,.2)]`} value="Bloque" onClick={()=> handlleBloque(elem.id)}>Bloque</button>
 
-				        </div>}
+              </div>}
             </div> 
 							</ConversationSideBarItem>
 								
 						)
 					}) }
 				</ConversationSideBarContainer>
-			</Conversation>
+			</div>
            
     )
 

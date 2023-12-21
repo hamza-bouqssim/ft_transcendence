@@ -1,114 +1,105 @@
-import { useState } from "react";
+import { useState ,useContext, useEffect} from "react";
 import PopUp from "./popUp";
 import Swal from "sweetalert2";
-import { useForm } from "react-hook-form";
-import { CreateChangeParams } from "../utils/types";
-import { AppDispatch } from "../store";
-import { useDispatch } from "react-redux";
-import { fetchUpdateAvatarUrl, fetchUpdateDisplayName, fetchUpdateUserName } from "../store/usersSlice";
-import Image from "next/image";
+import { socketContext } from "../utils/context/socketContext";
+import { Qrcodeform } from "./Qrcodefom";
+import { changeDisplayedName, changePhoto, changeUserName, disable2Fa, firstTime } from "../utils/api";
+import { useRouter } from "next/navigation"
 
-// type FormProps = {
-// 	img: string;
-// };
+type FormProps = {
+	img: string;
+};
 
-const Form = () => {
-	const [name, setName] = useState<string>("");
-	const [login, setLogin] = useState<string>("");
-	const [pass, setPass] = useState<string>("");
-	const [confirm, setConfirm] = useState<string>("");
+const Form = ({ img }: FormProps) => {
+	
+	const {Userdata, setUserdata} : any = useContext(socketContext);
 
+	const router = useRouter();
+	// console.log("user data form",Userdata);
+	const [display2fa,setDisplay2fa] = useState(false);
 	const [show, setShow] = useState<boolean>(false);
+	const [_username, setUsername] = useState("");
+	const [_display_name, setDisplayname] = useState("");
+	const [message, setMessage] = useState("");
+	const [success, setSuccess] = useState(true);
+	useEffect(() => {
+		// Set initial values from Userdata only if the state is empty
+		if (!_username) {
+		  setUsername(Userdata?.username || "");
+		}
+		if (!_display_name) {
+		  setDisplayname(Userdata?.display_name || "");
+		}
+	  }, [Userdata]);
 
 
-	const {register, handleSubmit, formState: { errors }} = useForm<CreateChangeParams>();
-	const dispatch = useDispatch<AppDispatch>();
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+	e.preventDefault();
 
-
+	if (!_username.trim() || !_display_name.trim()) {
+	  setMessage("Please fill in all fields");
+	  setSuccess(false);
+	  return;
+	}
+  
+	try {
+	  await changeDisplayedName(_display_name).then((displayNameResponse) => {
+		if(displayNameResponse.data.success == false &&  Userdata.first_time == false)
+		{
+			setMessage(displayNameResponse.data.message);
+			setSuccess(displayNameResponse.data.success)
+		}
+	  });
+	  await changeUserName(_username);
+	  await changePhoto(Userdata.avatar_url);
+	  if (success)
+	  		setUserdata((prevUserData: any) => ({...prevUserData, username: _username, display_name: _display_name, first_time: false,}));
+	  if(Userdata.first_time)
+	  {
+		
+		  await firstTime();
+		  router.push('/dashboard');
+	  }
+	} catch (error) {
+	  console.error("error:", error);
+	  setMessage("Error saving");
+	  setSuccess(false);
+	}
+  };
 
 	
-
-	const onSubmit = async (data: CreateChangeParams) => {
-		dispatch(fetchUpdateDisplayName(data.display_name)).then((res)=>{
-			console.log("display_name change")
-			// alert("You are sending request")
-		  }).catch((err)=>{
-		   console.log(err); 
+	const closeQrForm : () => void = () => {
+		setDisplay2fa(false);
+	}
+	const _disable = async () => {
+		  await disable2Fa().then((res)=>{
+			console.log("success", res);
+			// setIsVerified(res.data.success);
+			setUserdata({...Userdata, tfa_enabled: false});
 		  })
-		  dispatch(fetchUpdateUserName(data.username)).then((res)=>{
-			console.log("username change")
-			// alert("You are sending request")
-		  }).catch((err)=>{
-		   console.log(err); 
-		  })
-
-		  dispatch(fetchUpdateAvatarUrl(data.avatarUrl)).then(()=>{
-			console.log("avatar change")
-
-		  }).catch((err)=>{
-			console.log(err);
-		  })
-
-		
-	};
-	const [src, setSrc] = useState<string>("/assets/user2.jpeg");
-
+		  .catch((e) =>{
+		  console.log("error:", e);
+		})
+	  }
 	return (
+		<>
 		<div>
 			<form
 				className="mt-11 text-[15px] text-black md:text-[18px] lg:text-[21px]"
-				onSubmit={handleSubmit(onSubmit)}
-
+				onSubmit={handleSubmit}
 			>
-				<div className="flex flex-col items-center justify-around gap-5 border-b border-[#9f9f9f4a] pb-3 md:flex-row">
-				<div className=" ">
-					<Image
-						className="h-24 w-24 rounded-[50%] bg-sky-200 min-[1750px]:h-24 min-[1750px]:w-24"
-						src={src}
-						width={72}
-						height={51}
-						alt="user"
-					/>
-				</div>
-				<div className="">
-					<input
-						type="file"
-						accept="image/*"
-						className="hidden"
-						id="file"
-						{...register('avatarUrl', {required: 'avatarUrl is required'})}
-
-						onChange={(e) => {
-							if (e.target.files)
-								setSrc(URL.createObjectURL(e.target.files[0]));
-						}}
-					/>
-					<label
-						className="rounded-[20px] bg-[#5B8CD4] px-6 py-3"
-						htmlFor="file"
-					>
-						Change Photo
-					</label>
-				</div>
-				<input
-					type="button"
-					className="rounded-[20px] bg-[#EA7F87] px-8 py-3"
-					onClick={() => {
-						setSrc("/assets/unknown.png");
-					}}
-					value="Delete"
-				/>
-			</div>
-				{/* {show ? <PopUp setShow={setShow} /> : null} */}
+				{show ? <PopUp setShow={setShow} /> : null}
 				<div className="my-2">
 					<label htmlFor="fullName" className="block py-2 pl-4">
 						Username
 					</label>
 					<input
 						type="text"
+						id="fullName"
+						value={_username}
+						onChange={(e) => setUsername(e.target.value)}
 						placeholder="Enter your name"
 						className="w-full rounded-[20px] border border-[#838383] px-4 py-3"
-						{...register('username', {required: 'username is required'})}
 					/>
 				</div>
 				<div className="my-2">
@@ -117,39 +108,36 @@ const Form = () => {
 					</label>
 					<input
 						type="text"
+						id="Login"
+						value={_display_name}
+						onChange={(e) => setDisplayname(e.target.value)}
 						placeholder="Enter your login"
 						className="w-full rounded-[20px] border  border-[#838383] px-4 py-3"
-						{...register('display_name', {required: 'display_name is required'})}
-
-						
 					/>
 				</div>
-				{/* <div className="my-4 flex flex-col justify-between gap-5 md:flex-row ">
-					<div>
-						<label htmlFor="pass" className="block pb-1 pl-4 pt-3">
-							Set Password
-						</label>
-						<input
-							type="password"
-							id="pass"
-							value={pass}
-							onChange={(e) => setPass(e.target.value)}
-							placeholder="Enter your password"
-							className="w-full rounded-[20px] border border-[#838383] px-4  py-3 md:w-auto"
-						/>
-					</div>
-					
-				</div> */}
-				{/* <div className="flex flex-col items-center  justify-center border-t border-[#9f9f9f4a] md:flex-row md:justify-evenly">
-					<h1 className="p-4 text-black ">Two-factor authentication</h1>
+				
+				<div className="flex flex-col items-center  justify-center border-t border-[#9f9f9f4a] md:flex-row md:justify-evenly">
+					<h1 className="p-4 text-black font-['Whitney Semibold'] ">Two-factor authentication</h1>
 					<div className="my-3">
-						<input
-							type="button"
-							className="rounded-[20px] bg-[#5B8CD4] px-8 py-3 text-white"
-							value="Enable"
-						/>
+
+					{Userdata?.tfa_enabled ? (
+					<input
+						onClick={_disable}
+						type="button"
+						className="rounded-[20px] bg-[#EA7F87] px-8 py-3 text-white"
+						value="Disable 2FA"
+					/>
+					) : (
+					<input
+						onClick={() => setDisplay2fa(true)}
+						type="button"
+						className="rounded-[20px] cursor-pointer bg-[--purple-color] px-8 py-3 text-white"
+						value="Enable 2FA"
+					/>
+					)}
+						
 					</div>
-				</div> */}
+				</div>
 				<div className=" flex items-center  justify-center pt-9 text-white ">
 					<div className="m-auto">
 						<h1 className="mb-4 text-black">Save Changes</h1>
@@ -159,7 +147,7 @@ const Form = () => {
 							value="Save"
 						/>
 					</div>
-					{/* <div className="m-auto ">
+					<div className="m-auto ">
 						<h1 className="mb-4 text-black">Delete Account</h1>
 						<input
 							type="button"
@@ -167,10 +155,21 @@ const Form = () => {
 							onClick={() => setShow(!show)}
 							value="Delete"
 						/>
-					</div> */}
+					</div>
 				</div>
 			</form>
 		</div>
+		{
+			display2fa && 
+			<>
+				<div className="absolute left-0 z-10 right-0 bottom-0 top-0 bg-[#00000095] backdrop-blur-md opacity-100"></div>
+					<Qrcodeform closeQrForm={closeQrForm} />
+			</>
+		}
+		{message != "" && (
+            <p style={{ color: success ? 'green' : 'red' }}>{message}</p>
+            )}
+		</>
 	);
 };
 export default Form;

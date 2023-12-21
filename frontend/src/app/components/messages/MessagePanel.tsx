@@ -1,46 +1,34 @@
 "use client"
-import { InputField, MessagePanelStyle, MessagePannelBody, MessagePannelHeaderStyle } from "@/app/utils/styles"
+import { InputField, MessageContainerStyle, MessagePanelStyle, MessagePannelBody, MessagePannelHeaderStyle } from "@/app/utils/styles"
 import MessageContainer from "./MessageContainer";
-import MessageInputField from "./MessageInputField";
+import MessageInputField from "./MessageInputFieldRoom";
 import { messageTypes } from "@/app/utils/types";
 import { FC, useState } from "react";
 import MessagePanelHeader from "./MessagePanelHeader";
-import { useParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { postNewMessage } from "@/app/utils/api";
 import UpdateComponent from "../updateComponent/UpdateComponent";
 import { InfoRoom } from "../InfoRoom/InfoRoom";
-import {usePathname} from "next/navigation"
-type Props  = {
-    messages : messageTypes[];
-}
+import {useContext} from 'react'
+import MessageContainerRoom from "./MessageContainerRoom";
 
-const MessagePanel : FC<Props> = ({messages}) => {
-        const [content, setContent] = useState('');
+
+const MessagePanel = () => {
+
         const [updateRome,setUpdateRome] = useState<boolean>(false)
-        const { id } = useParams();
         const pathname = usePathname()
-        const sendMessage = async (e : React.FormEvent<HTMLFormElement>) => {
-            e.preventDefault();
-            if(!id || !content)
-                return ;
-            const participentsId = id;
-            try{
-                await postNewMessage({participentsId, content});
-                setContent('');
-            }catch(err){
-                alert("error");
-            }
-        };
+        console.log(pathname)
      
     return (
         <div className="p-2 md:p-6   h-full flex items-center w-full justify-between"> 
                 <div className="md:w-[60%] h-full w-full"> 
-
-                    {pathname.includes("/group") ? <MessagePanelHeader setUpdateRome={setUpdateRome} updateRome={updateRome} /> :""}
+                    <MessagePanelHeader setUpdateRome={setUpdateRome} updateRome={updateRome} />
                     { !updateRome ? 
                         <>
-                            <MessageContainer messages={messages}/>
-                            <MessageInputField content= {content} setContent={setContent} sendMessage={sendMessage}/>
+                            {pathname.includes('chat') ? 
+                             <MessageContainer />:
+                             <MessageContainerRoom/>
+                            }
                         </>
                         :
                         <UpdateComponent></UpdateComponent>

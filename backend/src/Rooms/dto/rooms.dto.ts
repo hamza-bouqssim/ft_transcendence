@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsString ,IsArray} from "class-validator";
 
 
 export class RoomId{
@@ -19,6 +19,16 @@ export class CreateMessageRoom{
 
 }
 
+export class Member{
+    @IsNotEmpty()
+    @IsString()
+    id:string;
+
+    @IsNotEmpty()
+    @IsString()
+    userId:string;
+}
+
 export class CreateChatRoom{
 
     @IsNotEmpty()
@@ -34,6 +44,10 @@ export class CreateChatRoom{
 
     @IsString()
     picture :string;
+
+    @IsArray()
+    @IsString({ each: true })
+    idUserAdd: string[];
 
 }
 export class UpdateChatRoom{
@@ -77,4 +91,19 @@ export class getAllRooms{
     @IsString()
     id :string;
 
+}
+
+export class JoinRooms{
+   
+    @IsNotEmpty()
+    @IsString()
+    id :string;
+
+    @IsNotEmpty()
+    @IsString()
+    Privacy :string;
+
+
+    @IsString()
+    password :string;
 }

@@ -1,55 +1,88 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { getAllRoomsApi, createRoomsApi, updateRoomsApi, deleteRoomsApi } from '../utils/api';
 
+interface Member {
+  user_id: string;
+  isAdmin: boolean;
+}
+
+
+
 interface Room {
   id: string;
   name: string;
   Privacy: string;
   picture: string;
-  password?:string,
-  createdAt: string;
-  updatedAt: string;
-  members: {
-    isAdmin: boolean;
-  };
+  createdAt: Date;
+  updatedAt: Date;
+  members: Member[];
 }
 
 interface RoomState {
   rooms: Room[];
-  status: 'idle' | 'loading' | 'succeeded' | 'failed';
+  status:
+  {
+    get:'idle' | 'loading' | 'succeeded' | 'failed';
+    create:'idle' | 'loading' | 'succeeded' | 'failed';
+    update:'idle' | 'loading' | 'succeeded' | 'failed';
+  } 
   error: string | null;
 }
 
 const initialState: RoomState = {
   rooms: [],
-  status: 'idle',
+  status: {
+    get: 'idle',
+    create: 'idle',
+    update: 'idle',
+  },
   error: null,
 };
 
-// Async thunk for fetching all rooms
-export const getAllRooms = createAsyncThunk('rooms/getAllRooms', async () => {
+export const getAllRooms = createAsyncThunk('rooms/getAllRooms', async (_,{rejectWithValue} ) => {
+  try {
     const response = await getAllRoomsApi();
+    return response.data; 
+  } catch (error : any) {
+    console.log(error)
+    if (error.response && error.response.data) {
+      return rejectWithValue(error.response.data);
+    } else {
+      return rejectWithValue('Failed to fetch rooms');
+    }
+  }
+});
+
+export const createRooms = createAsyncThunk('rooms/createRooms', async (data: Room,{rejectWithValue}) => {
+  try
+  {
+    const response = await createRoomsApi(data);
     return response.data;
-
+  } catch (error : any) {
+    console.log(error.response)
+    if (error.response && error.response.data) {
+      return rejectWithValue(error.response.data);
+    } else {
+      return rejectWithValue('Failed to create rooms');
+    }
+  }
 });
 
-// Async thunk for creating a room
-export const createRooms = createAsyncThunk('rooms/createRooms', async (data: Room) => {
-  const response = await createRoomsApi(data);
-  return response.data;
+export const updateRooms = createAsyncThunk('rooms/updateRooms', async (data: Room,{rejectWithValue}) => {
+  try {
+    const response = await updateRoomsApi(data);    
+    return response.data;
+  } catch (error : any) {
+    console.log(error.response)
+    if (error.response && error.response.data) {
+      return rejectWithValue(error.response.data);
+    } else {
+      return rejectWithValue('Failed to create rooms');
+    }
+  }
 });
 
-// Async thunk for updating a room
-export const updateRooms = createAsyncThunk('rooms/updateRooms', async (data: Room) => {
-  const response = await updateRoomsApi(data);
-  return response.data;
-});
 
-// Async thunk for deleting a room
-export const deleteRooms = createAsyncThunk('rooms/deleteRooms', async (roomId: string) => {
-  const response = await deleteRoomsApi(roomId);
-  return response.data;
-});
 
 const roomSlice = createSlice({
   name: 'room',
@@ -58,34 +91,44 @@ const roomSlice = createSlice({
   extraReducers: (builder:any) => {
     builder
       .addCase(getAllRooms.pending, (state:any) => {
-        state.status = 'loading';
+        state.status.get = 'loading';
       })
       .addCase(getAllRooms.fulfilled, (state:any, action: PayloadAction<Room[]>) => {
-        state.status = 'succeeded';
+        state.status.get = 'succeeded';
         state.rooms = action.payload.data;
       })
-      .addCase(getAllRooms.rejected, (state:any, action: PayloadAction<string>) => {
-        state.status = 'failed';
+      .addCase(getAllRooms.rejected, (state:any, action: PayloadAction<string>) => {;
+        state.status.get = 'failed';
         state.error = action.payload;
+        
+      })
+      .addCase(createRooms.pending, (state:any) => {
+        state.status.create = 'loading';
       })
       .addCase(createRooms.fulfilled, (state:any, action:any) => {
+        state.status.create = 'succeeded';
         const newRoom = action.payload;
         state.rooms.push(newRoom);
       })
+      .addCase(createRooms.rejected, (state:any, action:any) => {;
+        state.status.create = 'failed';        
+      }).
+      addCase(updateRooms.pending, (state:any) => {
+        state.status.update = 'loading';
+      })
       .addCase(updateRooms.fulfilled, (state:any, action: PayloadAction<Room>) => {
+        state.status.update = 'succeeded';
         const updateData = action.payload.data
+        console.log(updateData)
         const index = state.rooms.findIndex((room: Room) => room.id === updateData.id);
         if (index !== -1) {
           state.rooms[index] = action.payload.data;
         }
       })
-      .addCase(deleteRooms.fulfilled, (state:any, action: PayloadAction<Room>) => {
-        const deletedRoom = action.payload.data;
-        const index = state.rooms.findIndex((room:Room) => room.id === deletedRoom.id);
-        if (index !== -1) {
-          state.rooms.splice(index, 1);
-        }
-      });
+      .addCase(updateRooms.rejected, (state:any, action:any) => {;
+        state.status.update = 'failed';
+        
+      })
   },
 });
 

@@ -13,15 +13,39 @@ import { useRouter } from "next/navigation";
 import { UserCredentialsParams } from "../utils/types";
 import { postLoginUser } from "../utils/api";
 import { setCookie } from "cookies-next";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const SignInForm = forwardRef((props: any, ref: any) => {
+	const ToastError = (message: any) => {
+		toast.error(message, {
+		  position: toast.POSITION.TOP_RIGHT,
+		  autoClose: 5000,
+		  hideProgressBar: false,
+		  closeOnClick: true,
+		  pauseOnHover: true,
+		  draggable: true,
+		});
+	  };
+	
+	  const ToastSuccess = (message: any) => {
+		toast.success(message, {
+		  position: toast.POSITION.TOP_RIGHT,
+		  autoClose: 5000,
+		  hideProgressBar: false,
+		  closeOnClick: true,
+		  pauseOnHover: true,
+		  draggable: true,
+		});
+	  };
 	const [show, setShow] = useState<boolean>(false),
 		faEyeRef = useRef<SVGSVGElement>(null),
 		faEyeSlashRef = useRef<SVGSVGElement>(null);
 
 	type FormData = {
 		email: string;
-		password_hashed: string;
+		password: string;
 	};
 
 	const {
@@ -44,17 +68,34 @@ const SignInForm = forwardRef((props: any, ref: any) => {
 
 	const onSubmit = async (data: UserCredentialsParams) => {
 		try {
-			await postLoginUser(data);
-			setCookie("logged", true);
-			router.push("/dashboard", { scroll: false });
-		} catch (err) {
-			alert("failed to login");
-			// console.log(err);
-		}
+			await postLoginUser(data).then((res) => {
+				if(res.data.success)
+					router.push('/dashboard/settings');
+				else if (!res.data.success)
+					router.push('/signIn/verify-two-factor');
+				else if (res.data.signed)
+					router.push('/dashboard');
+			});
+			ToastSuccess(`You are signIn succefully`);
+		} catch (err : any) {
+			if (err.response) {
+			
+			  const errorMessage = err.response.data.message;
+			ToastError(`Failed to login: ${errorMessage}`);
+			} else if (err.request) 
+			{
+			  ToastError(`No response from the server`);
+
+			} else {
+			  ToastError(`Error in request setup`);
+			}
+		  }
+		
 	};
 
 	return (
 		<div ref={ref}>
+			 <ToastContainer />
 			<form
 				action=""
 				className="relative flex h-full w-full flex-col items-center justify-center gap-3 sm:gap-4"
@@ -76,7 +117,7 @@ const SignInForm = forwardRef((props: any, ref: any) => {
 					<FontAwesomeIcon icon={faKey} className="icon-style left-[30px]" />
 					<input
 						type={show ? "text" : "password"}
-						{...register("password_hashed", {
+						{...register("password", {
 							required: "Password is required",
 						})}
 						className="custom-shape input-style"

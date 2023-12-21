@@ -3,44 +3,95 @@ import { AvatarStyle, MessageItemAvatar, MessagePannelHeaderStyle } from "@/app/
 import { IoMdSettings } from "react-icons/io";
 import {usePathname,useRouter} from 'next/navigation'
 import { IoClose } from "react-icons/io5";
-import {FC} from 'react'
+import {FC,useState} from 'react'
 import { FaArrowLeft } from "react-icons/fa6";
 import { useContext,useEffect } from "react";
 import {socketContext } from "@/app/utils/context/socketContext";
+import { useDispatch, useSelector } from 'react-redux';
+import { getAllMembers } from "@/app/store/memberSlice";
+import { HiOutlineLogout } from "react-icons/hi";
+import Image from "next/image";
+import { User } from "@/app/utils/types";
+
 
 interface MessagePanelHeaderProps {
     setUpdateRome: (value: boolean) => void;
     updateRome: boolean;
 }
+
+interface Member {
+  isAdmin: boolean; 
+  user_id: string; 
+}
 const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({ setUpdateRome, updateRome }) => {
     const pathname = usePathname()
-    const route = useRouter()
+    const { members, status, error } = useSelector((state:any) => state.member);
+    const dispatch = useDispatch();
+    const [isTyping, setIsTyping] = useState(false);
+    const socket = useContext(socketContext).socket
     const { updateChannel,channel} = useContext(socketContext);
-
+    const {Userdata} = useContext(socketContext)
     const goBack =() =>
     {
-        if(pathname.includes('groups'))
-            updateChannel("")
-        else
-            route.push('/dashboard/chat')
-
+        updateChannel(null)
     }
+    useEffect(() => {
+        const handleTyping = (typing: any) => {
+          if (typing.userId !== Userdata?.id) {
+            setIsTyping(typing.status);
+          }
+        };
+      
+        socket.on('Typing', handleTyping);
+        socket.on('leaveTyping', handleTyping);
+      
+        return () => {
+          socket.off('Typing', handleTyping);
+          socket.off('leaveTyping', handleTyping);
+        };
+      }, [Userdata?.id, socket]);
 
     useEffect(() => {
         setUpdateRome(false)
-    }, [channel])
-    console.log(channel)
+    }, [channel, setUpdateRome])
+
+    useEffect(() => {
+        dispatch(getAllMembers(channel?.id))
+      }, [dispatch,channel])
+
+    // Image src
+    const InfoRecipient = () =>{
+        let test : User | undefined;
+        if(channel?.recipient.display_name === Userdata?.display_name){
+            test = channel?.sender;
+        }else
+            test  = channel?.recipient;
+        return test;
+
+    }
     
-    return (<div className="flex items-center justify-between p-5 rounded-full text-black  bg-[#F2F3FD]">
+    return (<div className="flex items-center justify-between p-5  rounded-full text-black  bg-[#F2F3FD]">
             <div className="flex items-center">
                     <FaArrowLeft  onClick={goBack} className="mr-4 xl:hidden block" size={26}></FaArrowLeft>
-                    {pathname.includes('groups') ? <img src={channel.picture} className="w-[50px]" alt="" srcset="" /> :<AvatarStyle/>}
-                    
-                    {pathname.includes('groups') ? <h1 className="ml-2">{channel.name }</h1> :<h1 className="ml-2">soukaina ouchen</h1>}
+                    {channel?.picture && <Image src={channel.picture} className="w-[50px] rounded-full" alt=""  width={30} height={30} />}
+                    {!channel?.picture &&  InfoRecipient()?.avatar_url  && <Image src={InfoRecipient()?.avatar_url} className="w-[50px] rounded-full" alt="" width={30} height={30} />}
+                    {channel?.name && 
+                    <div>
+                        <h1 className="ml-2">{channel.name }</h1>
+                        {isTyping ? 
+                            <h1 className="ml-2 text-[12px]">Someone is typing...</h1>
+                            :<h1 className="ml-2 text-[12px]">{members.length} Members</h1>
+                        }
+                    </div>
+                    }
+                    {!channel?.name && channel?.recipient.display_name && <h1 className="ml-2">{InfoRecipient()?.display_name }</h1>}
             </div>
             {
-                channel?.members[0].isAdmin ? (
-                    pathname.includes('groups') && !updateRome ? (
+                pathname.includes('groups') &&
+                members?.some(
+                    member => (member.Status==="Owner" || member.Status === "Admin") && member.user_id === Userdata.id
+                ) ? (
+                    !updateRome ? (
                     <IoMdSettings
                         size={30}
                         onClick={() => {
@@ -58,7 +109,7 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({ setUpdateRome, update
                     ></IoClose>
                     )
                 ) : null
-                } 
+            }
         </div>)
 }
 
