@@ -3,7 +3,6 @@ import React, { useContext, useEffect, useState } from "react";
 import { generateQrcode, verifyCode } from "../utils/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { useRouter } from "next/navigation";
 import { socketContext } from "../utils/context/socketContext";
 import Image from "next/image";
 
@@ -18,7 +17,7 @@ export function Qrcodeform({ closeQrForm }: Props) {
 	const [Loading, setLoading] = useState(false);
 	const [isVerified, setIsVerified] = useState(false);
 	const [message, setMessage] = useState("");
-	const router = useRouter();
+
 	useEffect(() => {
 		generateQrcode()
 			.then((res) => {

@@ -49,19 +49,19 @@ export const IntraSignInButton = () => {
 	);
 };
 
-export const GithubSignInButton = () => {
-	return (
-		<button onClick={() => signIn("github")}>
-			<Image
-				className="w-5 hover:scale-150 hover:transform hover:transition hover:duration-300 hover:ease-in-out sm:w-6 md:w-7 2xl:w-[38px]"
-				src={require("../../../public/assets/github.svg")}
-				width={40}
-				height={40}
-				alt={"github"}
-			/>
-		</button>
-	);
-};
+// export const GithubSignInButton = () => {
+// 	return (
+// 		<button onClick={() => signIn("github")}>
+// 			<Image
+// 				className="w-5 hover:scale-150 hover:transform hover:transition hover:duration-300 hover:ease-in-out sm:w-6 md:w-7 2xl:w-[38px]"
+// 				src={require("../../../public/assets/github.svg")}
+// 				width={40}
+// 				height={40}
+// 				alt={"github"}
+// 			/>
+// 		</button>
+// 	);
+// };
 
 export const SignButton = (props: any) => {
 	return (

@@ -8,7 +8,7 @@ import RankingFriendsSwitch from "../components/RankingFriendsSwitch";
 import HistoryMatches from "../components/HistoryMatches";
 import Image from "next/image";
 import { socketContext } from "../utils/context/socketContext";
-import { HistoryMatchesProps } from "../components/HistoryMatches";
+import { HistoryMatchesType } from "./Imports";
 import { ResultsType } from "./Imports";
 
 const Dashboard = () => {
@@ -20,7 +20,7 @@ const Dashboard = () => {
 		lose: 0,
 	});
 
-	const [history_match, setHistoryMatch] = useState<HistoryMatchesProps[]>([]);
+	const [history_match, setHistoryMatch] = useState<HistoryMatchesType[]>([]);
 	useEffect(() => {
 		const fetchMatchHistory = async () => {
 			try {
@@ -96,7 +96,7 @@ const Dashboard = () => {
 							</div>
 						</div>
 						<div className="his scrollbar-hide  h-[120px] overflow-y-auto">
-							{history_match.map((_history: HistoryMatchesProps, index) => (
+							{history_match.map((_history: HistoryMatchesType, index) => (
 								<HistoryMatches
 									key={index}
 									playerOne={_history.playerOne}

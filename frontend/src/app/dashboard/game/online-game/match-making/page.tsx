@@ -1,6 +1,5 @@
 "use client";
 import PlayerCard from "../../../../components/PlayerCard";
-import { ChangeContext } from "../../../layout";
 import { useEffect, useContext } from "react";
 import { useRouter } from "next/navigation";
 import { socketContext } from "@/app/utils/context/socketContext";
@@ -15,7 +14,6 @@ import { OpponentData } from "../../utils/data";
 const MatchMaking = () => {
 	const searchParams = useSearchParams();
 	const mapIndex: string | null = searchParams.get("mapIndex");
-	const { change, setChange } = useContext(ChangeContext);
 	const router = useRouter();
 	const gameSocket = useGameSocket();
 	const checkQueryValue = (): boolean => {
@@ -57,10 +55,11 @@ const MatchMaking = () => {
 			gameSocket.off("redirectUser", handleRedirectUser);
 		};
 	}, []);
+	console.log("map index:", opponentPlayer.mapIndex);
 
 	return (
 		<>
-			{checkQueryValue() ? (
+			{checkQueryValue() && opponentPlayer.mapIndex >= 0 ? (
 				<section className="absolute left-[50%] top-[50%] flex h-[600px] w-fit -translate-x-[50%] -translate-y-[50%] flex-col items-center justify-center gap-10 px-4 md:ml-6 md:flex-row">
 					<PlayerCard
 						username={Userdata?.username}
@@ -81,7 +80,9 @@ const MatchMaking = () => {
 					/>
 				</section>
 			) : (
-				router.push("./maps", { scroll: false })
+				router.push("./maps", {
+					scroll: false,
+				})
 			)}
 		</>
 	);

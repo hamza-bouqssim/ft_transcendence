@@ -7,6 +7,7 @@ export const OpponentData = atom<{
 		avatar_url: string;
 	};
 	isRotate: boolean;
+	mapIndex: number;
 }>({
 	opponent: {
 		username: "",
@@ -14,6 +15,7 @@ export const OpponentData = atom<{
 		avatar_url: "/assets/unknown.png",
 	},
 	isRotate: false,
+	mapIndex: -1,
 });
 
 export const getCurrentSizes = (
@@ -41,8 +43,6 @@ export const getCurrentSizes = (
 	}
 	return [newWidth, newHeight];
 };
-
-
 
 //  calculateWidthHeight(): [number, number] {
 // 		let width: number, height: number;

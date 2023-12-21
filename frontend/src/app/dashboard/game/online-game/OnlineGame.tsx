@@ -10,7 +10,7 @@ import {
 import { socketContext } from "@/app/utils/context/socketContext";
 import { useGameSocket } from "@/app/providers/game-socket-provider";
 import { OpponentData, getCurrentSizes } from "../utils/data";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 
 const OnlineGame = ({ mapIndex }: any) => {
 	const router = useRouter();
@@ -36,6 +36,7 @@ const OnlineGame = ({ mapIndex }: any) => {
 				avatar_url: "/assets/unknown.png",
 			},
 			isRotate: false,
+			mapIndex: -1,
 		}));
 	};
 
@@ -58,8 +59,6 @@ const OnlineGame = ({ mapIndex }: any) => {
 		});
 
 		//TODO: don't forget to clear Event
-
-		
 	}, []);
 
 	useEffect(() => {
