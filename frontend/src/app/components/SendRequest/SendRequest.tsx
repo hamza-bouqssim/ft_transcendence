@@ -82,7 +82,7 @@ const SendRequest  = () => {
       return (
 
         <Conversation>
-        <ToastContainer />
+         
 				<ConversationSideBarContainer>
 					{request.map(function(elem : RequestTypes){
 						return(

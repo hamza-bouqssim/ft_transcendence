@@ -100,7 +100,7 @@ const NotificationComponent = () => {
       return (
         
         <div className='absolute  rounded-2xl p-3 pt-12 top-15 right-5 border-white border-2 z-50 bg-gradient-to-b from-[#2E2F54] via-[#3B5282] to-[#2E2F54] w-[500px] h-[500px] overflow-auto no-scrollbar'>
-                     <ToastContainer />
+                      
 
             <div className='  justify-between  py-1 items-center gap-1 my-3'>
                 <h1 className='text-white text-2xl -ml-[12px] pl-4 flex items-center py-3 bg-gradient-to-b from-[#2E2F54] via-[#3B5282] to-[#2E2F54] fixed z-10 w-[497px] -mt-[64px]  rounded-t-2xl'>Notifications</h1>

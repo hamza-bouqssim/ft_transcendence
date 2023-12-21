@@ -92,7 +92,7 @@ const TopRightBar = (props: Change) => {
 	
 	return (
 		<>
-		<ToastContainer />
+		 
 		<div className="fixed z-50 right-0 top-6  flex h-12 w-64 items-center justify-end gap-2 rounded-l-3xl lg:right-7 min-[1750px]:h-14 min-[1750px]:w-80 min-[1750px]:gap-4">
 			<div className="relative ">
 			<div onClick={() => {setNotefication(true)}} className="relative">

@@ -98,7 +98,7 @@ const OnlineFriends = () =>{
       
     return (
         <div className="text-black mt-[10px] h-[calc(100%-200px)] overflow-auto ">
-         <ToastContainer />
+          
         <div>
 
 				<ConversationSideBarContainer>

@@ -10,6 +10,7 @@ import { Socket } from "socket.io-client";
 import { usePathname } from "next/navigation";
 import { ConversationTypes, GroupChannel, User } from "../utils/types";
 import { Group } from "three";
+import { ToastContainer, toast } from 'react-toastify';
 
 export const SideBarContext: any = createContext<any>(null);
 export const ChangeContext: React.Context<any> = createContext(null);
@@ -108,6 +109,7 @@ export default function RootLayout({
 
 						<ChangeContext.Provider value={changeValues}>
 							<div className="h-full w-full">{children}</div>
+							<ToastContainer />
 						</ChangeContext.Provider>
 					</AppWithProviders>
 				</div>

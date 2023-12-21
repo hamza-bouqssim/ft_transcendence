@@ -123,7 +123,7 @@ export class RoomsService {
 
   async updateRooms(data:UpdateChatRoom,id:string)
   {
-    console.log(id)
+    console.log("data",data)
     const existingChatRoom = await this.prisma.chatRoom.findUnique({
       where: { id: data.id },
       include: {
@@ -143,17 +143,6 @@ export class RoomsService {
         },
       },
     });
-    const ChatRoomName = await this.prisma.chatRoom.findUnique({
-      where: { name: data.name },
-    });
-    console.log(existingChatRoom)
-
-    if(ChatRoomName.name === data.name)
-    {
-      console.log("yes")
-      throw new HttpException(`Room with name ${data.name} already exists`, HttpStatus.BAD_REQUEST);
-    }
-
     if (!existingChatRoom) {
       throw new HttpException(`Chat room with ID ${data.id} not found.`, HttpStatus.BAD_REQUEST);
     }
@@ -161,6 +150,16 @@ export class RoomsService {
     if (!existingChatRoom.members.length) {
       throw new HttpException(`User  is not an admin for the chat room.`, HttpStatus.BAD_REQUEST);
     }
+
+    const ChatRoomName = await this.prisma.chatRoom.findFirst({
+      where: { name: data.name },
+    });
+
+    if(ChatRoomName)
+    {
+      throw new HttpException(`Room with name ${data.name} already exists`, HttpStatus.BAD_REQUEST);
+    }
+    
     let hashedPassword;
     if(data.Privacy ==='Protected' && data.password)
     {

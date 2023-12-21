@@ -30,6 +30,7 @@ const CreatGroups: React.FC<CreateGroupsProps> = ({ setNewRooms }) => {
   const { rooms,status,error} = useSelector((state:any) => state.room);
 
   const handleCreateGroup = () => {
+    console.log("mohamssadasdsadsadsadsadsadsadsadasasdsadsa")
         if ((groupPrivacy === "Protected" &&  !groupPassword)) {
           toast.error("Password are required for a Protected group.")
           return;
@@ -56,12 +57,11 @@ const CreatGroups: React.FC<CreateGroupsProps> = ({ setNewRooms }) => {
           dispatch(createRooms(newGroupData)).then(response => {
             if(response.error)
             {
-              console.log(response)
               toast.error(response.payload)
             }
             else
             {
-              toast.success("asdsadsadas")
+              toast.success("Create Room Successfully! 🎉")
               setNewRooms(false)
             }
           }).catch(error => {
@@ -146,7 +146,8 @@ const CreatGroups: React.FC<CreateGroupsProps> = ({ setNewRooms }) => {
               :   <FaCheck />  }
 					</button>
     
-				</div>   
+				</div>  
+       
         </div>
     )
 }

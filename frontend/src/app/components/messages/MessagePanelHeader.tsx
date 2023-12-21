@@ -12,8 +12,20 @@ import { getAllMembers } from "@/app/store/memberSlice";
 import { HiOutlineLogout } from "react-icons/hi";
 import Image from "next/image";
 import { User } from "@/app/utils/types";
-
-
+import { updateRooms } from "@/app/store/roomsSlice";
+import { ToastContainer, toast } from 'react-toastify';
+interface Room {
+    id: string;
+    name: string;
+    Privacy: string;
+    password?:string;
+    picture: string;
+    createdAt: string;
+    updatedAt: string;
+    members: {
+      isAdmin: boolean;
+    };
+  }
 interface MessagePanelHeaderProps {
     setUpdateRome: (value: boolean) => void;
     updateRome: boolean;
@@ -31,6 +43,7 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({ setUpdateRome, update
     const socket = useContext(socketContext).socket
     const { updateChannel,channel} = useContext(socketContext);
     const {Userdata} = useContext(socketContext)
+
     const goBack =() =>
     {
         updateChannel(null)
@@ -69,6 +82,23 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({ setUpdateRome, update
         return test;
 
     }
+     
+  const [olddata, setOldData] = useState<Room | null>(null);
+  useEffect(() => {
+    if (channel) {
+      setOldData(channel);
+    }
+  }, [channel]);
+
+const handleUpdate = () => {
+  dispatch(updateRooms(olddata)).then((res)=>{
+    if(res.error)
+    {
+      toast.error(res.payload)
+    }
+  })
+};
+
     
     return (<div className="flex items-center justify-between p-5  rounded-full text-black  bg-[#F2F3FD]">
             <div className="flex items-center">
@@ -100,15 +130,31 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({ setUpdateRome, update
                         className="text-[#4D4D4D]"
                     ></IoMdSettings>
                     ) : (
-                    <IoClose
-                        size={30}
-                        onClick={() => {
-                        setUpdateRome(false);
-                        }}
-                        className="text-[#4D4D4D]"
-                    ></IoClose>
+
+                        <div  className="flex flex items-center justify-center ">
+                            <button className="mr-3 rounded-full py-2 px-4 text-[--pink-color] w-fit  border border-[--pink-color] text-[14px] " onClick={() => {
+                                setUpdateRome(false);
+                                }}>
+                                close
+                            </button>
+                            <button  onClick={handleUpdate} className={`${_.isEqual(olddata, channel) ? "  " :"flex items-center justify-center  "} text-white text-[14px] rounded-full px-4 py-2 w-fit  bg-[#EA7F87] px-5 py-2`}>
+                                Update
+                                {status.update === 'loading'   ?   <div className="flex items-center justify-center ml-3 ">
+                                                                     <div
+                                                                    className=" text-[white]   h-5 w-5 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                                                                    role="status">
+                                                                    <span
+                                                                    className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+                                                                    >Loading...</span>
+                                                                    </div>
+                                                                    </div> 
+                                :  null }
+					        </button>
+
+                        </div>
+
                     )
-                ) : null
+                ) : null 
             }
         </div>)
 }
