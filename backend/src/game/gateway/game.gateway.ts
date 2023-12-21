@@ -50,8 +50,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		private readonly prisma: PrismaService,
 		private readonly eventEmitter: EventEmitter2,
 	) {}
-	// sleep = async (ms: number) =>
-	// 	new Promise((resolve) => setTimeout(resolve, ms));
+
 
 	async handleConnection(socket: AuthenticatedSocket, ...args: any[]) {
 	
