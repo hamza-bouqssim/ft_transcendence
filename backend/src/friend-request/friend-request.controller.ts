@@ -48,6 +48,8 @@ export class FriendRequestController {
     @Post('accept_request_play')
     async acceptRequestToPlay(@Body() request: {requestId: string}, @Req() req){
       const user = req.user;
+      console.log("hnaa-->", request.requestId);
+
       return this.friendshipService.acceptRequestToPlay(request.requestId, user);
 
     }
@@ -104,6 +106,14 @@ export class FriendRequestController {
     async count_notification(@Req() req){
       const user = req.user;
       return this.friendshipService.count_notification(user.id);
+
+    }
+
+    @Post("delete-notification")
+    async deleteNotification(@Body() request: {idNotif : string}){
+      const result = await this.friendshipService.DeleteNotification(request.idNotif);
+      return result;
+      
 
     }
 

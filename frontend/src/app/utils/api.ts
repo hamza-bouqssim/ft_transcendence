@@ -65,6 +65,7 @@ export const AcceptRequest = async (id : string) => axios.post(`http://localhost
 
 export const refuseRequest = async ( id: string) => axios.post(`http://localhost:8000/friend-request/refuse-request`, {requestId : id }, config);
 
+export const deleteNotification = async (idNotif : string) => axios.post(`http://localhost:8000/friend-request/delete-notification`, {idNotif : idNotif}, config)
 
 export const changeDisplayedName = async (DisplayName : string) => axios.post(`http://localhost:8000/user/changedisplayname`, {newDisplayName : DisplayName }, config);
 

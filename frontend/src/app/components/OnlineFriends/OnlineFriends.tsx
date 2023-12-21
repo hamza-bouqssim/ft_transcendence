@@ -147,7 +147,7 @@ const OnlineFriends = () =>{
 								<Image src={elem.avatar_url} className="h-14 w-14 rounded-[50%] bg-black " alt="Description of the image" width={60}   height={60} />
                 {isUserOnline(elem)  ? <OnlineStyling/> : <OflineStyling/>}
               </div>
-					 			<span  className="ConversationName">{elem.username} {elem.display_name}</span>
+					 			<span  className="ConversationName"> {elem.display_name}</span>
 				         <div className="absolute right-5 p-4">
 				          <FontAwesomeIcon icon={faEllipsis} className={`text-black transform cursor-pointer text-2xl duration-500 ease-in-out hover:text-[--pink-color] lg:text-3xl }`}
 					          onClick={() => handleMenuClick(elem.id)}

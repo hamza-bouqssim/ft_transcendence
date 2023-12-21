@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Param,  Post, Delete, Req,  Res,  UnauthorizedException, UploadedFile, UseGuards, UseInterceptors, Query} from '@nestjs/common';
+/* eslint-disable prettier/prettier */
+import { Body, Controller, Get, Param,  Post, Delete, Req,  Res, UseGuards} from '@nestjs/common';
 import { UserService } from './user.service';
 import { AuthGuard } from '@nestjs/passport';
 import { PrismaService } from 'prisma/prisma.service';
@@ -166,6 +167,7 @@ export class UserController {
       const notifications = await this.userService.notificationCreate(user);
       return notifications;
     }
+   
 
     @Delete('delete-account')
     @UseGuards(AuthGuard('jwt'))

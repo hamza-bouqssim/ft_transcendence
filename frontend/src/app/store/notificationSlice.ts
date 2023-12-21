@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import {  changeAvatar, changeDisplayedName, changeUserName, dataUser, getAllUsers, getConversationMessage, getNotification, getNumberNotification, tableFriends} from '../utils/api';
+import {  changeAvatar, changeDisplayedName, changeUserName, dataUser, deleteNotification, getAllUsers, getConversationMessage, getNotification, getNumberNotification, tableFriends} from '../utils/api';
 import { ConversationMessage, NotificationTypes, UsersTypes, messageTypes } from '../utils/types';
 import axios from 'axios';
 
@@ -28,6 +28,14 @@ export const fetchNotificationThunk = createAsyncThunk('notification/fetchNotifi
 export const fetchCountNotification = createAsyncThunk('notificationCount/fetchNotification', async (_,{rejectWithValue})=>{
   const response = await getNumberNotification();
   return response.data
+})
+
+
+export const fetchdeleteNotification = createAsyncThunk('notification/delete', async (idNotif : string, { rejectWithValue })=>{ 
+  const response = await deleteNotification(idNotif);
+  return response;
+
+
 })
 
 export const NotificationSlice = createSlice({
@@ -59,7 +67,14 @@ export const NotificationSlice = createSlice({
     }).addCase(fetchCountNotification.rejected, (state : any, action) => {
         state.status = 'failed';
 
-    })
+    }).addCase(fetchdeleteNotification.pending, (state, action) => {
+          state.status = 'loading';
+    }).addCase(fetchdeleteNotification.fulfilled, (state : any, action : any) => {
+          state.status = 'success';      
+    }).addCase(fetchdeleteNotification.rejected, (state : any, action) => {
+        state.status = 'failed';
+
+})
   
   }
 });

@@ -183,11 +183,11 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
             const message = `${data.requestToPlay.Sender.display_name} send you request to play`;
             const type = "requestPLay";
             const requestId = data.requestToPlay.id;
-            console.log("requestId-->", requestId);
             this.server.to(data.requestToPlay.recipient.id).emit(`newRequestToPlay`,data);
             this.userService.createNotification(data.requestToPlay.Sender, data.requestToPlay.recipient, message, type, requestId);
 
         }
+        
 
         @OnEvent('requestAccept.created')
         AcceptFriendRequestNotification(data : any){
@@ -199,6 +199,26 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
 
 
         }
+        @OnEvent('deleteNotification.created')
+        deleteNOtification(data : any){
+            this.server.emit('deleteNOtification', data);
+
+
+        }
+        @OnEvent('requestAcceptPlay.created')
+        AcceptRequestPLay(data : any){
+            this.server.emit('AcceptPLayNotification', data);
+
+
+        }
+        @OnEvent('requestRefusePlay.created')
+        REfuseRequestPLay(data : any){
+            this.server.emit('RefusePLayNotification', data);
+
+
+        }
+
+
         @OnEvent('requestRefuse.created')
         RefuserFriendRequestNotification(RefuseruserId : string){
             this.server.emit('RefuseNotification', `${RefuseruserId} refuse your request`);

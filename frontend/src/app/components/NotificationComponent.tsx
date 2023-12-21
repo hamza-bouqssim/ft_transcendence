@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from '../store';
-import { fetchNotificationThunk } from '../store/notificationSlice';
+import { fetchNotificationThunk, fetchdeleteNotification } from '../store/notificationSlice';
 import { NotificationTypes } from '../utils/types';
 import { Conversation, ConversationSideBarContainer, ConversationSideBarItem } from '../utils/styles';
 import Image from 'next/image';
@@ -75,6 +75,7 @@ const NotificationComponent = () => {
       }
 
       const handleClickAcceptPLay = async (id : string) =>{
+        console.log("plllaaayyy-->", id);
         try {
          
             await dispatch(fetchAcceptRequestPlay(id));
@@ -96,6 +97,20 @@ const NotificationComponent = () => {
             ToastError(`Error refusing friend request to play: ${error}`);
   
           }
+      }
+
+      const deleteNotification = async (id : string) =>{
+        console.log("delete notif-->", id);
+        try{
+            await dispatch(fetchdeleteNotification(id));
+            ToastSuccess("delete notification Succefully !");
+
+
+        }catch(error){
+          ToastError(`Error while deleting Succefully !`);
+
+
+        }
       }
       return (
         
@@ -124,8 +139,8 @@ const NotificationComponent = () => {
                             <div className='relative flex items-center justify-center w-[70px] h-[60px]'>
                                 {(elem.type == 'requestPLay') && (
                                     <div className="absolute flex gap-3">
-                                        <FontAwesomeIcon icon={faCheck} className=" bg-[#5B8CD3] w-4 h-4 p-1 rounded-full cursor-pointer  duration-500  hover:text-[--pink-color] " />
-                                        <FontAwesomeIcon icon={faTimes} className=" bg-[#5B8CD3] w-4 h-4 p-1  rounded-full cursor-pointer  duration-500  hover:text-[--pink-color] " />
+                                        <FontAwesomeIcon icon={faCheck} className=" bg-[#5B8CD3] w-4 h-4 p-1 rounded-full cursor-pointer  duration-500  hover:text-[--pink-color] " onClick={()=> handleClickAcceptPLay(elem.requestId) }/>
+                                        <FontAwesomeIcon icon={faTimes} className=" bg-[#5B8CD3] w-4 h-4 p-1  rounded-full cursor-pointer  duration-500  hover:text-[--pink-color] " onClick={()=> handleClickRefusePLay(elem.requestId)}/>
                                     </div>)
                                  }
                                 {(elem.type === 'requestFriend') && (
@@ -135,7 +150,7 @@ const NotificationComponent = () => {
                                     </div>
                                 )}
                             </div>
-                            <FontAwesomeIcon icon={faTimes} className="text-[--pink-color] font-bold hover:scale-150 w-4 h-4 p-1 mt-[8px] mb-auto rounded-full cursor-pointer  duration-500  hover:text-[--purple-color] " />
+                            <FontAwesomeIcon icon={faTimes} className="text-[--pink-color] font-bold hover:scale-150 w-4 h-4 p-1 mt-[8px] mb-auto rounded-full cursor-pointer  duration-500  hover:text-[--purple-color] " onClick={() => deleteNotification(elem.id)}/>
                         </div>
                         
                     );
