@@ -16,35 +16,35 @@ import SignInForm from "./SignInForm";
 import { createUserParams } from "../utils/types";
 import { postRegisterUser } from "../utils/api";
 import { useRouter } from "next/navigation";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const SignUpForm = forwardRef((_props: any, ref: any) => {
 	const ToastError = (message: any) => {
 		toast.error(message, {
-		  position: toast.POSITION.TOP_RIGHT,
-		  autoClose: 5000,
-		  hideProgressBar: false,
-		  closeOnClick: true,
-		  pauseOnHover: true,
-		  draggable: true,
+			position: toast.POSITION.TOP_RIGHT,
+			autoClose: 5000,
+			hideProgressBar: false,
+			closeOnClick: true,
+			pauseOnHover: true,
+			draggable: true,
 		});
-	  };
-	
-	  const ToastSuccess = (message: any) => {
+	};
+
+	const ToastSuccess = (message: any) => {
 		toast.success(message, {
-		  position: toast.POSITION.TOP_RIGHT,
-		  autoClose: 5000,
-		  hideProgressBar: false,
-		  closeOnClick: true,
-		  pauseOnHover: true,
-		  draggable: true,
+			position: toast.POSITION.TOP_RIGHT,
+			autoClose: 5000,
+			hideProgressBar: false,
+			closeOnClick: true,
+			pauseOnHover: true,
+			draggable: true,
 		});
-	  };
+	};
 	const [show, setShow] = useState<boolean>(false),
 		faEyeRef = useRef<SVGSVGElement>(null),
 		faEyeSlashRef = useRef<SVGSVGElement>(null);
-		
+
 	type FormData = {
 		email: string;
 		password: string;
@@ -63,18 +63,15 @@ const SignUpForm = forwardRef((_props: any, ref: any) => {
 			await postRegisterUser(data);
 			ToastSuccess(`Welcome ${data.username}`);
 			router.push("/signIn", { scroll: false });
-		} catch (err :  any) {
+		} catch (err: any) {
 			if (err.response) {
-			
 				const errorMessage = err.response.data.message;
-			  ToastError(`Failed to login: ${errorMessage}`);
-			  } else if (err.request) 
-			  {
+				ToastError(`Failed to login: ${errorMessage}`);
+			} else if (err.request) {
 				ToastError(`No response from the server`);
-  
-			  } else {
+			} else {
 				ToastError(`Error in request setup`);
-			  }
+			}
 		}
 	};
 

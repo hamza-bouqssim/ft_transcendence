@@ -12,10 +12,8 @@ import { GameService } from '../game.service';
 import { PrismaService } from 'prisma/prisma.service';
 import { AuthenticatedSocket } from 'src/utils/interfaces';
 import { PongGame } from '../classes/PongGame';
-import { ne } from '@faker-js/faker';
-import { type } from 'os';
-import Matter, { Vector } from 'matter-js';
-import {EventEmitter2} from  '@nestjs/event-emitter';
+import { Vector } from 'matter-js';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 type User = {
 	id: string;
@@ -30,7 +28,7 @@ type InvitePayload = {
 export type KeyEventPayload = {
 	state: string;
 	key: string;
-	display_name:string;
+	display_name: string;
 };
 
 type JoinPayload = {
@@ -45,17 +43,17 @@ type Opponent = {
 
 type EndGame = {
 	status: string;
-}
+};
 
 type Score = {
 	yourScore: number;
-	opponantScore : number;
+	opponantScore: number;
 };
 
 type PaddleMove = {
 	xPosition1: number;
 	xPosition2: number;
-}
+};
 
 type Emit = PaddleMove | Opponent | EndGame | Score | Vector | {};
 
@@ -93,7 +91,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		private readonly prisma: PrismaService,
 		private readonly eventEmitter: EventEmitter2,
 	) {}
-	
+
 	// sleep = async (ms: number) =>
 	// 	new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -120,7 +118,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				data: { status: 'online' },
 			});
 			this.eventEmitter.emit('Ingameoffline.created', { userId });
-
 		}
 		const queue = this.getQueueWaiting(userId);
 		if (queue) {
@@ -211,18 +208,17 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 	// emit to user a message in an event---------------------------------------
-	emitToGame(user1: string, user2: string, payload :Emit , event: string) {
+	emitToGame(user1: string, user2: string, payload: Emit, event: string) {
 		this.server.to(`@${user1}`).emit(event, payload);
 		this.server.to(`@${user2}`).emit(event, payload);
-
 	}
 
-	emitToUser1InGame(userId: string, payload :Emit, event: string) {
+	emitToUser1InGame(userId: string, payload: Emit, event: string) {
 		this.server.to(`@${userId}`).emit(event, payload);
 		return 1;
 	}
 
-	emitToUser2InGame(userId: string, payload :Emit, event: string) {
+	emitToUser2InGame(userId: string, payload: Emit, event: string) {
 		this.server.to(`@${userId}`).emit(event, payload);
 		return 2;
 	}
@@ -377,6 +373,3 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		this.mapPong[game.user1.id].handleKeyDown(data);
 	}
 }
-
-
-	

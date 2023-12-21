@@ -2,8 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { promises } from 'dns';
 import { PrismaService } from 'prisma/prisma.service';
 
-
-
 @Injectable()
 export class GameService {
 	constructor(private readonly prisma: PrismaService) {}
@@ -28,7 +26,7 @@ export class GameService {
 		return Math.round(newLevel * 100) / 100;
 	}
 
-	rating(playerRank: number, opponentRank: number, outcome: number) : number{
+	rating(playerRank: number, opponentRank: number, outcome: number): number {
 		let k: number;
 		if (playerRank > 2400) k = 16;
 		else if (playerRank > 2100 && playerRank <= 2400) k = 24;
@@ -62,7 +60,7 @@ export class GameService {
 	}
 
 	async createStateGame(userId: string) {
-		// const state = 
+		// const state =
 		await this.prisma.stateGame.create({
 			data: {
 				user: { connect: { id: userId } },
@@ -140,7 +138,7 @@ export class GameService {
 		resultTwo: number,
 		duration: string,
 	) {
-		const totalMatch = await this.totalMatch(userIdOne, userIdTwo) + 1;
+		const totalMatch = (await this.totalMatch(userIdOne, userIdTwo)) + 1;
 		const match = await this.prisma.match_History.create({
 			data: {
 				playerOne: userIdOne,
@@ -232,7 +230,7 @@ export class GameService {
 	// 	return modifiedRanking;
 	// }
 
-	async history_matches(userId: string){
+	async history_matches(userId: string) {
 		const history = await this.prisma.match_History.findMany({
 			where: {
 				OR: [{ playerOne: userId }, { playerTwo: userId }],
@@ -257,7 +255,7 @@ export class GameService {
 				resultTwo: true,
 				createdAt: true,
 				duration: true,
-				totalMatch:true,
+				totalMatch: true,
 			},
 		});
 		return history;

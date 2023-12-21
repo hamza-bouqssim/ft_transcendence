@@ -21,7 +21,7 @@ const SideBar = (props: Change) => {
 
 	return (
 		<aside
-			className={`fixed bottom-0 left-0 right-0 z-20 flex justify-between  bg-gradient-to-b from-[#2E2F54] via-[#3B5282] to-[#2E2F54]  text-white duration-300 ease-in-out md:relative md:h-full md:flex-col md:items-center`}
+			className={`fixed bottom-0 left-0 right-0 z-20 flex justify-between bg-gradient-to-b from-[#2E2F54] via-[#3B5282] to-[#2E2F54]  text-white duration-300 ease-in-out md:relative md:h-full md:flex-col md:items-center`}
 		>
 			<ul
 				className="flex h-full w-full justify-between font-bold md:w-auto md:flex-col md:justify-start"

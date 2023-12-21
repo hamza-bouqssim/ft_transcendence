@@ -1,5 +1,13 @@
 "use client";
-import { useState, createContext, PropsWithChildren, Component } from "react";
+import {
+	useState,
+	createContext,
+	PropsWithChildren,
+	Component,
+	useRef,
+	ReactNode,
+	useEffect,
+} from "react";
 import SideBar from "../components/SideBar";
 import TopRightBar from "../components/TopRightBar";
 import { io } from "socket.io-client";
@@ -22,33 +30,41 @@ interface Room {
 	id: string;
 	name: string;
 	Privacy: string;
-	password:string;
+	password: string;
 	picture: string;
 	createdAt: string;
 	updatedAt: string;
 	members: {
-	  isAdmin: boolean;
+		isAdmin: boolean;
 	};
 }
 
 function AppWithProviders({ children }: PropsWithChildren & Props) {
-	const [channel, setChannel] = useState<GroupChannel | ConversationTypes |null>(null); // Initial value
-	const[oldId,setOldId] = useState(null);
-	const[Userdata,setUserdata] = useState<User |  null>(null);
-	const updateChannel = (newAddress:GroupChannel | ConversationTypes| null) => {
-	  setChannel(newAddress);
+	const [channel, setChannel] = useState<
+		GroupChannel | ConversationTypes | null
+	>(null); // Initial value
+	const [oldId, setOldId] = useState(null);
+	const [Userdata, setUserdata] = useState<User | null>(null);
+	const updateChannel = (
+		newAddress: GroupChannel | ConversationTypes | null,
+	) => {
+		setChannel(newAddress);
 	};
 	return (
-		<Provider store={store} >
-			<socketContext.Provider 
-				value={{socket,
-						updateChannel,
-						channel,
-						oldId,
-						setOldId,
-						Userdata,
-						setUserdata
-					}}>{children}</socketContext.Provider>
+		<Provider store={store}>
+			<socketContext.Provider
+				value={{
+					socket,
+					updateChannel,
+					channel,
+					oldId,
+					setOldId,
+					Userdata,
+					setUserdata,
+				}}
+			>
+				{children}
+			</socketContext.Provider>
 		</Provider>
 	);
 }
@@ -83,13 +99,29 @@ export default function RootLayout({
 		return validPaths.some((path) => pathName.includes(path));
 	};
 
-	 
+	const getChildrenSize = useRef<any>(null);
+
+	const [minHeight, setMinHeight] = useState<any>(1320);
+
+	useEffect(() => {
+		setMinHeight(getChildrenSize.current?.children[0].clientHeight);
+		const handleResizeWindow = () =>
+			setMinHeight(getChildrenSize.current?.children[0].clientHeight);
+
+		window.addEventListener("resize", handleResizeWindow);
+
+		return () => window.removeEventListener("resize", handleResizeWindow);
+	}, [getChildrenSize.current?.children[0].clientHeight, pathName]);
+
 	return (
 		<html lang="en">
 			<body>
-				<div className="flex h-screen w-full text-white">
+				<div
+					className={`flex h-screen w-full text-white`}
+					style={{ minHeight: `${minHeight + 100}px` }}
+				>
 					<AppWithProviders socket={socket}>
-					{shouldHide() ? null : (
+						{shouldHide() ? null : (
 							<SideBar
 								sideBar={change.sideBar}
 								onClick={() =>
@@ -116,12 +148,18 @@ export default function RootLayout({
 							/>
 						)}
 
-					{/* <div className="mt-[70px] h-[85%] w-full lg:flex lg:items-center lg:justify-evenly min-[1750px]:ml-72 min-[1750px]:mt-[90px] min-[1750px]:w-[86%]">
+						{/* <div className="mt-[70px] h-[85%] w-full lg:flex lg:items-center lg:justify-evenly min-[1750px]:ml-72 min-[1750px]:mt-[90px] min-[1750px]:w-[86%]">
 						{children}
 					</div> */}
 
 						<ChangeContext.Provider value={changeValues}>
-							<div className="h-full w-full">{children}</div>
+							<div
+								ref={getChildrenSize}
+								className={`min-h-[${minHeight + 100}px] h-full w-full`}
+								// className={`h-full w-full`}
+							>
+								{children}
+							</div>
 						</ChangeContext.Provider>
 					</AppWithProviders>
 				</div>

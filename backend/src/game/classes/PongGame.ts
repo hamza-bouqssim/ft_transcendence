@@ -541,29 +541,31 @@ export class PongGame {
 	updateBallVelocity() {
 		// Limit Velocity Value
 		console.log('Before velocity update:', this.currentBallVelocity.y);
+
+		const xVelocity = this.currentBallVelocity.x;
+
 		if (this.currentBallVelocity.y === 10 || this.currentBallVelocity.y === -10)
 			return;
-		// else if (
-		// 	this.currentBallVelocity.y === 8 ||
-		// 	this.currentBallVelocity.y === -8
-		// )
-		// 	return;
 		else {
 			if (this.lastDirection === 'top') this.currentBallVelocity.y -= 1;
 			else this.currentBallVelocity.y += 1;
-
-			Body.setVelocity(this.ball, {
-				x: this.ball.velocity.x,
-				y: this.currentBallVelocity.y,
-			});
-
-			this.gameGatway.emitToGame(
-				this.user1,
-				this.user2,
-				this.ball.velocity,
-				'setBallVelocity',
-			);
 		}
+
+		if (xVelocity === this.currentBallVelocity.x)
+			this.currentBallVelocity.x = this.ball!.velocity.x + 1;
+
+		Body.setVelocity(this.ball!, {
+			x: this.currentBallVelocity.x,
+			y: this.currentBallVelocity.y,
+		});
+
+		this.gameGatway.emitToGame(
+			this.user1,
+			this.user2,
+			this.ball.velocity,
+			'setBallVelocity',
+		);
+
 		console.log('After velocity update:', this.currentBallVelocity.y);
 	}
 
