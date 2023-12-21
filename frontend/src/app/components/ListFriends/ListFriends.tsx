@@ -186,7 +186,7 @@ const ListFriends = () => {
                 </div>
                
 								<div>
-					 				<span  className="ConversationName">{elem.username} {elem.display_name}</span>
+					 				<span  className="ConversationName">{elem.display_name}</span>
 					 			</div>
                    
   

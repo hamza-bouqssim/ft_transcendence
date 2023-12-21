@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Body, Controller, Get, Param,  Post, Delete, Req,  Res,  UnauthorizedException, UploadedFile, UseGuards, UseInterceptors, Query} from '@nestjs/common';
 import { UserService } from './user.service';
 import { AuthGuard } from '@nestjs/passport';

@@ -75,6 +75,7 @@ const NotificationComponent = () => {
       }
 
       const handleClickAcceptPLay = async (id : string) =>{
+        console.log("plllaaayyy-->", id);
         try {
          
             await dispatch(fetchAcceptRequestPlay(id));
@@ -124,8 +125,8 @@ const NotificationComponent = () => {
                             <div className='relative flex items-center justify-center w-[70px] h-[60px]'>
                                 {(elem.type == 'requestPLay') && (
                                     <div className="absolute flex gap-3">
-                                        <FontAwesomeIcon icon={faCheck} className=" bg-[#5B8CD3] w-4 h-4 p-1 rounded-full cursor-pointer  duration-500  hover:text-[--pink-color] " />
-                                        <FontAwesomeIcon icon={faTimes} className=" bg-[#5B8CD3] w-4 h-4 p-1  rounded-full cursor-pointer  duration-500  hover:text-[--pink-color] " />
+                                        <FontAwesomeIcon icon={faCheck} className=" bg-[#5B8CD3] w-4 h-4 p-1 rounded-full cursor-pointer  duration-500  hover:text-[--pink-color] " onClick={()=> handleClickAcceptPLay(elem.requestId) }/>
+                                        <FontAwesomeIcon icon={faTimes} className=" bg-[#5B8CD3] w-4 h-4 p-1  rounded-full cursor-pointer  duration-500  hover:text-[--pink-color] " onClick={()=> handleClickRefusePLay(elem.requestId)}/>
                                     </div>)
                                  }
                                 {(elem.type === 'requestFriend') && (
