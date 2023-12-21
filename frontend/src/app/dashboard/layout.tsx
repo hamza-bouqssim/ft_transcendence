@@ -3,21 +3,17 @@ import {
 	useState,
 	createContext,
 	PropsWithChildren,
-	Component,
 	useRef,
-	ReactNode,
 	useEffect,
 } from "react";
 import SideBar from "../components/SideBar";
 import TopRightBar from "../components/TopRightBar";
-import { io } from "socket.io-client";
 import { Provider } from "react-redux";
 import { socket, socketContext } from "../utils/context/socketContext";
 import { store } from "../store";
 import { Socket } from "socket.io-client";
 import { usePathname } from "next/navigation";
 import { ConversationTypes, GroupChannel, User } from "../utils/types";
-import { Group } from "three";
 
 export const SideBarContext: any = createContext<any>(null);
 export const ChangeContext: React.Context<any> = createContext(null);
@@ -104,36 +100,24 @@ export default function RootLayout({
 	const [minHeight, setMinHeight] = useState<any>(1320);
 
 	useEffect(() => {
-		setMinHeight(getChildrenSize.current?.children[0].clientHeight);
+		setMinHeight(getChildrenSize.current?.children[0]?.clientHeight);
 		const handleResizeWindow = () =>
-			setMinHeight(getChildrenSize.current?.children[0].clientHeight);
+			setMinHeight(getChildrenSize.current?.children[0]?.clientHeight);
 
 		window.addEventListener("resize", handleResizeWindow);
 
 		return () => window.removeEventListener("resize", handleResizeWindow);
-	}, [getChildrenSize.current?.children[0].clientHeight, pathName]);
+	}, [getChildrenSize.current?.children[0]?.clientHeight, pathName]);
 
 	return (
 		<html lang="en">
 			<body>
 				<div
 					className={`flex h-screen w-full text-white`}
-					style={{ minHeight: `${minHeight + 100}px` }}
+					style={{ minHeight: `${minHeight + 170}px` }}
 				>
 					<AppWithProviders socket={socket}>
-						{shouldHide() ? null : (
-							<SideBar
-								sideBar={change.sideBar}
-								onClick={() =>
-									setChange({
-										...change,
-										sideBar: !change.sideBar,
-										chatBox: false,
-										menu: false,
-									})
-								}
-							/>
-						)}
+						{shouldHide() ? null : <SideBar />}
 						{shouldHide() ? null : (
 							<TopRightBar
 								menu={change.menu}
@@ -148,15 +132,10 @@ export default function RootLayout({
 							/>
 						)}
 
-						{/* <div className="mt-[70px] h-[85%] w-full lg:flex lg:items-center lg:justify-evenly min-[1750px]:ml-72 min-[1750px]:mt-[90px] min-[1750px]:w-[86%]">
-						{children}
-					</div> */}
-
 						<ChangeContext.Provider value={changeValues}>
 							<div
 								ref={getChildrenSize}
-								className={`min-h-[${minHeight + 100}px] h-full w-full`}
-								// className={`h-full w-full`}
+								className={`min-h-[${minHeight + 170}px] h-full w-full`}
 							>
 								{children}
 							</div>

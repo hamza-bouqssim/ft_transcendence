@@ -1,26 +1,31 @@
 "use client";
 
 import React, { useEffect, useState, useContext } from "react";
-import { getAuthUser, getMatchHistory, getStates } from "../utils/api";
-import { redirect, useRouter } from "next/navigation";
-import { User } from "../utils/types";
-import { getSession } from "next-auth/react";
+import { getMatchHistory, getStates } from "../utils/api";
 import "./page.css";
 import Boxes from "../components/Boxes";
 import RankingFriendsSwitch from "../components/RankingFriendsSwitch";
 import HistoryMatches from "../components/HistoryMatches";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../store";
-import { fetchGetRequestThunk } from "../store/requestSlice";
 import Image from "next/image";
 import { socketContext } from "../utils/context/socketContext";
+import { HistoryMatchesProps } from "../components/HistoryMatches";
+
+interface ResultsType {
+	win: number;
+	level: number;
+	lose: number;
+}
 
 const Dashboard = () => {
 	const { Userdata } = useContext(socketContext);
 
-	const [results, setResults] = useState({});
+	const [results, setResults] = useState<ResultsType>({
+		win: 0,
+		level: 0,
+		lose: 0,
+	});
 
-	const [history_match, setHistoryMatch] = useState([]);
+	const [history_match, setHistoryMatch] = useState<HistoryMatchesProps[]>([]);
 	useEffect(() => {
 		const fetchMatchHistory = async () => {
 			try {
@@ -96,7 +101,7 @@ const Dashboard = () => {
 							</div>
 						</div>
 						<div className="his scrollbar-hide  h-[120px] overflow-y-auto">
-							{history_match.map((_history, index) => (
+							{history_match.map((_history: HistoryMatchesProps, index) => (
 								<HistoryMatches
 									key={index}
 									playerOne={_history.playerOne}
@@ -105,7 +110,7 @@ const Dashboard = () => {
 									playerTwo={_history.playerTwo}
 									duration={_history.duration}
 									date={_history.date}
-									totalMatches={_history.totalMatch}
+									totalMatch={_history.totalMatch}
 								/>
 							))}
 						</div>
@@ -113,7 +118,7 @@ const Dashboard = () => {
 
 					<div className="col-2">
 						<div className="rank-container overflow-hidden p-2">
-							<RankingFriendsSwitch />
+							<RankingFriendsSwitch userId={Userdata?.id} />
 						</div>
 
 						<div className="achievements-container">
@@ -128,6 +133,7 @@ const Dashboard = () => {
 											src="/assets/first.jpg"
 											width="200"
 											height="200"
+											alt=""
 										/>
 									</div>
 									<div className="my">
@@ -138,6 +144,7 @@ const Dashboard = () => {
 											src="/assets/second.jpg"
 											width="200"
 											height="200"
+											alt=""
 										/>
 									</div>
 									<div className="my">
@@ -148,6 +155,7 @@ const Dashboard = () => {
 											src="/assets/third.jpg"
 											width="200"
 											height="200"
+											alt=""
 										/>
 									</div>
 									<div className="my">
@@ -158,6 +166,7 @@ const Dashboard = () => {
 											src="/assets/fourth.jpg"
 											width="200"
 											height="200"
+											alt=""
 										/>
 									</div>
 									<div className="my">
@@ -168,6 +177,7 @@ const Dashboard = () => {
 											src="/assets/fifth.jpg"
 											width="200"
 											height="200"
+											alt=""
 										/>
 									</div>
 									<div className="my">
@@ -180,6 +190,7 @@ const Dashboard = () => {
 											src="/assets/sixth.jpg"
 											width="200"
 											height="200"
+											alt=""
 										/>
 									</div>
 								</div>

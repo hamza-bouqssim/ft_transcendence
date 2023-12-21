@@ -11,12 +11,7 @@ import { useRef } from "react";
 import Link from "next/link";
 import LogOut from "./LogOut";
 
-type Change = {
-	sideBar: boolean;
-	onClick: any;
-};
-
-const SideBar = (props: Change) => {
+const SideBar = () => {
 	const ulRef = useRef<HTMLUListElement>(null);
 
 	return (

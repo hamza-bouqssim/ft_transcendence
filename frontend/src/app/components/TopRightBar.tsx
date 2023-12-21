@@ -13,6 +13,7 @@ import { socketContext } from "../utils/context/socketContext";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../store";
 import { fetchCountNotification } from "../store/notificationSlice";
+import { current } from "immer";
 
 type Change = {
 	menu: boolean;
@@ -71,7 +72,12 @@ const TopRightBar = (props: Change) => {
 			ToastError(`Failed to logout`);
 		}
 	};
-	const menuRef = useRef(null);
+	const menuRef = useRef<HTMLDivElement>(null);
+	const subMenuRef = useRef<HTMLDivElement>(null);
+	const faChevronDownRef = useRef<SVGSVGElement>(null);
+
+	const [rotate, setRotate] = useState<boolean>(false);
+
 	const handleDocumentClick = (event: any) => {
 		console.log(notfication);
 		if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -90,6 +96,17 @@ const TopRightBar = (props: Change) => {
 			document.removeEventListener("click", handleDocumentClick);
 		};
 	}, [notfication]);
+
+	useEffect(() => {
+		const handleCLickEvent = (e: MouseEvent) => {
+			if (!faChevronDownRef.current?.contains(e.target as Node))
+				setRotate(false);
+		};
+
+		document.addEventListener("click", handleCLickEvent);
+
+		return () => document.removeEventListener("click", handleCLickEvent);
+	}, []);
 
 	return (
 		<>
@@ -137,21 +154,27 @@ const TopRightBar = (props: Change) => {
 					</div>
 
 					<FontAwesomeIcon
+						ref={faChevronDownRef}
 						icon={faChevronDown}
 						className={`transform cursor-pointer text-2xl duration-500 ease-in-out hover:text-[--pink-color] lg:text-3xl ${
-							props.menu ? "rotate-[180deg]" : "rotate-0"
+							rotate ? "rotate-[180deg]" : "rotate-0"
 						}`}
-						onClick={props.onClick}
+						onClick={() => {
+							setRotate(!rotate);
+							console.log("from click ");
+						}}
 					/>
-					<div
-						className={`absolute ${
-							props.menu ? "flex" : "hidden"
-						} right-4 top-14 h-[134px] w-[247px] flex-col items-center justify-center gap-1 rounded-[15px] border-2 border-solid border-[#8E8E8E] bg-white font-['Whitney_Semibold'] lg:right-[32px] lg:top-[64px]`}
-					>
-						<MenuButton background={"bg-[#d9d9d9]"} value="View Profile" />
-						<MenuButton background={"bg-[#BBBBBB]"} value="Settings" />
-						<LogoutButton background={"bg-[#EA7F87]"} value="Logout" />
-					</div>
+
+					{rotate && (
+						<div
+							ref={subMenuRef}
+							className={`absolute right-4 top-14 flex h-[134px] w-[247px] flex-col items-center justify-center gap-1 rounded-[15px] border-2 border-solid border-[#8E8E8E] bg-white font-['Whitney_Semibold'] lg:right-[32px] lg:top-[64px]`}
+						>
+							<MenuButton background={"bg-[#d9d9d9]"} value="View Profile" />
+							<MenuButton background={"bg-[#BBBBBB]"} value="Settings" />
+							<LogoutButton background={"bg-[#EA7F87]"} value="Logout" />
+						</div>
+					)}
 				</div>
 			</div>
 			{notfication && (
@@ -162,7 +185,3 @@ const TopRightBar = (props: Change) => {
 };
 
 export default TopRightBar;
-
-function setCookie(arg0: string, arg1: boolean) {
-	throw new Error("Function not implemented.");
-}
