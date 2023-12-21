@@ -1,16 +1,7 @@
 import Image from "next/image";
+import { HistoryMatchesType } from "../dashboard/Imports";
 
-export interface HistoryMatchesProps {
-	playerOne: string;
-	resultOne: string;
-	playerTwo: string;
-	resultTwo: string;
-	duration: string;
-	date: string;
-	totalMatch: string;
-}
-
-const HistoryMatches = (props: HistoryMatchesProps) => {
+const HistoryMatches = (props: HistoryMatchesType) => {
 	return (
 		<div className="history-results mt-[20px]  flex h-[40px] w-full justify-between rounded-[40px] bg-[#79a9f28d]  px-1   py-1 shadow-lg hover:bg-[#95c0ff8d]">
 			<div className="res flex  w-[23%] justify-between text-center">

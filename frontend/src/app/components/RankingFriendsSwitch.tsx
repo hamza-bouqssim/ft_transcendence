@@ -6,19 +6,8 @@ import RankedFriends from "./RankedFriends";
 import Image from "next/image";
 import { socketContext } from "../utils/context/socketContext";
 import { getRanking, getUserInfos } from "../utils/api";
+import { PlayerType, UserInfoType } from "../dashboard/Imports";
 
-interface userInfoType {
-	id: string;
-	username: string;
-	display_name: string;
-	avatar_url: string;
-}
-
-interface playerType {
-	username: string;
-	picture: string;
-	rank: number;
-}
 
 const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 	const [showRank, setShowRank] = useState(false);
@@ -27,8 +16,8 @@ const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 	const [clickedButton, setClickedButton] = useState("user");
 	const [showuser, setShowUser] = useState(true);
 	const { Userdata } = useContext(socketContext);
-	const [userinfo, setUserInfo] = useState<userInfoType>();
-	const [players, setPlayers] = useState<playerType[]>([]);
+	const [userinfo, setUserInfo] = useState<UserInfoType>();
+	const [players, setPlayers] = useState<PlayerType[]>([]);
 
 	const _showRank = () => {
 		setShowRank(true);

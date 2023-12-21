@@ -9,12 +9,7 @@ import HistoryMatches from "../components/HistoryMatches";
 import Image from "next/image";
 import { socketContext } from "../utils/context/socketContext";
 import { HistoryMatchesProps } from "../components/HistoryMatches";
-
-interface ResultsType {
-	win: number;
-	level: number;
-	lose: number;
-}
+import { ResultsType } from "./Imports";
 
 const Dashboard = () => {
 	const { Userdata } = useContext(socketContext);

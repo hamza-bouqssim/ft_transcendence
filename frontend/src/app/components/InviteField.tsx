@@ -67,7 +67,6 @@ const InviteField = () => {
 							@{user.username}
 						</span>
 					</div>
-					{/* <button className="w-[80px] h-[36px] bg-[#5B8CD4] rounded-[20px] font-['Whitney_Bold'] hover:bg-[--pink-color]">invite</button> */}
 					<FontAwesomeIcon
 						icon={faUserPlus}
 						className="h-5 w-5 rounded-[50%] bg-[#5B8CD4] p-3 hover:cursor-pointer hover:bg-[--pink-color] min-[1750px]:h-6 min-[1750px]:w-6"

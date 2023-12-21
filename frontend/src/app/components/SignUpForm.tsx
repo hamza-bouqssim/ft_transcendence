@@ -1,7 +1,6 @@
 import { forwardRef, useRef, useState } from "react";
-import EmailInput from "./EmailInput";
 import { SignButton } from "./Buttons";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
 	faKey,
@@ -11,8 +10,6 @@ import {
 	faUser,
 	faAddressCard,
 } from "@fortawesome/free-solid-svg-icons";
-import Image from "next/image";
-import SignInForm from "./SignInForm";
 import { createUserParams } from "../utils/types";
 import { postRegisterUser } from "../utils/api";
 import { useRouter } from "next/navigation";

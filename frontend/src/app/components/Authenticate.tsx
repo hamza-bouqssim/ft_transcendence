@@ -10,7 +10,6 @@ import {
 } from "./Buttons";
 
 const Authenticate = () => {
-
 	const containerRef = useRef<HTMLDivElement>(null),
 		subContainerRef = useRef<HTMLDivElement>(null),
 		btnSignInRef = useRef<HTMLButtonElement>(null),

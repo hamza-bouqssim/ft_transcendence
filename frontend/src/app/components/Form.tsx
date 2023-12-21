@@ -1,6 +1,5 @@
 import { useState, useContext, useEffect } from "react";
 import PopUp from "./popUp";
-import Swal from "sweetalert2";
 import { socketContext } from "../utils/context/socketContext";
 import { Qrcodeform } from "./Qrcodefom";
 import {

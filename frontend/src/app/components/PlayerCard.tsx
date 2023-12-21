@@ -27,7 +27,7 @@ const PlayerCard = (props: PlayerCardProps) => {
 					{props.username}
 				</h3>
 				<span className="mt-[-5px] block text-xs lg:text-sm min-[1750px]:text-lg">
-					{props.display_name? ("@" + props.display_name) : ""}
+					{props.display_name ? "@" + props.display_name : ""}
 				</span>
 			</div>
 		</div>

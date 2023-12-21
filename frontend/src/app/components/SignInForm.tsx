@@ -12,7 +12,6 @@ import {
 import { useRouter } from "next/navigation";
 import { UserCredentialsParams } from "../utils/types";
 import { postLoginUser } from "../utils/api";
-import { setCookie } from "cookies-next";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
