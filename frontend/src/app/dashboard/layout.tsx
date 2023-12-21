@@ -10,6 +10,7 @@ import { Socket } from "socket.io-client";
 import { usePathname } from "next/navigation";
 import { ConversationTypes, GroupChannel, User } from "../utils/types";
 import { Group } from "three";
+import ProviderOnSocket from "./ProviderOnSocket.tsx";
 
 export const SideBarContext: any = createContext<any>(null);
 export const ChangeContext: React.Context<any> = createContext(null);
@@ -107,6 +108,7 @@ export default function RootLayout({
 					</div> */}
 
 						<ChangeContext.Provider value={changeValues}>
+							<ProviderOnSocket></ProviderOnSocket>
 							<div className="h-full w-full">{children}</div>
 						</ChangeContext.Provider>
 					</AppWithProviders>

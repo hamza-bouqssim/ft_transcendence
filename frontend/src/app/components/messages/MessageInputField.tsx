@@ -20,9 +20,9 @@ const MessageInputField=() => {
     const [content,setContent] = useState("");
 
     const sendMessage = async () => {
-        if (content.trim() !== '') { // Check if the trimmed content is not empty
+        if (content.trim() !== '') { 
             socket.emit("message.create", { participentsId: channel?.id, content: content });
-            setContent('');  // Assuming you want to clear the content after sending the message
+            setContent(''); 
         }
     };
     const handleEnter =(event : any) => {
