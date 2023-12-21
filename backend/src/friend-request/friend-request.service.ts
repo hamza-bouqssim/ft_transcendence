@@ -420,7 +420,8 @@ export class FriendRequestService {
 
         const user = await this.prisma.user.findFirst({where: {id: senderId}});
         const recipientUser = await this.prisma.user.findFirst({where: {id: recipientId}});
-        
+        console.log("user: ", user);
+        console.log("rec : ", recipientUser); 
         if(!user || !recipientUser)
         {
             throw new HttpException('User Not Found!', HttpStatus.BAD_REQUEST)

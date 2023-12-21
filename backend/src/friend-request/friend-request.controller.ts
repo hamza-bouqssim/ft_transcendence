@@ -43,7 +43,7 @@ export class FriendRequestController {
     async acceptRequest(@Body() request: {requestId: string}, @Req() req)
     {
         const user = req.user;
-        return this.friendshipService.acceptFriendRequest(request.requestId, user);
+        return this.friendshipService.acceptFriendRequest(request.requestId, user); 
     }
     @Post('accept_request_play')
     async acceptRequestToPlay(@Body() request: {requestId: string}, @Req() req){
@@ -84,7 +84,8 @@ export class FriendRequestController {
         return res.status(200).json({ success: true, response: returnvalue });
 
       }catch (err) {
-        return res.status(401).json({ success: false, message: err.message || 'An unexpected error occurred' });
+        return res.status(401
+          ).json({ success: false, message: err.message || 'An unexpected error occurred' });
       }
 
 
@@ -92,11 +93,21 @@ export class FriendRequestController {
 
 
     @Post('unblock-friend')
-    async unblockFriend(@Body() request: {friendIdToUnblock: string}, @Req() req)
+    async unblockFriend(@Body() request: {friendIdToUnblock: string}, @Req() req, @Res() res)
     {
+      try{
         const user = req.user;
-        return this.friendshipService.unblock( user.id, request.friendIdToUnblock);
-    }
+        const returnUNbloque = await this.friendshipService.unblock( user.id, request.friendIdToUnblock);
+        return res.status(200).json({ success: true, response: returnUNbloque });
+
+      }catch(err)
+      {
+        return res.status(401).json({ success: false, message: err.message || 'An unexpected error occurred' });
+      }
+
+      }
+        
+    
 
     // count notification
 

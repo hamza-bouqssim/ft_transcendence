@@ -1,6 +1,6 @@
 "use client";
 
-import { getMatchHistory, getStates, getUserInfos } from '@/app/utils/api';
+import { bloqueFriend, getMatchHistory, getStates, getUserInfos , DebloqueUser} from '@/app/utils/api';
 import { useState, useEffect } from 'react';
 import Boxes from '@/app/components/Boxes';
 import HistoryMatches from '@/app/components/HistoryMatches';
@@ -8,13 +8,109 @@ import RankingFriendsSwitch from '@/app/components/RankingFriendsSwitch';
 import Image from 'next/image';
 import "./page.css"
 import RankingUserSwitch from '@/app/components/RankingUserSwitch';
-
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch } from "@/app/store";
+import { fetchBlockFriendThunk, fetchBlocksThunk, fetchDebloqueUserThunk } from '@/app/store/blockSlice';
+import { ToastContainer, toast } from 'react-toastify';
 const Dashboard = ({ params }: { params: { id: string } }) => {
+	const ToastError = (message: any) => {
+		toast.error(message, {
+		  position: toast.POSITION.TOP_RIGHT,
+		  autoClose: 5000,
+		  hideProgressBar: false,
+		  closeOnClick: true,
+		  pauseOnHover: true,
+		  draggable: true,
+		});
+	  };
+	
+	  const ToastSuccess = (message: any) => {
+		toast.success(message, {
+		  position: toast.POSITION.TOP_RIGHT,
+		  autoClose: 5000,
+		  hideProgressBar: false,
+		  closeOnClick: true,
+		  pauseOnHover: true,
+		  draggable: true,
+		});
+	  };
+	const { friendsBlock , status, error } = useSelector((state:any) => state.friendsBlock);
+	const dispatch = useDispatch<AppDispatch>();
+	console.log("list: ",friendsBlock);
 
   const [results, setResults] = useState({});
   const [history_match, setHistoryMatch] = useState([]);
   const [userinfo, setUserInfo] = useState("");
   const [showMessageBlock, setShowMessageBlock] = useState(false);
+  const [_switch, setSwitch] = useState(true);
+
+
+
+
+
+  
+  const handleUnblockButtonClick = async () => {
+	try {
+		console.log("friendBlock", friendsBlock);
+		console.log("elem",params.id );
+
+		const res = await dispatch(fetchDebloqueUserThunk(params.id));
+		if (res.payload && typeof res.payload === 'object') {
+			const responseData = res.payload as { data?: { response?: { message?: string } } };
+			const message = responseData.data?.response?.message;
+			if (message) {
+			  ToastSuccess(message);
+			  dispatch(fetchBlocksThunk())
+			  console.log("friendBlock", friendsBlock);
+			  console.log("elem", params.id);
+	
+	
+	  
+			}else {
+			  const responseData = res.payload as {message?: string};
+			  const message = responseData.message;
+			  if(message)
+			  ToastError(message);
+			}
+		  }
+		
+		  } catch (error) {
+			
+			ToastError("Failed to block this friend. Please try again.");
+		
+		  }
+	
+  };
+  
+  const handleBlockButtonClick = async () => {
+	// 
+	try {
+		const res = await dispatch(fetchBlockFriendThunk(params.id));
+		if (res.payload && typeof res.payload === 'object') {
+		const responseData = res.payload as { data?: { response?: { message?: string } } };
+		const message = responseData.data?.response?.message;
+		if (message) {
+		  ToastSuccess(message);
+		  dispatch(fetchBlocksThunk())
+		  console.log("friendBlock", friendsBlock);
+
+
+  
+		}else {
+		  const responseData = res.payload as {message?: string};
+		  const message = responseData.message;
+		  if(message)
+		  ToastError(message);
+		}
+	  }
+	
+	  } catch (error) {
+		
+		ToastError("Failed to block this friend. Please try again.");
+	
+	  }
+  };
+  
   
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -82,7 +178,18 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 							<div className="flex justify-center items-center gap-4 align-center absolute top-[50%] -translate-y-[50%] left-10">
 								<button className="px-4 h-12 bg-[--purple-color] rounded-2xl shadow-xl hover:scale-105 hover:duration-175 ease-in-out hover:bg-[--blue-color]">Send Request</button>
 								<button className="px-4 h-12 bg-[--purple-color] rounded-2xl shadow-xl hover:scale-105 hover:duration-175 ease-in-out hover:bg-[--blue-color]" onClick={() => setShowMessageBlock(true)}>Send Message</button>
-								<button className="px-4 h-12 bg-[--purple-color] rounded-2xl shadow-xl hover:scale-105 hover:duration-175 ease-in-out hover:bg-[--pink-color]">Block</button>
+								{/* {_switch ? (
+									<button className="px-4 h-12 bg-[--purple-color] rounded-2xl shadow-xl hover:scale-105 hover:duration-175 ease-in-out hover:bg-[--pink-color]" onClick={() => handleBlockButtonClick()}>Block</button>
+								): (
+
+									<button className="px-4 h-12 bg-[--pink-color] rounded-2xl shadow-xl hover:scale-105 hover:duration-175 ease-in-out after:bg-[--purple-color]" onClick={() => handleUnblockButtonClick()}>Unblock</button>
+								)} */}
+								
+								{friendsBlock.some((friend: any) => friend.id === params.id) ? (
+  									<button className="px-4 h-12 bg-[---color] rounded-2xl shadow-xl hover:scale-105 hover:duration-175 ease-in-out hover:bg-[--pink-color]" onClick={() => handleUnblockButtonClick()}>Unblock</button>
+									) : (
+ 									 <button className="px-4 h-12 bg-[--purple-color] rounded-2xl shadow-xl hover:scale-105 hover:duration-175 ease-in-out hover:bg-[--pink-color]" onClick={() => handleBlockButtonClick()}>Block</button>
+								)}
 							</div>
 							{showMessageBlock && 
 							<>
