@@ -33,9 +33,6 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchCountNotification());
 
 
-
-
-
     });
 		socket.on('newFriendRequest', (data : any) => {
 			dispatch(fetchGetRequestThunk());
@@ -45,6 +42,18 @@ const ConversationChannelPagechat = () => {
 
 
 		  });
+    socket.on('newRequestToPlay', (data : any)=>{
+      dispatch(fetchCountNotification());
+      dispatch(fetchNotificationThunk());
+    })
+    socket.on('AcceptPLayNotification', (data : any)=>{
+      dispatch(fetchCountNotification());
+      dispatch(fetchNotificationThunk());
+    })
+    socket.on('RefusePLayNotification', (data : any)=>{
+      dispatch(fetchCountNotification());
+      dispatch(fetchNotificationThunk());
+    })
     socket.on('RefuseNotification', (data : any) => {
       dispatch(fetchGetRequestThunk());
       dispatch(fetchNumberPending());
@@ -130,6 +139,9 @@ const ConversationChannelPagechat = () => {
         socket.off('deleteFriendship');
         socket.off('Ingame');
         socket.off('IngameOffline');
+        socket.off('newRequestToPlay');
+        socket.off('AcceptPLayNotification');
+        socket.off('RefusePLayNotification');
 
 
       };

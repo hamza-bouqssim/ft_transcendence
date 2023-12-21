@@ -286,7 +286,7 @@ export class FriendRequestService {
         if (!req) {
             throw new HttpException("The request doesn't exist", HttpStatus.BAD_REQUEST)
         }
-        if (req.senderId !== user.id) {
+        if (req.senderId === user.id) {
             throw new HttpException("You are not authorized to refuse this playing request", HttpStatus.BAD_REQUEST)
 
         }

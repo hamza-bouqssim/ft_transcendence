@@ -183,7 +183,6 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
             const message = `${data.requestToPlay.Sender.display_name} send you request to play`;
             const type = "requestPLay";
             const requestId = data.requestToPlay.id;
-            console.log("requestId-->", requestId);
             this.server.to(data.requestToPlay.recipient.id).emit(`newRequestToPlay`,data);
             this.userService.createNotification(data.requestToPlay.Sender, data.requestToPlay.recipient, message, type, requestId);
 
