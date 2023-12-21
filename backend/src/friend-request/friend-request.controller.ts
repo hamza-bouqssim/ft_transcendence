@@ -109,6 +109,14 @@ export class FriendRequestController {
 
     }
 
+    @Post("delete-notification")
+    async deleteNotification(@Body() request: {idNotif : string}){
+      const result = await this.friendshipService.DeleteNotification(request.idNotif);
+      return result;
+      
+
+    }
+
   
 
     

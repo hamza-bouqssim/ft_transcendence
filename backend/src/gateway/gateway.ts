@@ -199,6 +199,12 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
 
 
         }
+        @OnEvent('deleteNotification.created')
+        deleteNOtification(data : any){
+            this.server.emit('deleteNOtification', data);
+
+
+        }
         @OnEvent('requestAcceptPlay.created')
         AcceptRequestPLay(data : any){
             this.server.emit('AcceptPLayNotification', data);

@@ -26,8 +26,7 @@ export class FriendRequestService {
             throw new HttpException('User Not Found !', HttpStatus.BAD_REQUEST)
 
         }
-        console.log("display_name-->", _Display_name);
-        console.log("reci display_name-->", friendDisplay_name);
+     
         if(friendDisplay_name === _Display_name)
         {
             throw new HttpException('You cant send request to your self!', HttpStatus.BAD_REQUEST)
@@ -529,5 +528,21 @@ export class FriendRequestService {
           });
           return unreadCount
     }
-    
+    async DeleteNotification(idNotif: string) {
+        try {
+          const data = await this.prisma.notificationGlobal.delete({
+            where: {
+              id: idNotif,
+            },
+          });
+          this.eventEmitter.emit('deleteNotification.created', {
+            data
+          });
+          return { success: true, message: 'Notification deleted successfully' };
+        } catch (error) {
+          console.error('Error deleting notification:', error);
+          return { success: false, message: 'Error deleting notification' };
+        }
+      }
 }
+    

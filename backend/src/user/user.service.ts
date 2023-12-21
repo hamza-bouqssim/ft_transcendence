@@ -351,18 +351,7 @@ export class UserService {
         const blockedFriends = await this.blockedFriends(senderId);
         return blockedFriends.some((friend) => friend.id === recipientUserId);
       }
-    //   async notificationMessage(chatId : string, userId : string){
-    //     // const notificationMessage = await this.prisma.notificationGlobal.create({
-    //     //     data: {
-    //     //         Sender: { connect: { id: userSender.id } },
-    //     //         recipient: { connect: { id: userRecipient.id } },
-    //     //         content: message,
-    //     //         image_content: userSender.avatar_url,
-    //     //     },
-    //     // });
-
-
-    //   }
+   
 
     async deleteAccount(userId: string){
         await this.prisma.user.delete({
@@ -371,5 +360,6 @@ export class UserService {
           },
         });
       }
+
 }
 

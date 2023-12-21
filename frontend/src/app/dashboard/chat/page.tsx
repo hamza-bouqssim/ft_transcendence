@@ -60,9 +60,10 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchNotificationThunk());
       dispatch(fetchCountNotification());
 
-
-
-
+    })
+    socket.on('deleteNOtification', (data : any)=>{
+      dispatch(fetchNotificationThunk());
+      dispatch(fetchCountNotification());
     })
     socket.on('blockNotification', (data : any) =>{
       dispatch(fetchBlocksThunk());
@@ -142,6 +143,7 @@ const ConversationChannelPagechat = () => {
         socket.off('newRequestToPlay');
         socket.off('AcceptPLayNotification');
         socket.off('RefusePLayNotification');
+        socket.off('deleteNOtification');
 
 
       };

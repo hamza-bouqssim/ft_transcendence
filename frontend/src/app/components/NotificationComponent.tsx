@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from '../store';
-import { fetchNotificationThunk } from '../store/notificationSlice';
+import { fetchNotificationThunk, fetchdeleteNotification } from '../store/notificationSlice';
 import { NotificationTypes } from '../utils/types';
 import { Conversation, ConversationSideBarContainer, ConversationSideBarItem } from '../utils/styles';
 import Image from 'next/image';
@@ -98,6 +98,20 @@ const NotificationComponent = () => {
   
           }
       }
+
+      const deleteNotification = async (id : string) =>{
+        console.log("delete notif-->", id);
+        try{
+            await dispatch(fetchdeleteNotification(id));
+            ToastSuccess("delete notification Succefully !");
+
+
+        }catch(error){
+          ToastError(`Error while deleting Succefully !`);
+
+
+        }
+      }
       return (
         
         <div className='absolute  rounded-2xl p-3 pt-12 top-15 right-5 border-white border-2 z-50 bg-gradient-to-b from-[#2E2F54] via-[#3B5282] to-[#2E2F54] w-[500px] h-[500px] overflow-auto no-scrollbar'>
@@ -136,7 +150,7 @@ const NotificationComponent = () => {
                                     </div>
                                 )}
                             </div>
-                            <FontAwesomeIcon icon={faTimes} className="text-[--pink-color] font-bold hover:scale-150 w-4 h-4 p-1 mt-[8px] mb-auto rounded-full cursor-pointer  duration-500  hover:text-[--purple-color] " />
+                            <FontAwesomeIcon icon={faTimes} className="text-[--pink-color] font-bold hover:scale-150 w-4 h-4 p-1 mt-[8px] mb-auto rounded-full cursor-pointer  duration-500  hover:text-[--purple-color] " onClick={() => deleteNotification(elem.id)}/>
                         </div>
                         
                     );
