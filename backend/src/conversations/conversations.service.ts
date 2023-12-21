@@ -138,29 +138,28 @@ export class ConversationsService  {
  
 
 
-  async  findParticipentChat(user :any) {
-    const chatParticipents = await this.prisma.chatParticipents.findMany({
-      where: {
-        OR: [
-          { senderId: user.id },
-          { recipientId: user.id },
-        ],
-      },
-      include: {
-        sender: true,
-        recipient: true,
-        lastMessage: true,
-      },
-      orderBy: {
-        lastMessage: {
-          createdAt: 'desc', // Order by createdAt of the lastMessage in descending order
+    async findParticipentChat(user: any) {
+      const chatParticipents = await this.prisma.chatParticipents.findMany({
+        where: {
+          OR: [
+            { senderId: user.id, vue: false },
+            { recipientId: user.id, vue: false },
+          ],
         },
-      },
-  
-   });
-
-  return chatParticipents;
-}
+        include: {
+          sender: true,
+          recipient: true,
+          lastMessage: true,
+        },
+        orderBy: {
+          lastMessage: {
+            createdAt: 'desc',
+          },
+        },
+      });
+    
+      return chatParticipents;
+    }
 
 
 async createMessags(user : any, params: CreateMessageParams) {

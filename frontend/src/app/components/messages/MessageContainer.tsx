@@ -68,6 +68,11 @@ const MessageContainer = () => {
     useEffect(() => {
       scrollRef.current?.scrollIntoView();
     }, [messages]);
+
+    const breakContentIntoLines = (content : string, lineLength : number) => {
+      const regex = new RegExp(`.{1,${lineLength}}`, 'g');
+      return content.match(regex) || [];
+    };
     
     return (
 
@@ -105,8 +110,9 @@ const MessageContainer = () => {
                       Userdata?.display_name === m.sender.display_name ? 'bg-[#718baf] ' : 'bg-[#7093c5] '
                     }`}
                   >
-                    {m.content}
-                  </div>
+                    {breakContentIntoLines(m.content, 30).map((line, index) => (
+                        <div key={index}>{line}</div>
+                              ))} </div>
                 </div>
               </div>
             ))}
