@@ -160,6 +160,7 @@ const ListFriends = () => {
                   ToastError(`Error: ${errorMessage}`);
                 } else {
                   ToastSuccess("PLay request sent successfully");
+                  router.push(`/dashboard/game/online-game/maps`);
     
                 }
               } catch (err: any) {
@@ -175,10 +176,7 @@ const ListFriends = () => {
             }
 						return(
 							<ConversationSideBarItem key={elem.id}>
-                {/* <div
-                  className="absolute top-40 left-10  rounded-full w-6 h-6"
-                >                  {(getStatusColor() === "green") ? <OnlineStyling/>  : (getStatusColor() === "red") ? <OflineStyling/> : <IngameStyling/>}
-                </div> */}
+            
                 <div className="flex">
                 <Image src={elem.avatar_url} className="h-14 w-14 rounded-[50%] bg-black " alt="Description of the image" width={60}   height={60} />
                   {(getStatusColor() === "green") ? <OnlineStyling/>  : (getStatusColor() === "red") ? <OflineStyling/> : <IngameStyling/>}

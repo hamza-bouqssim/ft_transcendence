@@ -177,18 +177,8 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
 
             
         }
-        @OnEvent("requestPlay.created")
-        sendRequestToPLay(data : any){
-          
-            const message = `${data.requestToPlay.Sender.display_name} send you request to play`;
-            const type = "requestPLay";
-            const requestId = data.requestToPlay.id;
-            this.server.to(data.requestToPlay.recipient.id).emit(`newRequestToPlay`,data);
-            this.userService.createNotification(data.requestToPlay.Sender, data.requestToPlay.recipient, message, type, requestId);
-
-        }
         
-
+        
         @OnEvent('requestAccept.created')
         AcceptFriendRequestNotification(data : any){
             const message = `${data.req.friends.display_name} accept your request`;
@@ -196,21 +186,31 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
             const type = "AcceptRequest";
             const requestId = data.req.id;
             this.userService.createNotification( data.req.friends,data.req.user, message, type, requestId);
-
-
+            
+            
         }
         @OnEvent('deleteNotification.created')
         deleteNOtification(data : any){
             this.server.emit('deleteNOtification', data);
-
-
+            
+            
         }
-        @OnEvent('requestAcceptPlay.created')
-        AcceptRequestPLay(data : any){
-            this.server.emit('AcceptPLayNotification', data);
+        // @OnEvent("requestPlay.created")
+        // sendRequestToPLay(data : any){
+          
+        //     const message = `${data.requestToPlay.Sender.display_name} send you request to play`;
+        //     const type = "requestPLay";
+        //     const requestId = data.requestToPlay.id;
+        //     this.server.to(data.requestToPlay.recipient.id).emit(`newRequestToPlay`,data);
+        //     this.userService.createNotification(data.requestToPlay.Sender, data.requestToPlay.recipient, message, type, requestId);
+
+        // }
+        // @OnEvent('requestAcceptPlay.created')
+        // AcceptRequestPLay(data : any){
+        //     this.server.emit('AcceptPLayNotification', data);
 
 
-        }
+        // }
         @OnEvent('requestRefusePlay.created')
         REfuseRequestPLay(data : any){
             this.server.emit('RefusePLayNotification', data);
@@ -274,6 +274,22 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         }
     
         
+
+        @OnEvent('chat.newRequestToPlay')
+        async handleInvitegame(data: any) {
+            console.log("datatatatatata---?", data);
+            this.server.to(data.requestToPlay.recipientId).emit("newRequestToPlay",data);  
+     
+        }
+
+        @OnEvent('chat.AcceptPLayNotification')
+	    async handleAcceptPLayNotification(data: any) {
+		console.log("herererererere");
+		console.log("game accept",data)
+		console.log(data.req_play.senderId,data.req_play.recipientId)
+		this.server.to(data.req_play.senderId).emit("AcceptPLayNotification",{accept:true});
+        this.server.to(data.req_play.recipientId).emit("AcceptPLayNotification",{accept:true});
+        }
         
         
         
