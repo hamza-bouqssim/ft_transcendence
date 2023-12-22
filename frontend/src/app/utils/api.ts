@@ -7,6 +7,16 @@ const API = axios.create({
   });
 
 
+
+  interface createRoom {
+    name: string;
+    Privacy: string;
+    password: string | null;
+    picture: string | null;
+    idUserAdd: string[]; 
+  }
+  
+
 const config : AxiosRequestConfig = { withCredentials: true}
 
 export const postRegisterUser = async (data: createUserParams) => axios.post(`http://localhost:8000/auth/signup`, data, config)
@@ -98,7 +108,7 @@ export const findConversationUsers = async ( display_name : string) => axios.pos
 
 export const tableFriends = async () => axios.get(`http://localhost:8000/user/table-friends`, config);
 
-export const createRoomsApi = (data:any) =>{
+export const createRoomsApi = (data:createRoom) =>{
     const response = API.post("/rooms/createRooms",{data})
     return response;  
 }

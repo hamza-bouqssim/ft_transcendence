@@ -40,7 +40,7 @@ export const Ban = () => {
       )}
       
       {members && !members.some(member => member.Status === 'Ban') && (
-        <div className="text-[14px] mt-3 text-center text-gray-400 ">No one is in 'Ban'</div>
+        <div className="text-[14px] mt-3 text-center text-gray-400 ">No one is in `Ban`</div>
       )}
     </div>
   );

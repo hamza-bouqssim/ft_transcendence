@@ -40,7 +40,7 @@ export const Admin = () => {
       )}
       
       {members && !members.some(member => member.Status === 'Admin') && (
-        <div className="text-[14px] mt-3 text-center text-gray-400 ">No one is in 'Admin'</div>
+        <div className="text-[14px] mt-3 text-center text-gray-400 ">No one is in `Admin`</div>
       )}
     </div>
   );

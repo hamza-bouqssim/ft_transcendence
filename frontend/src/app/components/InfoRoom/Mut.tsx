@@ -42,7 +42,7 @@ export const Mut = () => {
       )}
       
       {members && !members.some(member => member.Status === 'Mut') && (
-        <div className="text-[14px] mt-3 text-center text-gray-400 ">No one is in 'Mut'</div>
+        <div className="text-[14px] mt-3 text-center text-gray-400 ">No one is in `Mut`</div>
       )}
     </div>
   );
