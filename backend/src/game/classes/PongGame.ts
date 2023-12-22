@@ -96,8 +96,8 @@ export class PongGame {
 		});
 
 		this.runner = Runner.create();
-		this.user1 = game.socket1.user.sub;
-		this.user2 = game.socket2.user.sub;
+		this.user1 = game.user1.id;
+		this.user2 = game.user2.id;
 		this.mapIndex = game.indexMap;
 
 		// This Function Will Run In All Maps:

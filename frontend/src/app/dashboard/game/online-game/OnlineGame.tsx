@@ -110,6 +110,11 @@ const OnlineGame = ({ mapIndex }: any) => {
 		}, 3000);
 		console.log("setup launchGame event!");
 		console.log("setup gameIsFinished event!");
+		const handleRedirectUser = (payload: any) => {
+			if (Userdata?.display_name === payload.display_name)
+				router.push("/dashboard/", { scroll: false });
+		};
+		gameSocket.on("redirectUser", handleRedirectUser);
 		gameSocket.on("launchGame", handleLaunchGame);
 		gameSocket.on("gameIsFinished", handleGameIsFinished);
 
@@ -118,6 +123,7 @@ const OnlineGame = ({ mapIndex }: any) => {
 			console.log("remove gameIsFinished event!");
 			gameSocket.off("launchGame", handleLaunchGame);
 			gameSocket.off("gameIsFinished", handleGameIsFinished);
+			gameSocket.off("redirectUser", handleRedirectUser);
 			pongRef.current?.clear();
 			clearAtomData();
 		};

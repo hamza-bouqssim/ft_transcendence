@@ -262,7 +262,7 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
 
         @OnEvent('Ingame.created')
 	    handleIngameEvent(payload: { userId: string }) {
-		    console.log("entere here gameee");
+		    // console.log("entere here gameee");
 		    console.log(payload.userId);
 	        this.server.emit('Ingame', `This user ${payload} is InGame`);
     	}
@@ -277,15 +277,15 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
 
         @OnEvent('chat.newRequestToPlay')
         async handleInvitegame(data: any) {
-            console.log("datatatatatata---?", data);
+            // console.log("datatatatatata---?", data);
             this.server.to(data.requestToPlay.recipientId).emit("newRequestToPlay",data);  
      
         }
 
         @OnEvent('chat.AcceptPLayNotification')
 	    async handleAcceptPLayNotification(data: any) {
-		console.log("herererererere");
-		console.log("game accept",data)
+		// console.log("herererererere");
+		// console.log("game accept",data)
 		console.log(data.req_play.senderId,data.req_play.recipientId)
 		this.server.to(data.req_play.senderId).emit("AcceptPLayNotification",{accept:true});
         this.server.to(data.req_play.recipientId).emit("AcceptPLayNotification",{accept:true});
