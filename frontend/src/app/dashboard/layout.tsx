@@ -8,7 +8,9 @@ import { socket, socketContext } from "../utils/context/socketContext";
 import { store } from "../store";
 import { Socket } from "socket.io-client";
 import { usePathname } from "next/navigation";
-import { ConversationTypes, User } from "../utils/types";
+import { ConversationTypes, GroupChannel, User } from "../utils/types";
+import { Group } from "three";
+import ProviderOnSocket from "./ProviderOnSocket.tsx";
 
 export const SideBarContext: any = createContext<any>(null);
 export const ChangeContext: React.Context<any> = createContext(null);
@@ -31,10 +33,10 @@ interface Room {
 }
 
 function AppWithProviders({ children }: PropsWithChildren & Props) {
-	const [channel, setChannel] = useState<User | ConversationTypes |null>(null); // Initial value
+	const [channel, setChannel] = useState<GroupChannel | ConversationTypes |null>(null); // Initial value
 	const[oldId,setOldId] = useState(null);
 	const[Userdata,setUserdata] = useState<User |  null>(null);
-	const updateChannel = (newAddress:User | ConversationTypes| null) => {
+	const updateChannel = (newAddress:GroupChannel | ConversationTypes| null) => {
 	  setChannel(newAddress);
 	};
 	return (
@@ -106,6 +108,7 @@ export default function RootLayout({
 					</div> */}
 
 						<ChangeContext.Provider value={changeValues}>
+							<ProviderOnSocket></ProviderOnSocket>
 							<div className="h-full w-full">{children}</div>
 						</ChangeContext.Provider>
 					</AppWithProviders>

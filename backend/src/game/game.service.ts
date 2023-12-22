@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { promises } from 'dns';
 import { PrismaService } from 'prisma/prisma.service';
+
+
 
 @Injectable()
 export class GameService {
@@ -10,11 +13,11 @@ export class GameService {
 			where: {
 				id: id,
 			},
-			// select: {
-			// 	id: true,
-			// 	username: true,
-			// 	avatar_url: true,
-			// },
+			select: {
+				id: true,
+				display_name: true,
+				avatar_url: true,
+			},
 		});
 		return user;
 	}
@@ -25,7 +28,7 @@ export class GameService {
 		return Math.round(newLevel * 100) / 100;
 	}
 
-	rating(playerRank: number, opponentRank: number, outcome: number) {
+	rating(playerRank: number, opponentRank: number, outcome: number) : number{
 		let k: number;
 		if (playerRank > 2400) k = 16;
 		else if (playerRank > 2100 && playerRank <= 2400) k = 24;
@@ -40,7 +43,6 @@ export class GameService {
 	async updateStateGame(
 		win: number,
 		lose: number,
-		totalMatch: number,
 		userId: string,
 		rating: number,
 	) {
@@ -52,7 +54,6 @@ export class GameService {
 			data: {
 				win,
 				lose,
-				totalMatch,
 				level: level,
 				rating: rating,
 			},
@@ -61,16 +62,15 @@ export class GameService {
 	}
 
 	async createStateGame(userId: string) {
-		const state = await this.prisma.stateGame.create({
+		// const state = 
+		await this.prisma.stateGame.create({
 			data: {
 				user: { connect: { id: userId } },
 			},
 		});
-		return state;
+		// return state;
 	}
-	async createStateGame1(userIdOne: string, userIdTwo: string) {
-	
-	}
+	async createStateGame1(userIdOne: string, userIdTwo: string) {}
 
 	async deleteStateGame(userId: string) {
 		const deleteState = await this.prisma.stateGame.delete({
@@ -99,16 +99,10 @@ export class GameService {
 		date: number,
 	) {
 		try {
-			let state :any;
-			let state2 :any;
 			const endDate = new Date();
 			const duration = this.convertDuration(date);
-			state = await this.getStateGame(userIdOne);
-			state2 = await this.getStateGame(userIdTwo);
-			if(!state)
-				state =	await this.createStateGame(userIdOne);
-			if(!state2)
-				state2 = await this.createStateGame(userIdTwo);
+			const state = await this.getStateGame(userIdOne);
+			const state2 = await this.getStateGame(userIdTwo);
 			const result1 = resultOne > resultTwo ? 1 : 0;
 			const result2 = resultTwo > resultOne ? 1 : 0;
 
@@ -117,14 +111,12 @@ export class GameService {
 			await this.updateStateGame(
 				state.win + result1,
 				state.lose + result2,
-				state.totalMatch + 1,
 				userIdOne,
 				rating,
 			);
 			await this.updateStateGame(
 				state2.win + result2,
 				state2.lose + result1,
-				state2.totalMatch + 1,
 				userIdTwo,
 				rating2,
 			);
@@ -148,12 +140,14 @@ export class GameService {
 		resultTwo: number,
 		duration: string,
 	) {
+		const totalMatch = await this.totalMatch(userIdOne, userIdTwo) + 1;
 		const match = await this.prisma.match_History.create({
 			data: {
 				playerOne: userIdOne,
 				playerTwo: userIdTwo,
 				resultOne: resultOne,
 				resultTwo: resultTwo,
+				totalMatch,
 				duration,
 			},
 		});
@@ -238,7 +232,7 @@ export class GameService {
 	// 	return modifiedRanking;
 	// }
 
-	async history_matches(userId: string) {
+	async history_matches(userId: string){
 		const history = await this.prisma.match_History.findMany({
 			where: {
 				OR: [{ playerOne: userId }, { playerTwo: userId }],
@@ -263,6 +257,7 @@ export class GameService {
 				resultTwo: true,
 				createdAt: true,
 				duration: true,
+				totalMatch:true,
 			},
 		});
 		return history;
@@ -280,20 +275,17 @@ export class GameService {
 		return totalMatch;
 	}
 
-	//80 -> 01:20
-	//80/60
-
-	convertDuration(date: number) {
-		console.log("date",date);
+	convertDuration(date: number): string {
+		console.log('date', date);
 
 		const hours = Math.floor(date / 3600000);
 		const minutes = Math.floor((date % 3600000) / 60000);
 		const seconds = Math.floor(((date % 3600000) % 60000) / 1000);
-		// return ??:??:??
-		let duration
-		duration = (hours < 10 ? "0" + hours : hours) + ":";
-		duration += (minutes < 10 ? "0" + minutes : minutes) + ":";
-		duration += (seconds < 10 ? "0" + seconds : seconds);
+
+		let duration;
+		duration = (hours < 10 ? '0' + hours : hours) + ':';
+		duration += (minutes < 10 ? '0' + minutes : minutes) + ':';
+		duration += seconds < 10 ? '0' + seconds : seconds;
 		return duration;
 	}
 }

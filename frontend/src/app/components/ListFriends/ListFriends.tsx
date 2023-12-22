@@ -1,24 +1,24 @@
 import { AppDispatch } from "@/app/store";
 import { createConversationThunk, fetchConversationUserThunk } from "@/app/store/conversationSlice";
 import { getAllFriends } from "@/app/utils/api";
-import { Conversation, ConversationSideBarContainer, ConversationSideBarItem } from "@/app/utils/styles";
+import { Conversation, ConversationSideBarContainer, ConversationSideBarItem, IngameStyling, OflineStyling, OnlineStyling } from "@/app/utils/styles";
 import { CreateConversationParams, FriendsTypes } from "@/app/utils/types";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { MenuButton, MenuButton2 } from "../Buttons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import '@fortawesome/fontawesome-svg-core/styles.css';
 import { faChevronDown, faEllipsis} from "@fortawesome/free-solid-svg-icons";
 import RightBarUsers from "../RightBarUsers";
 import Image from "next/image";
 import { fetchBlockFriendThunk } from "@/app/store/blockSlice";
-import { fetchGetAllFriendsThunk } from "@/app/store/friendsSlice";
+import { fetchGetAllFriendsThunk, fetchRemoveFriendship } from "@/app/store/friendsSlice";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { socketContext } from "@/app/utils/context/socketContext";
 import { fetchMessagesThunk } from "@/app/store/messageSlice";
 import { fetchSendRequestPLay } from "@/app/store/requestSlice";
+import { fetchUsersThunk } from "@/app/store/usersSlice";
 
 
 const ListFriends = () => {
@@ -65,9 +65,12 @@ const ListFriends = () => {
    
    
       const { friends, status, error } = useSelector((state:any) => state.friends);
-    
+      const { users, Userstatus, Usererror } = useSelector((state:any) => state.users);
+
       useEffect(() => {
         dispatch(fetchGetAllFriendsThunk());
+        dispatch(fetchUsersThunk());
+
       }, [dispatch]);
 
       const router = useRouter();
@@ -111,47 +114,77 @@ const ListFriends = () => {
       
      
     return (
-        <Conversation>
+        <div className="mt-[10px]">
           <ToastContainer />
 				<ConversationSideBarContainer>
 					{friends.map(function(elem : FriendsTypes){
-            const handleSendMessage = async () =>
+            const user = users.find((user: any) => user.id === elem.id);
+            const getStatusColor = () => {
+              if (user) {
+                switch (user.status) {
+                  case "online":
+                    return "green"; // Online status color
+                  case "offline":
+                    return "red"; // Offline status color
+                  case "inGame":
+                    return "blue"; // In-game status color
+                  default:
+                    return "black"; // Default color or any other status
+                }
+              }
+              return "black"; // Default color if user not found
+            };
+            const handleRemoveFriendship= async () =>
             {
 
-                  dispatch(fetchConversationUserThunk(elem.display_name))
-                    .unwrap()
-                    .then(({data}) => {
-                      updateChannel(data);
-                      dispatch(fetchMessagesThunk(data.id));
+                 
+                try{
+                    const res =  dispatch(fetchRemoveFriendship(elem.display_name));
+                    ToastSuccess(`remove ${elem.display_name} from your list friends`);
 
-                  }).catch((err)=>{
-                      console.log(err);
-                  }
-                );
+
+                }catch(err : any){
+                  ToastError(`Error... while removing ${elem.display_name} from your list friends `);
+
+
+                }
 
             }
+
             const handlePLayingRequest = async(display_name : string) =>{
+              console.log("display_name here-->", display_name);
               try { 
                 const response= await dispatch(fetchSendRequestPLay(display_name));
                 if (response.payload && response.payload.message) {
                   const errorMessage = response.payload.message;
                   ToastError(`Error: ${errorMessage}`);
                 } else {
-                  ToastSuccess("Friend request sent successfully");
+                  ToastSuccess("PLay request sent successfully");
+                  router.push(`/dashboard/game/online-game/maps`);
     
                 }
               } catch (err: any) {
                 ToastError(`Error: ${err.message || 'An unexpected error occurred'}!`);
     
               }
+             
 
+            }
+            function handleClick()
+            {
+              router.push(`/dashboard/${elem.id}`)
             }
 						return(
 							<ConversationSideBarItem key={elem.id}>
+            
+                <div className="flex">
                 <Image src={elem.avatar_url} className="h-14 w-14 rounded-[50%] bg-black " alt="Description of the image" width={60}   height={60} />
+                  {(getStatusColor() === "green") ? <OnlineStyling/>  : (getStatusColor() === "red") ? <OflineStyling/> : <IngameStyling/>}
 
+                </div>
+               
 								<div>
-					 				<span  className="ConversationName">{elem.username} {elem.display_name}</span>
+					 				<span  className="ConversationName">{elem.display_name}</span>
 					 			</div>
                    
   
@@ -161,20 +194,19 @@ const ListFriends = () => {
 				          />
       
                 {openMenuId === elem.id &&
-                <div className={`absolute  top-[-120px] left-2 h-[120px]  w-[200px] flex-col items-center justify-center gap-1 rounded-[15px] border-2 border-solid border-[#000000] bg-white font-['Whitney_Semibold'] `}>
-					        <button className={`bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`}>see profile</button>
-                  <button className={`bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> handlePLayingRequest(elem.display_name)}>Invite to play</button>
-					        <button className={` bg-[#d9d9d9] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} onClick={()=>handleSendMessage()}>send message</button>
-                  <button className={` bg-[#EA7F87] text-black h-[35px] w-[197px] rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`} value="Bloque" onClick={()=> handlleBloque(elem.id)}>Bloque</button>
+              <div className={`absolute z-10 -top-[157px] right-3 p-2 w-[200px] flex-col items-center justify-evenly rounded-[15px] border-2 border-solid border-[#000000] bg-white font-['Whitney_Semibold'] `}>                  <button className={`bg-[#d9d9d9] text-black h-[30px] w-full rounded-[15px] my-1 hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> handleClick()}>View profile</button>
+                  <button className={`bg-[#d9d9d9] text-black h-[30px] w-full rounded-[15px] my-1 hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> handlePLayingRequest(elem.display_name)}>Invite To Play</button>
+                  <button className={` bg-[#d9d9d9] text-black h-[30px] w-full rounded-[15px] my-1 hover:bg-[rgba(0,0,0,.2)]`} onClick={()=> handleRemoveFriendship() }>Remove Friendship</button>
+                  <button className={` bg-[#EA7F87] text-black h-[30px] w-full rounded-[15px] my-1 hover:bg-[rgba(0,0,0,.2)]`} value="Bloque" onClick={()=> handlleBloque(elem.id)}>Bloque</button>
 
-				        </div>}
+              </div>}
             </div> 
 							</ConversationSideBarItem>
 								
 						)
 					}) }
 				</ConversationSideBarContainer>
-			</Conversation>
+			</div>
            
     )
 

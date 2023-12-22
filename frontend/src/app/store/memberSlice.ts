@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { getAllMembersApi } from '../utils/api';
+import { Member, banMember, getAllMembersApi, kickMember, makeAdmin, mutMember, quitRoom } from '../utils/api';
 
 interface Member {
   id: string;
@@ -19,6 +19,10 @@ interface Member {
     two_factor_secret_key: string;
   };
 }
+interface Memberdata{
+  id:string,
+  userId:string
+}
 
 interface MemberState {
   members: Member[];
@@ -36,8 +40,59 @@ export const getAllMembers = createAsyncThunk('members/getAllMembers', async (ro
   try {
     const response = await getAllMembersApi(roomId);
     return response.data;
-  } catch (error) {
+  } catch (error : any) {
     return rejectWithValue(error.message || 'Failed to fetch members');
+  }
+});
+
+export const quitMember = createAsyncThunk('members/quitMember', async (roomId: string, { rejectWithValue }) => {
+  try {
+    console.log(roomId)
+    const response = await quitRoom(roomId);
+    return response.data;
+  } catch (error) {
+    return rejectWithValue(error.message || 'Failed to quit members');
+  }
+});
+export const makeAdminMember = createAsyncThunk('members/makeAdminMember', async (memberdata:Memberdata, { rejectWithValue }) => {
+  try {
+    const response = await makeAdmin(memberdata.id,memberdata.userId);
+    return response.data;
+  } catch (error) {
+    return rejectWithValue(error.message || 'Failed to quit members');
+  }
+});
+
+export const makeMember = createAsyncThunk('members/makeMember', async (memberdata:Memberdata, { rejectWithValue }) => {
+  try {
+    const response = await Member(memberdata.id,memberdata.userId);
+    return response.data;
+  } catch (error) {
+    return rejectWithValue(error.message || 'Failed to quit members');
+  }
+});
+export const kickMembers = createAsyncThunk('members/kickMembers', async (memberdata:Memberdata, { rejectWithValue }) => {
+  try {
+    const response = await kickMember(memberdata.id,memberdata.userId);
+    return response.data;
+  } catch (error) {
+    return rejectWithValue(error.message || 'Failed to quit members');
+  }
+});
+export const mutMembers = createAsyncThunk('members/mutMembers', async (memberdata:Memberdata, { rejectWithValue }) => {
+  try {
+    const response = await mutMember(memberdata.id,memberdata.userId);
+    return response.data;
+  } catch (error) {
+    return rejectWithValue(error.message || 'Failed to quit members');
+  }
+});
+export const banMembers = createAsyncThunk('members/banMembers', async (memberdata:Memberdata, { rejectWithValue }) => {
+  try {
+    const response = await banMember(memberdata.id, memberdata.userId);
+    return response.data;
+  } catch (error) {
+    return rejectWithValue(error.message || 'Failed to ban members');
   }
 });
 
@@ -57,7 +112,34 @@ const membersSlice = createSlice({
       .addCase(getAllMembers.rejected, (state: any, action: PayloadAction<string>) => {
         state.status = 'failed';
         state.error = action.payload;
-      });
+      })
+      .addCase(quitMember.pending, (state: any) => {
+        state.status = 'loading';
+      })
+      .addCase(quitMember.fulfilled, (state: any, action: PayloadAction<Member[]>) => {
+        state.status = 'succeeded';
+        state.members = state.members.filter((member:Member) => member.id !== action.payload.data);
+      })
+      .addCase(quitMember.rejected, (state: any, action: PayloadAction<string>) => {
+        state.status = 'failed';
+        state.error = action.payload;
+      })
+      // .addCase(banMembers.pending, (state: any) => {
+      //   state.status = 'loading';
+      // })
+      // .addCase(banMembers.fulfilled, (state: any, action: PayloadAction<Member[]>) => {
+      //   state.status = 'succeeded';
+      //   console.log(action.payload)
+      //   state.members = state.members.map((member) => ({
+      //     ...member,
+      //     Status: member.user_id === action.payload ? 'Ban' : member.Status,
+      //   }));
+      // })
+      // .addCase(banMembers.rejected, (state: any, action: PayloadAction<string>) => {
+      //   state.status = 'failed';
+      //   state.error = action.payload;
+      // })
+      
   },
 });
 

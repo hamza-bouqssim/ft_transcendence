@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faXmark } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from 'next/navigation';
 import { socketContext } from '../utils/context/socketContext';
+import Image from 'next/image';
 
 interface Props {
   closeQrForm :  () => void;
@@ -30,13 +31,11 @@ export function Qrcodeform({closeQrForm } : Props) {
   const _verificationCode = async () => {
     setLoading(true);
       await verifyCode(otp).then((res)=>{
-        console.log("success", res);
         setMessage(res.data.message);
         setIsVerified(res.data.success);
         setUserdata({...Userdata, tfa_enabled: res.data.success});
         setLoading(false);
-        //   router.push('/dashboard');
-        // if (res.data.success)
+       
       })
       .catch((e) =>{
       setLoading(false)
@@ -56,7 +55,7 @@ export function Qrcodeform({closeQrForm } : Props) {
             <span className="text-black font-['Whitney_Semibold'] text-xs">Enable and secure your account by scanning this QR code</span>
           </div>
 
-          <img src={qrCodeData ? qrCodeData : ""} alt="" className=' border-solid  border-orange-800 w-[165px]' />
+          <Image src={qrCodeData ? qrCodeData : ""} alt="" className=' border-solid  border-orange-800 w-[165px]' width={165} height={165}/>
 
           <div className='w-full border-t relative'>
             <span className='absolute  -top-[15px] px-3 left-[50%] -translate-x-[50%] bg-white text-black text-lg'>Verification Code</span>

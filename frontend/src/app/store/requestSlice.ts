@@ -1,15 +1,17 @@
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { AcceptRequest, DebloqueUser, SendRequest, acceptRequestToPlay, bloqueFriend, getAllFriends, getBloques, getConversationMessage, getRequest, refusePLayRequest, refuseRequest, sendRequestPlay} from '../utils/api';
+import { AcceptRequest, DebloqueUser, SendRequest, acceptRequestToPlay, bloqueFriend, getAllFriends, getBloques, getConversationMessage, getNumberPending, getRequest, refusePLayRequest, refuseRequest, sendRequestPlay} from '../utils/api';
 import { AcceptRequestParams, ConversationMessage, CreateRequestParams, FriendsTypes, RequestTypes, UsersTypes, messageTypes } from '../utils/types';
 
 export interface requestState {
   request: RequestTypes[];
+  countRequest : number;
   status: 'success' | 'failed' | 'idle' | 'loading'; // Add 'idle' status
   error: string | null;
   }
 
   const initialState: requestState = {
     request: [],
+    countRequest : 0,
     status: 'idle', // Initial status is 'idle'
     error: null,
   };
@@ -31,7 +33,7 @@ export const fetchGetRequestThunk = createAsyncThunk('request/fetchGetRequestThu
 
 export const fetchRequestThunk = createAsyncThunk('request/create', async (data: CreateRequestParams, { rejectWithValue }) => {
   try {
-    const response = await SendRequest(data);
+    const response = await SendRequest(data.display_name);
     if (!response.data.success) {
       throw new Error(response.data.error);
     }
@@ -56,6 +58,12 @@ export const fetchREfuseFriendRquestThunk = createAsyncThunk('request/refuse', a
   return response;
 })
 
+
+export const fetchNumberPending = createAsyncThunk('request/pendingCount',  async (_,{rejectWithValue} ) =>{
+  const response = await getNumberPending();
+  console.log("response pen-->", response.data);
+  return response.data;
+})
 /// request PLaying
 
 export const fetchSendRequestPLay = createAsyncThunk('request/send', async (display_name : string, { rejectWithValue })=>{
@@ -135,7 +143,17 @@ export const requestSlice = createSlice({
       
      
       }).addCase(fetchRefuseRequestPlay.pending, (state: any) =>{
+          state.status = 'loading';
+      }).addCase(fetchNumberPending.pending, (state: any, action )=>{
+         
         state.status = 'loading';
+
+      }).addCase(fetchNumberPending.fulfilled, (state: any, action) =>{
+          state.status = 'success';
+          state.countRequest = action.payload;
+      
+      }).addCase(fetchNumberPending.rejected, (state: any) =>{
+          state.status = 'failed';
       })
       
      

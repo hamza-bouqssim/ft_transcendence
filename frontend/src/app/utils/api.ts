@@ -19,7 +19,7 @@ export const getAuthUser = () => axios.get<User>(`http://localhost:8000/user/inf
 
 export const getConversation = () => axios.get(`http://localhost:8000/chat/findconversation`, config)
 
-export const createConversation = async (display_name : string) => axios.post(`http://localhost:8000/chat/conversation`,{display_name : display_name}, config)
+export const createConversation = async (display_name : string, message: string) => axios.post(`http://localhost:8000/chat/conversation`,{display_name : display_name, message: message}, config)
 export const getConversationMessage = (id : string) => axios.get(`http://localhost:8000/chat/messages/${id}`, config)
 export const markConversationAsRead = (id : string) => axios.get(`http://localhost:8000/chat/${id}/mark-as-read`, config);
 export const loginGoogle = () => axios.get(`http://localhost:8000/auth/google/login`, config)
@@ -46,19 +46,26 @@ export const DebloqueUser = async (id : string) => axios.post(`http://localhost:
 export const bloqueFriend = async (id : string) => axios.post(`http://localhost:8000/friend-request/block-friend`, {friendIdToBlock : id}, config);
 
 
-export const SendRequest =  async (data : CreateRequestParams) => await axios.post(`http://localhost:8000/friend-request/send-request`,data,  config);
+export const SendRequest =  async (display_name : string) => await axios.post(`http://localhost:8000/friend-request/send-request`,{display_name : display_name},  config);
 
-export const sendRequestPlay = async (display_name : string) => await axios.post(`http://localhost:8000/friend-request/send-request-play`, {dislay_name : display_name}, config);
+export const sendRequestPlay = async (display_name : string) => await axios.post(`http://localhost:8000/friend-request/send-request-play`, {display_name : display_name}, config);
 export const acceptRequestToPlay = async (requestId : string) => await axios.post(`http://localhost:8000/friend-request/accept_request_play`, {requestId : requestId}, config);
 export const refusePLayRequest = async (requestId : string) => await axios.post(`http://localhost:8000/friend-request/refuse-request-play`, {requestId : requestId}, config)
 export const pending_request_play = () => axios.get(`http://localhost:8000/user/pending-request-play`, config);
 
 export const getAllUsers = async () => axios.get(`http://localhost:8000/user/All-users`, config);
 
+//count number of the notification
+
+export const getNumberNotification = async () => axios.get(`http://localhost:8000/friend-request/notification_count`, config);
+export const getNumberPending = async () => axios.get(`http://localhost:8000/user/count-pending`, config);
+
+
 export const AcceptRequest = async (id : string) => axios.post(`http://localhost:8000/friend-request/accept-request`, {requestId : id}, config);
 
 export const refuseRequest = async ( id: string) => axios.post(`http://localhost:8000/friend-request/refuse-request`, {requestId : id }, config);
 
+export const deleteNotification = async (idNotif : string) => axios.post(`http://localhost:8000/friend-request/delete-notification`, {idNotif : idNotif}, config)
 
 export const changeDisplayedName = async (DisplayName : string) => axios.post(`http://localhost:8000/user/changedisplayname`, {newDisplayName : DisplayName }, config);
 
@@ -71,6 +78,7 @@ export const dataUser = async (id_user: string) => axios.post(`http://localhost:
 export const getUnreadMessages = async (conversationId : string) => axios.post(`http://localhost:8000/chat/unread-messages`, {conversationId : conversationId}, config)
 
 
+export const removeFriendship = async (display_name : string) => axios.post(`http://localhost:8000/friend-request/remove-friendship`, {display_name : display_name}, config);
 //delete conversation
 
 export const deleteConversation = async (conversationId : string) => axios.post(`http://localhost:8000/chat/delete-conversation`, {conversationId : conversationId}, config)
@@ -141,14 +149,6 @@ export const firstTime = async () => {
     return res;
 }
 
-
-// export const uploadToCloud = async () => {
-//     const formData = new FormData();
-    
-//     const res = API.post(`https://api.cloudinary.com/v1_1/dnbhh3qxj/image/upload`, formData);
-//     return res;
-// }
-
 export const getConversationMessageRoom = (id:string) =>{
   const response = API.post("/rooms/getConversation",{id})
   return response;
@@ -158,6 +158,64 @@ export const getConversationMessageRoom = (id:string) =>{
 export const getAllMembersApi =(id:string) =>
 {
   const response = API.post("/rooms/allMember",{id})
+  return response;
+}
+
+export const quitRoom =(id:string) =>
+{
+  const response = API.post("/rooms/quitRoom",{id})
+  return response;
+}
+
+
+export const makeAdmin =(id:string ,userId:string) =>
+{
+  const response = API.post("/rooms/makeAdmin",{id,userId})
+  return response;
+}
+export const Member =(id:string ,userId:string) =>
+{
+  const response = API.post("/rooms/Member",{id,userId})
+  return response;
+}
+export const kickMember =(id:string ,userId:string) =>
+{
+  const response = API.post("/rooms/kickMember",{id,userId})
+  return response;
+}
+export const mutMember =(id:string ,userId:string) =>
+{
+  const response = API.post("/rooms/mutMember",{id,userId})
+  return response;
+}
+export const banMember =(id:string ,userId:string) =>
+{
+  const response = API.post("/rooms/banMember",{id,userId})
+  return response;
+}
+
+export const getMatchHistory = (id: string) =>{
+  const response = API.post("/game/myhistory", {userId:id});
+  return response;
+}
+
+export const getStates = (id: string) =>{
+  const response = API.post("/game/myresult", {userId:id});
+  return response;
+}
+
+export const getRanking = () =>{
+  const response = API.get("/game/ranking");
+  return response;
+}
+
+export const deleteAccount = () => {
+  const response = API.delete("/user/delete-account");
+  return response;
+}
+
+export const getUserInfos = (id:string) => {
+  const response = API.post("/user/get_user", {id_user:id});
   return response;
 }
 

@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { HttpException, HttpStatus, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { User } from 'src/gateway/User';
 import { findUserParams } from 'src/utils/types';
@@ -171,6 +171,14 @@ export class UserService {
         })
 
     }
+    async CountPendingRequests(userId: string): Promise<number> {
+        const pendingRequests = await this.prisma.friend.count({
+          where: { friend_id: userId, status: 'PENDING' },
+        });
+      
+        return pendingRequests;
+      }
+      
 
     async blockedFriends(userId: string) {
         const blockedUsers = await this.prisma.blockList.findMany({
@@ -283,28 +291,32 @@ export class UserService {
         return processedFriends;
       }
 
-      async userInfo(user_id : string){
-
+    async userInfo(user_id: string) {
+      
         const user = await this.prisma.user.findUnique({
-            where: { id: user_id},
-            
-            
-          });
-          if (!user) {
-            throw new NotFoundException('User not found');
-          }
-          return user;
-
+          where: { id: user_id },
+        });
+      
+        if (!user) {
+          throw new NotFoundException('User not found');
+        }
+      
+        return user;
       }
+      
+      
+
       // create notification
 
-      async createNotification(userSender: User, userRecipient: User, message: string) {
+      async createNotification(userSender: User, userRecipient: User, message: string, type: string, requestId : string) {
         const notification = await this.prisma.notificationGlobal.create({
             data: {
                 Sender: { connect: { id: userSender.id } },
                 recipient: { connect: { id: userRecipient.id } },
                 content: message,
                 image_content: userSender.avatar_url,
+                type: type,
+                requestId: requestId,
             },
         });
     
@@ -312,17 +324,18 @@ export class UserService {
     }
     async notificationCreate(user : User){
 
-        await this.prisma.notificationGlobal.updateMany({
-            where: {
-                recipient_id: user.id,
-            },
-            data: {
-                vue: true,
-            },
-        });
+        // await this.prisma.notificationGlobal.updateMany({
+        //     where: {
+        //         recipient_id: user.id,
+        //     },
+        //     data: {
+        //         vue: true,
+        //     },
+        // });
         const notifications = await this.prisma.notificationGlobal.findMany({
             where: {
                 recipient_id: user.id,
+                vue: false,
             },
             include: {
                 Sender: true, // Corrected syntax: remove the semicolon and use a comma
@@ -338,17 +351,15 @@ export class UserService {
         const blockedFriends = await this.blockedFriends(senderId);
         return blockedFriends.some((friend) => friend.id === recipientUserId);
       }
-    //   async notificationMessage(chatId : string, userId : string){
-    //     // const notificationMessage = await this.prisma.notificationGlobal.create({
-    //     //     data: {
-    //     //         Sender: { connect: { id: userSender.id } },
-    //     //         recipient: { connect: { id: userRecipient.id } },
-    //     //         content: message,
-    //     //         image_content: userSender.avatar_url,
-    //     //     },
-    //     // });
+   
 
+    async deleteAccount(userId: string){
+        await this.prisma.user.delete({
+          where: {
+            id: userId,
+          },
+        });
+      }
 
-    //   }
 }
 
