@@ -103,7 +103,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		return new Promise((resolve) => setTimeout(resolve, ms));
 	}
 	async handleConnection(socket: AuthenticatedSocket) {
-		console.log('connect1   ...');
+		console.log('connect1   ...',socket.id, socket.user.sub);
 		console.log('socket', socket.user.sub);
 		const userId = socket.user.sub;
 		if (socket.user) {
@@ -133,8 +133,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			{ opponent: invite.user2, rotate: false, idGame },
 			'knowOpponent',
 			);
-		if (!invite) return;
-			console.log('startgame +++++++++++++++');	
 	}
 	async handleDisconnect(socket: AuthenticatedSocket) {
 		socket.leave(`@${socket.user.sub}`);
@@ -165,12 +163,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 						this.mapPong[GameId].playerTwoScore = 7;
 					}
 					else{
-						console.log("redirectUser user 2");
-						this.server.to(game.socket2).emit('redirectUser', {
-							display_name: game.user2.display_name,
-						});
+						// console.log("redirectUser user 2");
+						// this.server.to(game.socket2).emit('redirectUser', {
+						// 	display_name: game.user2.display_name,
+						// });
 					}
-					// this.endGame(game);
+					this.endGame(game);
 				}
 				else if (!game.socket2 || (socket.id === game.socket2)) {
 					console.log('user2 leave game');
@@ -180,12 +178,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 						this.mapPong[GameId].playerTwoScore = 0;
 					}
 					else{
-						console.log("redirectUser user 1");
-						this.server.to(game.socket1).emit('redirectUser', {
-							display_name: game.user1.display_name,
-						});
+						// console.log("redirectUser user 1");
+						// this.server.to(game.socket1).emit('redirectUser', {
+						// 	display_name: game.user1.display_name,
+						// });
 					}
-					// this.endGame(game);
+					this.endGame(game);
 				}
 			}
 		}
@@ -207,7 +205,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		// console.log("herererererere");
 		// console.log("game accept",data)
 		// console.log(data.req_play.senderId,data.req_play.recipientId)
-		this.eventEmitter.emit("chat.AcceptPLayNotification",data);
 
 		// const opponent = await this.gameservice.findUserById(data.opponentId);
 		// const user = await this.gameservice.findUserById(client.user.sub);
@@ -246,6 +243,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		// },10000000)
 		
 		// remove this notfication 
+		this.eventEmitter.emit("chat.AcceptPLayNotification",data);
+
 	}
 
 	@SubscribeMessage('startGame')
@@ -255,13 +254,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		const wait = this.getQueueWaiting(client.user.sub);
 		// const invite = this.getQueueInvite(client.user.sub);
 		const user = await this.gameservice.findUserById(client.user.sub);
-		console.log("test start game ----------------------------------------------------------------")
 		if (wait || (game && game.status !== 'invite')) {
-			console.log("red start game ",game,"-----------------------------------------------------------------")
-			
-			client.emit('redirectUser', {
-				display_name: user.display_name,
-			});
+			console.log("redirectUser start game ",game,"-----------------------------------------------------------------")
+			// client.emit('redirectUser', {
+			// 	display_name: user.display_name,
+			// });
 			return;
 		}
 		if(game && game.status === 'invite')
@@ -369,8 +366,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				'knowOpponent',
 			);
 			if (!game) return;
-			console.log('test startgame +++++++++++++++');
-
 			game.status = 'playing';
 		}
 		return;
@@ -425,6 +420,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				duration,
 			);
 		}
+		else
+		{
+			this.queueGame = this.queueGame.filter(
+				(game) => game.user1.id != game.user1.id ,
+			);
+		}
+		console.log('endgame',this.queueGame);
 	}
 	// End Queue---------------------------------------
 	@SubscribeMessage('launchGameRequest')
@@ -440,7 +442,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			return;
 		}
 		game.duration = new Date();
-		game.status = 'playing';	
+		game.status = 'playing';
+		console.log('startgame +++++++++++++++');	
 		this.mapPong[game.user1.id] = new PongGame(this, game);
 	}
 

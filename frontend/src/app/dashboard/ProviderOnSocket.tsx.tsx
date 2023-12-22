@@ -38,7 +38,7 @@ const ProviderOnSocket = () => {
                 //     }
                 // }}>
                 // </Link>
-                route.push("/dashboard/game/online-game/match-making")
+                route.push("/dashboard/game/online-game/")
 
             }
             dispatch(fetchCountNotification());
