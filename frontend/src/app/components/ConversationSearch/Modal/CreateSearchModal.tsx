@@ -39,6 +39,8 @@ type props = {
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState<UsersTypes[] | GroupChannel[]>([]);
 	const router = useRouter();
+    const {Userdata} = useContext(socketContext);
+
 
     useEffect(() => {
         // Define a function to fetch search results
@@ -49,10 +51,11 @@ type props = {
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({ name: searchQuery }),
+                    body: JSON.stringify({ name: searchQuery}),
                 });
                 if (response.ok) {
                     const data = await response.json();
+                    console.log("data here-->", data);
                     setSearchResults(data);
                 }
             } catch (error) {

@@ -1,16 +1,18 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import {  changeAvatar, changeDisplayedName, changeUserName, dataUser, getAllUsers, getConversationMessage, tableFriends} from '../utils/api';
+import {  changeAvatar, changeDisplayedName, changeUserName, dataUser, getAllUsers, getConversationMessage, searchingBar, tableFriends} from '../utils/api';
 import { ConversationMessage, UsersTypes, messageTypes } from '../utils/types';
 import axios from 'axios';
 
 export interface UsersState {
   users: UsersTypes[];
+  searchResults: UsersTypes[],
   status: 'idle' | 'loading' | 'success' | 'failed';
   error : string | null;
 }
 
 const initialState: UsersState = {
   users: [],
+  searchResults: [],
   status: 'idle' ,
   error : null,
 };
@@ -74,6 +76,11 @@ export const fetchUpdateAvatar = createAsyncThunk(
   }
 );
 
+export const fetchSearch = createAsyncThunk('users/search', async(name :string, { rejectWithValue })=>{
+  const response = await searchingBar(name);
+  return response;
+})
+
 export const UsersSlice = createSlice({
   name: 'users',
   initialState,
@@ -102,7 +109,17 @@ export const UsersSlice = createSlice({
   }).addCase(fetchUserTable.fulfilled, (state, action) => {
 
   }).addCase(fetchUserInfo.fulfilled, (state, action)=>{
-    
+
+  }).addCase(fetchSearch.pending, (state, action) =>{
+    state.status = 'loading';
+
+  }).addCase(fetchSearch.fulfilled, (state : any, action) => {
+    state.status = 'success';
+    state.searchResults = action.payload;
+
+  }).addCase(fetchSearch.rejected, (state, action)=>{
+    state.status = 'failed';
+
   })
   }
 });

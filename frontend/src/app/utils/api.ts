@@ -91,7 +91,7 @@ export const changeAvatar = async (avatarFormData: FormData) => {
   
     return axios.post(`http://localhost:8000/user/changeAvatar`, avatarFormData, config);
   };
-export const searchingBar = async (name : string) => axios.post(`http://localhost:8000/user/search`, {name: name}, config);
+export const searchingBar = async (name : string) => axios.post(`http://localhost:8000/friend-request/search`, {name: name}, config);
 
 
 export const findConversationUsers = async ( display_name : string) => axios.post(`http://localhost:8000/chat/findConversationUser`, {display_name : display_name}, config);
