@@ -244,12 +244,19 @@ export class UserService {
         });
       
         const chatRooms = await this.prisma.chatRoom.findMany({
-          where: {
-            name: {
-              contains: name,
+            where: {
+              AND: [
+                {
+                  name: {
+                    contains: name,
+                  },
+                },
+                {
+                  Privacy: "Public",
+                },
+              ],
             },
-          },
-        });
+          });
       
         // Concatenate the arrays of users and chat rooms
         const result = [...users, ...chatRooms];
