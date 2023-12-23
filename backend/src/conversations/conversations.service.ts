@@ -182,7 +182,25 @@ async createMessags(user : any, params: CreateMessageParams) {
     if(!chat)
         throw new HttpException('Conversation not found', HttpStatus.BAD_REQUEST)
 
-    
+        const blockListEntry = await this.prisma.blockList.findFirst({
+          where: {
+            OR: [
+              {
+                userOneId: chat.recipient.id,
+                userTwoId: chat.sender.id,
+              },
+              {
+                userOneId: chat.sender.id,
+                userTwoId: chat.recipient.id,
+              },
+            ],
+          },
+        });
+      
+        if (blockListEntry) {
+          throw new HttpException('Users have blocked each other', HttpStatus.BAD_REQUEST);
+        }
+      
     if((chat.senderId !== user.sub) && (chat.recipientId !== user.sub))
     {
         throw new HttpException('Cannot create message in this conversation', HttpStatus.BAD_REQUEST)
