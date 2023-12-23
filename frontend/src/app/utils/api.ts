@@ -143,6 +143,11 @@ export const changePhoto = async (avatar: string) => {
     return res;
 }
 
+export const deleteAvatar = async () => {
+  const res = API.post("/user/deletePhoto");
+  return res;
+}
+
 export const firstTime = async () => {
     const res = API.post("/user/first_time");
     return res;

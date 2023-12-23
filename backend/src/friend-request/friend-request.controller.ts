@@ -14,16 +14,17 @@ export class FriendRequestController {
                 private readonly prisma: PrismaService,){}
 
 
-    @Post('send-request')
-    async sendRequest(@Body() request: { display_name: string }, @Req() req, @Res() res) {
-        try {
-          const user = req.user;
-          const returnvalue = await this.friendshipService.sendRequest(user.display_name, request.display_name, );
-          return res.status(200).json({ success: true, response: returnvalue });
-        } catch (err) {
-          return res.status(401).json({ success: false, message: err.message || 'An unexpected error occurred' });
-        }
+      @Post('send-request')
+      async sendRequest(@Body() request: { display_name: string }, @Req() req, @Res() res) {
+          try {
+              const user = req.user;
+              const returnvalue = await this.friendshipService.sendRequest(user.display_name, request.display_name);
+              return res.status(200).json({ success: true, response: returnvalue });
+          } catch (err) {
+              return res.status(401).json({ success: false, message: err.message || 'An unexpected error occurred' });
+          }
       }
+                
       
       @Post('send-request-play')
       async sendRequestPlay(@Body() request: { display_name : string}, @Req() req, @Res() res){

@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { socketContext } from '../utils/context/socketContext';
 import { getRanking, getUserInfos } from '../utils/api';
 
-const RankingUserSwitch = ({userId, userInfo}) => {
+const RankingUserSwitch = ({userId, userInfo, _switch}) => {
     const [showRank, setShowRank] = useState(false);
     const [showFriends, setShowFriends] = useState(false);
     const [showSendReqCompo, setShowSendReqCompo] = useState(false);
@@ -54,24 +54,28 @@ const RankingUserSwitch = ({userId, userInfo}) => {
       <div className='w-[80%] h-[22%] p-2 bg-gray-100 rounded-[50px] flex gap-1 items-center '>
 
         <button onClick={_showUser} className={`w-1/2 ${clickedButton === 'user' ? 'bg-[#498CDA] text-white' : 'bg-gray-300 text-gray-600'} h-full rounded-3xl duration-300 hover:scale-105`}>User</button>
-        <button  onClick={_showRank} className={`w-1/2 bg-[#498CDA] ${clickedButton === 'rank' ? 'bg-[#498CDA] text-white' : 'bg-gray-300 text-gray-600'} h-full rounded-3xl duration-300 hover:scale-105`}>Rank</button>
+        {_switch ? <><button  onClick={_showRank} className={`w-1/2 bg-[#498CDA] ${clickedButton === 'rank' ? 'bg-[#498CDA] text-white' : 'bg-gray-300 text-gray-600'} h-full rounded-3xl duration-300 hover:scale-105`}>Rank</button></>:null}
 
       </div>
 
       {
         showuser && (
           <div className='pt-[10px]  flex justify-center items-center flex-col relative w-full h-[75%] rounded-[50px] text-black animate-bounce'>
-            {userInfo.avatar_url && <Image src={userInfo.avatar_url}  
+            {userInfo.avatar_url && <Image src={_switch ? userInfo.avatar_url : '/assets/unknown.png'}  
             className='w-[130px] h-[130px] shadow-lg rounded-full ' 
             alt="Description of the image" 
             width="250"  
             height="250"
             priority={true}
             />}
-            <h1>{userInfo.username}</h1>
-            <h5>@{userInfo.display_name}</h5>
+            <h1>{_switch ? userInfo.username: '-'}</h1>
+            <h5>@{_switch ? userInfo.display_name: '-'}</h5>
           </div>
         )}
+
+        
+      
+
       {showRank && (
         <div className=' items-center justify-center  gap-10 relative w-full h-[75%] rounded-[50px] flex overflow-auto scrollbar-hide'>
             

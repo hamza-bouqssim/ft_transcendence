@@ -76,7 +76,9 @@
 	--background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255; */
 	--pink-color: #fc7785;
+	--pink-hover: #fe4b5d;
 	--purple-color: #6a67f3;
+	--purple-hover: #5451ff;
 	--dark-purple-color: #1e1b34;
 	--blue-color: #498cda;
 	--gray-color: #ececec;

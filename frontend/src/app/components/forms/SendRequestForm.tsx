@@ -46,7 +46,7 @@ export const SendRequestForm= () => {
               ToastError(`Error: ${errorMessage}`);
             } else {
               ToastSuccess("Friend request sent successfully");
-
+              
             }
           } catch (err: any) {
             ToastError(`Error: ${err.message || 'An unexpected error occurred'}!`);

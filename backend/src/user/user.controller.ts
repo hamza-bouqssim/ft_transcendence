@@ -64,6 +64,15 @@ export class UserController {
       await this.prisma.user.update({where:{email: user.email}, data: {avatar_url: request.avatar}});
       res.send({success:true, message:"avatar uploaded succesfully"});
     }
+
+    @Post('deletePhoto')
+    @UseGuards(AuthGuard('jwt'))
+    async deletePhoto(@Req() req, @Res() res)
+    {
+      const user = req.user;
+      await this.prisma.user.update({where:{email: user.email}, data: {avatar_url: "https://cdn.landesa.org/wp-content/uploads/default-user-image.png"}});
+      res.send({success:true, message:"Avatar Deleted Succesfully"});
+    }
     @Post('first_time') 
     @UseGuards(AuthGuard('jwt'))
     async firstTime(@Req() req, @Res() res)
@@ -171,11 +180,16 @@ export class UserController {
     @UseGuards(AuthGuard('jwt'))
     async delete_account(@Req() req, @Res() res)
     {
+      try{
       const user = req.user;
-      await this.userService.deleteAccount(user.id);
       res.clearCookie('token');
-      return res.redirect('http://localhost:3000/signIn');
+      await this.userService.deleteAccount(user.id);
+      return res.send({success:true, message: "Deleted Successfully"});
+    } 
+    catch (error) {
+      console.error('Error deleting user account:', error);
     }
+  }
      
     
 }
