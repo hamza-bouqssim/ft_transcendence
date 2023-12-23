@@ -88,7 +88,7 @@ const SideBar = (props: Change) => {
 			<ul>
 				<Link
 					className="hidden md:block"
-					href={"http://localhost:8000/auth/logout"}
+					href={"http://10.12.2.12:8000/auth/logout"}
 					// onClick={(e) => {
 					// 	if (!messageBox()) e.preventDefault();
 					// }}

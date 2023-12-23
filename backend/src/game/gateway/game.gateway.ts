@@ -75,7 +75,7 @@ export type GameQ = {
 };
 
 @WebSocketGateway({
-	origin: ['http://localhost:3000'],
+	origin: ['http://10.12.2.12:3000'],
 	credentials: true,
 	namespace: '/game',
 })

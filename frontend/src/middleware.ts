@@ -21,7 +21,7 @@ export const config = {
 
 async function isAuthfetch(token: string | undefined): Promise<boolean> {
   try {
-    const apiUrl = 'http://localhost:8000/auth/isAuth';
+    const apiUrl = 'http://10.12.2.12:8000/auth/isAuth';
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {

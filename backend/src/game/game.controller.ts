@@ -9,12 +9,12 @@ import {
 } from '@nestjs/common';
 import { GameService } from './game.service';
 import { AuthGuard } from '@nestjs/passport';
-
+ 
 @Controller('game')
 export class GameController {
 	constructor(private readonly gameService: GameService) {}
 
-	@Post('myhistory')
+	@Get('myhistory')
 	@UseGuards(AuthGuard('jwt'))
 	async getMyHistory(@Body() request: { userId: string }, @Res() res) {
 		try {
@@ -70,7 +70,7 @@ export class GameController {
 		}
 	}
 
-	@Post('myresult')
+	@Get('myresult')
 	@UseGuards(AuthGuard('jwt'))
 	async getMyState(@Body() request: { userId: string }, @Res() res) {
 		try {

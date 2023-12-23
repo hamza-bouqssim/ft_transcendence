@@ -176,7 +176,7 @@ export class UserController {
       const user = req.user;
       await this.userService.deleteAccount(user.id);
       res.clearCookie('token');
-      return res.redirect('http://localhost:3000/signIn');
+      return res.redirect('http://10.12.2.12:3000/signIn');
     }
      
     

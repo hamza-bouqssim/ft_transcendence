@@ -103,7 +103,7 @@ export const LogoutButton = (props: any) => {
 	const router = useRouter();
 	const logoutFunction =  async () =>{
 		try {
-			window.location.href = "http://localhost:8000/auth/logout";
+			window.location.href = "http://10.12.2.12:8000/auth/logout";
 		} catch (err) {
 			alert("failed to logout");
 		}

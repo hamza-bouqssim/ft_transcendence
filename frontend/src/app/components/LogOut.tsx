@@ -17,7 +17,7 @@ const LogOut = () => {
 		confirmButtonText: "Yes, Log Out!",
 		customClass: "rounded-[30px] font-['Whitney_BlackSc'] text-sm",
 	}).then((result : any) => {
-		if (result.isConfirmed) window.location.href = "http://localhost:8000/auth/logout";
+		if (result.isConfirmed) window.location.href = "http://10.12.2.12:8000/auth/logout";
 	});
 };
 

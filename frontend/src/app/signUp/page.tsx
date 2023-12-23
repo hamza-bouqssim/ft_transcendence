@@ -20,8 +20,8 @@ const SignUp = () => {
 						</div>
 					</div>
 					<div className="flex cursor-pointer items-center justify-center gap-4">
-						<Link href="http://localhost:8000/auth/google/login"><GoogleSignInButton /></Link>
-						<Link href="http://localhost:8000/auth/42/login"><IntraSignInButton /></Link>
+						<Link href="http://10.12.2.12:8000/auth/google/login"><GoogleSignInButton /></Link>
+						<Link href="http://10.12.2.12:8000/auth/42/login"><IntraSignInButton /></Link>
 						
 					</div>
 					<div className="relative h-[2px] w-56 bg-[#241c1c] md:w-[17rem]">
