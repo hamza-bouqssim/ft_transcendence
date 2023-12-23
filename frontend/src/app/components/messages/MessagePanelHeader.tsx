@@ -60,9 +60,11 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({ setUpdateRome, update
       }, [dispatch,channel])
 
     // Image src
+
     const InfoRecipient = () =>{
         let test : User | undefined;
-        if(channel?.recipient.display_name === Userdata?.display_name){
+       
+        if(channel?.recipientId === Userdata?.id){
             test = channel?.sender;
         }else
             test  = channel?.recipient;

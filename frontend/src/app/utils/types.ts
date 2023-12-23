@@ -69,6 +69,8 @@ export type GroupChannel = {
     name : string;
     sender : User;
     recipient : User;
+    recipientId : string;
+    senderId : string;
 }
 
 export type AcceptRequestParams ={

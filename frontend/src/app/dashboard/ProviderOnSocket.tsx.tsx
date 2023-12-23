@@ -6,7 +6,6 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../store';
 import { socketContext } from '../utils/context/socketContext';
 import { useRouter } from 'next/navigation';
-import { Link } from 'next/link';
 
 const ProviderOnSocket = () => {
     const { updateChannel, channel } = useContext(socketContext);
@@ -28,16 +27,9 @@ const ProviderOnSocket = () => {
     
         });
         socket.on("AcceptPLayNotification",(payload:any) =>{
-            console.log("aaaaaaaaa",payload)
             if(payload.accept)
             {
-                // <Link href={{
-                //     pathname: "/dashboard/game/online-game/match-making",
-                //     query: {
-                //         mapIndex: 0
-                //     }
-                // }}>
-                // </Link>
+             
                 route.push("/dashboard/game/online-game/match-making")
 
             }
@@ -88,7 +80,7 @@ const ProviderOnSocket = () => {
     
           };
             
-          }, [socket, dispatch]);
+          }, [socket, dispatch, route]);
         
   return (
     <div>

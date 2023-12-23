@@ -25,49 +25,7 @@ const ConversationChannelPagechat = () => {
 	const dispatch= useDispatch<AppDispatch>();
 
   useEffect(() => {
-    socket.on('AcceptNotification', (data : any) => {
-      dispatch(fetchGetRequestThunk());
-      dispatch(fetchGetAllFriendsThunk());
-      dispatch(fetchCountNotification());
-      dispatch(fetchNumberPending());
-      dispatch(fetchNotificationThunk());
-      dispatch(fetchCountNotification());
-
-
-    });
-		socket.on('newFriendRequest', (data : any) => {
-			dispatch(fetchGetRequestThunk());
-      dispatch(fetchNumberPending());
-      dispatch(fetchCountNotification());
-      dispatch(fetchNotificationThunk());
-
-
-		  });
-    socket.on('newRequestToPlay', (data : any)=>{
-      dispatch(fetchCountNotification());
-      dispatch(fetchNotificationThunk());
-    })
-    socket.on('AcceptPLayNotification', (data : any)=>{
-      if(data.accept)
-      {
-        route.push("/dashboard/game/online-game/match-making?mapIndex=0")
-      }
-    })
-    socket.on('RefusePLayNotification', (data : any)=>{
-      dispatch(fetchCountNotification());
-      dispatch(fetchNotificationThunk());
-    })
-    socket.on('RefuseNotification', (data : any) => {
-      dispatch(fetchGetRequestThunk());
-      dispatch(fetchNumberPending());
-      dispatch(fetchNotificationThunk());
-      dispatch(fetchCountNotification());
-
-    })
-    socket.on('deleteNOtification', (data : any)=>{
-      dispatch(fetchNotificationThunk());
-      dispatch(fetchCountNotification());
-    })
+  
     socket.on('blockNotification', (data : any) =>{
       dispatch(fetchBlocksThunk());
       dispatch(fetchGetAllFriendsThunk());
@@ -116,7 +74,11 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchGetAllFriendsThunk());
     })
     socket.on('deleteConversation', (data : ConversationTypes)=>{
-			updateChannel(data);
+
+      if(data.id === channel?.id)
+      {
+        updateChannel(null);
+      }
 			dispatch(fetchConversationThunk());
       if (channel && channel.id) {
         dispatch(fetchMessagesThunk(channel.id));
@@ -130,9 +92,7 @@ const ConversationChannelPagechat = () => {
 
 		})
       return () => {
-        socket.off('AcceptNotification');
-        socket.off('newFriendRequest');
-        socket.off('RefuseNotification');
+    
         socket.off('blockNotification');
         socket.off('debloqueNotification');
         socket.off('online');
@@ -143,10 +103,7 @@ const ConversationChannelPagechat = () => {
         socket.off('deleteFriendship');
         socket.off('Ingame');
         socket.off('IngameOffline');
-        socket.off('newRequestToPlay');
-        socket.off('AcceptPLayNotification');
-        socket.off('RefusePLayNotification');
-        socket.off('deleteNOtification')
+      
 
 
       };
