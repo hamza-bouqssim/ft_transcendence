@@ -129,7 +129,7 @@ const CoversationSideBar = () => {
 				&& <ChatComponnent />
 			}
 
- 			{ pathname.includes('groups')  && !newRooms &&
+ 			{ pathname.includes('groups')  &&  !show && !newRooms &&
 				(search  ? <SerachGroup/> : <GroupsManagement/>  )   
 			}
 

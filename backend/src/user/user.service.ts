@@ -234,17 +234,28 @@ export class UserService {
             }
         })
     }
-
-    async findByDisplayNameSearching(displayName: string) {
-        return await this.prisma.user.findMany({
-            where: {
-                display_name: {
-                    contains: displayName,
-                },
+    async findByNameSearching(name: string) {
+        const users = await this.prisma.user.findMany({
+          where: {
+            display_name: {
+              contains: name,
             },
+          },
         });
-    }
-    
+      
+        const chatRooms = await this.prisma.chatRoom.findMany({
+          where: {
+            name: {
+              contains: name,
+            },
+          },
+        });
+      
+        // Concatenate the arrays of users and chat rooms
+        const result = [...users, ...chatRooms];
+      
+        return result;
+      }
     
     async findUserById(finduserParams : findUserParams)
     {

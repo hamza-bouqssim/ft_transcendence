@@ -134,8 +134,8 @@ export class UserController {
       return await this.userService.allUsers(user.id);
     }
     @Post('search')
-    async searchUsers(@Body() request: {displayName : string}) {
-      const test = this.userService.findByDisplayNameSearching(request.displayName);
+    async searchUsersRooms(@Body() request: {name: string}) {
+      const test = this.userService.findByNameSearching(request.name);
       return test;
   }
   @Get('table-friends')
