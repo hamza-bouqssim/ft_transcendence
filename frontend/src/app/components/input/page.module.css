@@ -1,0 +1,21 @@
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
+.input {
+    border: 2px solid gray;
+    width: 100%;
+    padding: 10px;
+    color: rgb(46, 46, 82);
+    background-color: #5f5b7a;
+    font-size: 20px;
+    font-weight: 50px;
+    color: aliceblue;
+}
+
+.label {
+    font-size: 20px;
+    color: rgb(99, 97, 95);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
