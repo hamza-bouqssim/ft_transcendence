@@ -111,12 +111,12 @@ export class AuthService {
       return user;
     }
 
-    // async generateNickname(email: string) :Promise<string>{
-    //   const username = email.split('@')[0];
-    //   const cleanedUsername = username.replace(/[^a-zA-Z0-9]/g, '');
-    //   const nickname = cleanedUsername.length > 0 ? cleanedUsername : 'defaultNickname';
-    //   return nickname;
-    // }
+    async generateNickname(email: string) :Promise<string>{
+      const username = email.split('@')[0];
+      const cleanedUsername = username.replace(/[^a-zA-Z0-9]/g, '');
+      const nickname = cleanedUsername.length > 0 ? cleanedUsername : 'defaultNickname';
+      return nickname;
+    }
 
 
 

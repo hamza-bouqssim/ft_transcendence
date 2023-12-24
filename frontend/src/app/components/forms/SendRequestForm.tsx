@@ -60,7 +60,7 @@ export const SendRequestForm= () => {
     return (
 
           <StylingForm>
-            	<ToastContainer />
+            	 
             <h1 className="text-black">Add conversation</h1>
             <form className={styles.formConversation} onSubmit={handleSubmit(onSubmit)}>
               <ContainerStyling>

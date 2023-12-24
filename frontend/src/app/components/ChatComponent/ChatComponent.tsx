@@ -174,7 +174,7 @@ const ChatComponnent  = () =>{
 
 	  return (
 		<>
-		  <ToastContainer />
+		   
 	
 		  {/* Conditionally render CreateConversationModal if show is true */}
 		  {show && <CreateConversationModal setShow={setShow} />}

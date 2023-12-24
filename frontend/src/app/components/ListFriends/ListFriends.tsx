@@ -115,7 +115,7 @@ const ListFriends = () => {
      
     return (
         <div className="mt-[10px]">
-          <ToastContainer />
+           
 				<ConversationSideBarContainer>
 					{friends.map(function(elem : FriendsTypes){
             const user = users.find((user: any) => user.id === elem.id);
