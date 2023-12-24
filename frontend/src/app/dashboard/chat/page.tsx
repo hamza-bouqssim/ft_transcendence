@@ -14,13 +14,14 @@ import { fetchConversationThunk } from "@/app/store/conversationSlice";
 import { fetchMessagesThunk } from "@/app/store/messageSlice";
 import { ConversationTypes, messageTypes } from "@/app/utils/types";
 import { fetchCountNotification, fetchNotificationThunk } from "@/app/store/notificationSlice";
+import { useRouter } from "next/navigation";
 
 const ConversationChannelPagechat = () => { 
   const { updateChannel, channel } = useContext(socketContext);
 
    
     const socket = useContext(socketContext).socket
-
+    const route = useRouter();
 	const dispatch= useDispatch<AppDispatch>();
 
   useEffect(() => {
@@ -46,10 +47,12 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchCountNotification());
       dispatch(fetchNotificationThunk());
     })
-    socket.on('AcceptPLayNotification', (data : any)=>{
-      dispatch(fetchCountNotification());
-      dispatch(fetchNotificationThunk());
-    })
+    // socket.on('AcceptPLayNotification', (data : any)=>{
+    //   if(data.accept)
+    //   {
+    //     route.push("/dashboard/game/-game/match-making?mapIndex=0")
+    //   }
+    // })
     socket.on('RefusePLayNotification', (data : any)=>{
       dispatch(fetchCountNotification());
       dispatch(fetchNotificationThunk());
@@ -141,9 +144,9 @@ const ConversationChannelPagechat = () => {
         socket.off('Ingame');
         socket.off('IngameOffline');
         socket.off('newRequestToPlay');
-        socket.off('AcceptPLayNotification');
+        // socket.off('AcceptPLayNotification');
         socket.off('RefusePLayNotification');
-        socket.off('deleteNOtification');
+        socket.off('deleteNOtification')
 
 
       };

@@ -73,9 +73,11 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({ setUpdateRome, update
       }, [dispatch,channel])
 
     // Image src
+
     const InfoRecipient = () =>{
         let test : User | undefined;
-        if(channel?.recipient.display_name === Userdata?.display_name){
+       
+        if(channel?.recipientId === Userdata?.id){
             test = channel?.sender;
         }else
             test  = channel?.recipient;
@@ -119,7 +121,7 @@ const handleUpdate = () => {
             {
                 pathname.includes('groups') &&
                 members?.some(
-                    member => (member.Status==="Owner" || member.Status === "Admin") && member.user_id === Userdata.id
+                    member => (member.Status==="Owner" || member.Status === "Admin") && member.user_id === Userdata?.id
                 ) ? (
                     !updateRome ? (
                     <IoMdSettings

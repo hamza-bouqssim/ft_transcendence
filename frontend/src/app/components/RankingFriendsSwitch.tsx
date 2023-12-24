@@ -59,7 +59,6 @@ const RankingFriendsSwitch = ({userId}) => {
       try {
         if (userId) {
           const response = await getUserInfos(userId);
-          console.log("BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA======> ",response);
           setUserInfo(response.data);
         }
       } catch (error) {

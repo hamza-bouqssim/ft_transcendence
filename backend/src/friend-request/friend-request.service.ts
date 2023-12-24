@@ -170,14 +170,10 @@ export class FriendRequestService {
             }
         
         });
-        this.eventEmitter.emit('requestPlay.created', {
-            requestToPlay
-          });
-    
-   
+        this.eventEmitter.emit('game.invite', 
+            {requestToPlay}
+          );
         return {message: 'Request to play sent succesfully'};
-
-
     }
     
     async acceptRequestToPlay(requestId: string, user: User){
@@ -204,7 +200,7 @@ export class FriendRequestService {
               requestId: requestId,
             },
           });
-        this.eventEmitter.emit('requestAcceptPlay.created', {
+        this.eventEmitter.emit('game.accept', {
             req_play
           });
     
@@ -544,5 +540,7 @@ export class FriendRequestService {
           return { success: false, message: 'Error deleting notification' };
         }
       }
+
+      
 }
     

@@ -93,13 +93,16 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		private readonly prisma: PrismaService,
 		private readonly eventEmitter: EventEmitter2,
 	) {}
+	
+	// sleep = async (ms: number) =>
+	// 	new Promise((resolve) => setTimeout(resolve, ms));
 
 	async handleConnection(socket: AuthenticatedSocket) {
 		console.log('connect1   ...');
 		console.log('socket', socket.user.sub);
 		const userId = socket.user.sub;
 		if (socket.user) {
-			await this.prisma.user.update({
+			const newStatus = await this.prisma.user.update({
 				where: { id: socket.user.sub },
 				data: { status: 'ingame' },
 			});
@@ -112,7 +115,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		socket.leave(`@${socket.user.sub}`);
 		const userId = socket.user.sub;
 		if (socket.user) {
-			await this.prisma.user.update({
+			const newStatus = await this.prisma.user.update({
 				where: { id: socket.user.sub },
 				data: { status: 'online' },
 			});

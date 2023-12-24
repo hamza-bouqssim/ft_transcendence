@@ -37,7 +37,7 @@ const MatchMaking = () => {
 	useEffect(() => {
 		const handleRedirectUser = (payload: any) => {
 			if (Userdata?.display_name === payload.display_name)
-				router.push("/dashboard", { scroll: false });
+				router.push("/dashboard/chat", { scroll: false });
 		};
 		gameSocket.on("redirectUser", handleRedirectUser);
 

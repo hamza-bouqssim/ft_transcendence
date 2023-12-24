@@ -81,7 +81,6 @@ export class FriendRequestController {
     {
       try{
         const user = req.user;
-        this.friendshipService.deleteMessagesWithUser(user.id, request.friendIdToBlock);
         const returnvalue =  await this.friendshipService.block(user.id, request.friendIdToBlock);
         return res.status(200).json({ success: true, response: returnvalue });
 
@@ -116,6 +115,7 @@ export class FriendRequestController {
       
 
     }
+    
 
   
 

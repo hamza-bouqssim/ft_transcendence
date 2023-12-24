@@ -5,11 +5,13 @@ import { fetchCountNotification, fetchNotificationThunk } from '../store/notific
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../store';
 import { socketContext } from '../utils/context/socketContext';
+import { useRouter } from 'next/navigation';
+
 
 const ProviderOnSocket = () => {
     const { updateChannel, channel } = useContext(socketContext);
-
-   
+    const route = useRouter()
+    
     const socket = useContext(socketContext).socket
 
 	const dispatch= useDispatch<AppDispatch>();
@@ -25,6 +27,23 @@ const ProviderOnSocket = () => {
     
     
         });
+        socket.on("AcceptPLayNotification",(payload:any) =>{
+            console.log("aaaaaaaaa",payload)
+            if(payload.accept)
+            {
+                // <Link href={{
+                //     pathname: "/dashboard/game/online-game/match-making",
+                //     query: {
+                //         mapIndex: 0
+                //     }
+                // }}>
+                // </Link>
+                route.push("/dashboard/game/online-game/match-making?mapIndex=0")
+
+            }
+            dispatch(fetchCountNotification());
+            dispatch(fetchNotificationThunk());
+        })
         socket.on('newFriendRequest', (data : any) => {
                 dispatch(fetchGetRequestThunk());
           dispatch(fetchNumberPending());
@@ -69,7 +88,7 @@ const ProviderOnSocket = () => {
     
           };
             
-          }, [socket, dispatch]);
+          }, [socket, dispatch, route]);
         
   return (
     <div>

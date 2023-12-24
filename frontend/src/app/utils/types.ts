@@ -65,10 +65,13 @@ export type GroupChannel = {
     
     id : string;
     picture : string;
+    display_name : string;
     members : Member;
     name : string;
     sender : User;
     recipient : User;
+    recipientId : string;
+    senderId : string;
 }
 
 export type AcceptRequestParams ={
@@ -82,6 +85,7 @@ export type UsersTypes = {
     display_name : string;
     avatar_url : string;
     status : string;
+    name : string;
 }
 
 export type UsersType = {
