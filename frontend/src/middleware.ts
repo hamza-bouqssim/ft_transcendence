@@ -5,7 +5,8 @@ import { NextRequest } from 'next/server';
 export async function middleware(request: NextRequest) {
   try {
     const token = request.cookies.get('token')?.value;
-    if (!token) {
+    const isAuth = await isAuthfetch(token)
+    if (!isAuth) {
       return NextResponse.redirect(new URL('/signIn', request.url).toString());
     }
   } catch (error) {
@@ -32,18 +33,11 @@ async function isAuthfetch(token: string | undefined): Promise<boolean> {
     });
 
     if (response.status === 200) {
-      const result = await response.json();
-      return result.isAuthenticated === true;
-    } else if (response.status === 401) {
-      // Unauthorized - handle accordingly
-      return false;
+      return  true;
     } else {
-      // Handle other HTTP status codes if needed
-      console.error(`Unexpected response status: ${response.status}`);
       return false;
     }
   } catch (error) {
-    console.error('Error during authentication check:', error);
     return false;
   }
 }

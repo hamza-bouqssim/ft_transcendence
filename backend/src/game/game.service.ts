@@ -78,8 +78,6 @@ export class GameService {
 		})
 	}
 
-	async createStateGame1(userIdOne: string, userIdTwo: string) {}
-
 	async deleteStateGame(userId: string) {
 		const deleteState = await this.prisma.stateGame.delete({
 			where: {

@@ -8,28 +8,10 @@ import { socketContext } from "@/app/utils/context/socketContext";
 import Image from "next/image";
 import { AppDispatch } from "@/app/store";
 import ListRome from "./ListRome";
+import { ConversationTypes } from "@/app/utils/types";
 
-interface lastMessage {
-  id: string;
-  content: string;
-  createdAt: Date;
-}
 
-interface Member {
-  user_id: string;
-  isAdmin: boolean;
-}
 
-interface Room {
-  id: string;
-  name: string;
-  Privacy: string;
-  picture: string;
-  createdAt: Date;
-  updatedAt: Date;
-  members: Member[];
-  messageRome: lastMessage[];
-}
 
 const GroupsManagement = () => {
   const router = useRouter();
@@ -38,8 +20,8 @@ const GroupsManagement = () => {
 
   const { rooms, status, error } = useSelector((state: any) => state.room);
   const { updateChannel, channel } = useContext(socketContext);
-  const [sortedRooms, setSortedRooms] = useState<Room[]>([]);
-  const [roomsdata, setRoomsData] = useState<Room[]>([])
+  const [sortedRooms, setSortedRooms] = useState<ConversationTypes[]>([]);
+  const [roomsdata, setRoomsData] = useState<ConversationTypes[]>([]);
 
   useEffect(() => {
     dispatch(getAllRooms())
@@ -85,15 +67,16 @@ const GroupsManagement = () => {
   }
 
   return (
-    <div className="text-black  pb-2 pt-5 h-[calc(100%-74px)] overflow-auto  no-scrollbar">
-      {roomsdata && roomsdata.map((data: Room) => (
-        <div key={data.id}>
-          <ListRome  data={data} ></ListRome>
-        </div>
-      ))}
-      <div className="md:h-32 h-32"></div>
-    </div>
-  );
+		<div className="no-scrollbar  h-[calc(100%-74px)] overflow-auto pb-2 pt-5  text-black">
+			{rooms &&
+				rooms?.map((data: ConversationTypes) => (
+					<div key={data.id}>
+						<ListRome data={data}></ListRome>
+					</div>
+				))}
+			<div className="h-32 md:h-32"></div>
+		</div>
+	);
 };
 
 export default GroupsManagement;

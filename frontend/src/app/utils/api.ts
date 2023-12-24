@@ -1,5 +1,5 @@
 import axios, { Axios, AxiosRequestConfig } from 'axios'
-import { AcceptRequestParams, ConversationTypes, CreateConversationParams, CreateMessageParams, CreateRequestParams, FetchMessagePayload, User, UserCredentialsParams, createUserParams } from './types';
+import { AcceptRequestParams, ConversationTypes, CreateConversationParams, CreateMessageParams, CreateRequestParams, FetchMessagePayload,  User, UserCredentialsParams, createUserParams } from './types';
 
 const API = axios.create({
     baseURL: "http://localhost:8000/",
@@ -115,10 +115,10 @@ export const createRoomsApi = (data:createRoom) =>{
 }
 
   
-export const updateRoomsApi = (data:any) =>{
-    const response = API.post("/rooms/updateRooms",{data})
-    return response;  
-}
+export const updateRoomsApi = (data:ConversationTypes | null) => {
+	const response = API.post("/rooms/updateRooms", { data });
+	return response;
+};
   
 export const deleteRoomsApi = (id:string) =>{
     const response = API.post("/rooms/deleteRooms",{id})
@@ -152,6 +152,11 @@ export const disable2Fa = async () => {
 export const changePhoto = async (avatar: string) => {
     const res = API.post("/user/changePhoto", {avatar})
     return res;
+}
+
+export const deleteAvatar = async () => {
+  const res = API.post("/user/deletePhoto");
+  return res;
 }
 
 export const firstTime = async () => {

@@ -74,16 +74,15 @@ const Header = () => {
 		try {
 			await getlogout();
 			let data;
-			deleteCookie('logged');
+			deleteCookie("logged");
 			setUser(data);
 			router.push("/", { scroll: false });
 			ToastSuccess("Logout succeffuly");
-
 		} catch (err) {
 			ToastError("failed to logout");
 			console.log(err);
 		}
-	}
+	};
 
 	return (
 		<header className="px-[15%] py-[59px]">
@@ -132,9 +131,13 @@ const Header = () => {
 							<a href="#featues" className="link-style">
 								Features
 							</a>
-							{!user ? <Link className="btn-style" href={"/signIn"}>
-								Sign In
-							</Link> : <button onClick={logoutFunction} className="btn-style">Sign Out</button>}
+							{!user ? (
+								<Link className="btn-style" href={"/signIn"}>
+									Sign In
+								</Link>
+							) : (
+								<Link href={"http://localhost:8000/auth/logout"} onClick={logoutFunction} className="btn-style">Sign Out</Link>
+							)}
 						</nav>
 					</div>
 					<div

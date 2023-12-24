@@ -96,8 +96,8 @@ export class PongGame {
 		});
 
 		this.runner = Runner.create();
-		this.user1 = game.socket1.user.sub;
-		this.user2 = game.socket2.user.sub;
+		this.user1 = game.user1.id;
+		this.user2 = game.user2.id;
 		this.mapIndex = game.indexMap;
 
 		// This Function Will Run In All Maps:
@@ -541,29 +541,31 @@ export class PongGame {
 	updateBallVelocity() {
 		// Limit Velocity Value
 		console.log('Before velocity update:', this.currentBallVelocity.y);
+
+		const xVelocity = this.currentBallVelocity.x;
+
 		if (this.currentBallVelocity.y === 10 || this.currentBallVelocity.y === -10)
 			return;
-		// else if (
-		// 	this.currentBallVelocity.y === 8 ||
-		// 	this.currentBallVelocity.y === -8
-		// )
-		// 	return;
 		else {
 			if (this.lastDirection === 'top') this.currentBallVelocity.y -= 1;
 			else this.currentBallVelocity.y += 1;
-
-			Body.setVelocity(this.ball, {
-				x: this.ball.velocity.x,
-				y: this.currentBallVelocity.y,
-			});
-
-			this.gameGatway.emitToGame(
-				this.user1,
-				this.user2,
-				this.ball.velocity,
-				'setBallVelocity',
-			);
 		}
+
+		if (xVelocity === this.currentBallVelocity.x)
+			this.currentBallVelocity.x = this.ball!.velocity.x + 1;
+
+		Body.setVelocity(this.ball!, {
+			x: this.currentBallVelocity.x,
+			y: this.currentBallVelocity.y,
+		});
+
+		this.gameGatway.emitToGame(
+			this.user1,
+			this.user2,
+			this.ball.velocity,
+			'setBallVelocity',
+		);
+
 		console.log('After velocity update:', this.currentBallVelocity.y);
 	}
 

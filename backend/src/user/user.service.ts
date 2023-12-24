@@ -385,15 +385,103 @@ export class UserService {
         const blockedFriends = await this.blockedFriends(senderId);
         return blockedFriends.some((friend) => friend.id === recipientUserId);
       }
-   
+    //   async notificationMessage(chatId : string, userId : string){
+    //     // const notificationMessage = await this.prisma.notificationGlobal.create({
+    //     //     data: {
+    //     //         Sender: { connect: { id: userSender.id } },
+    //     //         recipient: { connect: { id: userRecipient.id } },
+    //     //         content: message,
+    //     //         image_content: userSender.avatar_url,
+    //     //     },
+    //     // });
 
-    async deleteAccount(userId: string){
-        await this.prisma.user.delete({
-          where: {
-            id: userId,
-          },
-        });
+
+    //   }
+    async deleteAccount(userId: string) {
+        try {
+          // Delete related data
+          await this.prisma.friend.deleteMany({
+            where: {
+              OR: [
+                { user_id: userId },
+                { friend_id: userId },
+              ],
+            },
+          });
+      
+          await this.prisma.notificationGlobal.deleteMany({
+            where: {
+              OR: [
+                { Sender_id: userId },
+                { recipient_id: userId },
+              ],
+            },
+          });
+      
+          await this.prisma.blockList.deleteMany({
+            where: {
+              OR: [
+                { userOneId: userId },
+                { userTwoId: userId },
+              ],
+            },
+          });
+      
+          await this.prisma.chatParticipents.deleteMany({
+            where: {
+              OR: [
+                { senderId: userId },
+                { recipientId: userId },
+              ],
+            },
+          });
+      
+          await this.prisma.message.deleteMany({
+            where: {
+              OR: [
+                { senderId: userId },
+                { participentsId: userId },
+              ],
+            },
+          });
+      
+          await this.prisma.session.deleteMany({
+            where: {
+              data: userId,
+            },
+          });
+      
+          await this.prisma.match_History.deleteMany({
+            where: {
+              OR: [
+                { playerOne: userId },
+                { playerTwo: userId },
+              ],
+            },
+          });
+      
+          await this.prisma.stateGame.deleteMany({
+            where: {
+              user_id: userId,
+            },
+          });
+      
+          await this.prisma.user.delete({
+            where: {
+              id: userId,
+            },
+          });
+        } catch (error) {
+          console.error('Error deleting user account:', error);
+          throw new Error('Failed to delete user account');
+        }
       }
+      
+      
+      
 
+      
+      
+      
 }
 

@@ -5,7 +5,7 @@ import { PrismaModule } from 'prisma/prisma.module';
 import { GoogleStrategy } from './strategies/googleStrategy';
 import { FortyTwoStrategy } from './strategies/42Strategy';
 import { PrismaService } from 'prisma/prisma.service';
-import { JwtModule ,JwtService} from '@nestjs/jwt';
+import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { TwoFactorAuthenticationService } from 'src/two-factor-authentication/two-factor-authentication.service';
 import { TwoFactorAuthenticationModule } from 'src/two-factor-authentication/two-factor-authentication.module';

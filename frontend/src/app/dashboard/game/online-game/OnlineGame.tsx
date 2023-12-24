@@ -10,7 +10,7 @@ import {
 import { socketContext } from "@/app/utils/context/socketContext";
 import { useGameSocket } from "@/app/providers/game-socket-provider";
 import { OpponentData, getCurrentSizes } from "../utils/data";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 
 const OnlineGame = ({ mapIndex }: any) => {
 	const router = useRouter();
@@ -36,6 +36,7 @@ const OnlineGame = ({ mapIndex }: any) => {
 				avatar_url: "/assets/unknown.png",
 			},
 			isRotate: false,
+			mapIndex: -1,
 		}));
 	};
 
@@ -56,14 +57,20 @@ const OnlineGame = ({ mapIndex }: any) => {
 			width: getCurrentSizes(parentWidth, parentHeight)[0],
 			height: getCurrentSizes(parentWidth, parentHeight)[1],
 		});
+
+		//TODO: don't forget to clear Event
 	}, []);
 
 	useEffect(() => {
 		console.log("online-game-score-useffect");
+		window.addEventListener("popstate", () => {
+			router.push("/dashboard/game/", { scroll: false });
+		});
 		if (opponentPlayer.opponent.username === "") {
-			router.push("/dashboard/game", {scroll: false});
+			router.push("/dashboard/game/", { scroll: false });
 			return;
 		}
+		// window.addEventListener("offline", () => console.log("rak offline a sat!"));
 		const updateScoreListener = (playersScore: any) => {
 			setScore({
 				...score,
@@ -78,10 +85,8 @@ const OnlineGame = ({ mapIndex }: any) => {
 	useEffect(() => {
 		console.log("online-game-score-useffect2");
 
-		const handleLaunchGame = (payload: any) => {
+		const handleLaunchGame = () => {
 			console.log("from lauch game listern!!!!!!!!!!!!!!!!!!");
-			// opponentPlayer.current = payload.opponant;
-			// isRotate.current = payload.rotate;
 			if (!pongRef.current) {
 				console.log("Create game!");
 				pongRef.current = new PongGame(
@@ -101,11 +106,7 @@ const OnlineGame = ({ mapIndex }: any) => {
 			// pongRef.current?.clear();
 		};
 		setTimeout(() => {
-			gameSocket.emit("launchGameRequest", {
-				mapIndex: mapIndex,
-				width: parentCanvasRef.current?.getBoundingClientRect().width,
-				height: parentCanvasRef.current?.getBoundingClientRect().height,
-			});
+			gameSocket.emit("launchGameRequest");
 			setStartGame((prev: any) => !prev);
 		}, 3000);
 		console.log("setup launchGame event!");

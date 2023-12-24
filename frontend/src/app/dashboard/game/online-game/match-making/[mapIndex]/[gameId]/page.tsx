@@ -7,11 +7,7 @@ const Game = ({
 		mapIndex: number;
 	};
 }) => {
-	return (
-		<section className="relative h-screen min-h-[653px] text-white md:min-h-[900px] xl:min-h-[800px]">
-			<OnlineGame mapIndex={Number(params.mapIndex)} />
-		</section>
-	);
+	return <OnlineGame mapIndex={Number(params.mapIndex)} />;
 };
 
 export default Game;

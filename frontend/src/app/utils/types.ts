@@ -48,37 +48,28 @@ export type Member = {
 } 
 
 
-export type   ConversationTypes= {
-    id : string;
-    picture : string;
-    name : string;
-    members : Member;
-    sender : User;
-    recipient : User;
-    createdAt : string;
-    recipientId : string;
-    senderId : string;
-    lastMessage: MessageType;
-}
-
-
-export type lastMessage = {
-        id: string;
-        content: string;
-        createdAt: Date;
-   
-}
-export type GroupChannel = {
-    
-    id: string;
-	name: string;
-	Privacy: string;
+export type ConversationTypes = {
+	id: string;
 	picture: string;
+	name: string;
+	sender: User;
+	recipient: User;
+	recipientId: string;
+	senderId: string;
+	lastMessage: MessageType;
+	Privacy: string;
+	password: string | null;
 	createdAt: Date;
 	updatedAt: Date;
 	members: Member[];
 	messageRome: lastMessage[];
-}
+};
+export type lastMessage = {
+	id: string;
+	content: string;
+	createdAt: Date;
+};
+
 
 export type AcceptRequestParams ={
     idRequest : string;
@@ -185,3 +176,21 @@ export type CreateRequestParams = {
     display_name : string;
 }
 
+export type Members = {
+	id: string;
+	user_id: string;
+	chatRoomId: string;
+	isAdmin: boolean;
+	Status: string;
+	user: {
+		id: string;
+		username: string;
+		status: string;
+		email: string;
+		password: string;
+		display_name: string;
+		avatar_url: string;
+		two_factor_auth: string;
+		two_factor_secret_key: string;
+	};
+}
