@@ -1,13 +1,11 @@
 /* eslint-disable prettier/prettier */
 import {
-	BadRequestException,
 	Body,
 	Controller,
 	Get,
 	Post,
 	Req,
 	Res,
-	UnauthorizedException,
 	UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -63,7 +61,7 @@ export class AuthController {
 
 	@Get('google/login')
 	@UseGuards(AuthGuard('google'))
-	async googleLogin(@Res() res: Response, @Req() req) {}
+	async googleLogin() {}
 
 	@Get('google/redirect')
 	@UseGuards(AuthGuard('google'))
@@ -91,7 +89,7 @@ export class AuthController {
 
 	@Get('42/login')
 	@UseGuards(AuthGuard('42'))
-	ftLogin(@Res() res: Response, @Req() req) {}
+	ftLogin() {}
 
 	@Get('42/redirect')
 	@UseGuards(AuthGuard('42'))
@@ -124,14 +122,14 @@ export class AuthController {
 	}
 
 	@Post('isAuth')
-	@UseGuards(AuthGuard('jwt'))
-	async isAuthentication(@Req() request, @Res() res, @Body() body) {
-		try {
-			console.log(request.user);
-			let user = await this.authService.findUser(request.user.id);
-			return res.status(200).json({ isAuth: true });
-		} catch (error) {
-			return res.status(401).json({ isAuth: false });
-		}
-	}
+    @UseGuards(AuthGuard('jwt'))
+    async isAuthentication( @Req() request, @Res() res,) {
+      try {
+        console.log(request.user)
+        await this.authService.findUser(request.user.id) 
+        return res.status(200).json({ isAuth: true});
+      } catch (error) {
+        return res.status(401).json({ isAuth: false });
+      }
+    }
 }
