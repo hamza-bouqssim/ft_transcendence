@@ -74,7 +74,7 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchGetAllFriendsThunk());
     })
     socket.on('deleteConversation', (data : ConversationTypes)=>{
-
+          console.log("detelele");
       if(data.id === channel?.id)
       {
         updateChannel(null);
