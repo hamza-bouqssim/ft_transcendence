@@ -1,7 +1,6 @@
 import Form from "./Form";
 import Image from "next/image";
 import { useState, useContext } from "react";
-import { changePhoto, uploadToCloud } from "../utils/api";
 import axios, { Axios } from 'axios'
 import { socketContext } from "../utils/context/socketContext";
 
@@ -12,7 +11,7 @@ const MyAccount = () => {
 	const [src, setSrc] = useState<string>("/assets/user2.jpeg");
 	const [_image, setImage] = useState();
 
-	const handleFile = async (event) => {
+	const handleFile = async (event:any) => {
 		try {
 			const file = event.target.files[0];
 			const formData = new FormData();

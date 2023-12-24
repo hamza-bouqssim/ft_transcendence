@@ -1,8 +1,9 @@
-import React ,{useContext} from 'react';
+import React, { useContext } from 'react';
 import Image from 'next/image';
 import { socketContext } from '@/app/utils/context/socketContext';
 
-interface LastMessage {
+
+interface lastMessage {
   id: string;
   content: string;
   createdAt: Date;
@@ -21,17 +22,15 @@ interface Room {
   createdAt: Date;
   updatedAt: Date;
   members: Member[];
-  messageRome: LastMessage[];
+  messageRome: lastMessage[];
 }
-
 interface ListRomeProps {
   data: Room;
-  // updateChannel: (data: Room) => void;
 }
 
-const ListRome: React.FC<ListRomeProps> = (data:Room) => {
-  console.log("xzcxzc",data)
-  const {channel,updateChannel} = useContext(socketContext)
+const ListRome: React.FC<ListRomeProps> = (data ) => {
+  const { channel, updateChannel } = useContext(socketContext);
+
   return (
     <div key={data.data.id} onClick={() => updateChannel(data.data)} className="cursor-pointer rounded-[10px] hover:bg-[#F2F3FD] flex items-center justify-between px-2 py-3">
       <div className="flex items-center justify-start">

@@ -60,7 +60,7 @@ const MessageInputFieldRoom: FC<props> = ({setMessage, Message}) => {
         }
       setContent('');
     };
-    const handleEnter =(event) => {
+    const handleEnter =(event:any) => {
       if (event.key === 'Enter') {
         event.preventDefault(); 
         sendMessage();   

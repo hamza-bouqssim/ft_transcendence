@@ -87,7 +87,9 @@ const GroupsManagement = () => {
   return (
     <div className="text-black  pb-2 pt-5 h-[calc(100%-74px)] overflow-auto  no-scrollbar">
       {roomsdata && roomsdata.map((data: Room) => (
-        <ListRome data={data} ></ListRome>
+        <div key={data.id}>
+          <ListRome  data={data} ></ListRome>
+        </div>
       ))}
       <div className="md:h-32 h-32"></div>
     </div>

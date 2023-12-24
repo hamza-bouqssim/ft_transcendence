@@ -6,6 +6,25 @@ import { MdOutlineMoreVert } from "react-icons/md";
 import Image from 'next/image';
 import ListUser from './ListUser';
 
+
+interface Member {
+  id: string;
+  user_id: string;
+  chatRoomId: string;
+  isAdmin: boolean;
+  Status: string;
+  user: {
+    id: string;
+    username: string;
+    status: string;
+    email: string;
+    password: string;
+    display_name: string;
+    avatar_url: string;
+    two_factor_auth: string;
+    two_factor_secret_key: string;
+  };
+}
 export const Admin = () => {
   const { members, status, error } = useSelector((state:any) => state.member);
   const { channel } = useContext(socketContext);
@@ -30,7 +49,7 @@ export const Admin = () => {
   return (
     <div>
       {members && members.length > 0 ? (
-        members.map((member) => (
+        members.map((member:Member) => (
           (member.Status === 'Admin') ? (
             <ListUser key={member.id} member={member} />
           ) : null
@@ -39,7 +58,7 @@ export const Admin = () => {
         <div>Not found</div>
       )}
       
-      {members && !members.some(member => member.Status === 'Admin') && (
+      {members && !members.some((member:Member) => member.Status === 'Admin') && (
         <div className="text-[14px] mt-3 text-center text-gray-400 ">No one is in `Admin`</div>
       )}
     </div>
