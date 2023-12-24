@@ -200,8 +200,6 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         @OnEvent('game.accept')
         AcceptRequestPLay(data : any){
             this.server.emit('AcceptPLayNotification', data);
-
-
         }
         @OnEvent('requestRefusePlay.created')
         REfuseRequestPLay(data : any){
@@ -240,7 +238,6 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         }
 
         @OnEvent('deleteConversation.created')
-
         deleteConversation(data : any){
             this.server.emit('deleteConversation', data.chatParticipent);
 

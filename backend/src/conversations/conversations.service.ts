@@ -374,7 +374,7 @@ async deleteConversation(conversationId: string, userId : string) {
   
 
   this.eventEmitter.emit('deleteConversation.created', {
-    chatParticipent,
+    chatParticipent
   });
 
   return { message: 'Delete conversation successfully' };
