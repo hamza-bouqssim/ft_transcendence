@@ -14,7 +14,7 @@ import { UserService } from 'src/user/user.service';
 
 @WebSocketGateway({
     cors:{
-        origin:['http://10.12.2.12:3000'],
+        origin:['http://localhost:3000'],
         credentials : true,
     },
     namespace: '/chat',
@@ -28,12 +28,10 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
     server: Server;
     
     private NsessionOfuser: Map<string, number> = new Map();
-
     async handleConnection(socket : AuthenticatedSocket) {
         const userId = socket.user.sub;
         if(socket.user)
-        {
-            
+        {  
             if (!this.NsessionOfuser.has(userId)) {
                 
                 this.NsessionOfuser.set(userId, 1);
@@ -52,31 +50,48 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         }  
         socket.join(socket.user.sub.toString());     
     }
-    //#######################################################################################################################
-        //room
-    
+
+
+
+    // ##################################################################################################################
+    //  room
+
     @SubscribeMessage('joinToRoom')
     handleJoinRome(client: Socket, roomId: RoomId){
          client.join(roomId.id.toString());
-        }
-        
-        @SubscribeMessage('leaveToRoom')
-        handleLeaveRome (client: Socket, roomId: RoomId) {
-            client.leave (roomId.id);
-        }
-        
-        
+    }
+    
+    @SubscribeMessage('leaveToRoom')
+    handleLeaveRome (client: Socket, roomId: RoomId) {
+        client.leave (roomId.id);
+    }
+
+    // @SubscribeMessage('cleanNot')
+    // cleanNotification(client: AuthenticatedSocket, roomId: RoomId)
+    // {
+    //     this.roomsService.cleanNotification(client.user.sub,roomId.id)
+    // }
+
+
+    // @SubscribeMessage('getNor')
+    // GetNotification(client: AuthenticatedSocket, roomId: RoomId)
+    // {
+    //     this.roomsService.cleanNotification(client.user.sub,roomId.id)
+    // }
+
+ 
     @SubscribeMessage('messageRome')
     async handleMessage(client: AuthenticatedSocket, createMessageRoom: CreateMessageRoom){
         const messageRome = await this.roomsService.createMessage(createMessageRoom,client.user.sub);
+        this.roomsService.notificationRoomUpdate(messageRome.senderId,messageRome.chatRoomId)
         this.server.to(createMessageRoom.chatRoomId.toString()).emit ('messageRome', messageRome);
     }
     @SubscribeMessage('Typing')
     handleTyping(client: Socket, {id,userId}){
         this.server.to(id.toString()).emit ('Typing', {status: true,userId:userId});
     }
-    
-    
+
+
     
     @SubscribeMessage('leaveTyping')
     handleLeaveTyoing (client: Socket, { id,userId}) {
@@ -84,32 +99,37 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
     }
     
     
-    
-    
     @OnEvent("order.created")
     async onNotificationCreate(data:any) {
-             const userAdmin = data.members.find((userAdmin) => userAdmin.isAdmin)
-             data.members.map((member) => {
-                if(!member.isAdmin)
-                {
-                    const message = `${userAdmin.user.display_name } Join you to ${data.name}`;
-                    this.server.to(member.user_id).emit('notification', message);
-                    const type = "Join";
-                    const requestId = data.members.id;
-                    this.userService.createNotification( userAdmin.user,member.user, message, type, requestId);
-                }             
-            })
-        }
-        @OnEvent("order.update")
-        async onNotificationupdate(data:any,id:string) {
-            const member = await this.prisma.chatRoom.findUnique({
-                where: { id: data.id },
-                include:{
-                    members:{
-                        include:{
-                            user:true
-                        }
+        console.log(data)
+        const userAdmin = data.members.find((userAdmin) => userAdmin.Status=== "Owner")
+        data.members.map((member) => {
+            if(member.Status !== "Owner")
+            {
+                console.log(member)
+                this.roomsService.notificationRoom(data.id,member.user_id,1)
+                const message = `${userAdmin.user.display_name } Join you to ${data.name}`;
+                this.server.to(member.user_id).emit('notification', message);
+                // const type = "Join";
+                // const requestId = data.members.id;
+                // this.userService.createNotification( userAdmin.user,member.user_id, message, type, requestId);
+            }
+            else
+            {
+                this.roomsService.notificationRoom(data.id,member.user_id,0)
+            }             
+        })
+    }
+    @OnEvent("order.update")
+    async onNotificationupdate(data:any,id:string) {
+        const member = await this.prisma.chatRoom.findUnique({
+            where: { id: data.id },
+            include:{
+                members:{
+                    include:{
+                      user:true
                     }
+                  }
                 }
             })
             member.members.map((member) => {
@@ -117,30 +137,27 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
                     this.server.to(member.user_id).emit('update', "");         
             })
         }
-        @OnEvent("order.updateMember")
-        async onNotificationupdatemember(RoomId:string,id:string,types:string) {
-            const member = await this.prisma.chatRoom.findUnique({
-                where: { id: RoomId },
-                include:{
-                    members:{
-                        include:{
-                            user:true
-                        }
+    @OnEvent("order.updateMember")
+    async onNotificationupdatemember(RoomId:string,id:string,types:string) {
+        const member = await this.prisma.chatRoom.findUnique({
+            where: { id: RoomId },
+            include:{
+                members:{
+                    include:{
+                        user:true
                     }
                 }
-            })
-            member?.members.map((member) => {
-                this.server.to(member.user_id).emit('updateMember', {roomId:RoomId,idUserleave:id,types:types});         
-            })
-        }
-    
-    
-        @OnEvent("order.delete")
-         async onNotificationdelete(data:any) {
-            data.members.map((member) => {
-                this.server.to(member.user_id).emit('delete', "");         
-            })
-        }
+            }
+        })
+        member?.members.map((member) => {
+            this.server.to(member.user_id).emit('updateMember', {roomId:RoomId,idUserleave:id,types:types});         
+        })
+    }
+    //chat room 
+
+
+
+
         @OnEvent("request.created")
         sendFriendRequestNotification(data : any) {
             const message = `${data.friendData.user.display_name} send you request to be friends`;
@@ -170,22 +187,22 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
             
             
         }
-        // @OnEvent("requestPlay.created")
-        // sendRequestToPLay(data : any){
+        @OnEvent("game.invite")
+        sendRequestToPLay(data : any){
           
-        //     const message = `${data.requestToPlay.Sender.display_name} send you request to play`;
-        //     const type = "requestPLay";
-        //     const requestId = data.requestToPlay.id;
-        //     this.server.to(data.requestToPlay.recipient.id).emit(`newRequestToPlay`,data);
-        //     this.userService.createNotification(data.requestToPlay.Sender, data.requestToPlay.recipient, message, type, requestId);
+            const message = `${data.requestToPlay.Sender.display_name} send you request to play`;
+            const type = "requestPLay";
+            const requestId = data.requestToPlay.id;
+            this.server.to(data.requestToPlay.recipient.id).emit(`newRequestToPlay`,data);
+            this.userService.createNotification(data.requestToPlay.Sender, data.requestToPlay.recipient, message, type, requestId);
 
-        // }
-        // @OnEvent('requestAcceptPlay.created')
-        // AcceptRequestPLay(data : any){
-        //     this.server.emit('AcceptPLayNotification', data);
+        }
+        @OnEvent('game.accept')
+        AcceptRequestPLay(data : any){
+            this.server.emit('AcceptPLayNotification', data);
 
 
-        // }
+        }
         @OnEvent('requestRefusePlay.created')
         REfuseRequestPLay(data : any){
             this.server.emit('RefusePLayNotification', data);
@@ -225,7 +242,7 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         @OnEvent('deleteConversation.created')
 
         deleteConversation(data : any){
-            this.server.emit('deleteConversation', data.conversation);
+            this.server.emit('deleteConversation', data.chatParticipent);
 
         }
 
@@ -237,8 +254,6 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
 
         @OnEvent('Ingame.created')
 	    handleIngameEvent(payload: { userId: string }) {
-		    console.log("entere here gameee");
-		    console.log(payload.userId);
 	        this.server.emit('Ingame', `This user ${payload} is InGame`);
     	}
 
@@ -252,18 +267,15 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
 
         @OnEvent('chat.newRequestToPlay')
         async handleInvitegame(data: any) {
-            console.log("datatatatatata---?", data);
             this.server.to(data.requestToPlay.recipientId).emit("newRequestToPlay",data);  
      
         }
 
         @OnEvent('chat.AcceptPLayNotification')
 	    async handleAcceptPLayNotification(data: any) {
-		console.log("herererererere");
-		console.log("game accept",data)
-		console.log(data.req_play.senderId,data.req_play.recipientId)
-        this.server.to(data.req_play.recipientId).emit("AcceptPLayNotification",{accept:true});
+	
 		this.server.to(data.req_play.senderId).emit("AcceptPLayNotification",{accept:true});
+        this.server.to(data.req_play.recipientId).emit("AcceptPLayNotification",{accept:true});
         }
         
 
@@ -283,17 +295,17 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
     
 
     
-    @OnEvent("requestPlay.created")
-    sendRequestToPLay(data : any){
+    // @OnEvent("requestPlay.created")
+    // sendRequestToPLay(data : any){
         
-        const message = `${data.requestToPlay.Sender.display_name} send you request to play`;
-        const type = "requestPLay";
-        const requestId = data.requestToPlay.id;
-        console.log("requestId-->", requestId);
-        this.server.to(data.requestToPlay.recipient.id).emit(`newRequestToPlay`,data);
-        this.userService.createNotification(data.requestToPlay.Sender, data.requestToPlay.recipient, message, type, requestId);
+    //     const message = `${data.requestToPlay.Sender.display_name} send you request to play`;
+    //     const type = "requestPLay";
+    //     const requestId = data.requestToPlay.id;
+    //     console.log("requestId-->", requestId);
+    //     this.server.to(data.requestToPlay.recipient.id).emit(`newRequestToPlay`,data);
+    //     this.userService.createNotification(data.requestToPlay.Sender, data.requestToPlay.recipient, message, type, requestId);
         
-    }
+    // }
     
    
        
@@ -314,13 +326,11 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
                         
                     });
                 }
+                this.eventEmitter.emit('offline.created', { userId });
             }
-            socket.leave(socket.user.sub);
-            
         }
-        
-        
-        
+        socket.leave(socket.user.sub); 
     }
-
+      
 }
+    
