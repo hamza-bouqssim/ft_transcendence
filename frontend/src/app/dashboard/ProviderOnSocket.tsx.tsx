@@ -24,8 +24,7 @@ const ProviderOnSocket = () => {
           dispatch(fetchNumberPending());
           dispatch(fetchNotificationThunk());
           dispatch(fetchCountNotification());
-    
-    
+          console.log(null)
         });
         socket.on("AcceptPLayNotification",(payload:any) =>{
             console.log("aaaaaaaaa",payload)
