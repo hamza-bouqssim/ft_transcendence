@@ -244,8 +244,9 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
 
         @OnEvent('deleteConversation.created')
 
-        deleteConversation(data : any){
-            this.server.emit('deleteConversation', data.chatParticipent);
+        deleteConversation(payload: { chatParticipent: any, userId: string }){
+        
+            this.server.to(payload.userId).emit('deleteConversation', payload.chatParticipent);
 
         }
 
