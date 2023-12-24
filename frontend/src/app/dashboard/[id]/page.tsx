@@ -173,121 +173,151 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 	return (
 		<div>
 			<div className="container">
-
 				<div className="row">
-
 					<div className="col-1">
-						<div className="play rounded-[54px] relative">
-						<Image
-  							src="/assets/hand.png"
-  							className="thehand absolute  -top-[41px] -right-[9px] rounded-r-full w-[490px] animate-bounce"
-  							alt=""
-  							width="500"
-  							height="500"
-							priority={true}
-						/>
-							<div className="flex justify-center items-center gap-4 align-center bottom-5 absolute left-10">
-								{_switch ? <>
-								{
-									sendReq ? <>
-
-											<button className="px-4 h-12 bg-[--purple-color] rounded-2xl shadow-xl hover:scale-105 hover:duration-300 ease-in-out hover:bg-[--purple-hover]">Send Request</button>
-									</>: <>
-											<button className="px-4 h-12 bg-[--purple-color] rounded-2xl shadow-xl hover:scale-105 hover:duration-300 ease-in-out hover:bg-[--purple-hover]">Pending Request</button>
-
+						<div className="play relative rounded-[54px]">
+							<Image
+								src="/assets/hand.png"
+								className="thehand absolute  -right-[9px] -top-[41px] w-[490px] animate-bounce rounded-r-full"
+								alt=""
+								width="500"
+								height="500"
+								priority={true}
+							/>
+							<div className="align-center absolute bottom-5 left-10 flex items-center justify-center gap-4">
+								{_switch ? (
+									<>
+										{sendReq ? (
+											<>
+												<button className="h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover] hover:duration-300">
+													Send Request
+												</button>
+											</>
+										) : (
+											<>
+												<button className="h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover] hover:duration-300">
+													Pending Request
+												</button>
+											</>
+										)}
+										<button
+											className="hover:duration- h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover]"
+											onClick={() => setShowMessageBlock(true)}
+										>
+											Send Message
+										</button>
 									</>
-								}
-									<button className="px-4 h-12 bg-[--purple-color] rounded-2xl shadow-xl hover:scale-105 hover:duration- ease-in-out hover:bg-[--purple-hover]" onClick={() => setShowMessageBlock(true)}>Send Message</button>
-								</>
+								) : null}
 
-								
-								: null}
-								
 								{friendsBlock.some((friend: any) => friend.id === params.id) ? (
-  									<button className="px-4 h-12 bg-[--pink-color] rounded-2xl shadow-xl hover:scale-105 hover:duration-175 ease-in-out hover:bg-[--pink-hover]" onClick={() => handleUnblockButtonClick()}>Unblock</button>
-									) : (
- 									 <button className="px-4 h-12 bg-[--purple-color] rounded-2xl shadow-xl hover:scale-105 hover:duration-175 ease-in-out hover:bg-[--purple-hover]" onClick={() => handleBlockButtonClick()}>Block</button>
+									<button
+										className="hover:duration-175 h-12 rounded-2xl bg-[--pink-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--pink-hover]"
+										onClick={() => handleUnblockButtonClick()}
+									>
+										Unblock
+									</button>
+								) : (
+									<button
+										className="hover:duration-175 h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover]"
+										onClick={() => handleBlockButtonClick()}
+									>
+										Block
+									</button>
 								)}
 							</div>
-							{showMessageBlock && 
-							<>
-								<div className="fixed left-0 z-10 top-0 bottom-0 right-0  p-10 rounded-[60px] w-full h-full bg-[#00000095] backdrop-blur-md opacity-100">
-								<div className="w-[380px] h-[280px] z-30 bg-white absolute top-0 left-0 bottom-0 right-0 m-auto rounded-[20px] overflow-hidden">
-									<h2 className="text-black">Send Message to {userinfo?.display_name}</h2>
-								</div>
-								
-								</div>
-							</>
-							}
-
+							{showMessageBlock && (
+								<>
+									<div className="fixed bottom-0 left-0 right-0 top-0 z-10  h-full w-full rounded-[60px] bg-[#00000095] p-10 opacity-100 backdrop-blur-md">
+										<div className="absolute bottom-0 left-0 right-0 top-0 z-30 m-auto flex h-[280px] w-[380px] flex-col items-center justify-center gap-3 overflow-hidden rounded-[20px] bg-white px-5 shadow-xl">
+											<h2 className="text-[20px] text-gray-800">
+												Send Message to{" "}
+												<span className="text-[25px] text-[--purple-color]">
+													{userinfo?.display_name}
+												</span>
+											</h2>
+											<Image
+												src={userinfo?.avatar_url || ""}
+												className="h-auto w-auto rounded-full"
+												alt=""
+												width={120}
+												height={120}
+												priority={true}
+											/>
+											<input
+												type="text"
+												className="w-full rounded-xl border-2 border-[--purple-color]  p-4 text-black outline-[--purple-color]"
+												placeholder="Send Message"
+											/>
+										</div>
+									</div>
+								</>
+							)}
 						</div>
-						
-						{ _switch ? (
-						<div>
-							<div className="boxes">
-							<Boxes title="WINS" value={results?.win} color="#6A67F3"/>
-							<Boxes title="RANK" value={results?.level} color="#498CDA"/>
-							<Boxes title="LOSSES" value={results?.lose} color="#FC7785"/>
-							</div>
-							<h1 className="mt-[20px]">History</h1>
-							<div className="history-header mt-[20px] shadow-lg w-full h-[40px] bg-[#79a9f28d] rounded-[40px] flex justify-between px-1 py-1 ">
-							<div className="w-[23%] text-center ">
-								<h1>Players</h1>
-							</div>
 
-							<div className="w-[23%] text-center ">
-								<h1>Duration</h1>
-							</div>
+						{_switch ? (
+							<div>
+								<div className="boxes">
+									<Boxes title="WINS" value={results?.win} color="#6A67F3" />
+									<Boxes title="RANK" value={results?.level} color="#498CDA" />
+									<Boxes title="LOSSES" value={results?.lose} color="#FC7785" />
+								</div>
+								<h1 className="mt-[20px]">History</h1>
+								<div className="history-header mt-[20px] flex h-[40px] w-full justify-between rounded-[40px] bg-[#79a9f28d] px-1 py-1 shadow-lg ">
+									<div className="w-[23%] text-center ">
+										<h1>Players</h1>
+									</div>
 
-							<div className="w-[23%] text-center ">
-								<h1>Date</h1>
-							</div>
+									<div className="w-[23%] text-center ">
+										<h1>Duration</h1>
+									</div>
 
-							<div className="w-[23%] text-center ">
-								<h1>Total Matches</h1>
+									<div className="w-[23%] text-center ">
+										<h1>Date</h1>
+									</div>
+
+									<div className="w-[23%] text-center ">
+										<h1>Total Matches</h1>
+									</div>
+								</div>
+								<div className="his scrollbar-hide  h-[120px] overflow-y-auto">
+									{history_match.map((_history: HistoryMatchesType, index) => (
+										<HistoryMatches
+											key={index}
+											playerOne={_history.playerOne}
+											resultOne={_history.resultOne}
+											resultTwo={_history.resultTwo}
+											playerTwo={_history.playerTwo}
+											duration={_history.duration}
+											date={_history.date}
+											totalMatch={_history.totalMatch}
+										/>
+									))}
+								</div>
 							</div>
-							</div>
-							<div className="his overflow-y-auto  h-[120px] scrollbar-hide">
-							{history_match.map((_history: HistoryMatchesType, index) => (
-								<HistoryMatches
-								key={index}
-								playerOne={_history.playerOne}
-								resultOne={_history.resultOne} 
-								resultTwo={_history.resultTwo} 
-								playerTwo={_history.playerTwo} 
-								duration={_history.duration} 
-								date={_history.date} 
-								totalMatch={_history.totalMatch}
-								/>
-							))}
-							</div>
-						</div>
 						) : null}
-
-
 					</div>
-					
+
 					<div className="col-2">
-
 						<div className="rank-container overflow-hidden p-2">
-							   <RankingUserSwitch userId={params.id} userInfo={userinfo} _switch={_switch}/>
+							<RankingUserSwitch
+								userId={params.id}
+								userInfo={userinfo}
+								_switch={_switch}
+							/>
 						</div>
 
-						{_switch ? 
-
-						<div className="achievements-container">
-							<div className="achievements">
-								<h1>Achievements</h1>
-								<AchievementsList results={results} />
+						{_switch ? (
+							<div className="achievements-container">
+								<div className="achievements">
+									<h1>Achievements</h1>
+									<AchievementsList results={results} />
+								</div>
 							</div>
-						</div>
-						: null}
-
+						) : null}
 					</div>
 				</div>
-
 			</div>
-    	</div>
+		</div>
 	);
 };
 export default Dashboard;
