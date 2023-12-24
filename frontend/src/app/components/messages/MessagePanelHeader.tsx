@@ -91,7 +91,7 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({ setUpdateRome, update
             {
                 pathname.includes('groups') &&
                 members?.some(
-                    member => (member.Status==="Owner" || member.Status === "Admin") && member.user_id === Userdata.id
+                    member => (member.Status==="Owner" || member.Status === "Admin") && member.user_id === Userdata?.id
                 ) ? (
                     !updateRome ? (
                     <IoMdSettings
