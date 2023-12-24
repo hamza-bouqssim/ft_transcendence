@@ -77,7 +77,7 @@ const MessageContainer = () => {
     return (
 
        <>
-        <ToastContainer />
+         
         <div className="h-[calc(100%-130px)] no-scrollbar  overflow-y-auto  ">
         <MessageContainerStyle>
           {messages &&

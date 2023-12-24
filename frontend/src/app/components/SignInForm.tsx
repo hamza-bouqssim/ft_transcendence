@@ -95,7 +95,7 @@ const SignInForm = forwardRef((props: any, ref: any) => {
 
 	return (
 		<div ref={ref}>
-			 <ToastContainer />
+			  
 			<form
 				action=""
 				className="relative flex h-full w-full flex-col items-center justify-center gap-3 sm:gap-4"

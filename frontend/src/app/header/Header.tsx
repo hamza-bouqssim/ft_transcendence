@@ -87,7 +87,7 @@ const Header = () => {
 
 	return (
 		<header className="px-[15%] py-[59px]">
-			    <ToastContainer />
+			     
 			<section className="flex items-center justify-between">
 				<div>
 					<Image

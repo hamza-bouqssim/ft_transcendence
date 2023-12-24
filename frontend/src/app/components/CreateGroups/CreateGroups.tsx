@@ -9,6 +9,7 @@ import { socketContext } from '@/app/utils/context/socketContext'
 import { MemberUser } from '../cardMemberUser/MemberUser';
 import { FriendsTypes } from '@/app/utils/types';
 import Image from 'next/image';
+import { AppDispatch } from '@/app/store';
 
 
 
@@ -16,19 +17,25 @@ interface CreateGroupsProps {
     setNewRooms: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+interface createRoom {
+  name: string;
+  Privacy: string;
+  password: string | null;
+  picture: string | null;
+  idUserAdd: string[]; 
+}
 
-const CreatGroups: React.FC<CreateGroupsProps> = ({ setNewRooms }) => {
-  const dispatch = useDispatch();
 
-  const [groupName, setGroupName] = useState('');
-  const [groupPrivacy, setGroupPrivacy] = useState('Public'); // Default to Public, you can change this based on your logic
-  const [groupPassword, setGroupPassword] = useState('');
-  const [grouImage,setGroupImage] = useState("")
-  const [errorin , setError] = useState("");
+const CreatGroups: React.FC<CreateGroupsProps> = ({ setNewRooms }: CreateGroupsProps) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const [groupName, setGroupName] = useState<string>('');
+  const [groupPrivacy, setGroupPrivacy] = useState<string>('Public'); 
+  const [groupPassword, setGroupPassword] = useState<string>("");;
+  const [grouImage,setGroupImage] = useState<string>("");
+  const [errorin , setError] = useState<string>("");
   const { updateChannel,channel} = useContext(socketContext);
-  const [idUserAdd,setIdUserAdd] = useState([]);
+  const [idUserAdd,setIdUserAdd] = useState<string[]>([]);
   const { rooms,status,error} = useSelector((state:any) => state.room);
-
   const handleCreateGroup = () => {
         if ((groupPrivacy === "Protected" &&  !groupPassword)) {
           toast.error("Password are required for a Protected group.")
@@ -45,7 +52,7 @@ const CreatGroups: React.FC<CreateGroupsProps> = ({ setNewRooms }) => {
             return;
         }
         
-          const newGroupData = {
+          const newGroupData :createRoom = {
             name: groupName,
             Privacy: groupPrivacy,
             password: groupPassword,
@@ -53,20 +60,19 @@ const CreatGroups: React.FC<CreateGroupsProps> = ({ setNewRooms }) => {
             idUserAdd:idUserAdd 
           };
       
-          dispatch(createRooms(newGroupData)).then(response => {
+          dispatch(createRooms(newGroupData)).then((response:any )=> {
             if(response.error)
             {
-              console.log(response)
               toast.error(response.payload)
             }
             else
             {
-              toast.success("asdsadsadas")
+              toast.success("Create Room Successfully! 🎉")
               setNewRooms(false)
             }
-          }).catch(error => {
+          }).catch((error:any) => {
             toast.success(error)
-          });       
+          });   
   };
     return (
         <div className="p-2 pt-4  h-[calc(100%-150px)]  overflow-auto no-scrollbar ">
@@ -146,7 +152,8 @@ const CreatGroups: React.FC<CreateGroupsProps> = ({ setNewRooms }) => {
               :   <FaCheck />  }
 					</button>
     
-				</div>   
+				</div>  
+       
         </div>
     )
 }

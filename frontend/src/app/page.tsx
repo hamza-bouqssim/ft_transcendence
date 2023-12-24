@@ -15,7 +15,7 @@ const Home = () => {
 				<About />
 				<Team />
 				<Footer />
-				{/* <ToastContainer /> */}
+				{/*   */}
 			</main>
 		
 	);

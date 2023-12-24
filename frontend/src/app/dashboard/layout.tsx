@@ -11,6 +11,7 @@ import { usePathname } from "next/navigation";
 import { ConversationTypes, GroupChannel, User } from "../utils/types";
 import { Group } from "three";
 import ProviderOnSocket from "./ProviderOnSocket.tsx";
+import { ToastContainer, toast } from 'react-toastify';
 
 export const SideBarContext: any = createContext<any>(null);
 export const ChangeContext: React.Context<any> = createContext(null);
@@ -19,24 +20,33 @@ type Props = {
 	// setUser : React.Dispatch<React.SetStateAction<User | undefined>>;
 	socket: Socket;
 };
-interface Room {
+interface lastMessage {
+	id: string;
+	content: string;
+	createdAt: Date;
+  }
+  
+  interface Member {
+	user_id: string;
+	isAdmin: boolean;
+  }
+  
+  interface Room {
 	id: string;
 	name: string;
 	Privacy: string;
-	password:string;
 	picture: string;
-	createdAt: string;
-	updatedAt: string;
-	members: {
-	  isAdmin: boolean;
-	};
-}
+	createdAt: Date;
+	updatedAt: Date;
+	members: Member[];
+	messageRome: lastMessage[];
+  }
 
 function AppWithProviders({ children }: PropsWithChildren & Props) {
-	const [channel, setChannel] = useState<GroupChannel | ConversationTypes |null>(null); // Initial value
-	const[oldId,setOldId] = useState(null);
+	const [channel, setChannel] = useState<Room | ConversationTypes |null>(null); // Initial value
+	const[oldId,setOldId] = useState<string>(null);
 	const[Userdata,setUserdata] = useState<User |  null>(null);
-	const updateChannel = (newAddress:GroupChannel | ConversationTypes| null) => {
+	const updateChannel = (newAddress:Room | ConversationTypes| null) => {
 	  setChannel(newAddress);
 	};
 	return (
@@ -110,6 +120,7 @@ export default function RootLayout({
 						<ChangeContext.Provider value={changeValues}>
 							<ProviderOnSocket></ProviderOnSocket>
 							<div className="h-full w-full">{children}</div>
+							<ToastContainer />
 						</ChangeContext.Provider>
 					</AppWithProviders>
 				</div>

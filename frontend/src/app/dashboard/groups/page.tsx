@@ -20,31 +20,26 @@ import { getAllMembers } from "@/app/store/memberSlice";
 
 
 const ConversationChannelPage = () => {
-  const {channel ,updateChannel} = useContext(socketContext);
-  const socket = useContext(socketContext).socket
+  const {channel ,updateChannel} = useContext<any>(socketContext);
+  const socket = useContext<any>(socketContext).socket
   const dispatch= useDispatch<AppDispatch>();
-  const {Userdata} = useContext(socketContext)
+  const {Userdata} = useContext<any>(socketContext)
 
 	useEffect(()=>{
-		socket.on("notification",(payload:any) =>{
+		socket.on("notification",() =>{
 			dispatch(getAllRooms())
 		})
-    socket.on("delete",(payload:any) =>{
-			dispatch(getAllRooms())
-      updateChannel(null)
-		})
-    socket.on("update",(payload:any) =>{
+    socket.on("update",() =>{
 			dispatch(getAllRooms())
       updateChannel(null)
 		})
     socket.on("updateMember",(payload:any) =>{
 			dispatch(getAllMembers(payload.roomId))
-      dispatch(getAllRooms())
-      if(payload.types==="Ban" && Userdata?.id === payload.idUserleave)
+      if(Userdata?.id === payload.idUserleave)
       {  
         socket.emit("leaveToRoom", {id: payload.roomId});
+        dispatch(getAllRooms());
       }
-      
 		})
     return () => {
       socket.off("notification");
@@ -69,7 +64,7 @@ const ConversationChannelPage = () => {
 <div className="xl:my-10 xl:mr-10  w-full xl:ml-2 xl:w-[65%]   xl:mt-32 hidden xl:flex items-center justify-center">Invit friend to new chat rome</div>
               }
               </div>
-              <ToastContainer />
+              
               </>
 
      );
