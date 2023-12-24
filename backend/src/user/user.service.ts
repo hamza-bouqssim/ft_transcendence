@@ -257,6 +257,22 @@ export class UserService {
               ],
             },
           });
+
+          // const blockedUsers = await this.prisma.blockList.findMany({
+          //   where: {
+          //     OR: users.map((user) => ({
+          //       OR: [
+          //         { userOneId: userId, userTwoId: user.id },
+          //         { userOneId: user.id, userTwoId: userId },
+          //       ],
+          //     })),
+          //   },
+          // });
+        
+          // // Filter out blocked users
+          // const filteredUnblockedUsers = users.filter(
+          //   (user) => !blockedUsers.some((blockedUser) => blockedUser.userTwoId === user.id)
+          // );
       
         // Concatenate the arrays of users and chat rooms
         const result = [...users, ...chatRooms];

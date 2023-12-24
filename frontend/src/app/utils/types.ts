@@ -61,17 +61,23 @@ export type   ConversationTypes= {
     lastMessage: MessageType;
 }
 
+
+export type lastMessage = {
+        id: string;
+        content: string;
+        createdAt: Date;
+   
+}
 export type GroupChannel = {
     
-    id : string;
-    picture : string;
-    display_name : string;
-    members : Member;
-    name : string;
-    sender : User;
-    recipient : User;
-    recipientId : string;
-    senderId : string;
+    id: string;
+	name: string;
+	Privacy: string;
+	picture: string;
+	createdAt: Date;
+	updatedAt: Date;
+	members: Member[];
+	messageRome: lastMessage[];
 }
 
 export type AcceptRequestParams ={

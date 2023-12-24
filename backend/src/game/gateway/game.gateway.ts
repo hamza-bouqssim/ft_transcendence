@@ -183,7 +183,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	@OnEvent('game.invite')
 	async handleInvitegame(data: any) {
-		console.log("datatatatatata---?", data);
 		const message = `${data.requestToPlay.Sender.display_name} send you request to play`;
 		const type = "requestPLay";
 		const requestId = data.requestToPlay.id;

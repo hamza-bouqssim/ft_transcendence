@@ -27,7 +27,7 @@ interface lastMessage {
 type SocketContextValue = {
   socket: Socket;
   updateChannel: (newAddress: Room| ConversationTypes | null) => void;
-  channel:Room | ConversationTypes | null;
+  channel: GroupChannel | ConversationTypes | null;
   oldId: any; 
   setOldId: Dispatch<SetStateAction<any>>; 
   Userdata: User | null; 
