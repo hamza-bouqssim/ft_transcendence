@@ -70,7 +70,7 @@ const OnlineGame = ({ mapIndex }: any) => {
 			router.push("/dashboard/game/", { scroll: false });
 			return;
 		}
-		window.addEventListener("offline", () => console.log("rak offline a sat!"));
+		// window.addEventListener("offline", () => console.log("rak offline a sat!"));
 		const updateScoreListener = (playersScore: any) => {
 			setScore({
 				...score,

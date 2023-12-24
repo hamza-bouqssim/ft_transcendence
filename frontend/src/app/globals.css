@@ -52,7 +52,7 @@
 }
 
 .icon-style {
-	@apply absolute top-[50%] translate-y-[-50%] transform text-[.7rem] text-black md:text-sm 2xl:text-[1rem];
+	@apply absolute top-[50%] translate-y-[-50%] transform text-[.7rem] text-black md:text-sm 2xl:text-[1.1rem];
 }
 
 .active-btn-style {

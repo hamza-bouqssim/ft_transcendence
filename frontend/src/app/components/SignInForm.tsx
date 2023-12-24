@@ -2,18 +2,12 @@
 import { forwardRef, useRef, useState } from "react";
 import { SignButton } from "./Buttons";
 import { useForm } from "react-hook-form";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-	faKey,
-	faEnvelope,
-	faEye,
-	faEyeSlash,
-} from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
 import { UserCredentialsParams } from "../utils/types";
 import { postLoginUser } from "../utils/api";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Email, Key, Visibility, VisibilityOff } from "@mui/icons-material";
 
 const SignInForm = forwardRef((props: any, ref: any) => {
 	const ToastError = (message: any) => {
@@ -93,10 +87,7 @@ const SignInForm = forwardRef((props: any, ref: any) => {
 				onSubmit={handleSubmit(onSubmit)}
 			>
 				<div className="relative">
-					<FontAwesomeIcon
-						icon={faEnvelope}
-						className="icon-style left-[30px]"
-					/>
+					<Email className="icon-style left-[30px]" />
 					<input
 						type="email"
 						{...register("email", { required: "Email is required" })}
@@ -105,7 +96,7 @@ const SignInForm = forwardRef((props: any, ref: any) => {
 					/>
 				</div>
 				<div className="relative">
-					<FontAwesomeIcon icon={faKey} className="icon-style left-[30px]" />
+					<Key className="icon-style left-[30px]" />
 					<input
 						type={show ? "text" : "password"}
 						{...register("password", {
@@ -114,15 +105,13 @@ const SignInForm = forwardRef((props: any, ref: any) => {
 						className="custom-shape input-style"
 						placeholder="Password"
 					/>
-					<FontAwesomeIcon
+					<Visibility
 						ref={faEyeRef}
-						icon={faEye}
 						className="icon-style right-[8%] block cursor-pointer"
 						onClick={(e) => handleClick(e)}
 					/>
-					<FontAwesomeIcon
+					<VisibilityOff
 						ref={faEyeSlashRef}
-						icon={faEyeSlash}
 						className="icon-style right-[8%] hidden cursor-pointer"
 						onClick={(e) => handleClick(e)}
 					/>

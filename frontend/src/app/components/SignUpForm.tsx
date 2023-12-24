@@ -15,6 +15,14 @@ import { postRegisterUser } from "../utils/api";
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import {
+	Email,
+	Key,
+	Visibility,
+	VisibilityOff,
+	Badge,
+	Person,
+} from "@mui/icons-material";
 
 const SignUpForm = forwardRef((_props: any, ref: any) => {
 	const ToastError = (message: any) => {
@@ -72,6 +80,17 @@ const SignUpForm = forwardRef((_props: any, ref: any) => {
 		}
 	};
 
+	const handleClick = (e: any): void => {
+		if (e.currentTarget === faEyeRef.current) {
+			faEyeRef.current?.classList.replace("block", "hidden");
+			faEyeSlashRef.current?.classList.replace("hidden", "block");
+		} else {
+			faEyeSlashRef.current?.classList.replace("block", "hidden");
+			faEyeRef.current?.classList.replace("hidden", "block");
+		}
+		setShow(!show);
+	};
+
 	return (
 		<div ref={ref} className="">
 			<ToastContainer />
@@ -81,7 +100,7 @@ const SignUpForm = forwardRef((_props: any, ref: any) => {
 				onSubmit={handleSubmit(onSubmit)}
 			>
 				<div className="relative">
-					<FontAwesomeIcon icon={faUser} className="icon-style left-[30px]" />
+					<Person className="icon-style left-[30px]" />
 					<input
 						type="text"
 						id="username"
@@ -91,10 +110,7 @@ const SignUpForm = forwardRef((_props: any, ref: any) => {
 					/>
 				</div>
 				<div className="relative">
-					<FontAwesomeIcon
-						icon={faAddressCard}
-						className="icon-style left-[30px]"
-					/>
+					<Badge className="icon-style left-[30px]" />
 					<input
 						type="text"
 						id="display_name"
@@ -106,10 +122,7 @@ const SignUpForm = forwardRef((_props: any, ref: any) => {
 					/>
 				</div>
 				<div className="relative">
-					<FontAwesomeIcon
-						icon={faEnvelope}
-						className="icon-style left-[30px]"
-					/>
+					<Email className="icon-style left-[30px]" />
 					<input
 						type="email"
 						id="email"
@@ -119,7 +132,7 @@ const SignUpForm = forwardRef((_props: any, ref: any) => {
 					/>
 				</div>
 				<div className="relative">
-					<FontAwesomeIcon icon={faKey} className="icon-style left-[30px]" />
+					<Key className="icon-style left-[30px]" />
 					<input
 						type={show ? "text" : "password"}
 						id="password_hashed"
@@ -129,11 +142,15 @@ const SignUpForm = forwardRef((_props: any, ref: any) => {
 						className="custom-shape input-style"
 						placeholder="Passsword"
 					/>
-					<FontAwesomeIcon
+					<Visibility
 						ref={faEyeRef}
-						icon={show ? faEye : faEyeSlash}
-						className="icon-style right-[10%] block cursor-pointer"
-						onClick={() => setShow(!show)}
+						className="icon-style right-[8%] block cursor-pointer"
+						onClick={(e) => handleClick(e)}
+					/>
+					<VisibilityOff
+						ref={faEyeSlashRef}
+						className="icon-style right-[8%] hidden cursor-pointer"
+						onClick={(e) => handleClick(e)}
 					/>
 				</div>
 				<SignButton value={"Sign Up"} />
