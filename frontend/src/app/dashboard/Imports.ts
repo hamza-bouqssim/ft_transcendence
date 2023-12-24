@@ -5,6 +5,12 @@ export interface UserInfoType {
 	avatar_url: string;
 }
 
+export interface UserInfo {
+	display_name : string;
+}
+
+
+
 export interface PlayerType {
 	username: string;
 	picture: string;

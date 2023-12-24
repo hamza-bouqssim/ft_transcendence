@@ -2,15 +2,15 @@
 import {  useEffect, useState } from "react"
 import {useRouter} from "next/navigation"
 import { usePathname } from 'next/navigation'
-import ConversationSearch from "../ConversationSearch/page"
-import ChatComponnent from "../ChatComponent/ChatComponent"
-import GroupsManagement from "../GroupsManagment/GroupsManagment"
-import CreatGroups from "../CreateGroups/CreateGroups"
+import ConversationSearch from "@/app/components/ConversationSearch/page"
+import ChatComponnent from "@/app/components/ChatComponent/ChatComponent"
+import GroupsManagement from "@/app/components/GroupsManagment/GroupsManagment"
+import CreatGroups from "@/app/components/CreateGroups/CreateGroups"
 import {IoMdAdd} from 'react-icons/io'
-import OnlineFriends from "../OnlineFriends/OnlineFriends"
-import ListFriends from "../ListFriends/ListFriends"
-import SendRequest from "../SendRequest/SendRequest"
-import FriendsBloque from "../FriendsBloque/FriendsBloque"
+import OnlineFriends from "@/app/components/OnlineFriends/OnlineFriends"
+import ListFriends from "@/app/components/ListFriends/ListFriends"
+import SendRequest from "@/app/components/SendRequest/SendRequest"
+import FriendsBloque from "@/app/components/FriendsBloque/FriendsBloque"
 
 const CoversationSideBar = () => {
 	const [newRooms , setNewRooms]  = useState<boolean>(false)
@@ -62,5 +62,6 @@ const CoversationSideBar = () => {
 		</div>
      );
 }
+
  
 export default CoversationSideBar;

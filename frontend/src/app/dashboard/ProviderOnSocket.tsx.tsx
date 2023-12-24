@@ -26,23 +26,14 @@ const ProviderOnSocket = () => {
           dispatch(fetchCountNotification());
           console.log(null)
         });
-        socket.on("AcceptPLayNotification",(payload:any) =>{
-            console.log("aaaaaaaaa",payload)
-            if(payload.accept)
-            {
-                // <Link href={{
-                //     pathname: "/dashboard/game/online-game/match-making",
-                //     query: {
-                //         mapIndex: 0
-                //     }
-                // }}>
-                // </Link>
-                route.push("/dashboard/game/online-game/match-making?mapIndex=0")
-
-            }
-            dispatch(fetchCountNotification());
-            dispatch(fetchNotificationThunk());
-        })
+        socket.on("AcceptPLayNotification", (payload: any) => {
+          console.log("accepppppppppppppppppppppppppppp",payload)
+					if (payload.accept) {
+						route.push("/dashboard/game/online-game/match-making?mapIndex=0");
+					}
+					dispatch(fetchCountNotification());
+					dispatch(fetchNotificationThunk());
+				});
         socket.on('newFriendRequest', (data : any) => {
                 dispatch(fetchGetRequestThunk());
           dispatch(fetchNumberPending());
@@ -52,10 +43,6 @@ const ProviderOnSocket = () => {
     
               });
         socket.on('newRequestToPlay', (data : any)=>{
-          dispatch(fetchCountNotification());
-          dispatch(fetchNotificationThunk());
-        })
-        socket.on('AcceptPLayNotification', (data : any)=>{
           dispatch(fetchCountNotification());
           dispatch(fetchNotificationThunk());
         })

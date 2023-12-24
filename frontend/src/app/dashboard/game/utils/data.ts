@@ -1,4 +1,6 @@
 import { atom } from "jotai";
+import { createContext } from "react";
+import { Socket } from "socket.io-client";
 
 export const OpponentData = atom<{
 	opponent: {
@@ -7,6 +9,7 @@ export const OpponentData = atom<{
 		avatar_url: string;
 	};
 	isRotate: boolean;
+	mapIndex: number;
 }>({
 	opponent: {
 		username: "",
@@ -14,6 +17,7 @@ export const OpponentData = atom<{
 		avatar_url: "/assets/unknown.png",
 	},
 	isRotate: false,
+	mapIndex: -1,
 });
 
 export const getCurrentSizes = (
@@ -42,7 +46,8 @@ export const getCurrentSizes = (
 	return [newWidth, newHeight];
 };
 
-
+export const SideBarContext: any = createContext<any>(null);
+export const ChangeContext: React.Context<any> = createContext(null);
 
 //  calculateWidthHeight(): [number, number] {
 // 		let width: number, height: number;

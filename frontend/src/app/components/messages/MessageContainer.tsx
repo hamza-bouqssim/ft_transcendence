@@ -39,7 +39,6 @@ const MessageContainer = () => {
 		});
 	  };
     const [setLoadloadinging] = useState<boolean>(false);
-
     // const [Message,setMessage] = useState<messageTypes[]>([]);
     const controller = new AbortController();
     const { channel } = useContext(socketContext);
@@ -49,9 +48,7 @@ const MessageContainer = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { messages, status, error , isSenderBlocked , isRecipientBlocked} = useSelector((state:any) => state.messages);
     const scrollRef = useRef<HTMLDivElement | null>(null);
-    console.log("channel-->", channel);
-    console.log("channel recipient-->", channel?.recipient);
-    console.log("channel sender-->", channel?.sender);
+
     useEffect(() => {
       const joinRoom = (id: string) => {
         if (oldId) socket.emit("leaveToRoom", { id: oldId });
@@ -80,7 +77,7 @@ const MessageContainer = () => {
     // console.log("recipient here-->", messages.participent.recipient);
     const debloqueFromPanel  = async () =>{
         let user : User | undefined;
-        if(channel?.sender.id === Userdata?.id)
+        if( channel && channel?.sender.id === Userdata?.id)
             user = channel?.recipient;
         else
           user =channel?.sender;

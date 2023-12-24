@@ -187,7 +187,7 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
             
             
         }
-        @OnEvent("game.invite")
+        @OnEvent("chat.invite")
         sendRequestToPLay(data : any){
           
             const message = `${data.requestToPlay.Sender.display_name} send you request to play`;
@@ -197,10 +197,7 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
             this.userService.createNotification(data.requestToPlay.Sender, data.requestToPlay.recipient, message, type, requestId);
 
         }
-        @OnEvent('game.accept')
-        AcceptRequestPLay(data : any){
-            this.server.emit('AcceptPLayNotification', data);
-        }
+
         @OnEvent('requestRefusePlay.created')
         REfuseRequestPLay(data : any){
             this.server.emit('RefusePLayNotification', data);
@@ -238,8 +235,8 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         }
 
         @OnEvent('deleteConversation.created')
-        deleteConversation(data : any){
-            this.server.emit('deleteConversation', data.chatParticipent);
+        deleteConversation(payload: {chatParticipent : any , userId : string}){
+            this.server.to(payload.userId).emit('deleteConversation', payload.chatParticipent);
 
         }
 
@@ -271,6 +268,7 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         @OnEvent('chat.AcceptPLayNotification')
 	    async handleAcceptPLayNotification(data: any) {
 	
+        console.log(data)
 		this.server.to(data.req_play.senderId).emit("AcceptPLayNotification",{accept:true});
         this.server.to(data.req_play.recipientId).emit("AcceptPLayNotification",{accept:true});
         }

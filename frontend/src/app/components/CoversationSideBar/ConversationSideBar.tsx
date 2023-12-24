@@ -1,16 +1,16 @@
-"use client"
-import {  useEffect, useState } from "react"
-import {useRouter} from "next/navigation"
-import { usePathname } from 'next/navigation'
-import ConversationSearch from "../ConversationSearch/page"
-import ChatComponnent from "../ChatComponent/ChatComponent"
-import GroupsManagement from "../GroupsManagment/GroupsManagment"
-import CreatGroups from "../CreateGroups/CreateGroups"
-import {IoMdAdd} from 'react-icons/io'
-import OnlineFriends from "../OnlineFriends/OnlineFriends"
-import ListFriends from "../ListFriends/ListFriends"
-import SendRequest from "../SendRequest/SendRequest"
-import FriendsBloque from "../FriendsBloque/FriendsBloque"
+"use client";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
+import ConversationSearch from "../ConversationSearch/page";
+import ChatComponnent from "../ChatComponent/ChatComponent";
+import GroupsManagement from "../GroupsManagment/GroupsManagment";
+import CreatGroups from "../CreateGroups/CreateGroups";
+import { IoMdAdd } from "react-icons/io";
+import OnlineFriends from "../OnlineFriends/OnlineFriends";
+import ListFriends from "../ListFriends/ListFriends";
+import SendRequest from "../SendRequest/SendRequest";
+import FriendsBloque from "../FriendsBloque/FriendsBloque";
 import { useContext } from "react";
 import {socketContext } from "@/app/utils/context/socketContext";
 import { SendRequestForm } from "../forms/SendRequestForm"
@@ -149,7 +149,7 @@ const CoversationSideBar = () => {
 			
 			}
 		</div>
-     );
-}
- 
+	);
+};
+
 export default CoversationSideBar;

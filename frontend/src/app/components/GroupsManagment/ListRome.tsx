@@ -1,31 +1,12 @@
 import React, { useContext } from 'react';
 import Image from 'next/image';
 import { socketContext } from '@/app/utils/context/socketContext';
+import { ConversationTypes,  } from '@/app/utils/types';
 
 
-interface lastMessage {
-  id: string;
-  content: string;
-  createdAt: Date;
-}
 
-interface Member {
-  user_id: string;
-  isAdmin: boolean;
-}
-
-interface Room {
-  id: string;
-  name: string;
-  Privacy: string;
-  picture: string;
-  createdAt: Date;
-  updatedAt: Date;
-  members: Member[];
-  messageRome: lastMessage[];
-}
 interface ListRomeProps {
-  data: Room;
+	data: ConversationTypes;
 }
 
 const ListRome: React.FC<ListRomeProps> = (data ) => {

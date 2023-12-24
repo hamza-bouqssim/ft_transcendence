@@ -6,7 +6,7 @@ import { createConversation } from "@/app/utils/api"
 import { CreateSearchForm } from "../../forms/CreateSearchForm"
 import { ModalContainer, ModalContentBody, ModalHeader } from "../../modals"
 import { ModalContainerSearching, ModalContentBodySearching, ModalHeaderSearching } from "."
-import { CreateConversationParams, GroupChannel, UsersTypes } from "@/app/utils/types"
+import { ConversationTypes, CreateConversationParams,  UsersTypes } from "@/app/utils/types"
 import { useAppDispatch } from "@/redux_toolkit/hooks"
 import { useDispatch } from "react-redux"
 import { useForm } from "react-hook-form"
@@ -37,7 +37,7 @@ type props = {
     }
 
     const [searchQuery, setSearchQuery] = useState("");
-    const [searchResults, setSearchResults] = useState<UsersTypes[] | GroupChannel[]>([]);
+    const [searchResults, setSearchResults] = useState<UsersTypes[] | ConversationTypes[]>([]);
 	const router = useRouter();
     const {Userdata} = useContext(socketContext);
 
@@ -84,18 +84,18 @@ type props = {
             console.log('close Modal');
         }
     };
-    const updatePage = (elem : GroupChannel) =>{
+    const updatePage = (elem : ConversationTypes) =>{
         router.push("/dashboard/groups")
 
         updateChannel(elem);
 
     }
-    function isUsersTypes(elem: GroupChannel | UsersTypes): elem is UsersTypes {
-        return (elem as UsersTypes).display_name !== undefined;
-      }
+    function isUsersTypes(elem: ConversationTypes | UsersTypes): elem is UsersTypes {
+			return (elem as UsersTypes).display_name !== undefined;
+		}
       
-      function isGroupChannel(elem: GroupChannel | UsersTypes): elem is GroupChannel {
-        return (elem as GroupChannel).name !== undefined;
+      function isGroupChannel(elem: ConversationTypes | UsersTypes): elem is ConversationTypes {
+        return (elem as ConversationTypes).name !== undefined;
       }
   
     return (

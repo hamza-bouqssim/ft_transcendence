@@ -5,11 +5,10 @@ import { UserCredentialsParams } from "../utils/types";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { deleteCookie } from "cookies-next";
+import LogOut from "./LogOut";
+import Link from "next/link";
 
 export const GoogleSignInButton = () => {
-
-	
-
 	const router = useRouter();
 	const {
 		register,
@@ -51,19 +50,19 @@ export const IntraSignInButton = () => {
 	);
 };
 
-export const GithubSignInButton = () => {
-	return (
-		<button onClick={() => signIn("github")}>
-			<Image
-				className="w-5 hover:scale-150 hover:transform hover:transition hover:duration-300 hover:ease-in-out sm:w-6 md:w-7 2xl:w-[38px]"
-				src={require("../../../public/assets/github.svg")}
-				width={40}
-				height={40}
-				alt={"github"}
-			/>
-		</button>
-	);
-};
+// export const GithubSignInButton = () => {
+// 	return (
+// 		<button onClick={() => signIn("github")}>
+// 			<Image
+// 				className="w-5 hover:scale-150 hover:transform hover:transition hover:duration-300 hover:ease-in-out sm:w-6 md:w-7 2xl:w-[38px]"
+// 				src={require("../../../public/assets/github.svg")}
+// 				width={40}
+// 				height={40}
+// 				alt={"github"}
+// 			/>
+// 		</button>
+// 	);
+// };
 
 export const SignButton = (props: any) => {
 	return (
@@ -77,39 +76,32 @@ export const SignButton = (props: any) => {
 };
 
 export const MenuButton = (props: any) => {
-	
 	return (
-		<button
+		<Link
+			href={props.value === "Settings" ? "/dashboard/settings" : "#"}
 			className={`h-[35px] w-[225px] ${props.background} ${
 				props.value === "Logout" ? "text-white" : "text-black"
-			} rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`}
+			} flex items-center justify-center rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`}
 		>
 			{props.value}
-		</button>
+		</Link>
 	);
 };
+
 export const MenuButton2 = (props: any) => {
-	
 	return (
 		<button
-			className={`h-[35px] w-[197px] ${props.background}
-				 rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`}
+			className={`h-[35px] w-[197px] ${props.background} rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`}
 		>
 			{props.value}
 		</button>
 	);
 };
+
 export const LogoutButton = (props: any) => {
-	const router = useRouter();
-	const logoutFunction =  async () =>{
-		try {
-			window.location.href = "http://localhost:8000/auth/logout";
-		} catch (err) {
-			alert("failed to logout");
-		}
-	}
 	return (
-		<button onClick={logoutFunction}
+		<button
+			onClick={LogOut}
 			className={`h-[35px] w-[225px] ${props.background} ${
 				props.value === "Logout" ? "text-white" : "text-black"
 			} rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`}
@@ -119,20 +111,20 @@ export const LogoutButton = (props: any) => {
 	);
 };
 
-export const GoToProfileBtn = (props : any) =>{
+export const GoToProfileBtn = (props: any) => {
 	const router = useRouter();
 
-	const handleFunction = () =>{
+	const handleFunction = () => {
 		router.push("/dashboard", { scroll: false });
-
-	}
+	};
 	return (
-		<button onClick={handleFunction}
+		<button
+			onClick={handleFunction}
 			className={`h-[35px] w-[225px] ${props.background} ${
 				props.value === "Logout" ? "text-white" : "text-black"
 			} rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`}
 		>
 			{props.value}
 		</button>
-	)
-}
+	);
+};

@@ -8,7 +8,6 @@ import { socketContext } from "../utils/context/socketContext";
 import { getRanking, getUserInfos } from "../utils/api";
 import { PlayerType, UserInfoType } from "../dashboard/Imports";
 
-
 const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 	const [showRank, setShowRank] = useState(false);
 	const [showFriends, setShowFriends] = useState(false);

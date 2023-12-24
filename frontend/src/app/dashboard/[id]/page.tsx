@@ -13,6 +13,7 @@ import { fetchBlockFriendThunk, fetchBlocksThunk, fetchDebloqueUserThunk } from 
 import { toast } from 'react-toastify';
 import { fetchRequestThunk } from '@/app/store/requestSlice';
 import AchievementsList from '@/app/components/AchievementsList';
+import { HistoryMatchesType, ResultsType, UserInfoType } from '../Imports';
 
 const Dashboard = ({ params }: { params: { id: string } }) => {
 	
@@ -21,9 +22,9 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 	const { request, status, error } = useSelector((state:any) => state.request);
 	const dispatch = useDispatch<AppDispatch>();
 
-	const [results, setResults] = useState({});
+	const [results, setResults] = useState<ResultsType>();
 	const [history_match, setHistoryMatch] = useState([]);
-	const [userinfo, setUserInfo] = useState("");
+	const [userinfo, setUserInfo] = useState<UserInfoType>();
 	const [showMessageBlock, setShowMessageBlock] = useState(false);
 	const [ _switch, setSwitch ] = useState(true);
 	const [sendReq, setSendReq] = useState(true);
@@ -49,27 +50,6 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 		draggable: true,
 	});
 	};
-
-	//========>  REQUEST:
-	const onSubmit = async () => {
-		try {
-		const response = await dispatch(fetchRequestThunk(userinfo.display_name));
-	
-		if (response.payload && response.payload.message) {
-			const errorMessage = response.payload.message;
-			ToastError(`Error: ${errorMessage}`);
-		} else {
-			ToastSuccess("Friend request sent successfully");
-			dispatch(fetchRequestThunk(userinfo.display_name));
-			setSendReq(false);
-		}
-		} catch (err: any) {
-		const errorMessage = err.payload ? err.payload.message : "An unexpected error occurred";
-		ToastError(`Error: ${errorMessage}`);
-		}
-	};
-	
-	//========> UNBLOCK:
 	const handleUnblockButtonClick = async () => {
 		try {
 			const res = await dispatch(fetchDebloqueUserThunk(params.id));
@@ -119,10 +99,10 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 
 		//========> USE EFFECTS
 
-		//========> DISPATCH SEND REQUEST
-		useEffect(()=> {
-			dispatch(fetchRequestThunk());
-		}, [dispatch]);
+		// //========> DISPATCH SEND REQUEST
+		// useEffect(()=> {
+		// 	dispatch(fetchRequestThunk());
+		// }, [dispatch]);
 
 		//========> DISPATCH BLOCK
 		useEffect(() => {
@@ -197,7 +177,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 				<div className="row">
 
 					<div className="col-1">
-						<div className="play relative rounded-[54px] relative">
+						<div className="play rounded-[54px] relative">
 						<Image
   							src="/assets/hand.png"
   							className="thehand absolute  -top-[41px] -right-[9px] rounded-r-full w-[490px] animate-bounce"
@@ -211,7 +191,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 								{
 									sendReq ? <>
 
-											<button className="px-4 h-12 bg-[--purple-color] rounded-2xl shadow-xl hover:scale-105 hover:duration-300 ease-in-out hover:bg-[--purple-hover]" onClick={() => onSubmit()}>Send Request</button>
+											<button className="px-4 h-12 bg-[--purple-color] rounded-2xl shadow-xl hover:scale-105 hover:duration-300 ease-in-out hover:bg-[--purple-hover]">Send Request</button>
 									</>: <>
 											<button className="px-4 h-12 bg-[--purple-color] rounded-2xl shadow-xl hover:scale-105 hover:duration-300 ease-in-out hover:bg-[--purple-hover]">Pending Request</button>
 
@@ -233,7 +213,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 							<>
 								<div className="fixed left-0 z-10 top-0 bottom-0 right-0  p-10 rounded-[60px] w-full h-full bg-[#00000095] backdrop-blur-md opacity-100">
 								<div className="w-[380px] h-[280px] z-30 bg-white absolute top-0 left-0 bottom-0 right-0 m-auto rounded-[20px] overflow-hidden">
-									<h2 className="text-black">Send Message to {userinfo.display_name}</h2>
+									<h2 className="text-black">Send Message to {userinfo?.display_name}</h2>
 								</div>
 								
 								</div>
@@ -268,7 +248,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 							</div>
 							</div>
 							<div className="his overflow-y-auto  h-[120px] scrollbar-hide">
-							{history_match.map((_history, index) => (
+							{history_match.map((_history: HistoryMatchesType, index) => (
 								<HistoryMatches
 								key={index}
 								playerOne={_history.playerOne}
@@ -277,7 +257,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 								playerTwo={_history.playerTwo} 
 								duration={_history.duration} 
 								date={_history.date} 
-								totalMatches={_history.totalMatch}
+								totalMatch={_history.totalMatch}
 								/>
 							))}
 							</div>

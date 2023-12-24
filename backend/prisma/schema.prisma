@@ -215,3 +215,6 @@ model StateGame {
   rating     Int    @default(1200)
   user       User   @relation(fields: [user_id], references: [id])
 }
+
+
+

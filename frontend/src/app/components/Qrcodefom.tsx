@@ -111,4 +111,3 @@ export function Qrcodeform({ closeQrForm }: Props) {
 		</div>
 	);
 }
-

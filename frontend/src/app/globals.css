@@ -52,7 +52,7 @@
 }
 
 .icon-style {
-	@apply absolute top-[50%] translate-y-[-50%] transform text-[.7rem] text-black md:text-sm 2xl:text-[1rem];
+	@apply absolute top-[50%] translate-y-[-50%] transform text-[.7rem] text-black md:text-sm 2xl:text-[1.1rem];
 }
 
 .active-btn-style {
@@ -69,6 +69,24 @@
 
 .icon-aside-bar {
 	@apply inline-block h-[30px] w-[30px] transition duration-500 ease-in-out group-hover:text-white;
+}
+
+@media screen and (min-height: 300px) {
+	.score-box {
+		font-size: 25px;
+	}
+}
+
+@media screen and (min-width: 768px) and (min-height: 740px) {
+	.score-box {
+		font-size: 50px;
+	}
+}
+
+@media screen and (min-width: 1024px) and (min-height: 800px) {
+	.score-box {
+		font-size: 70px;
+	}
 }
 
 :root {
@@ -134,19 +152,17 @@ body {
     rgb(var(--background-start-rgb));
 } */
 
-
 @layer utilities {
 	@variants responsive {
-	  /* Hide scrollbar for Chrome, Safari and Opera */
-	  .no-scrollbar::-webkit-scrollbar {
-		display: none;
-	  }
-  
-	  /* Hide scrollbar for IE, Edge and Firefox */
-	  .no-scrollbar {
-		-ms-overflow-style: none; /* IE and Edge */
-		scrollbar-width: none; /* Firefox */
-	  }
+		/* Hide scrollbar for Chrome, Safari and Opera */
+		.no-scrollbar::-webkit-scrollbar {
+			display: none;
+		}
+
+		/* Hide scrollbar for IE, Edge and Firefox */
+		.no-scrollbar {
+			-ms-overflow-style: none; /* IE and Edge */
+			scrollbar-width: none; /* Firefox */
+		}
 	}
-  }
-  
+}

@@ -40,16 +40,21 @@ const MyAccount = () => {
 		}
 	};
 
-	const _deleteAvatar = async () =>{
-		try{
+	const _deleteAvatar = async () => {
+		try {
 			await deleteAvatar().then((res) => {
-				if(res.data.success)
-					setUserdata({...Userdata, avatar_url: "https://cdn.landesa.org/wp-content/uploads/default-user-image.png"});
-			})
-		}catch(err){
+				if (res.data.success)
+					// setUserdata({...Userdata, avatar_url: "https://cdn.landesa.org/wp-content/uploads/default-user-image.png"});
+					setUserdata((prevUserdata) => ({
+						...prevUserdata!,
+						avatar_url:
+							"https://cdn.landesa.org/wp-content/uploads/default-user-image.png"
+					}));
+			});
+		} catch (err) {
 			console.log(err);
 		}
-	}
+	};
 	return (
 		<div className="font-['Whitney Semibold'] text-xs md:text-sm lg:text-[1.3rem] ">
 			<div className="flex flex-col items-center justify-around gap-5 border-b border-[#9f9f9f4a] pb-3 md:flex-row">
@@ -80,7 +85,7 @@ const MyAccount = () => {
 				<input
 					type="button"
 					className="rounded-[20px] bg-[#EA7F87] px-8 py-3 font-['Whitney_Semibold'] "
-					onClick={() => _deleteAvatar() }
+					onClick={() => _deleteAvatar()}
 					value="Delete"
 				/>
 			</div>

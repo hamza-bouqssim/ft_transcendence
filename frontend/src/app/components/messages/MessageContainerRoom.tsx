@@ -49,7 +49,7 @@ const MessageContainerRoom = () => {
             .catch((err: any) => console.log(err));
         }
       }
-    }, [channel.id]);
+    }, [channel?.id]);
   
    
     useEffect(()=>{
