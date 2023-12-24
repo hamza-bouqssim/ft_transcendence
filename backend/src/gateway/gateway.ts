@@ -114,11 +114,11 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
             })
             member.members.map((member) => {
                 if(member.user_id !== id)
-                this.server.to(member.user_id).emit('update', "");         
-        })
-    }
-    @OnEvent("order.updateMember")
-    async onNotificationupdatemember(RoomId:string,id:string,types:string) {
+                    this.server.to(member.user_id).emit('update', "");         
+            })
+        }
+        @OnEvent("order.updateMember")
+        async onNotificationupdatemember(RoomId:string,id:string,types:string) {
             const member = await this.prisma.chatRoom.findUnique({
                 where: { id: RoomId },
                 include:{
@@ -133,15 +133,13 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
                 this.server.to(member.user_id).emit('updateMember', {roomId:RoomId,idUserleave:id,types:types});         
             })
         }
-        //#######################################################################################################################
-        //chat 
-        
-        @SubscribeMessage("message.create")
-        async handleMessageCreateEvent(socket : AuthenticatedSocket,payload : any){
-            const messages = await this.conversationService.createMessags(socket.user, payload);
-            this.server.to(messages.participents.recipient.id).to(messages.participents.sender.id).to(messages.participentsId.toString()).emit('onMessage', messages, socket.user);
-            // this.userService.notificationMessage( messages.participentsId, messages.participents.recipientId);
     
+    
+        @OnEvent("order.delete")
+         async onNotificationdelete(data:any) {
+            data.members.map((member) => {
+                this.server.to(member.user_id).emit('delete', "");         
+            })
         }
         @OnEvent("request.created")
         sendFriendRequestNotification(data : any) {
@@ -267,26 +265,54 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         this.server.to(data.req_play.recipientId).emit("AcceptPLayNotification",{accept:true});
 		this.server.to(data.req_play.senderId).emit("AcceptPLayNotification",{accept:true});
         }
+        
+
+   
 
 
-        async handleDisconnect(socket: AuthenticatedSocket) {
-            const userId = socket.user.sub;
-            if (this.NsessionOfuser.has(userId)) {
-                const sessionNumber = this.NsessionOfuser.get(userId) - 1;
+
+
     
-                if (sessionNumber > 0) {
-                    this.NsessionOfuser.set(userId, sessionNumber);
-                } else {
-                    
-                    this.NsessionOfuser.delete(userId);
-                    if (userId) {
-                        await this.prisma.user.update({
-                            where: { id: userId},
-                            data: { status: "offline"},
-                            
-                        });
-                    }
-                    this.eventEmitter.emit('offline.created', { userId });
+    @SubscribeMessage("message.create")
+    async handleMessageCreateEvent(socket : AuthenticatedSocket,payload : any){
+        const messages = await this.conversationService.createMessags(socket.user, payload);
+        this.server.to(messages.participents.recipient.id).to(messages.participents.sender.id).to(messages.participentsId.toString()).emit('onMessage', messages, socket.user);
+        // this.userService.notificationMessage( messages.participentsId, messages.participents.recipientId);
+        
+    }
+    
+
+    
+    @OnEvent("requestPlay.created")
+    sendRequestToPLay(data : any){
+        
+        const message = `${data.requestToPlay.Sender.display_name} send you request to play`;
+        const type = "requestPLay";
+        const requestId = data.requestToPlay.id;
+        console.log("requestId-->", requestId);
+        this.server.to(data.requestToPlay.recipient.id).emit(`newRequestToPlay`,data);
+        this.userService.createNotification(data.requestToPlay.Sender, data.requestToPlay.recipient, message, type, requestId);
+        
+    }
+    
+   
+       
+    async handleDisconnect(socket: AuthenticatedSocket) {
+        const userId = socket.user.sub;
+        if (this.NsessionOfuser.has(userId)) {
+            const sessionNumber = this.NsessionOfuser.get(userId) - 1;
+
+            if (sessionNumber > 0) {
+                this.NsessionOfuser.set(userId, sessionNumber);
+            } else {
+                
+                this.NsessionOfuser.delete(userId);
+                if (userId) {
+                    await this.prisma.user.update({
+                        where: { id: userId},
+                        data: { status: "offline"},
+                        
+                    });
                 }
             }
             socket.leave(socket.user.sub);
@@ -296,3 +322,5 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         
         
     }
+
+}
