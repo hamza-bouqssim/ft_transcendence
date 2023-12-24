@@ -377,6 +377,3 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		this.mapPong[game.user1.id].handleKeyDown(data);
 	}
 }
-
-
-	

@@ -68,8 +68,16 @@ export class GameService {
 				user: { connect: { id: userId } },
 			},
 		});
-		// return state;
+		await this.prisma.user.update({
+			where:{
+				id:userId
+			},
+			data:{
+				first_time:false
+			}
+		})
 	}
+
 	async createStateGame1(userIdOne: string, userIdTwo: string) {}
 
 	async deleteStateGame(userId: string) {

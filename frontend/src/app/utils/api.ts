@@ -7,6 +7,16 @@ const API = axios.create({
   });
 
 
+
+  interface createRoom {
+    name: string;
+    Privacy: string;
+    password: string | null;
+    picture: string | null;
+    idUserAdd: string[]; 
+  }
+  
+
 const config : AxiosRequestConfig = { withCredentials: true}
 
 export const postRegisterUser = async (data: createUserParams) => axios.post(`http://localhost:8000/auth/signup`, data, config)
@@ -65,6 +75,7 @@ export const AcceptRequest = async (id : string) => axios.post(`http://localhost
 
 export const refuseRequest = async ( id: string) => axios.post(`http://localhost:8000/friend-request/refuse-request`, {requestId : id }, config);
 
+export const deleteNotification = async (idNotif : string) => axios.post(`http://localhost:8000/friend-request/delete-notification`, {idNotif : idNotif}, config)
 
 export const changeDisplayedName = async (DisplayName : string) => axios.post(`http://localhost:8000/user/changedisplayname`, {newDisplayName : DisplayName }, config);
 
@@ -90,7 +101,7 @@ export const changeAvatar = async (avatarFormData: FormData) => {
   
     return axios.post(`http://localhost:8000/user/changeAvatar`, avatarFormData, config);
   };
-export const searchingBar = async (display_name : string) => axios.post(`http://localhost:8000/user/search`, {displayName : display_name}, config);
+export const searchingBar = async (name : string) => axios.post(`http://localhost:8000/friend-request/search`, {name: name}, config);
 
 
 export const findConversationUsers = async ( display_name : string) => axios.post(`http://localhost:8000/chat/findConversationUser`, {display_name : display_name}, config);
@@ -98,7 +109,7 @@ export const findConversationUsers = async ( display_name : string) => axios.pos
 
 export const tableFriends = async () => axios.get(`http://localhost:8000/user/table-friends`, config);
 
-export const createRoomsApi = (data:any) =>{
+export const createRoomsApi = (data:createRoom) =>{
     const response = API.post("/rooms/createRooms",{data})
     return response;  
 }

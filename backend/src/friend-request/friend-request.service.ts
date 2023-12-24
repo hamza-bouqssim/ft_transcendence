@@ -26,8 +26,7 @@ export class FriendRequestService {
             throw new HttpException('User Not Found !', HttpStatus.BAD_REQUEST)
 
         }
-        console.log("display_name-->", _Display_name);
-        console.log("reci display_name-->", friendDisplay_name);
+     
         if(friendDisplay_name === _Display_name)
         {
             throw new HttpException('You cant send request to your self!', HttpStatus.BAD_REQUEST)
@@ -171,18 +170,14 @@ export class FriendRequestService {
             }
         
         });
-        this.eventEmitter.emit('requestPlay.created', {
-            requestToPlay
-          });
-    
-   
+        this.eventEmitter.emit('game.invite', 
+            {requestToPlay}
+          );
         return {message: 'Request to play sent succesfully'};
-
-
     }
     
     async acceptRequestToPlay(requestId: string, user: User){
-        const req_play = await this.prisma.requestPlay.findFirst({
+        const req_play = await this.prisma.requestPlay.findUnique({
             where: {
                 id : requestId
             },
@@ -191,22 +186,24 @@ export class FriendRequestService {
                 recipient: true,
             }
         })
+
         if(!req_play)
             throw new HttpException("The request doesn't exist!", HttpStatus.BAD_REQUEST)
 
-        if(req_play.senderId != user.id)
+        if(req_play.senderId === user.id)
             throw new HttpException("You are not the person who send this request", HttpStatus.BAD_REQUEST)
 
-        
-        await this.prisma.friend.update({where: {id: requestId}, data: {status: 'ACCEPTED'}});
-        await this.prisma.notificationGlobal.updateMany({
+        await this.prisma.requestPlay.update({where: {id: requestId}, data: {status: 'ACCEPTED'}});
+       
+        await this.prisma.notificationGlobal.deleteMany({
             where: {
-                recipient_id: user.id,
+              requestId: requestId,
             },
-            data: {
-                vue: true,
-            },
-        });
+          });
+        this.eventEmitter.emit('game.accept', {
+            req_play
+          });
+    
         
         return {message: 'Accept request to play succesfully'};
 
@@ -234,14 +231,12 @@ export class FriendRequestService {
        
 
         await this.prisma.friend.update({where: {id: requestId}, data: {status: 'ACCEPTED'}});
-        await this.prisma.notificationGlobal.updateMany({
+        await this.prisma.notificationGlobal.deleteMany({
             where: {
-                recipient_id: user.id,
+              requestId: requestId,
             },
-            data: {
-                vue: true,
-            },
-        });
+          });
+
         
         this.eventEmitter.emit('requestAccept.created', {
            req
@@ -265,14 +260,11 @@ export class FriendRequestService {
         }
     
         await this.prisma.friend.delete({ where: { id: requestId } });
-        await this.prisma.notificationGlobal.updateMany({
+        await this.prisma.notificationGlobal.deleteMany({
             where: {
-                recipient_id: user.id,
+              requestId: requestId,
             },
-            data: {
-                vue: true,
-            },
-        });
+          });
         
 
         this.eventEmitter.emit('requestRefuse.created', {
@@ -289,22 +281,19 @@ export class FriendRequestService {
         if (!req) {
             throw new HttpException("The request doesn't exist", HttpStatus.BAD_REQUEST)
         }
-        if (req.senderId !== user.id) {
+        if (req.senderId === user.id) {
             throw new HttpException("You are not authorized to refuse this playing request", HttpStatus.BAD_REQUEST)
 
         }
         await this.prisma.requestPlay.delete({ where: { id: requestId } });
-        await this.prisma.notificationGlobal.updateMany({
+        await this.prisma.notificationGlobal.deleteMany({
             where: {
-                recipient_id: user.id,
+              requestId: requestId,
             },
-            data: {
-                vue: true,
-            },
-        });
+          });
         
 
-        this.eventEmitter.emit('requestRefuse.created', {
+        this.eventEmitter.emit('requestRefusePlay.created', {
             RefuseruserId: req.senderId,
           });
     
@@ -536,5 +525,23 @@ export class FriendRequestService {
           });
           return unreadCount
     }
-    
+    async DeleteNotification(idNotif: string) {
+        try {
+          const data = await this.prisma.notificationGlobal.delete({
+            where: {
+              id: idNotif,
+            },
+          });
+          this.eventEmitter.emit('deleteNotification.created', {
+            data
+          });
+          return { success: true, message: 'Notification deleted successfully' };
+        } catch (error) {
+          console.error('Error deleting notification:', error);
+          return { success: false, message: 'Error deleting notification' };
+        }
+      }
+
+      
 }
+    

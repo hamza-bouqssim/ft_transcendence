@@ -138,30 +138,35 @@ export class ConversationsService  {
  
 
 
-  async  findParticipentChat(user :any) {
-    const chatParticipents = await this.prisma.chatParticipents.findMany({
-      where: {
-        OR: [
-          { senderId: user.id },
-          { recipientId: user.id },
-        ],
-      },
-      include: {
-        sender: true,
-        recipient: true,
-        lastMessage: true,
-      },
-      orderBy: {
-        lastMessage: {
-          createdAt: 'desc', // Order by createdAt of the lastMessage in descending order
+    async findParticipentChat(user: any) {
+   
+      const chatParticipents = await this.prisma.chatParticipents.findMany({
+        where: {
+          OR: [
+            { 
+              senderId: user.id, 
+              NOT: { deletedBy: { some: { id: user.id } } },
+            },
+            { 
+              recipientId: user.id, 
+              NOT: { deletedBy: { some: { id: user.id } } },
+            },
+          ],
         },
-      },
-  
-   });
-
-  return chatParticipents;
-}
-
+        include: {
+          sender: true,
+          recipient: true,
+          lastMessage: true,
+        },
+        orderBy: {
+          lastMessage: {
+            createdAt: 'desc',
+          },
+        },
+      });
+    
+      return chatParticipents;
+    }
 
 async createMessags(user : any, params: CreateMessageParams) {
     const chat = await this.prisma.chatParticipents.findUnique({
@@ -177,7 +182,25 @@ async createMessags(user : any, params: CreateMessageParams) {
     if(!chat)
         throw new HttpException('Conversation not found', HttpStatus.BAD_REQUEST)
 
-    
+        const blockListEntry = await this.prisma.blockList.findFirst({
+          where: {
+            OR: [
+              {
+                userOneId: chat.recipient.id,
+                userTwoId: chat.sender.id,
+              },
+              {
+                userOneId: chat.sender.id,
+                userTwoId: chat.recipient.id,
+              },
+            ],
+          },
+        });
+      
+        if (blockListEntry) {
+          throw new HttpException('Users have blocked each other', HttpStatus.BAD_REQUEST);
+        }
+      
     if((chat.senderId !== user.sub) && (chat.recipientId !== user.sub))
     {
         throw new HttpException('Cannot create message in this conversation', HttpStatus.BAD_REQUEST)
@@ -189,6 +212,17 @@ async createMessags(user : any, params: CreateMessageParams) {
               data: { senderId: user.sub, recipientId: chat.sender.id },
             });
       }
+     await this.prisma.chatParticipents.update({
+        where: { id: chat.id },
+        data: {
+          deletedBy: {
+            disconnect: [{ id: chat.recipient.id }, { id: chat.sender.id }],
+          },
+        },
+        include :{
+          deletedBy : true,
+        }
+      });
     const messageCreate = await this.prisma.message.create({
       data: {
         content:params.content,
@@ -211,6 +245,7 @@ async createMessags(user : any, params: CreateMessageParams) {
       },
       
     });
+   
 
     await this.prisma.chatParticipents.update({
       where: { id: chat.id },
@@ -308,55 +343,43 @@ async findUnreadMessages(conversationId: string) {
   return unreadMessageCount;
 }
 
-async deleteConversation(conversationId: string) {
-  const conversation = await this.prisma.chatParticipents.findFirst({
-    where: {
-      id: conversationId,
-    },
-    include: {
-      messages: true, // Include related messages
-      sender: true,
-      recipient: true,
+async deleteConversation(conversationId: string, userId : string) {
+  
+  await this.prisma.chatParticipents.update({
+    where: { id: conversationId },
+    data: {
+      deletedBy: {
+        connect: { id: userId },
+      },
     },
   });
+  const chatParticipent = await this.prisma.chatParticipents.findUnique({
+    where: { id: conversationId },
+    include: { sender: true, recipient : true, deletedBy: true, messages: true },
+  });
 
-  if (!conversation) {
-    throw new HttpException('Conversation not found', HttpStatus.BAD_REQUEST);
-  }
-
-  // Delete related messages first
-  for (const message of conversation.messages) {
-    await this.prisma.message.delete({
-      where: {
-        id: message.id,
-      },
+  if (Array.isArray(chatParticipent.deletedBy) && chatParticipent.deletedBy.length === 2) {
+    for (const message of chatParticipent.messages) {
+      await this.prisma.message.delete({
+        where: {
+          id: message.id,
+        },
+      });
+    }
+  
+    await this.prisma.chatParticipents.delete({
+      where: { id: conversationId },
     });
   }
-
-  // Now, you can safely delete the conversation
-  await this.prisma.chatParticipents.delete({
-    where: {
-      id: conversationId,
-    },
-  });
+  
 
   this.eventEmitter.emit('deleteConversation.created', {
-    conversation,
+    chatParticipent,
   });
 
   return { message: 'Delete conversation successfully' };
 }
   
-
-
-
-
-
-
-
-
-
-
 
 }
 

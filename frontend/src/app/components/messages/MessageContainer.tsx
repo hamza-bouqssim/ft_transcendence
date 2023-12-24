@@ -39,6 +39,7 @@ const MessageContainer = () => {
 		});
 	  };
     const [setLoadloadinging] = useState<boolean>(false);
+
     // const [Message,setMessage] = useState<messageTypes[]>([]);
     const controller = new AbortController();
     const { channel } = useContext(socketContext);
@@ -48,7 +49,9 @@ const MessageContainer = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { messages, status, error , isSenderBlocked , isRecipientBlocked} = useSelector((state:any) => state.messages);
     const scrollRef = useRef<HTMLDivElement | null>(null);
-
+    console.log("channel-->", channel);
+    console.log("channel recipient-->", channel?.recipient);
+    console.log("channel sender-->", channel?.sender);
     useEffect(() => {
       const joinRoom = (id: string) => {
         if (oldId) socket.emit("leaveToRoom", { id: oldId });
@@ -68,11 +71,37 @@ const MessageContainer = () => {
     useEffect(() => {
       scrollRef.current?.scrollIntoView();
     }, [messages]);
-    
+
+    const breakContentIntoLines = (content : string, lineLength : number) => {
+      const regex = new RegExp(`.{1,${lineLength}}`, 'g');
+      return content.match(regex) || [];
+    };
+    // console.log("sender here-->", messages.participent.sender.id);
+    // console.log("recipient here-->", messages.participent.recipient);
+    const debloqueFromPanel  = async () =>{
+        let user : User | undefined;
+        if(channel?.sender.id === Userdata?.id)
+            user = channel?.recipient;
+        else
+          user =channel?.sender;
+        if(user){
+          const id = user.id;
+          try {
+            await dispatch(fetchDebloqueUserThunk(id));
+              ToastSuccess("You have Deblocked this friend successfully");
+  
+          } catch (error) {
+            ToastError("Failed to Deblock the friend. Please try again.");
+  
+          }
+
+        }
+        
+    }
     return (
 
        <>
-        <ToastContainer />
+         
         <div className="h-[calc(100%-130px)] no-scrollbar  overflow-y-auto  ">
         <MessageContainerStyle>
           {messages &&
@@ -105,8 +134,9 @@ const MessageContainer = () => {
                       Userdata?.display_name === m.sender.display_name ? 'bg-[#718baf] ' : 'bg-[#7093c5] '
                     }`}
                   >
-                    {m.content}
-                  </div>
+                    {breakContentIntoLines(m.content, 30).map((line, index) => (
+                        <div key={index}>{line}</div>
+                              ))} </div>
                 </div>
               </div>
             ))}
@@ -115,7 +145,7 @@ const MessageContainer = () => {
 
         </div>
         {(isSenderBlocked && Userdata?.display_name === channel?.sender.display_name) || (isRecipientBlocked && Userdata?.display_name === channel?.recipient.display_name) ? (
-          <button className="w-full p-4 py-3 bg-[#5B8CD3] px-4 mr-2 rounded-full" >
+          <button onClick={() => debloqueFromPanel()} className="w-full p-4 py-3 bg-[#5B8CD3] px-4 mr-2 rounded-full" >
             Unblock
           </button>
         

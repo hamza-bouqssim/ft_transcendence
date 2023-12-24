@@ -49,6 +49,8 @@ export class FriendRequestController {
     @Post('accept_request_play')
     async acceptRequestToPlay(@Body() request: {requestId: string}, @Req() req){
       const user = req.user;
+      console.log("hnaa-->", request.requestId);
+
       return this.friendshipService.acceptRequestToPlay(request.requestId, user);
 
     }
@@ -80,7 +82,6 @@ export class FriendRequestController {
     {
       try{
         const user = req.user;
-        this.friendshipService.deleteMessagesWithUser(user.id, request.friendIdToBlock);
         const returnvalue =  await this.friendshipService.block(user.id, request.friendIdToBlock);
         return res.status(200).json({ success: true, response: returnvalue });
 
@@ -118,6 +119,15 @@ export class FriendRequestController {
       return this.friendshipService.count_notification(user.id);
 
     }
+
+    @Post("delete-notification")
+    async deleteNotification(@Body() request: {idNotif : string}){
+      const result = await this.friendshipService.DeleteNotification(request.idNotif);
+      return result;
+      
+
+    }
+    
 
   
 

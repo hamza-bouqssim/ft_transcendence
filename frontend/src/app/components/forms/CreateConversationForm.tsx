@@ -39,7 +39,7 @@ export const CreateConversationForm = () => {
 
         const onSubmit = async  (data : CreateConversationParams) => {
           try{
-            const res = await dispatch(createConversationThunk(data.display_name));
+            const res = await dispatch(createConversationThunk(data));
               if (res.payload && typeof res.payload === 'object') {
                 const responseData = res.payload as { data?: { response?: { message?: string } } };
                 const message = responseData.data?.response?.message;
@@ -61,7 +61,7 @@ export const CreateConversationForm = () => {
         }
     return (
       <>
-      <ToastContainer />
+       
 
         <form className={styles.formConversation} onSubmit={handleSubmit(onSubmit)}>
           

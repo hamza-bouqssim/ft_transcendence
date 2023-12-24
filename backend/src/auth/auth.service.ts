@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { BadRequestException, Inject,ConflictException, ForbiddenException, HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ConflictException,  Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { AuthDto } from './dto/auth.dto';
 import { Request, Response } from 'express';
@@ -111,12 +111,12 @@ export class AuthService {
       return user;
     }
 
-    // async generateNickname(email: string) :Promise<string>{
-    //   const username = email.split('@')[0];
-    //   const cleanedUsername = username.replace(/[^a-zA-Z0-9]/g, '');
-    //   const nickname = cleanedUsername.length > 0 ? cleanedUsername : 'defaultNickname';
-    //   return nickname;
-    // }
+    async generateNickname(email: string) :Promise<string>{
+      const username = email.split('@')[0];
+      const cleanedUsername = username.replace(/[^a-zA-Z0-9]/g, '');
+      const nickname = cleanedUsername.length > 0 ? cleanedUsername : 'defaultNickname';
+      return nickname;
+    }
 
 
 

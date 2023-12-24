@@ -80,8 +80,10 @@ async getUnreadMessages(@Body() request: {conversationId : string}) {
 // delete conversation
 
 @Post('delete-conversation')
-  async deleteConversation(@Body() request: {conversationId : string}) {
-      const deleteConversation = await this.conversationService.deleteConversation(request.conversationId);
+  async deleteConversation(@Body() request: {conversationId : string}, @Req() req: Request) {
+    const user = req.user
+
+      const deleteConversation = await this.conversationService.deleteConversation(request.conversationId, user.id);
       return deleteConversation;
      
   }

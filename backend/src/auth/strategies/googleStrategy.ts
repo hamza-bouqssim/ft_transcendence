@@ -23,7 +23,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy){
         const authDto: AuthDto = {
           email: profile.emails[0]?.value,
           username: profile.displayName,
-          display_name: profile.name.givenName + " " + profile.name.familyName,
+          display_name: await this.authService.generateNickname( profile.emails[0]?.value,),
           avatar_url: profile._json.picture || "api_backend/src/uploads/default-profile-photo.jpg",
         };
         const user = await this.authService.validateUser(authDto);

@@ -63,8 +63,8 @@ const CoversationSideBar = () => {
 
 
 			
-			{!newRooms  && <div className={`search-container`}>
-            {show  &&  <CreateSearchModal   setShow={setShow} />   }
+			{!newRooms  && pathname.includes('chat') && <div className={`search-container`}>
+            {show  && pathname.includes('chat')  &&  <CreateSearchModal   setShow={setShow} />   }
 		
 			{!show && <div className="flex items-center bg-gray-200 rounded-md">
                 <div className="pl-2">
@@ -129,7 +129,7 @@ const CoversationSideBar = () => {
 				&& <ChatComponnent />
 			}
 
- 			{ pathname.includes('groups')  && !newRooms &&
+ 			{ pathname.includes('groups')  &&  !show && !newRooms &&
 				(search  ? <SerachGroup/> : <GroupsManagement/>  )   
 			}
 

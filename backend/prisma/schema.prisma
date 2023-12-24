@@ -46,6 +46,7 @@ model User {
   recipientPlay requestPlay[] @relation("recipient_playing")
   senderNotifMessage NotificationMessage[] @relation("senderMessage")
   senderOfmessage Message[] @relation("senderMessage")
+  deleteByUser  ChatParticipents[] @relation("deletedBy")
   blockUserOne    blockList[] @relation("userOne")
   blockUserTwo    blockList[] @relation("userTwo")
   Member  Member[]
@@ -90,9 +91,10 @@ model ChatParticipents {
   messages    Message[]   @relation("participentsMessages")
   lastMessage Message?    @relation("lastMessageSent", fields: [lastMessageId], references: [id])
   sender      User        @relation("sender", fields: [senderId], references: [id])
-}
+  deletedBy   User[]      @relation("deletedBy")
+  }
 
-model Message {
+  model Message {
   id String @id @default(uuid())
   vue Boolean  @default(false)
   content String?

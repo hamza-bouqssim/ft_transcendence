@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from '../store';
-import { fetchNotificationThunk } from '../store/notificationSlice';
+import { fetchNotificationThunk, fetchdeleteNotification } from '../store/notificationSlice';
 import { NotificationTypes } from '../utils/types';
 import { Conversation, ConversationSideBarContainer, ConversationSideBarItem } from '../utils/styles';
 import Image from 'next/image';
@@ -75,6 +75,7 @@ const NotificationComponent = () => {
       }
 
       const handleClickAcceptPLay = async (id : string) =>{
+        console.log("plllaaayyy-->", id);
         try {
          
             await dispatch(fetchAcceptRequestPlay(id));
@@ -97,10 +98,24 @@ const NotificationComponent = () => {
   
           }
       }
+
+      const deleteNotification = async (id : string) =>{
+        console.log("delete notif-->", id);
+        try{
+            await dispatch(fetchdeleteNotification(id));
+            ToastSuccess("delete notification Succefully !");
+
+
+        }catch(error){
+          ToastError(`Error while deleting Succefully !`);
+
+
+        }
+      }
       return (
         
         <div className='absolute  rounded-2xl p-3 pt-12 top-15 right-5 border-white border-2 z-50 bg-gradient-to-b from-[#2E2F54] via-[#3B5282] to-[#2E2F54] w-[500px] h-[500px] overflow-auto no-scrollbar'>
-                     <ToastContainer />
+                      
 
             <div className='  justify-between  py-1 items-center gap-1 my-3'>
                 <h1 className='text-white text-2xl -ml-[12px] pl-4 flex items-center py-3 bg-gradient-to-b from-[#2E2F54] via-[#3B5282] to-[#2E2F54] fixed z-10 w-[497px] -mt-[64px]  rounded-t-2xl'>Notifications</h1>
@@ -124,8 +139,8 @@ const NotificationComponent = () => {
                             <div className='relative flex items-center justify-center w-[70px] h-[60px]'>
                                 {(elem.type == 'requestPLay') && (
                                     <div className="absolute flex gap-3">
-                                        <FontAwesomeIcon icon={faCheck} className=" bg-[#5B8CD3] w-4 h-4 p-1 rounded-full cursor-pointer  duration-500  hover:text-[--pink-color] " />
-                                        <FontAwesomeIcon icon={faTimes} className=" bg-[#5B8CD3] w-4 h-4 p-1  rounded-full cursor-pointer  duration-500  hover:text-[--pink-color] " />
+                                        <FontAwesomeIcon icon={faCheck} className=" bg-[#5B8CD3] w-4 h-4 p-1 rounded-full cursor-pointer  duration-500  hover:text-[--pink-color] " onClick={()=> handleClickAcceptPLay(elem.requestId) }/>
+                                        <FontAwesomeIcon icon={faTimes} className=" bg-[#5B8CD3] w-4 h-4 p-1  rounded-full cursor-pointer  duration-500  hover:text-[--pink-color] " onClick={()=> handleClickRefusePLay(elem.requestId)}/>
                                     </div>)
                                  }
                                 {(elem.type === 'requestFriend') && (
@@ -135,7 +150,7 @@ const NotificationComponent = () => {
                                     </div>
                                 )}
                             </div>
-                            <FontAwesomeIcon icon={faTimes} className="text-[--pink-color] font-bold hover:scale-150 w-4 h-4 p-1 mt-[8px] mb-auto rounded-full cursor-pointer  duration-500  hover:text-[--purple-color] " />
+                            <FontAwesomeIcon icon={faTimes} className="text-[--pink-color] font-bold hover:scale-150 w-4 h-4 p-1 mt-[8px] mb-auto rounded-full cursor-pointer  duration-500  hover:text-[--purple-color] " onClick={() => deleteNotification(elem.id)}/>
                         </div>
                         
                     );
