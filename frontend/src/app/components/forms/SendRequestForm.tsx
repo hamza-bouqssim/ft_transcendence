@@ -46,7 +46,7 @@ export const SendRequestForm= () => {
               ToastError(`Error: ${errorMessage}`);
             } else {
               ToastSuccess("Friend request sent successfully");
-
+              
             }
           } catch (err: any) {
             ToastError(`Error: ${err.message || 'An unexpected error occurred'}!`);
@@ -60,7 +60,7 @@ export const SendRequestForm= () => {
     return (
 
           <StylingForm>
-            	<ToastContainer />
+            	 
             <h1 className="text-black">Add conversation</h1>
             <form className={styles.formConversation} onSubmit={handleSubmit(onSubmit)}>
               <ContainerStyling>

@@ -1,6 +1,5 @@
 "use client";
 import PlayerCard from "../../../../components/PlayerCard";
-import { ChangeContext } from "../../../layout";
 import { useEffect, useContext } from "react";
 import { useRouter } from "next/navigation";
 import { socketContext } from "@/app/utils/context/socketContext";
@@ -8,19 +7,13 @@ import { useSearchParams } from "next/navigation";
 import { useGameSocket } from "@/app/providers/game-socket-provider";
 import { useAtom } from "jotai";
 import { OpponentData } from "../../utils/data";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/app/store";
-import { fetchUsersThunk } from "@/app/store/usersSlice";
-import { fetchGetAllFriendsThunk } from "@/app/store/friendsSlice";
 
 // const sleep = async (ms: number) =>
 // 	new Promise((resolve) => setTimeout(resolve, ms));
 
 const MatchMaking = () => {
-
 	const searchParams = useSearchParams();
 	const mapIndex: string | null = searchParams.get("mapIndex");
-	const { change, setChange } = useContext(ChangeContext);
 	const router = useRouter();
 	const gameSocket = useGameSocket();
 	const checkQueryValue = (): boolean => {
@@ -37,7 +30,7 @@ const MatchMaking = () => {
 	useEffect(() => {
 		const handleRedirectUser = (payload: any) => {
 			if (Userdata?.display_name === payload.display_name)
-				router.push("/dashboard/", { scroll: false });
+				router.push("/dashboard", { scroll: false });
 		};
 		gameSocket.on("redirectUser", handleRedirectUser);
 
@@ -62,10 +55,11 @@ const MatchMaking = () => {
 			gameSocket.off("redirectUser", handleRedirectUser);
 		};
 	}, []);
+	console.log("map index:", opponentPlayer.mapIndex);
 
 	return (
 		<>
-			{checkQueryValue() ? (
+			{checkQueryValue() && opponentPlayer.mapIndex >= 0 ? (
 				<section className="absolute left-[50%] top-[50%] flex h-[600px] w-fit -translate-x-[50%] -translate-y-[50%] flex-col items-center justify-center gap-10 px-4 md:ml-6 md:flex-row">
 					<PlayerCard
 						username={Userdata?.username}
@@ -86,14 +80,12 @@ const MatchMaking = () => {
 					/>
 				</section>
 			) : (
-				router.push("./maps", { scroll: false })
+				router.push("./maps", {
+					scroll: false,
+				})
 			)}
 		</>
 	);
 };
 
 export default MatchMaking;
-
-
-
-

@@ -4,7 +4,7 @@ import Image from "next/image";
 
 const Settings = () => {
 	return (
-		<div className="xl:container mx-auto py-4 text-white">
+		<div className="mx-auto py-4 text-white xl:container">
 			<div className="">
 				<div className="my-16  flex  flex-col gap-16 rounded-[40px] bg-white p-4 md:p-10">
 					<div className="">
@@ -24,6 +24,7 @@ const Settings = () => {
 						</div>
 						<div className="hidden flex-auto 2xl:block ">
 							<Image
+								className="h-auto w-auto"
 								src="/assets/settingsLogo.svg"
 								width={500}
 								height={500}

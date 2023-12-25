@@ -6,8 +6,11 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCoverflow } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/effect-coverflow";
+import { OpponentData } from "../../utils/data";
+import { useSetAtom } from "jotai";
 
 const ChoseMapOnline = () => {
+	const setMapIndexAtom = useSetAtom(OpponentData);
 	const swiperRef = useRef<any>(null);
 	const [mapIndex, setMapIndex] = useState<number>(0);
 
@@ -65,6 +68,9 @@ const ChoseMapOnline = () => {
 						query: { mapIndex },
 					}}
 					className="glassmorphism m-auto w-fit px-7 py-2 font-['Whitney_Semibold'] duration-150 ease-in-out hover:bg-[--purple-color]"
+					onClick={() =>
+						setMapIndexAtom((prevData) => ({ ...prevData, mapIndex }))
+					}
 				>
 					Choose
 				</Link>

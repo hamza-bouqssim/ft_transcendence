@@ -47,12 +47,12 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchCountNotification());
       dispatch(fetchNotificationThunk());
     })
-    socket.on('AcceptPLayNotification', (data : any)=>{
-      if(data.accept)
-      {
-        route.push("/dashboard/game/online-game/match-making?mapIndex=0")
-      }
-    })
+    // socket.on('AcceptPLayNotification', (data : any)=>{
+    //   if(data.accept)
+    //   {
+    //     route.push("/dashboard/game/-game/match-making?mapIndex=0")
+    //   }
+    // })
     socket.on('RefusePLayNotification', (data : any)=>{
       dispatch(fetchCountNotification());
       dispatch(fetchNotificationThunk());
@@ -116,7 +116,10 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchGetAllFriendsThunk());
     })
     socket.on('deleteConversation', (data : ConversationTypes)=>{
-			updateChannel(data);
+      if(data.id === channel?.id)
+      {
+        updateChannel(null);
+      }
 			dispatch(fetchConversationThunk());
       if (channel && channel.id) {
         dispatch(fetchMessagesThunk(channel.id));
@@ -144,7 +147,7 @@ const ConversationChannelPagechat = () => {
         socket.off('Ingame');
         socket.off('IngameOffline');
         socket.off('newRequestToPlay');
-        socket.off('AcceptPLayNotification');
+        // socket.off('AcceptPLayNotification');
         socket.off('RefusePLayNotification');
         socket.off('deleteNOtification')
 

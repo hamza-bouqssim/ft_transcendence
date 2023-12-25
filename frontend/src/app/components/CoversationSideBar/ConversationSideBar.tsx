@@ -1,16 +1,16 @@
-"use client"
-import {  useEffect, useState } from "react"
-import {useRouter} from "next/navigation"
-import { usePathname } from 'next/navigation'
-import ConversationSearch from "../ConversationSearch/page"
-import ChatComponnent from "../ChatComponent/ChatComponent"
-import GroupsManagement from "../GroupsManagment/GroupsManagment"
-import CreatGroups from "../CreateGroups/CreateGroups"
-import {IoMdAdd} from 'react-icons/io'
-import OnlineFriends from "../OnlineFriends/OnlineFriends"
-import ListFriends from "../ListFriends/ListFriends"
-import SendRequest from "../SendRequest/SendRequest"
-import FriendsBloque from "../FriendsBloque/FriendsBloque"
+"use client";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
+import ConversationSearch from "../ConversationSearch/page";
+import ChatComponnent from "../ChatComponent/ChatComponent";
+import GroupsManagement from "../GroupsManagment/GroupsManagment";
+import CreatGroups from "../CreateGroups/CreateGroups";
+import { IoMdAdd } from "react-icons/io";
+import OnlineFriends from "../OnlineFriends/OnlineFriends";
+import ListFriends from "../ListFriends/ListFriends";
+import SendRequest from "../SendRequest/SendRequest";
+import FriendsBloque from "../FriendsBloque/FriendsBloque";
 import { useContext } from "react";
 import {socketContext } from "@/app/utils/context/socketContext";
 import { SendRequestForm } from "../forms/SendRequestForm"
@@ -63,8 +63,8 @@ const CoversationSideBar = () => {
 
 
 			
-			{!newRooms  && <div className={`search-container`}>
-            {show  &&  <CreateSearchModal   setShow={setShow} />   }
+			{!newRooms  && pathname.includes('chat') && <div className={`search-container`}>
+            {show  && pathname.includes('chat')  &&  <CreateSearchModal   setShow={setShow} />   }
 		
 			{!show && <div className="flex items-center bg-gray-200 rounded-md">
                 <div className="pl-2">
@@ -129,7 +129,7 @@ const CoversationSideBar = () => {
 				&& <ChatComponnent />
 			}
 
- 			{ pathname.includes('groups')  && !newRooms &&
+ 			{ pathname.includes('groups')  &&  !show && !newRooms &&
 				(search  ? <SerachGroup/> : <GroupsManagement/>  )   
 			}
 
@@ -149,7 +149,7 @@ const CoversationSideBar = () => {
 			
 			}
 		</div>
-     );
-}
- 
+	);
+};
+
 export default CoversationSideBar;

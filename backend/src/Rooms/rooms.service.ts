@@ -53,13 +53,26 @@ export class RoomsService {
             Status: true,
           },
         },
-      },
+        messageRome:{
+          select: {
+            id: true,
+            content: true,
+            createdAt: true,
+          },
+          take: 1, 
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
+        }
+      
     });
   
   
     if (!chatRooms || chatRooms.length === 0) {
       throw new HttpException("No chat rooms found for the given user.", HttpStatus.BAD_REQUEST );
     }
+    console.log(chatRooms[0].messageRome)
   
     return chatRooms;
   }
@@ -123,7 +136,7 @@ export class RoomsService {
 
   async updateRooms(data:UpdateChatRoom,id:string)
   {
-    console.log(id)
+    console.log("data",data)
     const existingChatRoom = await this.prisma.chatRoom.findUnique({
       where: { id: data.id },
       include: {
@@ -143,17 +156,6 @@ export class RoomsService {
         },
       },
     });
-    const ChatRoomName = await this.prisma.chatRoom.findUnique({
-      where: { name: data.name },
-    });
-    console.log(existingChatRoom)
-
-    if(ChatRoomName.name === data.name)
-    {
-      console.log("yes")
-      throw new HttpException(`Room with name ${data.name} already exists`, HttpStatus.BAD_REQUEST);
-    }
-
     if (!existingChatRoom) {
       throw new HttpException(`Chat room with ID ${data.id} not found.`, HttpStatus.BAD_REQUEST);
     }
@@ -161,6 +163,16 @@ export class RoomsService {
     if (!existingChatRoom.members.length) {
       throw new HttpException(`User  is not an admin for the chat room.`, HttpStatus.BAD_REQUEST);
     }
+
+    const ChatRoomName = await this.prisma.chatRoom.findFirst({
+      where: { name: data.name },
+    });
+
+    if(ChatRoomName)
+    {
+      throw new HttpException(`Room with name ${data.name} already exists`, HttpStatus.BAD_REQUEST);
+    }
+    
     let hashedPassword;
     if(data.Privacy ==='Protected' && data.password)
     {
@@ -756,5 +768,119 @@ export class RoomsService {
     return chatRoomMessages;
   }
 
+  async notificationRoom(roomId:string,userId:string,number:number)
+  {
+      const existingUser = await this.prisma.user.findUnique({
+        where: { id: userId },
+      });
+  
+      if (!existingUser) {
+        return null;
+      }
+  
+      const notificationRoom = await this.prisma.notificationMessage.create({
+        data: {
+          roomId: roomId,
+          userId: userId,
+          number: number,
+        },
+      });
+      return notificationRoom;
+  } 
 
+  async notificationRoomUpdate(senderId: string, chatRoomId: string) {
+
+      const chatRoom = await this.prisma.chatRoom.findUnique({
+        where: {
+          id: chatRoomId,
+        },
+        include: {
+          members: {
+            include: {
+              user: true,
+            },
+          },
+        },
+      });
+  
+      if (!chatRoom) {
+        console.log('Chat room not found.');
+        return null;
+      }
+  
+      for (const member of chatRoom.members) {
+        if(member.user_id !== senderId)
+        {
+            const existingNotification = await this.prisma.notificationMessage.findFirst({
+              where: {
+                roomId: chatRoomId,
+                userId: member.user_id,
+              },
+            });
+      
+            if (!existingNotification) {
+              await this.prisma.notificationMessage.create({
+                data: {
+                  roomId: chatRoomId,
+                  userId: member.user_id,
+                  number: 1, 
+                },
+              });
+            } else {
+              const updatedNotification = await this.prisma.notificationMessage.update({
+                where: {
+                  id: existingNotification.id,
+                },
+                data: {
+                  number: existingNotification.number + 1,
+                },
+              });
+      
+              console.log('Notification room updated:', updatedNotification);
+            }
+        }
+      }
+      return 'Notification messages updated successfully.';
+  }
+
+  async cleanNotification(userId:string,roomId:string)
+  {
+    const existingNotification = await this.prisma.notificationMessage.findFirst({
+      where: {
+        roomId: roomId,
+        userId: userId,
+      },
+    });
+    if(!existingNotification)
+      return
+    const cleanNotification = await this.prisma.notificationMessage.update({
+      where: {
+        id: existingNotification.id,
+      },
+      data: {
+        number:0,
+      },
+    });
+    return 'Notification messages clean successfully.';
+
+  }
+
+  async DeleteNotification(userId:string,roomId:string)
+  {
+    const existingNotification = await this.prisma.notificationMessage.findFirst({
+      where: {
+        roomId: roomId,
+        userId: userId,
+      },
+    });
+    if(!existingNotification)
+      return
+    const cleanNotification = await this.prisma.notificationMessage.delete({
+      where: {
+        id: existingNotification.id,
+      },
+    });
+    return 'Notification messages deleted successfully.';
+
+  }
 }

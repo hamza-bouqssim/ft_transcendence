@@ -8,7 +8,24 @@ import {useContext, useEffect,useState}  from "react"
 import { MessageType, messageTypes } from "@/app/utils/types";
 import {useRouter,usePathname} from 'next/navigation'
 import { useDispatch, useSelector } from 'react-redux';
-
+interface Members {
+	id: string;
+	user_id: string;
+	chatRoomId: string;
+	isAdmin: boolean;
+	Status: string;
+	user: {
+		id: string;
+		username: string;
+		status: string;
+		email: string;
+		password: string;
+		display_name: string;
+		avatar_url: string;
+		two_factor_auth: string;
+		two_factor_secret_key: string;
+	};
+}
 
 type props = {
     Message : any[];
@@ -60,7 +77,7 @@ const MessageInputFieldRoom: FC<props> = ({setMessage, Message}) => {
         }
       setContent('');
     };
-    const handleEnter =(event) => {
+    const handleEnter =(event:any) => {
       if (event.key === 'Enter') {
         event.preventDefault(); 
         sendMessage();   
@@ -69,13 +86,13 @@ const MessageInputFieldRoom: FC<props> = ({setMessage, Message}) => {
 
     return (
       <>
-      { members.some(member => member.user_id === Userdata.id && member.Status !== "Mut")?
+      { members.some((member : Members) => member.user_id === Userdata?.id && member.Status !== "Mut")?
         <div className="flex items-center justify-between ">
          
             <CiImageOn className="text-[#5B8CD3] mr-5 " size={40}/>
             <div  className="w-full  flex items-center bg-[#F2F3FD]  rounded-full justify-between">
                 <input 
-                onKeyPress={handleEnter}
+                onKeyDown={handleEnter}
                 onFocus={() => {
                   socket?.emit('Typing', { id:channel?.id,userId:Userdata?.id});
                 }}

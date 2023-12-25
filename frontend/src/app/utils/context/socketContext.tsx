@@ -1,17 +1,17 @@
 import { createContext, Dispatch, SetStateAction } from "react";
 import { io, Socket } from "socket.io-client";
-import { ConversationTypes, GroupChannel, User } from "../types";
+import { ConversationTypes, User } from "../types";
 
 
 
 type SocketContextValue = {
-  socket: Socket;
-  updateChannel: (newAddress: GroupChannel| ConversationTypes | null) => void;
-  channel:GroupChannel | ConversationTypes | null;
-  oldId: any; 
-  setOldId: Dispatch<SetStateAction<any>>; 
-  Userdata: User | null; 
-  setUserdata: Dispatch<SetStateAction<User | null>>; 
+	socket: Socket;
+	updateChannel: (newAddress: ConversationTypes | null) => void;
+	channel:  ConversationTypes | null;
+	oldId: any;
+	setOldId: Dispatch<SetStateAction<any>>;
+	Userdata: User | null;
+	setUserdata: Dispatch<SetStateAction<User | null>>;
 };
 
 export const socket = io("http://localhost:8000/chat", {

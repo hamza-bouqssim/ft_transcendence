@@ -115,7 +115,7 @@ const NotificationComponent = () => {
       return (
         
         <div className='absolute  rounded-2xl p-3 pt-12 top-15 right-5 border-white border-2 z-50 bg-gradient-to-b from-[#2E2F54] via-[#3B5282] to-[#2E2F54] w-[500px] h-[500px] overflow-auto no-scrollbar'>
-                     <ToastContainer />
+                      
 
             <div className='  justify-between  py-1 items-center gap-1 my-3'>
                 <h1 className='text-white text-2xl -ml-[12px] pl-4 flex items-center py-3 bg-gradient-to-b from-[#2E2F54] via-[#3B5282] to-[#2E2F54] fixed z-10 w-[497px] -mt-[64px]  rounded-t-2xl'>Notifications</h1>
@@ -127,7 +127,7 @@ const NotificationComponent = () => {
                             <div className="relative w-16 h-16 rounded-full hover:bg-red-700 bg-gradient-to-r from-purple-400 via-blue-500 to-red-400 ">
                                     <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-14 h-14 bg-gray-200 rounded-full border-2 border-white">
                                         <Image
-                                            src={elem.image_content} // You need to provide a valid source for the Image component
+                                            src={elem.image_content as string} // You need to provide a valid source for the Image component
                                             className="h-14 w-14 rounded-[50%] bg-black"
                                             alt="Description of the image"
                                             width={60}

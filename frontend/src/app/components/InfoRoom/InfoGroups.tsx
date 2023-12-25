@@ -2,7 +2,6 @@
 import React ,{useContext,useState,useRef,useEffect} from 'react'
 import {MdEdit} from 'react-icons/md'
 import { socketContext } from '@/app/utils/context/socketContext'
-import { kick } from './kick'
 import { Member } from './Member'
 import { Ban } from './Ban'
 import { Mut } from './Mut'
@@ -20,28 +19,50 @@ import { quitMember } from '@/app/store/memberSlice'
 import { getAllRooms } from '@/app/store/roomsSlice'
 import { Owner } from './Owner'
 import { Admin } from './Admin'
+import { AppDispatch } from '@/app/store'
 
+interface Members {
+  id: string;
+  user_id: string;
+  chatRoomId: string;
+  isAdmin: boolean;
+  Status: string;
+  user: {
+    id: string;
+    username: string;
+    status: string;
+    email: string;
+    password: string;
+    display_name: string;
+    avatar_url: string;
+    two_factor_auth: string;
+    two_factor_secret_key: string;
+  };
+}
 
 export const InfoGroups = () => {
   const { updateChannel,channel} = useContext(socketContext);
   const {Userdata} = useContext(socketContext)
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const { members,status,error} = useSelector((state:any) => state.member);
   const [valide,setValide] =useState(false)
 
   const handelQuitRoom=()=>
   {
-    dispatch(quitMember(channel.id)).then((res:any)=>{
-      updateChannel("")
-      dispatch(getAllRooms())
-    })
+    if(channel?.id)
+    {
+        dispatch(quitMember(channel?.id)).then((res:any)=>{
+          updateChannel(null)
+          dispatch(getAllRooms())
+        })
+    }
   }
   
-  const menuRef = useRef(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   
-  const handleDocumentClick = (event) => {
+  const handleDocumentClick = (event:any) => {
     if (menuRef.current && !menuRef.current.contains(event.target)) {
-      setValide(null);
+      setValide(false);
     }
 
   };
@@ -85,7 +106,7 @@ export const InfoGroups = () => {
                     <Member></Member>
                   </AccordionContent>
                 </AccordionItem>
-                {members?.some(member => member.Status === "Owner" && member.user_id === Userdata.id) &&
+                {members?.some((member:Members) => member.Status === "Owner" && member.user_id === Userdata?.id) &&
                 
               <>
                 <AccordionItem value="item-2">
@@ -105,7 +126,7 @@ export const InfoGroups = () => {
               </Accordion>
               
             <div className=" absolute z-0 mx-auto left-0 right-0 bottom-0">
-              {  members?.some(member => member.Status !== "Ban" && member.user_id === Userdata.id) &&
+              {  members?.some((member:Members) => member.Status !== "Ban" && member.user_id === Userdata?.id) &&
                 <button onClick={()=>{setValide(true)}}  className=" flex items-center justify-center rounded-full py-2 px-4 bg-[--pink-color] hover:drop-shadow-md mx-auto mb-3 text-white  ">
                   <h1>Quitte Rome</h1> 
                     <HiOutlineLogout size={26}  className="ml-2"></HiOutlineLogout>
@@ -121,7 +142,7 @@ export const InfoGroups = () => {
         </div>
         <div ref={menuRef} className="fixed left-0 right-0 bottom-0 p-5  z-50 drop-shadow-md top-0 bg-[#ffff] w-[500px] rounded-2xl h-[300px] m-auto">
           <div className="relative h-full ">
-            <p className="text-[20px] pt-5 pl-5 text-black">Quitter le groupe  {channel.name}</p>
+            <p className="text-[20px] pt-5 pl-5 text-black">Quitter le groupe  {channel?.name}</p>
             <p className="mt-2 text-black  pl-5" > Seulement les admins du groupe sauront que vous avez quitté le groupe.</p>
             <div  className="absolute right-0 bottom-0  flex flex-col  items-end">
               <button onClick={()=>{setValide(false)}} className="rounded-full py-2 px-4 text-[--pink-color] mb-4 w-fit  border border-[--pink-color] hover:drop-shadow-md  ">Cancel</button>   

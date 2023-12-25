@@ -6,6 +6,25 @@ import { MdOutlineMoreVert } from "react-icons/md";
 import Image from 'next/image';
 import ListUser from './ListUser';
 
+interface Member {
+  id: string;
+  user_id: string;
+  chatRoomId: string;
+  isAdmin: boolean;
+  Status: string;
+  user: {
+    id: string;
+    username: string;
+    status: string;
+    email: string;
+    password: string;
+    display_name: string;
+    avatar_url: string;
+    two_factor_auth: string;
+    two_factor_secret_key: string;
+  };
+}
+
 export const Owner = () => {
   const { members, status, error } = useSelector((state:any) => state.member);
   const { channel } = useContext(socketContext);
@@ -29,7 +48,7 @@ export const Owner = () => {
 
   return (
     <div >
-      {members && members.map((member) => (
+      {members && members.map((member:Member) => (
         (member.Status === 'Owner') ? (
           <ListUser key={member.id} member={member} />
         ) : null

@@ -1,15 +1,20 @@
 import { OverlayStyle, OverlayStyleSearching, SearchResultStyling } from "@/app/utils/styles"
 import { CreateConversationForm } from "../../forms/CreateConversationForm"
-import { Dispatch, FC, createRef, useEffect, useState } from "react"
+import { Dispatch, FC, createRef, useContext, useEffect, useState } from "react"
 import { MdClose } from "react-icons/md"
 import { createConversation } from "@/app/utils/api"
 import { CreateSearchForm } from "../../forms/CreateSearchForm"
 import { ModalContainer, ModalContentBody, ModalHeader } from "../../modals"
 import { ModalContainerSearching, ModalContentBodySearching, ModalHeaderSearching } from "."
-import { CreateConversationParams, UsersTypes } from "@/app/utils/types"
+import { ConversationTypes, CreateConversationParams,  UsersTypes } from "@/app/utils/types"
 import { useAppDispatch } from "@/redux_toolkit/hooks"
 import { useDispatch } from "react-redux"
 import { useForm } from "react-hook-form"
+import Link from "next/link"
+import { socketContext } from "@/app/utils/context/socketContext"
+import { useRouter } from "next/navigation"
+
+
 
 type props = {
     setShow : Dispatch<React.SetStateAction<Boolean>>;
@@ -18,6 +23,8 @@ type props = {
  const CreateSearchModal:FC<props> = ({setShow}) => {
     const ref = createRef<HTMLDivElement>() ;
     // const [show, setShow] = useState<any>(false);
+    const { updateChannel, channel } = useContext(socketContext);
+
 
 
     const {register, handleSubmit, formState: { errors }} = useForm<CreateConversationParams>();
@@ -30,7 +37,10 @@ type props = {
     }
 
     const [searchQuery, setSearchQuery] = useState("");
-    const [searchResults, setSearchResults] = useState<UsersTypes[]>([]);
+    const [searchResults, setSearchResults] = useState<UsersTypes[] | ConversationTypes[]>([]);
+	const router = useRouter();
+    const {Userdata} = useContext(socketContext);
+
 
     useEffect(() => {
         // Define a function to fetch search results
@@ -41,11 +51,11 @@ type props = {
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({ displayName: searchQuery }),
+                    body: JSON.stringify({ name: searchQuery}),
                 });
-
                 if (response.ok) {
                     const data = await response.json();
+                    console.log("data here-->", data);
                     setSearchResults(data);
                 }
             } catch (error) {
@@ -74,38 +84,19 @@ type props = {
             console.log('close Modal');
         }
     };
-    useEffect(() => {
-        // Define a function to fetch search results
-        const fetchSearchResults = async () => {
-            try {
-                const response = await fetch(`http://localhost:8000/user/search`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ displayName: searchQuery }),
-                });
+    const updatePage = (elem : ConversationTypes) =>{
+        router.push("/dashboard/groups")
 
-                 
-                if (response.ok) 
-                {
-                    const data = await response.json();
-                    setSearchResults(data);
-                }
-            } catch (error) {
-                console.error("Error fetching search results:", error);
-            }
-        };
+        updateChannel(elem);
 
-        if (searchQuery.trim() !== "") {
-            fetchSearchResults();
-        } else {
-            setSearchResults([]);
-        }
-
-    }, [searchQuery]);
-
-   
+    }
+    function isUsersTypes(elem: ConversationTypes | UsersTypes): elem is UsersTypes {
+			return (elem as UsersTypes).display_name !== undefined;
+		}
+      
+      function isGroupChannel(elem: ConversationTypes | UsersTypes): elem is ConversationTypes {
+        return (elem as ConversationTypes).name !== undefined;
+      }
   
     return (
         <div className="w-full max-w-screen-xl mx-auto px-6">
@@ -129,15 +120,18 @@ type props = {
                             onChange={(e) => setSearchQuery(e.target.value)}/>
                     </div>
                     <div className="py-3 text-sm">
-                    {searchResults.map((user) => (
-                        <div  key="user.id" className="flex justify-start cursor-pointer text-gray-700 hover:text-blue-400 hover:bg-blue-100 rounded-md px-2 py-2 my-2">
+                    {searchResults.map((elem) => (
+                        <div key={elem.id} className="flex justify-start cursor-pointer text-gray-700 hover:text-blue-400 hover:bg-blue-100 rounded-md px-2 py-2 my-2">
                             <span className="bg-gray-400 h-2 w-2 m-2 rounded-full"></span>
-                                    <div className="flex-grow font-medium px-2">
-                                        {user.display_name}
-                                    </div>
-                           
+                        <div className="flex-grow font-medium px-2">
+                            {isUsersTypes(elem) ? (
+                                    <Link href={`/dashboard/${elem.id}`}>{elem.display_name}</Link>
+                                ) : isGroupChannel(elem) ? (
+                                    <div onClick={() => updatePage(elem)}>#{elem.name}</div>
+                                ) : null}
                         </div>
-                         ))}
+                        </div>
+))}
                         
                     </div>
                     <div className="block bg-gray-200 text-sm text-right py-2 px-3 -mx-3 -mb-2 rounded-b-lg">

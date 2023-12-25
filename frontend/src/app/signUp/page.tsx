@@ -1,7 +1,6 @@
 "use client";
 import PingPong from "../components/PingPong";
 import {
-	GithubSignInButton,
 	GoogleSignInButton,
 	IntraSignInButton,
 } from "../components/Buttons";
@@ -20,9 +19,12 @@ const SignUp = () => {
 						</div>
 					</div>
 					<div className="flex cursor-pointer items-center justify-center gap-4">
-						<Link href="http://localhost:8000/auth/google/login"><GoogleSignInButton /></Link>
-						<Link href="http://localhost:8000/auth/42/login"><IntraSignInButton /></Link>
-						
+						<Link href="http://localhost:8000/auth/google/login">
+							<GoogleSignInButton />
+						</Link>
+						<Link href="http://localhost:8000/auth/42/login">
+							<IntraSignInButton />
+						</Link>
 					</div>
 					<div className="relative h-[2px] w-56 bg-[#241c1c] md:w-[17rem]">
 						<span className="absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] transform bg-white px-2 text-[.7rem] text-[#8E8E8E] sm:text-sm md:text-[.9rem]">

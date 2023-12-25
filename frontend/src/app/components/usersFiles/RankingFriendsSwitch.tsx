@@ -108,6 +108,7 @@ const RankingFriendsSwitch = () => {
             display_name: data.data.display_name,
             avatar_url: data.data.avatar_url,
             status: data.data.status,
+            name : data.data.name,
           };
     
           setUserData(modifiedUserData);
@@ -130,7 +131,7 @@ const RankingFriendsSwitch = () => {
       {
         showuser && (
           <div className='pt-[10px]  flex justify-center items-center flex-col relative w-full h-[75%] rounded-[50px] text-black animate-bounce'>
-            <Image src={userData?.avatar_url} className='w-[145px] h-[145px] rounded-full border-solid border-4 border-[#498CDA]' alt="Description of the image" width={60}   height={60} />
+            <Image src={userData?.avatar_url as string} className='w-[145px] h-[145px] rounded-full border-solid border-4 border-[#498CDA]' alt="Description of the image" width={60}   height={60} />
 
             <h1>{userData?.display_name}</h1>
             <h5>@{userData?.username}</h5>

@@ -1,11 +1,21 @@
 import axios, { Axios, AxiosRequestConfig } from 'axios'
-import { AcceptRequestParams, ConversationTypes, CreateConversationParams, CreateMessageParams, CreateRequestParams, FetchMessagePayload, User, UserCredentialsParams, createUserParams } from './types';
+import { AcceptRequestParams, ConversationTypes, CreateConversationParams, CreateMessageParams, CreateRequestParams, FetchMessagePayload,  User, UserCredentialsParams, createUserParams } from './types';
 
 const API = axios.create({
     baseURL: "http://localhost:8000/",
     withCredentials: true,
   });
 
+
+
+  interface createRoom {
+    name: string;
+    Privacy: string;
+    password: string | null;
+    picture: string | null;
+    idUserAdd: string[]; 
+  }
+  
 
 const config : AxiosRequestConfig = { withCredentials: true}
 
@@ -91,7 +101,7 @@ export const changeAvatar = async (avatarFormData: FormData) => {
   
     return axios.post(`http://localhost:8000/user/changeAvatar`, avatarFormData, config);
   };
-export const searchingBar = async (display_name : string) => axios.post(`http://localhost:8000/user/search`, {displayName : display_name}, config);
+export const searchingBar = async (name : string) => axios.post(`http://localhost:8000/friend-request/search`, {name: name}, config);
 
 
 export const findConversationUsers = async ( display_name : string) => axios.post(`http://localhost:8000/chat/findConversationUser`, {display_name : display_name}, config);
@@ -99,16 +109,16 @@ export const findConversationUsers = async ( display_name : string) => axios.pos
 
 export const tableFriends = async () => axios.get(`http://localhost:8000/user/table-friends`, config);
 
-export const createRoomsApi = (data:any) =>{
+export const createRoomsApi = (data:createRoom) =>{
     const response = API.post("/rooms/createRooms",{data})
     return response;  
 }
 
   
-export const updateRoomsApi = (data:any) =>{
-    const response = API.post("/rooms/updateRooms",{data})
-    return response;  
-}
+export const updateRoomsApi = (data:ConversationTypes | null) => {
+	const response = API.post("/rooms/updateRooms", { data });
+	return response;
+};
   
 export const deleteRoomsApi = (id:string) =>{
     const response = API.post("/rooms/deleteRooms",{id})
@@ -142,6 +152,11 @@ export const disable2Fa = async () => {
 export const changePhoto = async (avatar: string) => {
     const res = API.post("/user/changePhoto", {avatar})
     return res;
+}
+
+export const deleteAvatar = async () => {
+  const res = API.post("/user/deletePhoto");
+  return res;
 }
 
 export const firstTime = async () => {

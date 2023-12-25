@@ -77,6 +77,7 @@ const CreateConversationModal: FC<props> = ({ setShow }) => {
     return (
 
         <form className="border border-[--pink-color] py-6 flex flex-col gap-5 justify-center sm:py-5 shadow-[0_0_50px_rgba(0,0,0,.3)] w-full mt-[90px] rounded-2xl h-[55%] p-5" onSubmit={handleSubmit(onSubmit)}>
+          <ToastContainer />
 				<MdClose  className="relative py-2 cursor-pointer bg-[--blue-color] rounded-full ml-2 -mt-[25px] mb-2" size={35} color="white"  onClick={() => setShow(false)}/>
 
 					<input  {...register('display_name', {required: 'display_name is required'})} type="text" className="rounded-xl h-10 w-full px-5 border border-[--pink-color] border-gray-300 text-gray-900 focus:outline-none focus:borer-rose-600 " placeholder="Display name" />

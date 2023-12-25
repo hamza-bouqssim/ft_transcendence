@@ -8,6 +8,7 @@ import {
 	Events,
 	Render,
 	Runner,
+	Vector,
 	World,
 } from "matter-js";
 
@@ -46,11 +47,12 @@ class PongGame {
 		y: 0,
 	};
 	private lastDirection: string = "bottom";
-	private moveInterval: NodeJS.Timer | undefined;
+	private moveInterval: NodeJS.Timeout | undefined;
 	// private lunchGameInterval: any;
-	private updatePositionInterval: NodeJS.Timer | undefined;
+	private updatePositionInterval: NodeJS.Timeout | undefined;
 	private handleKeyDown = (e: KeyboardEvent): void => {};
 	private handleKeyUp = (e: KeyboardEvent): void => {};
+	private handleMovePaddle = (e: any): void => {};
 	private handleCollisionStart = (e: any): void => {};
 	private handleBeforeUpdate = (): void => {};
 	private handleSetVelocity = (data: any) => {};
@@ -115,8 +117,8 @@ class PongGame {
 		private socket?: any,
 	) {
 		[this.divWidth, this.divHeight] = getCurrentSizes(
-			this.parentDiv.clientWidth,
-			this.parentDiv.clientHeight,
+			this.parentDiv?.clientWidth,
+			this.parentDiv?.clientHeight,
 		);
 
 		// Update Paddles && ball Size With New Mapped Values:
@@ -438,15 +440,21 @@ class PongGame {
 	};
 
 	moveOnlineModeBall = (): void => {
-		this.handleSetVelocity = (data: any) => {
-			this.setBallVelocity();
-			// Body.setVelocity(this.ball!, {
-			// 	x: this.map(data.x, this.defaultCanvasSizes.width, this.divWidth),
-			// 	y: this.map(data.y, this.defaultCanvasSizes.height, this.divHeight),
-			// });
+		this.handleSetVelocity = (data: Vector) => {
+			// this.setBallVelocity();
+			Body.setVelocity(this.ball!, {
+				x: this.map(data.x, 0, this.defaultCanvasSizes.width, 0, this.divWidth),
+				y: this.map(
+					data.y,
+					0,
+					this.defaultCanvasSizes.height,
+					0,
+					this.divHeight,
+				),
+			});
 		};
 
-		this.handleSetPosition = (data: any) => {
+		this.handleSetPosition = (data: Vector) => {
 			Body.setPosition(this.ball!, {
 				x: this.map(data.x, 0, this.defaultCanvasSizes.width, 0, this.divWidth),
 				y: this.map(
@@ -464,48 +472,55 @@ class PongGame {
 
 		// this.socket.on("updateBallVelocity", (data: any) => {
 		// 	Body.setVelocity(this.ball!, {
-		// 		x: this.map(data.x, this.defaultCanvasSizes.width, this.divWidth),
-		// 		y: this.map(data.y, this.defaultCanvasSizes.height, this.divHeight),
+		// 		x: this.map(data.x, 0, this.defaultCanvasSizes.width, 0, this.divWidth),
+		// 		y: this.map(
+		// 			data.y,
+		// 			0,
+		// 			this.defaultCanvasSizes.height,
+		// 			0,
+		// 			this.divHeight,
+		// 		),
 		// 	});
 		// });
 
-		this.socket.on("resetDefaultPosition", () => {
-			this.resetToDefaultPosition();
-		});
+		// this.socket.on("resetDefaultPosition", () => {
+		// 	this.resetToDefaultPosition();
+		// });
 	};
 
 	setBallVelocity = (): void => {
 		// Random Value Between A Range
 		// Math.floor(Math.random() * (max - min + 1)) + min;
+		let randomValue: number;
 
-		let randomVelocity = Math.floor(Math.random() * 11) - 5;
+		if (this.chosenMapIndex === 1) randomValue = Math.random() < 0.5 ? -6 : 5;
+		else randomValue = Math.random() < 0.5 ? -5 : 5;
 
-		if (randomVelocity >= 0 && randomVelocity < 3) randomVelocity = 3;
-		else if (randomVelocity >= -2 && randomVelocity <= 0) randomVelocity = -3;
+		const yVelocity = this.lastDirection == "top" ? -5 : 5;
 
-		if (this.lastDirection === "top") {
-			this.currentBallVelocity = {
-				x: this.map(
-					randomVelocity,
-					0,
-					this.defaultCanvasSizes.width,
-					0,
-					this.divWidth,
-				),
-				y: this.map(-4, 0, this.defaultCanvasSizes.height, 0, this.divHeight),
-			};
-		} else {
-			this.currentBallVelocity = {
-				x: this.map(
-					randomVelocity,
-					0,
-					this.defaultCanvasSizes.width,
-					0,
-					this.divWidth,
-				),
-				y: this.map(4, 0, this.defaultCanvasSizes.height, 0, this.divHeight),
-			};
-		}
+		this.currentBallVelocity = {
+			x: this.map(
+				randomValue,
+				0,
+				this.defaultCanvasSizes.width,
+				0,
+				this.divWidth,
+			),
+			y: this.map(
+				yVelocity,
+				0,
+				this.defaultCanvasSizes.height,
+				0,
+				this.divHeight,
+			),
+		};
+
+		// if (this.currentBallVelocity.y < 1) {
+		// 	this.currentBallVelocity = {
+		// 		x: this.map(10, 0, this.defaultCanvasSizes.width, 0, this.divWidth),
+		// 		y: this.map(10, 0, this.defaultCanvasSizes.height, 0, this.divHeight),
+		// 	};
+		// }
 
 		Body.setVelocity(this.ball!, {
 			x: this.currentBallVelocity.x,
@@ -640,8 +655,18 @@ class PongGame {
 
 	updateBallVelocity = (): void => {
 		// Limit Velocity Value
-		if (this.currentBallVelocity.y === 10 || this.currentBallVelocity.y === -10)
+		console.log("Before velocity update:", this.currentBallVelocity.y);
+		// console.log("Before velocity update:", this.currentBallVelocity.x);
+		const xVelocity = this.currentBallVelocity.x;
+		
+		// ... rest of your code ...
+
+		if (
+			this.currentBallVelocity.y >= 10 ||
+			(this.currentBallVelocity.y < 0 && this.currentBallVelocity.y >= -10)
+		)
 			return;
+
 		else if (this.lastDirection === "top") {
 			this.currentBallVelocity.y -= this.map(
 				1,
@@ -660,32 +685,58 @@ class PongGame {
 			);
 		}
 
+		if (xVelocity === this.currentBallVelocity.x)
+			this.currentBallVelocity.x = this.ball!.velocity.x + 1;
+
 		Body.setVelocity(this.ball!, {
-			x: this.ball!.velocity.x,
+			x: this.currentBallVelocity.x,
 			y: this.currentBallVelocity.y,
 		});
+
+		console.log("After velocity update:", this.currentBallVelocity.y);
 	};
 
 	moveBotPaddle = (): void => {
 		// Update random position after 3 seconds
+		// this.updatePositionInterval = setInterval(() => {
+		// 	let currentPositionX =
+		// 		Math.floor(
+		// 			Math.random() * (this.divWidth - this.paddleSizes.width) +
+		// 				this.paddleSizes.width / 2,
+		// 		) + this.currentBallVelocity.x;
 
-		this.updatePositionInterval = setInterval(() => {
-			let currentPositionX =
-				Math.floor(
-					Math.random() * (this.divWidth - this.paddleSizes.width) +
-						this.paddleSizes.width / 2,
-				) + this.currentBallVelocity.x;
+		// 	if (currentPositionX > this.divWidth - this.paddleSizes.width / 2)
+		// 		currentPositionX = this.divWidth - this.paddleSizes.width / 2;
+		// 	else if (currentPositionX < this.paddleSizes.width / 2)
+		// 		currentPositionX = this.paddleSizes.width / 2;
 
-			if (currentPositionX > this.divWidth - this.paddleSizes.width / 2)
+		// 	Body.setPosition(this.topPaddle!, {
+		// 		x: currentPositionX,
+		// 		y: this.topPaddle!.position.y,
+		// 	});
+		// }, 100);
+
+		// Impossible To Win
+		this.handleMovePaddle = () => {
+			let currentPositionX = this.ball!.position.x;
+
+			if (
+				this.topPaddle!.position.x + this.paddleSizes.width / 2 >=
+					this.divWidth &&
+				this.ball!.position.x >= this.divWidth - this.paddleSizes.width / 2
+			)
 				currentPositionX = this.divWidth - this.paddleSizes.width / 2;
-			else if (currentPositionX < this.paddleSizes.width / 2)
+			else if (
+				this.topPaddle!.position.x - this.paddleSizes.width / 2 <= 0 &&
+				this.ball!.position.x <= this.paddleSizes.width / 2
+			)
 				currentPositionX = this.paddleSizes.width / 2;
 
 			Body.setPosition(this.topPaddle!, {
 				x: currentPositionX,
 				y: this.topPaddle!.position.y,
 			});
-		}, 100);
+		};
 
 		this.handleCollisionStart = (e: any): void => {
 			const pairs = e.pairs[0];
@@ -702,6 +753,7 @@ class PongGame {
 			}
 		};
 
+		Events.on(engine, "beforeUpdate", this.handleMovePaddle);
 		Events.on(engine, "collisionStart", this.handleCollisionStart);
 		this.calcScore();
 
@@ -736,12 +788,12 @@ class PongGame {
 	};
 
 	clear = (): void => {
-		const displayBodies = (str: string) => {
-			console.log(str);
-			for (let body of engine.world.bodies) console.log(body);
-		};
+		// const displayBodies = (str: string) => {
+		// 	console.log(str);
+		// 	for (let body of engine.world.bodies) console.log(body);
+		// };
 
-		displayBodies("before");
+		// displayBodies("before");
 
 		// Remove Basic Bodies In Default Map
 		Composite.remove(engine.world, this.topPaddle!);
@@ -767,13 +819,15 @@ class PongGame {
 			Composite.remove(engine.world, this.verticalObstacle4!);
 		}
 
-		displayBodies("after");
+		// displayBodies("after");
 
 		// Remove Events:
+		Events.off(engine, "beforeUpdate", this.handleCollisionStart);
 		Events.off(engine, "collisionStart", this.handleCollisionStart);
 		Events.off(engine, "beforeUpdate", this.handleBeforeUpdate);
 
-		clearInterval(this.updatePositionInterval);
+		// Easy Mode
+		// clearInterval(this.updatePositionInterval);
 
 		// Stop The Runner:
 		Runner.stop(runner);

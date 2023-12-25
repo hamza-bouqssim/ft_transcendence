@@ -9,10 +9,29 @@ import { socketContext } from '@/app/utils/context/socketContext';
 import { useDispatch, useSelector } from 'react-redux';
 import { TiUserDelete } from "react-icons/ti";
 import { banMembers, getAllMembers, kickMembers, makeAdminMember, makeMember, mutMembers } from '@/app/store/memberSlice';
+import { AppDispatch } from '@/app/store';
 
+interface Member {
+  id: string;
+  user_id: string;
+  chatRoomId: string;
+  isAdmin: boolean;
+  Status: string;
+  user: {
+    id: string;
+    username: string;
+    status: string;
+    email: string;
+    password: string;
+    display_name: string;
+    avatar_url: string;
+    two_factor_auth: string;
+    two_factor_secret_key: string;
+  };
+}
 
 interface Props {
-  member:any
+  member:Member
   }
 const ListUser: React.FC<Props> = ({member}) => {
   const [option, setOption] = useState(false)
@@ -20,11 +39,11 @@ const ListUser: React.FC<Props> = ({member}) => {
   const {Userdata} = useContext(socketContext)
   const [valide,setValide] =useState<string| null>(null)
   const { updateChannel,channel} = useContext(socketContext);
-  const menuRef = useRef(null);
-  const dispatch =useDispatch();
-  const optionRef = useRef(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const dispatch =useDispatch<AppDispatch>();
+  const optionRef = useRef<HTMLDivElement>(null);
   
-  const handleDocumentClick = (event) => {
+  const handleDocumentClick = (event:any) => {
     if (menuRef.current && !menuRef.current.contains(event.target)) {
       setValide(null);
     }
@@ -54,54 +73,69 @@ const ListUser: React.FC<Props> = ({member}) => {
   {
     if(valideData ==="Ban")
     {
-      dispatch(banMembers({
-        userId:member?.user.id,
-        id:channel?.id
-      })).then((res)=>{
-        dispatch(getAllMembers(channel.id))
-         setValide(null)
-      })
+      if(member?.user.id && channel?.id)
+      {
+        dispatch(banMembers({
+          userId:member?.user.id ,
+          id:channel?.id
+        })).then((res)=>{
+          dispatch(getAllMembers(channel.id))
+           setValide(null)
+        })
+      }
     }
     if(valideData ==="Mut")
     {
-      dispatch(mutMembers({
-        userId:member?.user.id,
-        id:channel?.id
-      })).then((res)=>{
-        dispatch(getAllMembers(channel.id))
-         setValide(null)
-      })
+      if(member?.user.id && channel?.id)
+      {
+        dispatch(mutMembers({
+          userId:member?.user.id,
+          id:channel?.id
+        })).then((res)=>{
+          dispatch(getAllMembers(channel.id))
+          setValide(null)
+        })
+      }
     }
     if(valideData ==="Kick")
     {
-      dispatch(kickMembers({
-        userId:member?.user.id,
-        id:channel?.id
-      })).then((res)=>{
-        dispatch(getAllMembers(channel.id))
-         setValide(null)
+      if(member?.user.id && channel?.id)
+      {
+        dispatch(kickMembers({
+          userId:member?.user.id,
+          id:channel?.id
+        })).then((res)=>{
+          dispatch(getAllMembers(channel.id))
+          setValide(null)
 
-      })
+        })
+      }
     }
     if(valideData ==="Member")
     {
-      dispatch(makeMember({
-        userId:member?.user.id,
-        id:channel?.id
-      })).then((res)=>{
-        dispatch(getAllMembers(channel.id))
-         setValide(null)
-      })
+      if(member?.user.id && channel?.id)
+      {
+        dispatch(makeMember({
+          userId:member?.user.id,
+          id:channel?.id
+        })).then((res)=>{
+          dispatch(getAllMembers(channel.id))
+          setValide(null)
+        })
+      }
     }
     if(valideData ==="Admin")
     {
-      dispatch(makeAdminMember({
-        userId:member?.user.id,
-        id:channel?.id
-      })).then((res)=>{
-         dispatch(getAllMembers(channel.id))
-        setValide(null)
-      })
+      if(member?.user.id && channel?.id)
+      {
+        dispatch(makeAdminMember({
+          userId:member?.user.id,
+          id:channel?.id
+        })).then((res)=>{
+          dispatch(getAllMembers(channel.id))
+          setValide(null)
+        })
+      }
     }
    
 
@@ -122,9 +156,9 @@ const ListUser: React.FC<Props> = ({member}) => {
                   <h1>{member?.Status}</h1>
                 </div>
               </div>
-              {members?.some(member => member.Status === "Owner" && member.user_id === Userdata.id) && member?.Status!== "Owner" && <MdOutlineMoreVert onClick={()=>{setOption(!option)}} size={25} />}      
+              {members?.some((member:Member) => member.Status === "Owner" && member.user_id === Userdata?.id) && member?.Status!== "Owner" && <MdOutlineMoreVert onClick={()=>{setOption(!option)}} size={25} />}      
         </div>
-          {option  && members?.some(member => member.Status === "Owner" && member.user_id === Userdata.id) && 
+          {option  && members?.some((member:Member) => member.Status === "Owner" && member.user_id === Userdata?.id) && 
           <div ref={optionRef}  className="absolute p-2 rounded-xl right-1 flex flex-col  justify-between items-start    w-[150px] h-[150px] bg-white drop-shadow-md">
            {member?.Status!== "Mut" &&  
               <button onClick={()=>{setValide("Mut")}} className="text-[15px] p-1 flex justify-center items-center">
@@ -191,7 +225,7 @@ const ListUser: React.FC<Props> = ({member}) => {
                       }
 
                       <div className="absolute right-0 bottom-0 flex flex-col items-end">
-                        <button onClick={() => { setValide(false) }} className="rounded-full py-2 px-4 text-[--pink-color] mb-4 w-fit border border-[--pink-color] hover:drop-shadow-md">Cancel</button>
+                        <button onClick={() => { setValide(null) }} className="rounded-full py-2 px-4 text-[--pink-color] mb-4 w-fit border border-[--pink-color] hover:drop-shadow-md">Cancel</button>
                         <button onClick={()=>handelEvent(valide)} className="flex text-white items-center justify-center rounded-full py-2 px-4 bg-[--pink-color] hover:drop-shadow-md">
                           {
                             valide === "Mut" ? <div className="text-[17px]">Mut {member?.user.username}</div> :

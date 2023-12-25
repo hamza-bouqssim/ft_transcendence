@@ -70,7 +70,7 @@ const FriendsBloque = () =>{
     };
     return (
         <Conversation>
-        <ToastContainer />
+         
 				<ConversationSideBarContainer>
 					{friendsBlock.map(function(elem : BloquesTypes){
 						return(

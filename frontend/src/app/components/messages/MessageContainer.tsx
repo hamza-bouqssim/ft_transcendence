@@ -73,11 +73,32 @@ const MessageContainer = () => {
       const regex = new RegExp(`.{1,${lineLength}}`, 'g');
       return content.match(regex) || [];
     };
-    
+    // console.log("sender here-->", messages.participent.sender.id);
+    // console.log("recipient here-->", messages.participent.recipient);
+    const debloqueFromPanel  = async () =>{
+        let user : User | undefined;
+        if( channel && channel?.sender.id === Userdata?.id)
+            user = channel?.recipient;
+        else
+          user =channel?.sender;
+        if(user){
+          const id = user.id;
+          try {
+            await dispatch(fetchDebloqueUserThunk(id));
+              ToastSuccess("You have Deblocked this friend successfully");
+  
+          } catch (error) {
+            ToastError("Failed to Deblock the friend. Please try again.");
+  
+          }
+
+        }
+        
+    }
     return (
 
        <>
-        <ToastContainer />
+         
         <div className="h-[calc(100%-130px)] no-scrollbar  overflow-y-auto  ">
         <MessageContainerStyle>
           {messages &&
@@ -121,7 +142,7 @@ const MessageContainer = () => {
 
         </div>
         {(isSenderBlocked && Userdata?.display_name === channel?.sender.display_name) || (isRecipientBlocked && Userdata?.display_name === channel?.recipient.display_name) ? (
-          <button className="w-full p-4 py-3 bg-[#5B8CD3] px-4 mr-2 rounded-full" >
+          <button onClick={() => debloqueFromPanel()} className="w-full p-4 py-3 bg-[#5B8CD3] px-4 mr-2 rounded-full" >
             Unblock
           </button>
         
