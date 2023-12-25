@@ -169,7 +169,7 @@ export type CreateMessageParams = {
 }
 
 export type CreateConversationParams ={
-    display_name : string;
+    display_name? : string;
     message : string;
 }
 

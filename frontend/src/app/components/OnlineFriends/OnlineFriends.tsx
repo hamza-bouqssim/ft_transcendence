@@ -126,7 +126,6 @@ const OnlineFriends = () => {
 								);
 							}
 						};
-						console.log("online");
 						const handlePLayingRequest = async (display_name: string) => {
 						
 							try {

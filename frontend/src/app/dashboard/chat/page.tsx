@@ -26,7 +26,6 @@ const ConversationChannelPagechat = () => {
 
   useEffect(() => {
     socket.on('AcceptNotification', (data : any) => {
-      console.log("accept enter here");
       dispatch(fetchGetRequestThunk());
       dispatch(fetchGetAllFriendsThunk());
       dispatch(fetchCountNotification());
@@ -36,7 +35,6 @@ const ConversationChannelPagechat = () => {
 
 
     });
-    console.log("chat");
 		socket.on('newFriendRequest', (data : any) => {
 			dispatch(fetchGetRequestThunk());
       dispatch(fetchNumberPending());

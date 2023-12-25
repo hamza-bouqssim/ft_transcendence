@@ -41,7 +41,6 @@ const CreateConversationModal: FC<props> = ({ setShow }) => {
 	  };
         const {register, handleSubmit, formState: { errors }} = useForm<CreateConversationParams>();
         const dispatch = useDispatch<AppDispatch>();
-console.log("conversation");
         const onSubmit = async  (data : CreateConversationParams) => {
           try{
             const res = await dispatch(createConversationThunk(data));

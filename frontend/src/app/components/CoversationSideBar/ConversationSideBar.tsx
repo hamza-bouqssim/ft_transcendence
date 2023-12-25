@@ -37,7 +37,6 @@ const CoversationSideBar = () => {
 	useEffect(()=>{
 		dispatch(fetchNumberPending());
 	},[dispatch]);
-	console.log("sidebar");
     return (
 		<div className="w-full h-full relative p-2  xl:rounded-[20px] pt-4 bg-white">
 			<div className="flex items-center rounded-full justify-between w-3/4 mb-4  mx-auto  bg-[#DFDFDF]">

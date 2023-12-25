@@ -15,10 +15,14 @@ import { fetchGetRequestThunk, fetchRequestThunk } from '@/app/store/requestSlic
 import AchievementsList from '@/app/components/AchievementsList';
 import { HistoryMatchesType, ResultsType, UserInfoType } from '../Imports';
 import { fetchUsersThunk } from '@/app/store/usersSlice';
-import { User } from '@/app/utils/types';
+import { CreateConversationParams, User } from '@/app/utils/types';
 import { fetchGetAllFriendsThunk } from '@/app/store/friendsSlice';
 import { socketContext } from '@/app/utils/context/socketContext';
 import { fetchGetRequestsThunk } from '@/app/store/requestsSlice';
+import { createConversationThunk, fetchConversationUserThunk } from '@/app/store/conversationSlice';
+import { useForm } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
+import { userInfo } from 'os';
 
 const Dashboard = ({ params }: { params: { id: string } }) => {
 	
@@ -54,7 +58,72 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 		draggable: true,
 	});
 	};
-	console.log("dashboard");
+	useEffect(() => {
+		const fetchUserInfo = async () => {
+		try {
+			if (params.id) {
+			const response = await getUserInfos(params.id);
+			setUserInfo(response.data);
+			}
+		} catch (error) {
+			console.log('Error fetching user information:', error);
+		}
+		};
+
+		fetchUserInfo();
+	}, [params.id]);
+
+	const handleEnter = (event: any) => {
+		console.log("herere");
+		if (event.key === 'Enter') {
+		  event.preventDefault();
+		  const formData = {
+			display_name: userinfo?.display_name || '', // Provide a default value if display_name is undefined
+			message: event.target.value,
+		  };
+		  onSubmit(formData);
+		}
+	  };
+	  const router = useRouter();
+
+	  const { updateChannel, channel } = useContext(socketContext);
+	const {register, handleSubmit, formState: { errors }} = useForm<CreateConversationParams>();
+	const onSubmit = async  (data : CreateConversationParams) => {
+	  try{
+		const res = await dispatch(createConversationThunk({
+			display_name: userinfo?.display_name, // Use the display_name from userinfo
+			message: data.message, // Use the message from the input field
+		  }));
+		  console.log("res here-->", res);
+
+		  if (res.payload && typeof res.payload === 'object') {
+			
+			const message = res.payload.response.message;
+			
+			if (message) {
+				ToastSuccess(message);
+				const elem = res.payload.response.conversation
+				router.push("/dashboard/chat")
+				updateChannel(elem);
+			}
+		}
+	  }catch(err : any){
+		const userIdToFind = params.id;
+		const foundUser = users.find((user : User) => user.id === userIdToFind);
+
+		 const res = await dispatch(fetchConversationUserThunk(
+			{
+				display_name : userinfo?.display_name,
+				message: data.message,
+			}
+		 ));
+		 	router.push("/dashboard/chat")
+		 	const elem = res.payload;
+			updateChannel(elem);
+	  }
+	
+
+	}
 	const handleUnblockButtonClick = async () => {
 		try {
 			const res = await dispatch(fetchDebloqueUserThunk(params.id));
@@ -63,11 +132,8 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 				const message = responseData.data?.response?.message;
 				if (message) {
 					ToastSuccess(message);
-					dispatch(fetchBlocksThunk())
-					setSwitch(true);
-					
-					
-					
+					dispatch(fetchBlocksThunk());
+					setSwitch(true);					
 				}else {
 				const responseData = res.payload as {message?: string};
 				const message = responseData.message;
@@ -102,42 +168,18 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 		}
 		};
 
-		//========> USE EFFECTS
-
-		// //========> DISPATCH SEND REQUEST
-		// useEffect(()=> {
-		// 	dispatch(fetchRequestThunk());
-		// }, [dispatch]);
-
-		//========> DISPATCH BLOCK
+	
 		useEffect(() => {
 			dispatch(fetchBlocksThunk());
 		}, [dispatch]);
 
 		
 
-		////========> IF THE USER EXIST IN THE BLOCK LIST DISPLAY [UNBLOCK] BUTTON, IF NOT EXIST DISPLAY [BLOCK]
 		useEffect(() => {
 		friendsBlock.some((friend: any) => friend.id === params.id) ? setSwitch(false): setSwitch(true);
 		}, [friendsBlock, params.id, dispatch]);
 
-		//========> FETCHING ANOTHER INFORMATIONS OF ANOTHER USER BY IT'S ID, AND THE ID I TOOKEN FROM THE QUERY.
-		useEffect(() => {
-			const fetchUserInfo = async () => {
-			try {
-				if (params.id) {
-				const response = await getUserInfos(params.id);
-				setUserInfo(response.data);
-				}
-			} catch (error) {
-				console.log('Error fetching user information:', error);
-			}
-			};
-
-			fetchUserInfo();
-		}, [params.id]);
-
-		//========> FETCHING MATCH HISTORY DATA
+		
 		useEffect(() => {
 			const fetchMatchHistory = async () => {
 			try {
@@ -153,7 +195,6 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 			fetchMatchHistory();
 		}, [params.id]);
 
-		//========> FETCHING STATE OF THE USER RESULTS
 		useEffect(() => {
 			const fetchGameStates = async () => { 
 			try {
@@ -247,7 +288,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 										Send Request
         						</button>
                   					)}
-										<button
+										<button onKeyPress={handleEnter}
 											className="hover:duration- h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover]"
 											onClick={() => setShowMessageBlock(true)}
 										>
@@ -289,9 +330,11 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 												priority={true}
 											/>
 											<input
+												 {...register('message', {required: 'message is required'})}
 												type="text"
 												className="w-full rounded-xl border-2 border-[--purple-color]  p-4 text-black outline-[--purple-color]"
 												placeholder="Send Message"
+												onKeyPress={handleEnter}
 											/>
 										</div>
 									</div>

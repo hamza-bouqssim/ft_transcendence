@@ -58,7 +58,6 @@ const ListFriends = () => {
 
 	const [Friends, setFriends] = useState<FriendsTypes[]>([]);
 	const { updateChannel, channel } = useContext(socketContext);
-console.log("friens");;
 	const dispatch = useDispatch<AppDispatch>();
 	const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 	const [change, setChange] = useState<{

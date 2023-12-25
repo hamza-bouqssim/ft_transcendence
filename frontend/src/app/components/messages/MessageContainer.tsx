@@ -73,7 +73,6 @@ const MessageContainer = () => {
       const regex = new RegExp(`.{1,${lineLength}}`, 'g');
       return content.match(regex) || [];
     };
-  console.log("container chat");
     const debloqueFromPanel  = async () =>{
         let user : User | undefined;
         if( channel && channel?.sender.id === Userdata?.id)

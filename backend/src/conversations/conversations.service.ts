@@ -62,7 +62,7 @@ export class ConversationsService  {
       });
       // this.userService.notificationMessage( conversation., messages.participents.recipientId);
 
-      return {message : 'Conversation create succefully'}
+      return {message : 'Conversation create succefully', conversation}
 
   }
 
@@ -130,8 +130,15 @@ export class ConversationsService  {
           recipient: {
             connect: { display_name: _display_name}
           }
+          
+        },
+        include :{
+          sender : true,
+          recipient : true,
         }
+       
       });
+
 
         return newParticipent
     }
@@ -256,7 +263,7 @@ async createMessags(user : any, params: CreateMessageParams) {
     return messageCreate;
   }
 
-async findConversationUsers(user : any, _display_name : string)
+async findConversationUsers(user : any, _display_name : string, message : string)
 {
   const chat = await this.prisma.chatParticipents.findFirst({
     where: {
@@ -268,6 +275,27 @@ async findConversationUsers(user : any, _display_name : string)
     include: {
       sender: true,
       recipient: true,
+    },
+  });
+
+  await this.prisma.message.create({
+    data: {
+      content : message,
+      sender: {
+        connect: { id: user.id },
+      },
+      participents: {
+        connect: { id: chat.id },
+      },
+    },
+    include: {
+      sender: true,
+      participents: {
+        include: {
+          sender: true,
+          recipient: true,
+        },
+      },
     },
   });
   return chat;

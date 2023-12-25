@@ -104,7 +104,7 @@ export const changeAvatar = async (avatarFormData: FormData) => {
 export const searchingBar = async (name : string) => axios.post(`http://localhost:8000/friend-request/search`, {name: name}, config);
 export const getAllRequests = async() => axios.get(`http://localhost:8000/user/all-pending-request`, config);
 
-export const findConversationUsers = async ( display_name : string) => axios.post(`http://localhost:8000/chat/findConversationUser`, {display_name : display_name}, config);
+export const findConversationUsers = async ( display_name : string, message : string) => axios.post(`http://localhost:8000/chat/findConversationUser`, {display_name : display_name , message : message}, config);
 // tabel friends
 
 export const tableFriends = async () => axios.get(`http://localhost:8000/user/table-friends`, config);

@@ -17,27 +17,26 @@ const initialState: ConversationsState = {
 
 // for create the conversation
 
-export const createConversationThunk = createAsyncThunk('conversations/create', async(params: CreateConversationParams , { rejectWithValue })=>{
-  try {
+export const createConversationThunk = createAsyncThunk(
+  'conversations/create',
+  async (params: CreateConversationParams, { rejectWithValue }) => {
+    try {
+      const response = await createConversation(params.display_name ?? '', params.message);
 
-    const response = await createConversation(params.display_name, params.message);
-    
- 
-    if (!response.data.success)
-    {
-      throw new Error(response.data.error);
+      if (!response.data.success) {
+        throw new Error(response.data.error);
+      }
+      return response.data;
+    } catch (err: any) {
+      if (err.response && err.response.data) {
+        return rejectWithValue(err.response.data); // Return the entire error object
+      } else {
+        throw new Error("create conversation failed with an unknown error");
+      }
     }
-    return response;
-  } catch (err: any) {
-    if (err.response && err.response.data) 
-    {
-      return rejectWithValue(err.response.data); // Return the entire error object
-    } else {
-      throw new Error("create conversation failed with an unknown error");
-    }
-}
+  }
+);
 
-})
 
 export const fetchConversationThunk = createAsyncThunk('conversations/fetch', async () => {
   const response = await getConversation();
@@ -46,10 +45,9 @@ export const fetchConversationThunk = createAsyncThunk('conversations/fetch', as
 });
 
 
-
-export const fetchConversationUserThunk = createAsyncThunk('conversation/fetch',async(display_name : string) =>{
-  const response = await findConversationUsers(display_name);
-  return response;
+export const fetchConversationUserThunk = createAsyncThunk('conversation/fetch',async(params: CreateConversationParams) =>{
+  const response = await findConversationUsers(params.display_name ?? '' , params.message);
+  return response.data;
 
 })
 

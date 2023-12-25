@@ -19,7 +19,6 @@ const initialState: requestState = {
 export const fetchGetRequestsThunk = createAsyncThunk("request/fetchGetRequestThunk",async (_, { rejectWithValue }) => {
 		
 			const response = await getAllRequests();
-			console.log("response here-->", response);
 			return response.data;
 		
 	},
