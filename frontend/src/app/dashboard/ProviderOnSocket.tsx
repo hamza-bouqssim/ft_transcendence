@@ -36,7 +36,8 @@ const ProviderOnSocket = () => {
 					dispatch(fetchNotificationThunk());
 				});
         socket.on('newFriendRequest', (data : any) => {
-                dispatch(fetchGetRequestThunk());
+          console.log("enter here");
+          dispatch(fetchGetRequestThunk());
           dispatch(fetchNumberPending());
           dispatch(fetchCountNotification());
           dispatch(fetchNotificationThunk());

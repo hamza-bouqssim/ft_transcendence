@@ -215,6 +215,8 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 		);
 		useEffect(() => {
 			dispatch(fetchUsersThunk());
+			dispatch(fetchGetRequestsThunk())
+			dispatch(fetchGetAllFriendsThunk());
 		}, [dispatch]);
 
 		const { requests, statusReq, errorReq } = useSelector((state:any) => state.requests);
@@ -223,11 +225,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 
 		
    
-		useEffect(() => {
-		  dispatch(fetchGetRequestsThunk())
-		  dispatch(fetchGetAllFriendsThunk());
 
-		}, [dispatch]);
 	 
 		const sendRequest_handle =  async () =>{
 			const userIdToFind = params.id;
@@ -253,16 +251,25 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 				}
 		}
 		
-		  const handleClickAcceptRequest = async (id : string) => {
-			try {
+		  const handleClickAcceptRequest = async () => {
+			const matchingRequest = requests.find(
+				(request: any) =>
+				  request.user_id === params.id && request.friend_id === Userdata?.id
+			  );
+			  console.log("request id-->", matchingRequest.id);
+			  if(matchingRequest){
+				try {
 			 
-			  await dispatch(fetchAcceptFriendRequestThunk(id));
-			  ToastSuccess("You are accepting the request !");
-	
-			} catch (error) {
-			  ToastError(`Error accepting friend request: ${error}`);
-	
-			}
+					await dispatch(fetchAcceptFriendRequestThunk(matchingRequest.id));
+					ToastSuccess("You are accepting the request !");
+		  
+				  } catch (error) {
+					ToastError(`Error accepting friend request: ${error}`);
+		  
+				  }
+
+			  }		
+			
 		  };
 
 	  
@@ -287,11 +294,11 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 										Pending Request
 									</button>
 							) :requests.some((request: any) => request.user_id === params.id && request.friend_id === Userdata?.id)? (
-									<button className="h-12 rounded-2xl bg-[--green-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--green-hover] hover:duration-300">
+									<button onClick={() => handleClickAcceptRequest()} className="h-12 rounded-2xl bg-[--green-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--green-hover] hover:duration-300">
 										Respond to Request
 									</button>
 							) :friends.some((friend: any) => friend.id === params.id) ? (
-									<button className="h-12 rounded-2xl bg-[--gray-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--gray-hover] hover:duration-300" disabled>
+									<button className="h-12 rounded-2xl bg-[--pink-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--gray-hover] hover:duration-300" disabled>
 										Friends
 									</button>
 							) : (
