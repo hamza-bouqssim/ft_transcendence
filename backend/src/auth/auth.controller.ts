@@ -33,6 +33,7 @@ export class AuthController {
 		@Res() res: Response,
 	) {
 		const user = await this.authService.signIn(dto);
+		console.log("USER: ||||  ", user);
 		const payload = { sub: user.id, email: user.email };
 
 		if (user.first_time) {
@@ -45,7 +46,7 @@ export class AuthController {
 		if (user.tfa_enabled) {
 			const token = this.jwtService.sign(payload);
 			res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
-			return res.send({ success: false, message: 'tfa enabled' });
+			return res.send({ valid: true, message: 'tfa enabled' });
 		}
 
 		const token = this.jwtService.sign(payload);

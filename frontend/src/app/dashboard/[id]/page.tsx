@@ -17,7 +17,7 @@ import { HistoryMatchesType, ResultsType, UserInfoType } from '../Imports';
 
 const Dashboard = ({ params }: { params: { id: string } }) => {
 	
-	
+	console.log("USER PROFILE");
 	const { friendsBlock , fstatus, ferror } = useSelector((state:any) => state.friendsBlock);
 	const { request, status, error } = useSelector((state:any) => state.request);
 	const dispatch = useDispatch<AppDispatch>();
