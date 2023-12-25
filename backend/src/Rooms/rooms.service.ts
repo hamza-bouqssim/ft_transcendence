@@ -72,7 +72,6 @@ export class RoomsService {
     if (!chatRooms || chatRooms.length === 0) {
       throw new HttpException("No chat rooms found for the given user.", HttpStatus.BAD_REQUEST );
     }
-    console.log(chatRooms[0].messageRome)
   
     return chatRooms;
   }
@@ -136,7 +135,6 @@ export class RoomsService {
 
   async updateRooms(data:UpdateChatRoom,id:string)
   {
-    console.log("data",data)
     const existingChatRoom = await this.prisma.chatRoom.findUnique({
       where: { id: data.id },
       include: {
@@ -604,7 +602,6 @@ export class RoomsService {
       throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
     }
 
-    console.log(isRoom)
     const isMember = await this.prisma.member.findFirst({
       where: {
         user_id: id,
@@ -683,7 +680,6 @@ export class RoomsService {
 
 
   async getAllFreind(id: string) {
-    console.log(id)
       const friends = await this.prisma.friend.findMany({
         where: {
           OR: [
@@ -804,7 +800,6 @@ export class RoomsService {
       });
   
       if (!chatRoom) {
-        console.log('Chat room not found.');
         return null;
       }
   
@@ -836,7 +831,6 @@ export class RoomsService {
                 },
               });
       
-              console.log('Notification room updated:', updatedNotification);
             }
         }
       }

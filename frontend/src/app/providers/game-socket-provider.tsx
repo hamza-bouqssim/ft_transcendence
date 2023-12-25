@@ -27,11 +27,9 @@ const GameSocketProvider = ({ children }: { children: ReactNode }) => {
 		if (!socket) return;
 
 		// socket.connect();
-		console.log("connect!");
 
 		return () => {
 			socket.disconnect();
-			console.log("disconnect!");
 		};
 	}, [socket]);
 

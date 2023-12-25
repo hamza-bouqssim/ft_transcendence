@@ -44,18 +44,15 @@ const MatchMaking = () => {
 				scroll: false,
 			});
 		};
-		console.log("setup start game event");
 		gameSocket.emit("startGame", {
 			indexMap: mapIndex,
 		});
 		gameSocket.on("knowOpponent", handleKnowOpponent);
 		return () => {
-			console.log("remove start game event");
 			gameSocket.off("knowOpponent", handleKnowOpponent);
 			gameSocket.off("redirectUser", handleRedirectUser);
 		};
 	}, []);
-	console.log("map index:", opponentPlayer.mapIndex);
 
 	return (
 		<>

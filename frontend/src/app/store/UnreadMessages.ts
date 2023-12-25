@@ -18,7 +18,6 @@ const initialState: MessagesUnreadState = {
 
 export const fetchMessagesUnreadThunk = createAsyncThunk('messagesUnread/fetch', async (ConversationId : string) => {
     const response = await getUnreadMessages(ConversationId);
-    console.log("number of count-->", response.data);
     return response.data;
   })
 export const markConversationAsRead = createAsyncThunk('AsReadMessage/fetch', async (id : string) =>{

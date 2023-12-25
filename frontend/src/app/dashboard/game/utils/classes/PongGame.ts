@@ -655,8 +655,6 @@ class PongGame {
 
 	updateBallVelocity = (): void => {
 		// Limit Velocity Value
-		console.log("Before velocity update:", this.currentBallVelocity.y);
-		// console.log("Before velocity update:", this.currentBallVelocity.x);
 		const xVelocity = this.currentBallVelocity.x;
 		
 		// ... rest of your code ...
@@ -693,7 +691,6 @@ class PongGame {
 			y: this.currentBallVelocity.y,
 		});
 
-		console.log("After velocity update:", this.currentBallVelocity.y);
 	};
 
 	moveBotPaddle = (): void => {
@@ -788,14 +785,7 @@ class PongGame {
 	};
 
 	clear = (): void => {
-		// const displayBodies = (str: string) => {
-		// 	console.log(str);
-		// 	for (let body of engine.world.bodies) console.log(body);
-		// };
-
-		// displayBodies("before");
-
-		// Remove Basic Bodies In Default Map
+		
 		Composite.remove(engine.world, this.topPaddle!);
 		Composite.remove(engine.world, this.bottomPaddle!);
 		Composite.remove(engine.world, this.rightRect!);
@@ -806,13 +796,11 @@ class PongGame {
 
 		// Remove Obstacles For Map 1 && 2
 		if (this.chosenMapIndex === 1) {
-			console.log("index 1 chosen");
 			Composite.remove(engine.world, this.topLeftObstacle!);
 			Composite.remove(engine.world, this.topRightObstacle!);
 			Composite.remove(engine.world, this.bottomLeftObstacle!);
 			Composite.remove(engine.world, this.bottomRightObstacle!);
 		} else if (this.chosenMapIndex === 2) {
-			console.log("index 1 chosen");
 			Composite.remove(engine.world, this.verticalObstacle1!);
 			Composite.remove(engine.world, this.verticalObstacle2!);
 			Composite.remove(engine.world, this.verticalObstacle3!);

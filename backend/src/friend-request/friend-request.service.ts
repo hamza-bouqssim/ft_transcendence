@@ -239,13 +239,11 @@ export class FriendRequestService {
 				requestId: requestId,
 			},
 		});
-		console.log("emitit l sokaina")
 		this.eventEmitter.emit('game.accept', {
 			req_play,
 		});
 		
 
-		console.log("accccccccccccccccccccccccccccccccccccccccccept")
 
 		return { message: 'Accept request to play succesfully' };
 	}
@@ -470,8 +468,7 @@ export class FriendRequestService {
 		const recipientUser = await this.prisma.user.findFirst({
 			where: { id: recipientId },
 		});
-		console.log('user: ', user);
-		console.log('rec : ', recipientUser);
+	
 		if (!user || !recipientUser) {
 			throw new HttpException('User Not Found!', HttpStatus.BAD_REQUEST);
 		}

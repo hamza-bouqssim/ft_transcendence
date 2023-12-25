@@ -80,7 +80,6 @@ const Header = () => {
 			ToastSuccess("Logout succeffuly");
 		} catch (err) {
 			ToastError("failed to logout");
-			console.log(err);
 		}
 	};
 

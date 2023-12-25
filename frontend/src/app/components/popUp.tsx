@@ -5,9 +5,7 @@ import { useState } from "react";
 type PopUpProps = {
   setShow: (show: boolean) => void;
 };
-// const deleting = async () => {
-// 	await deleteAccount().then((res) => console.log(res));
-// }
+
 const PopUp = ({ setShow }: PopUpProps) => {
   const router = useRouter();
   const [deleting, setDeleting] = useState(false);

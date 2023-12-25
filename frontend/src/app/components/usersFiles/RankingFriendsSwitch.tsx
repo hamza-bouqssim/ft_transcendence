@@ -18,7 +18,6 @@ const RankingFriendsSwitch = () => {
     const [clickedButton, setClickedButton] = useState('user');
     const [showuser, setShowUser] = useState(true);
     const [userData, setUserData] = useState<UsersTypes | null>(null);
-    console.log("tes");
 
     const _showRank = () => {
       setShowRank(true);
@@ -98,7 +97,6 @@ const RankingFriendsSwitch = () => {
       dispatch(fetchUserInfo(id_user))
         .unwrap()
         .then((data: any) => {
-          console.log("API Response:", data.data);
     
           // Assuming you want to create a new object with display_name and username
           const modifiedUserData: UsersTypes = {
@@ -116,7 +114,6 @@ const RankingFriendsSwitch = () => {
         .catch((err: any) => console.log(err));
     }, [id, dispatch]);
 
-    console.log("user hereeee->", userData?.display_name);
   
   return (
     <div className='flex flex-col items-center gap-2 pt-5 pb-10 bg-white w-full h-full rounded-[70px] overflow-hidden'>

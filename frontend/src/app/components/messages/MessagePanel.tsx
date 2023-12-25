@@ -17,7 +17,6 @@ const MessagePanel = () => {
 
         const [updateRome,setUpdateRome] = useState<boolean>(false)
         const pathname = usePathname()
-        console.log(pathname)
      
     return (
         <div className="p-2 md:p-6   h-full flex items-center w-full justify-between"> 

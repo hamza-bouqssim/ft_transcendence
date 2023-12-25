@@ -13,7 +13,6 @@ const PlayMode = () => {
 	const dispatch= useDispatch<AppDispatch>();
 	useEffect(()=>{
 		socket.on('Ingame', (data : any)=>{
-			console.log("ingame hereeeeeeeee");
 			dispatch(fetchUsersThunk())
 			dispatch(fetchGetAllFriendsThunk());
 	  

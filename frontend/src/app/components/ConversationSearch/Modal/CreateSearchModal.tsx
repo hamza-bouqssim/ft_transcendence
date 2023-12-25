@@ -55,7 +55,6 @@ type props = {
                 });
                 if (response.ok) {
                     const data = await response.json();
-                    console.log("data here-->", data);
                     setSearchResults(data);
                 }
             } catch (error) {
@@ -81,7 +80,6 @@ type props = {
 
         const { current } = ref;
         if(current === e.target){
-            console.log('close Modal');
         }
     };
     const updatePage = (elem : ConversationTypes) =>{

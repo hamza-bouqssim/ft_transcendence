@@ -75,7 +75,6 @@ const NotificationComponent = () => {
       }
 
       const handleClickAcceptPLay = async (id : string) =>{
-        console.log("plllaaayyy-->", id);
         try {
          
             await dispatch(fetchAcceptRequestPlay(id));
@@ -100,7 +99,6 @@ const NotificationComponent = () => {
       }
 
       const deleteNotification = async (id : string) =>{
-        console.log("delete notif-->", id);
         try{
             await dispatch(fetchdeleteNotification(id));
             ToastSuccess("delete notification Succefully !");

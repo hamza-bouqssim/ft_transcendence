@@ -47,7 +47,6 @@ export const getAllMembers = createAsyncThunk('members/getAllMembers', async (ro
 
 export const quitMember = createAsyncThunk('members/quitMember', async (roomId: string, { rejectWithValue }) => {
   try {
-    console.log(roomId)
     const response = await quitRoom(roomId);
     return response.data.data;
   } catch (error : any) {
@@ -124,22 +123,7 @@ const membersSlice = createSlice({
         state.status = 'failed';
         state.error = action.payload;
       })
-      // .addCase(banMembers.pending, (state: any) => {
-      //   state.status = 'loading';
-      // })
-      // .addCase(banMembers.fulfilled, (state: any, action: PayloadAction<Member[]>) => {
-      //   state.status = 'succeeded';
-      //   console.log(action.payload)
-      //   state.members = state.members.map((member) => ({
-      //     ...member,
-      //     Status: member.user_id === action.payload ? 'Ban' : member.Status,
-      //   }));
-      // })
-      // .addCase(banMembers.rejected, (state: any, action: PayloadAction<string>) => {
-      //   state.status = 'failed';
-      //   state.error = action.payload;
-      // })
-      
+    
   },
 });
 

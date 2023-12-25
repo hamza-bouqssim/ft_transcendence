@@ -55,7 +55,6 @@ const LoginForm = () => {
 		}
 	};
 
-	console.log("sinin here")
 	return (
 		<div className="custom-shape absolute transition-all duration-700 ease-in-out sm:left-[40%] md:bg-white md:px-8 md:py-8">
 			     

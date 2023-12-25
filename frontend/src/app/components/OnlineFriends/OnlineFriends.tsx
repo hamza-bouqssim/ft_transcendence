@@ -127,8 +127,7 @@ const OnlineFriends = () => {
 							}
 						};
 						const handlePLayingRequest = async (display_name: string) => {
-							console.log("elem-->", elem);
-							console.log("display----->", display_name);
+						
 							try {
 								const response = await dispatch(
 									fetchSendRequestPLay(display_name),

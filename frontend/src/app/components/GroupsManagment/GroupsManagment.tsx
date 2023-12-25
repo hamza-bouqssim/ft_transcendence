@@ -31,7 +31,6 @@ const GroupsManagement = () => {
     setRoomsData(rooms)
   },[rooms])
 
-  console.log("dasdsadasdasdasdsadsasa")
 
   // useEffect(() => {
   //   // Sort the rooms when the data changes

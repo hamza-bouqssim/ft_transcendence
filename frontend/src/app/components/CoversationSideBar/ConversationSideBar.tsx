@@ -34,7 +34,6 @@ const CoversationSideBar = () => {
 	const [show, setShow] = useState<any>(false);
 	const dispatch = useDispatch<AppDispatch>();
 	const { request, status, error, countRequest  } = useSelector((state:any) => state.request);
-	console.log("count pend here", countRequest);
 	useEffect(()=>{
 		dispatch(fetchNumberPending());
 	},[dispatch]);

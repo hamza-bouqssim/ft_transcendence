@@ -47,7 +47,6 @@ export class GameController {
 
 			res.status(200).json(modifiedHistory);
 		} catch (error) {
-			console.log(error);
 			return {};
 		}
 	}
@@ -65,7 +64,6 @@ export class GameController {
 			}));
 			return modifiedRank;
 		} catch (error) {
-			console.log(error);
 			return {};
 		}
 	}
@@ -77,20 +75,9 @@ export class GameController {
 			const results = await this.gameService.getResult(request.userId);
 			return res.status(200).json(results);
 		} catch (error) {
-			console.log(error);
 			return {};
 		}
 	}
 
-	// @Post('test')
-	// async test(@Body() body : any){
-	// 	try{
-	// 		const state = await this.gameService.getStateGame(body.userId);
-	// 		return await this.gameService.updateStateGame(state.win,state.lose,state.totalMatch,body.userId,body.rating)
-	// 	}
-	// 	catch(error){
-	// 		console.log(error);
-	// 		return {};
-	// 	}
-	// }
+	
 }

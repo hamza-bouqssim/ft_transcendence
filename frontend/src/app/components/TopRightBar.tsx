@@ -56,7 +56,6 @@ const TopRightBar = (props: Change) => {
 				}));
 			})
 			.catch((err) => {
-				console.log(err);
 			});
 	}, [setUserdata, dispatch]);
 	const router = useRouter();
@@ -78,7 +77,6 @@ const TopRightBar = (props: Change) => {
 	const [rotate, setRotate] = useState<boolean>(false);
 
 	const handleDocumentClick = (event: any) => {
-		console.log(notfication);
 		if (menuRef.current && !menuRef.current.contains(event.target)) {
 			setNotefication(false);
 		}
@@ -160,7 +158,6 @@ const TopRightBar = (props: Change) => {
 						}`}
 						onClick={() => {
 							setRotate(!rotate);
-							console.log("from click ");
 						}}
 					/>
 

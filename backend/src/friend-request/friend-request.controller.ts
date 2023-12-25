@@ -49,7 +49,6 @@ export class FriendRequestController {
     @Post('accept_request_play')
     async acceptRequestToPlay(@Body() request: {requestId: string}, @Req() req){
       const user = req.user;
-      console.log("hnaa-->", request.requestId);
 
       return this.friendshipService.acceptRequestToPlay(request.requestId, user);
 

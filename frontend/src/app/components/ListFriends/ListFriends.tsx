@@ -147,7 +147,6 @@ const ListFriends = () => {
 					};
 
 					const handlePLayingRequest = async (display_name: string) => {
-						console.log("display_name here-->", display_name);
 						try {
 							const response = await dispatch(
 								fetchSendRequestPLay(display_name),

@@ -56,7 +56,6 @@ const MessageContainerRoom = () => {
       scrollRef.current?.scrollIntoView()
     },[Message])
 
-    console.log(Message)
     return (
         
         <>

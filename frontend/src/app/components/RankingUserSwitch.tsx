@@ -49,7 +49,6 @@ const RankingUserSwitch = ({
 				const response = await getRanking();
 				setPlayers(response.data);
 			} catch (error) {
-				console.log("Error fetching match history:", error);
 			}
 		};
 

@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { GameGateway, KeyEventPayload } from '../gateway/game.gateway';
 import {
 	Bodies,
@@ -540,7 +541,6 @@ export class PongGame {
 
 	updateBallVelocity() {
 		// Limit Velocity Value
-		console.log('Before velocity update:', this.currentBallVelocity.y);
 
 		const xVelocity = this.currentBallVelocity.x;
 
@@ -566,7 +566,6 @@ export class PongGame {
 			'setBallVelocity',
 		);
 
-		console.log('After velocity update:', this.currentBallVelocity.y);
 	}
 
 	emitScore() {
@@ -635,8 +634,7 @@ export class PongGame {
 
 	handleClearGame() {
 		const displayBodies = (str: string) => {
-			console.log(str);
-			for (let body of this.engine.world.bodies) console.log(body);
+			for (let body of this.engine.world.bodies) ;
 		};
 
 		// displayBodies('before');
@@ -652,13 +650,11 @@ export class PongGame {
 
 		// Remove Obstacles For Map 1 && 2
 		if (this.mapIndex === 1) {
-			console.log('index 1 chosen');
 			Composite.remove(this.engine.world, this.topLeftObstacle);
 			Composite.remove(this.engine.world, this.topRightObstacle);
 			Composite.remove(this.engine.world, this.bottomLeftObstacle);
 			Composite.remove(this.engine.world, this.bottomRightObstacle);
 		} else if (this.mapIndex === 2) {
-			console.log('index 1 chosen');
 			Composite.remove(this.engine.world, this.verticalObstacle1);
 			Composite.remove(this.engine.world, this.verticalObstacle2);
 			Composite.remove(this.engine.world, this.verticalObstacle3);

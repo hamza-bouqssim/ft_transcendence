@@ -136,7 +136,6 @@ export class GameService {
 			);
 			return history;
 		} catch (error) {
-			console.log(error);
 		}
 	}
 
@@ -283,7 +282,6 @@ export class GameService {
 	}
 
 	convertDuration(date: number): string {
-		console.log('date', date);
 
 		const hours = Math.floor(date / 3600000);
 		const minutes = Math.floor((date % 3600000) / 60000);

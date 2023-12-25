@@ -70,7 +70,6 @@ const CreateConversationModal: FC<props> = ({ setShow }) => {
 
         const { current } = ref;
         if(current === e.target){
-            console.log('close Modal');
         }
     };
    

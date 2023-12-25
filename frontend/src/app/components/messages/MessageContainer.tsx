@@ -73,8 +73,7 @@ const MessageContainer = () => {
       const regex = new RegExp(`.{1,${lineLength}}`, 'g');
       return content.match(regex) || [];
     };
-    // console.log("sender here-->", messages.participent.sender.id);
-    // console.log("recipient here-->", messages.participent.recipient);
+  
     const debloqueFromPanel  = async () =>{
         let user : User | undefined;
         if( channel && channel?.sender.id === Userdata?.id)

@@ -27,7 +27,6 @@ export const MemberUser: React.FC<MemberUserProps> = ({ idUserAdd, setIdUserAdd 
   useEffect(() => {
     dispatch(fetchGetAllFriendsThunk());
   }, [dispatch]);
-    console.log(friends)
     const handleAddUser = (userId: string) => {
       setIdUserAdd((prevIds:any) => [...prevIds, userId]);
     };

@@ -70,7 +70,6 @@ const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 					setUserInfo(response.data);
 				}
 			} catch (error) {
-				console.log("Error fetching user information:", error);
 			}
 		};
 
@@ -83,14 +82,12 @@ const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 				const response = await getRanking();
 				setPlayers(response.data);
 			} catch (error) {
-				console.log("Error fetching match history:", error);
 			}
 		};
 
 		fetchGameStates();
 	}, [Userdata?.id]);
 	const { friends, status, error } = useSelector((state: any) => state.friends);
-	console.log("friends here-->", friends);
 	const { users, Userstatus, Usererror } = useSelector(
 		(state: any) => state.users,
 	);

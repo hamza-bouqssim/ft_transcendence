@@ -62,7 +62,6 @@ const OnlineGame = ({ mapIndex }: any) => {
 	}, []);
 
 	useEffect(() => {
-		console.log("online-game-score-useffect");
 		window.addEventListener("popstate", () => {
 			router.push("/dashboard/game/", { scroll: false });
 		});
@@ -70,7 +69,6 @@ const OnlineGame = ({ mapIndex }: any) => {
 			router.push("/dashboard/game/", { scroll: false });
 			return;
 		}
-		// window.addEventListener("offline", () => console.log("rak offline a sat!"));
 		const updateScoreListener = (playersScore: any) => {
 			setScore({
 				...score,
@@ -83,12 +81,9 @@ const OnlineGame = ({ mapIndex }: any) => {
 	}, []);
 
 	useEffect(() => {
-		console.log("online-game-score-useffect2");
 
 		const handleLaunchGame = () => {
-			console.log("from lauch game listern!!!!!!!!!!!!!!!!!!");
 			if (!pongRef.current) {
-				console.log("Create game!");
 				pongRef.current = new PongGame(
 					parentCanvasRef.current!,
 					mapIndex,
@@ -96,7 +91,6 @@ const OnlineGame = ({ mapIndex }: any) => {
 					gameSocket,
 				);
 			}
-			console.log("from lauch game listern");
 		};
 
 		const handleGameIsFinished = (payload: { status: string }) => {
@@ -109,14 +103,10 @@ const OnlineGame = ({ mapIndex }: any) => {
 			gameSocket.emit("launchGameRequest");
 			setStartGame((prev: any) => !prev);
 		}, 3000);
-		console.log("setup launchGame event!");
-		console.log("setup gameIsFinished event!");
 		gameSocket.on("launchGame", handleLaunchGame);
 		gameSocket.on("gameIsFinished", handleGameIsFinished);
 
 		return () => {
-			console.log("remove launchGame event!");
-			console.log("remove gameIsFinished event!");
 			gameSocket.off("launchGame", handleLaunchGame);
 			gameSocket.off("gameIsFinished", handleGameIsFinished);
 			pongRef.current?.clear();
