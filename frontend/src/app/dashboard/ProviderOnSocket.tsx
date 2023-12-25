@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../store';
 import { socketContext } from '../utils/context/socketContext';
 import { useRouter } from 'next/navigation';
+import { fetchGetRequestsThunk } from '../store/requestsSlice';
 
 
 const ProviderOnSocket = () => {
@@ -24,6 +25,8 @@ const ProviderOnSocket = () => {
           dispatch(fetchNumberPending());
           dispatch(fetchNotificationThunk());
           dispatch(fetchCountNotification());
+          dispatch(fetchGetRequestsThunk())
+
         });
         socket.on("AcceptPLayNotification", (payload: any) => {
 					if (payload.accept) {
@@ -37,6 +40,8 @@ const ProviderOnSocket = () => {
           dispatch(fetchNumberPending());
           dispatch(fetchCountNotification());
           dispatch(fetchNotificationThunk());
+          dispatch(fetchGetRequestsThunk())
+
     
     
               });
@@ -53,11 +58,16 @@ const ProviderOnSocket = () => {
           dispatch(fetchNumberPending());
           dispatch(fetchNotificationThunk());
           dispatch(fetchCountNotification());
+          dispatch(fetchGetRequestsThunk())
+
     
         })
         socket.on('deleteNOtification', (data : any)=>{
           dispatch(fetchNotificationThunk());
           dispatch(fetchCountNotification());
+        })
+        socket.on('deleteFriendship', (data : any)=>{
+          dispatch(fetchGetAllFriendsThunk());
         })
        
           return () => {
@@ -68,6 +78,7 @@ const ProviderOnSocket = () => {
             socket.off('AcceptPLayNotification');
             socket.off('RefusePLayNotification');
             socket.off('deleteNOtification');
+            socket.off('deleteFriendship');
     
     
           };

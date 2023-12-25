@@ -60,7 +60,6 @@ export class ConversationsService  {
       this.eventEmitter.emit('createConversation.created', {
         conversation
       });
-      // this.userService.notificationMessage( conversation., messages.participents.recipientId);
 
       return {message : 'Conversation create succefully', conversation}
 
@@ -278,7 +277,7 @@ async findConversationUsers(user : any, _display_name : string, message : string
     },
   });
 
-  await this.prisma.message.create({
+  const messageCreate= await this.prisma.message.create({
     data: {
       content : message,
       sender: {
@@ -297,6 +296,16 @@ async findConversationUsers(user : any, _display_name : string, message : string
         },
       },
     },
+  });
+
+  await this.prisma.chatParticipents.update({
+    where: { id: chat.id },
+    data: {
+      lastMessageId: messageCreate.id,
+    },
+  });
+  this.eventEmitter.emit('createConversation.created', {
+    chat
   });
   return chat;
 }

@@ -15,6 +15,7 @@ import { fetchMessagesThunk } from "@/app/store/messageSlice";
 import { ConversationTypes, messageTypes } from "@/app/utils/types";
 import { fetchCountNotification, fetchNotificationThunk } from "@/app/store/notificationSlice";
 import { useRouter } from "next/navigation";
+import { fetchGetRequestsThunk } from "@/app/store/requestsSlice";
 
 const ConversationChannelPagechat = () => { 
   const { updateChannel, channel } = useContext(socketContext);
@@ -32,6 +33,8 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchNumberPending());
       dispatch(fetchNotificationThunk());
       dispatch(fetchCountNotification());
+      dispatch(fetchGetRequestsThunk())
+
 
 
     });
@@ -40,6 +43,8 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchNumberPending());
       dispatch(fetchCountNotification());
       dispatch(fetchNotificationThunk());
+      dispatch(fetchGetRequestsThunk())
+
 
 
 		  });
@@ -57,6 +62,8 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchNumberPending());
       dispatch(fetchNotificationThunk());
       dispatch(fetchCountNotification());
+      dispatch(fetchGetRequestsThunk());
+
 
     })
     socket.on('deleteNOtification', (data : any)=>{

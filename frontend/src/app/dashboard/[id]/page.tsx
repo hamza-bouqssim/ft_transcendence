@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/app/store";
 import { fetchBlockFriendThunk, fetchBlocksThunk, fetchDebloqueUserThunk } from '@/app/store/blockSlice';
 import { toast } from 'react-toastify';
-import { fetchGetRequestThunk, fetchRequestThunk } from '@/app/store/requestSlice';
+import { fetchAcceptFriendRequestThunk, fetchGetRequestThunk, fetchRequestThunk } from '@/app/store/requestSlice';
 import AchievementsList from '@/app/components/AchievementsList';
 import { HistoryMatchesType, ResultsType, UserInfoType } from '../Imports';
 import { fetchUsersThunk } from '@/app/store/usersSlice';
@@ -94,7 +94,6 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 			display_name: userinfo?.display_name, // Use the display_name from userinfo
 			message: data.message, // Use the message from the input field
 		  }));
-		  console.log("res here-->", res);
 
 		  if (res.payload && typeof res.payload === 'object') {
 			
@@ -222,8 +221,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 		const { friends, status, error } = useSelector((state: any) => state.friends);
 		const {Userdata} = useContext(socketContext);
 
-		console.log("request here-->", requests);
-		console.log("friends--<", friends);
+		
    
 		useEffect(() => {
 		  dispatch(fetchGetRequestsThunk())
@@ -254,12 +252,18 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 					}
 				}
 		}
-		const isRequestPending = requests.some((request: any) => {
-			return (
-			  (request.user_id === params.id && request.friend_id === Userdata?.id) ||
-			  (request.user_id === Userdata?.id && request.friend_id === params.id)
-			);
-		  });
+		
+		  const handleClickAcceptRequest = async (id : string) => {
+			try {
+			 
+			  await dispatch(fetchAcceptFriendRequestThunk(id));
+			  ToastSuccess("You are accepting the request !");
+	
+			} catch (error) {
+			  ToastError(`Error accepting friend request: ${error}`);
+	
+			}
+		  };
 
 	  
 
@@ -278,17 +282,24 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 								priority={true}
 							/>
 							<div className="align-center absolute bottom-5 left-10 flex items-center justify-center gap-4">
-							{isRequestPending ? (
-                    			<button className="h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover] hover:duration-300"
-                      				>
+							{requests.some((request: any) => request.user_id === Userdata?.id && request.friend_id === params.id) ? (
+									<button className="h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover] hover:duration-300">
 										Pending Request
-								</button>
-                  				) : (
-                      			<button className="h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover] hover:duration-300" onClick={() => sendRequest_handle()}> 
+									</button>
+							) :requests.some((request: any) => request.user_id === params.id && request.friend_id === Userdata?.id)? (
+									<button className="h-12 rounded-2xl bg-[--green-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--green-hover] hover:duration-300">
+										Respond to Request
+									</button>
+							) :friends.some((friend: any) => friend.id === params.id) ? (
+									<button className="h-12 rounded-2xl bg-[--gray-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--gray-hover] hover:duration-300" disabled>
+										Friends
+									</button>
+							) : (
+									<button className="h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover] hover:duration-300" onClick={() => sendRequest_handle()}> 
 										Send Request
-        						</button>
-                  					)}
-										<button onKeyPress={handleEnter}
+									</button>
+							)}
+											<button onKeyPress={handleEnter}
 											className="hover:duration- h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover]"
 											onClick={() => setShowMessageBlock(true)}
 										>

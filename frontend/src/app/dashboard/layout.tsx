@@ -15,7 +15,7 @@ import { Socket } from "socket.io-client";
 import { usePathname } from "next/navigation";
 import { ConversationTypes,  User } from "../utils/types";
 import { Group } from "three";
-import ProviderOnSocket from "./ProviderOnSocket.tsx";
+import ProviderOnSocket from "./ProviderOnSocket";
 import { ToastContainer, toast } from 'react-toastify';
 import { ChangeContext } from "./game/utils/data";
 
