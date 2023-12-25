@@ -51,7 +51,6 @@ const MessageContainerRoom = () => {
       }
     }, [channel?.id]);
   
-   
     useEffect(()=>{
       scrollRef.current?.scrollIntoView()
     },[Message])

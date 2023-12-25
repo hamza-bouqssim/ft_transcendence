@@ -10,12 +10,15 @@ import NotificationReducer from './notificationSlice';
 import memberReducer from './memberSlice';
 import UsersAuthReducer from './AuthSlice';
 import messagesUnreadReducer from './UnreadMessages';
+import requestsSlice from './requestsSlice';
+
 
 export const store = configureStore({
   reducer: {
     conversations: conversationReducer,
     messages: messageReducer,
     request : requestReducer,
+    requests : requestsSlice,
     friends : friendsReducer,
     friendsBlock : friendsBlockReducer,
     users : UsersReducer,

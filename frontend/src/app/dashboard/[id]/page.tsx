@@ -1,7 +1,7 @@
 "use client";
 
-import { getMatchHistory, getStates, getUserInfos} from '@/app/utils/api';
-import { useState, useEffect } from 'react';
+import { SendRequest, getMatchHistory, getStates, getUserInfos} from '@/app/utils/api';
+import { useState, useEffect, useContext } from 'react';
 import Boxes from '@/app/components/Boxes';
 import HistoryMatches from '@/app/components/HistoryMatches';
 import Image from 'next/image';
@@ -11,15 +11,19 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/app/store";
 import { fetchBlockFriendThunk, fetchBlocksThunk, fetchDebloqueUserThunk } from '@/app/store/blockSlice';
 import { toast } from 'react-toastify';
-import { fetchRequestThunk } from '@/app/store/requestSlice';
+import { fetchGetRequestThunk, fetchRequestThunk } from '@/app/store/requestSlice';
 import AchievementsList from '@/app/components/AchievementsList';
 import { HistoryMatchesType, ResultsType, UserInfoType } from '../Imports';
+import { fetchUsersThunk } from '@/app/store/usersSlice';
+import { User } from '@/app/utils/types';
+import { fetchGetAllFriendsThunk } from '@/app/store/friendsSlice';
+import { socketContext } from '@/app/utils/context/socketContext';
+import { fetchGetRequestsThunk } from '@/app/store/requestsSlice';
 
 const Dashboard = ({ params }: { params: { id: string } }) => {
 	
 	
 	const { friendsBlock , fstatus, ferror } = useSelector((state:any) => state.friendsBlock);
-	const { request, status, error } = useSelector((state:any) => state.request);
 	const dispatch = useDispatch<AppDispatch>();
 
 	const [results, setResults] = useState<ResultsType>();
@@ -50,6 +54,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 		draggable: true,
 	});
 	};
+	console.log("dashboard");
 	const handleUnblockButtonClick = async () => {
 		try {
 			const res = await dispatch(fetchDebloqueUserThunk(params.id));
@@ -109,11 +114,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 			dispatch(fetchBlocksThunk());
 		}, [dispatch]);
 
-		//========> IF THE REQUEST CREATED CHANGE BUTTON  [SEND REQUEST] TO [PENDING REQUEST]
-		useEffect(() => {
-			const friendRequestExists = request.some((friend: any) => friend.friendId === params.id);
-			setSendReq(!friendRequestExists);
-		}, [request, params.id]);
+		
 
 		////========> IF THE USER EXIST IN THE BLOCK LIST DISPLAY [UNBLOCK] BUTTON, IF NOT EXIST DISPLAY [BLOCK]
 		useEffect(() => {
@@ -168,6 +169,57 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 			fetchGameStates();
 		}, [params.id]);
 
+		//send request 
+		const { users, Userstatus, Usererror } = useSelector(
+			(state: any) => state.users,
+		);
+		useEffect(() => {
+			dispatch(fetchUsersThunk());
+		}, [dispatch]);
+
+		const { requests, statusReq, errorReq } = useSelector((state:any) => state.requests);
+		const { friends, status, error } = useSelector((state: any) => state.friends);
+		const {Userdata} = useContext(socketContext);
+
+		console.log("request here-->", requests);
+		console.log("friends--<", friends);
+   
+		useEffect(() => {
+		  dispatch(fetchGetRequestsThunk())
+		  dispatch(fetchGetAllFriendsThunk());
+
+		}, [dispatch]);
+	 
+		const sendRequest_handle =  async () =>{
+			const userIdToFind = params.id;
+
+    			const foundUser = users.find((user : User) => user.id === userIdToFind);
+				if(foundUser){
+					try{
+
+						const response = await SendRequest(foundUser.display_name);
+						
+						if (response.data.success) {
+							const SuccessMessage = response.data.response.message;
+							ToastSuccess(`${SuccessMessage}`);
+						  } else {
+							ToastError(`Error:.... `);
+						
+						  }
+					
+					} catch (err: any) {
+					  ToastError(`Error: Request alrighdy sent..!`);
+		  
+					}
+				}
+		}
+		const isRequestPending = requests.some((request: any) => {
+			return (
+			  (request.user_id === params.id && request.friend_id === Userdata?.id) ||
+			  (request.user_id === Userdata?.id && request.friend_id === params.id)
+			);
+		  });
+
 	  
 
 	return (
@@ -185,29 +237,22 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 								priority={true}
 							/>
 							<div className="align-center absolute bottom-5 left-10 flex items-center justify-center gap-4">
-								{_switch ? (
-									<>
-										{sendReq ? (
-											<>
-												<button className="h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover] hover:duration-300">
-													Send Request
-												</button>
-											</>
-										) : (
-											<>
-												<button className="h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover] hover:duration-300">
-													Pending Request
-												</button>
-											</>
-										)}
+							{isRequestPending ? (
+                    			<button className="h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover] hover:duration-300"
+                      				>
+										Pending Request
+								</button>
+                  				) : (
+                      			<button className="h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover] hover:duration-300" onClick={() => sendRequest_handle()}> 
+										Send Request
+        						</button>
+                  					)}
 										<button
 											className="hover:duration- h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover]"
 											onClick={() => setShowMessageBlock(true)}
 										>
 											Send Message
 										</button>
-									</>
-								) : null}
 
 								{friendsBlock.some((friend: any) => friend.id === params.id) ? (
 									<button

@@ -68,6 +68,7 @@ const FriendsBloque = () =>{
       const handleMenuClick = (friendId: string) => {
         setOpenMenuId(openMenuId === friendId ? null : friendId);
     };
+    
     return (
         <Conversation>
          

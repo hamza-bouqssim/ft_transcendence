@@ -39,7 +39,7 @@ const SendRequest  = () => {
 	  };
            
     const dispatch = useDispatch<AppDispatch>();
-
+console.log("send request");
    
     const { request, status, error } = useSelector((state:any) => state.request);
   

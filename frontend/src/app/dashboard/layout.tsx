@@ -123,6 +123,7 @@ export default function RootLayout({
 						)}
 
 						<ChangeContext.Provider value={changeValues}>
+						<ProviderOnSocket></ProviderOnSocket>
 							<div
 								ref={getChildrenSize}
 								className={`min-h-[${minHeight + 170}px] h-full w-full`}

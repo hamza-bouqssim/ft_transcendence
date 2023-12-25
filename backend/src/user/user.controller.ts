@@ -140,6 +140,12 @@ export class UserController {
 			return res.status(500).json({ message: error });
 		}
 	}
+
+	@Get('all-pending-request')
+	async allPendingRquest(){
+		const all_request = await this.userService.all_pending_request();
+		return all_request; 
+	}
 	@Get('count-pending')
 	@UseGuards(AuthGuard('jwt'))
 	async countPendingRequests(@Req() req) {

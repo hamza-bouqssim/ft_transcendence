@@ -43,6 +43,7 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 	const goBack = () => {
 		updateChannel(null);
 	};
+
 	useEffect(() => {
 		const handleTyping = (typing: any) => {
 			if (typing.userId !== Userdata?.id) {

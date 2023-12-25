@@ -15,6 +15,7 @@ import { AppDispatch } from "@/app/store";
 
 const MessageInputField=() => {
 
+    console.log("input");
     const socket = useContext(socketContext).socket
     const {channel, updateChannel} = useContext(socketContext)
     const [content,setContent] = useState("");

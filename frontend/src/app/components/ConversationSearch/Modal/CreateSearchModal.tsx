@@ -40,7 +40,7 @@ type props = {
     const [searchResults, setSearchResults] = useState<UsersTypes[] | ConversationTypes[]>([]);
 	const router = useRouter();
     const {Userdata} = useContext(socketContext);
-
+    console.log("search");
 
     useEffect(() => {
         // Define a function to fetch search results

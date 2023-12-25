@@ -16,6 +16,7 @@ export type UserCredentialsParams = {
 export type RequestTypes = {
     id : string;
     user : User;
+    friends : User;
 }
 
 export type User = {

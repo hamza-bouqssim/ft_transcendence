@@ -385,18 +385,20 @@ export class UserService {
         const blockedFriends = await this.blockedFriends(senderId);
         return blockedFriends.some((friend) => friend.id === recipientUserId);
       }
-    //   async notificationMessage(chatId : string, userId : string){
-    //     // const notificationMessage = await this.prisma.notificationGlobal.create({
-    //     //     data: {
-    //     //         Sender: { connect: { id: userSender.id } },
-    //     //         recipient: { connect: { id: userRecipient.id } },
-    //     //         content: message,
-    //     //         image_content: userSender.avatar_url,
-    //     //     },
-    //     // });
+ 
 
-
-    //   }
+    async all_pending_request(){
+      const pendingRequests = await this.prisma.friend.findMany({
+        where: {
+          status: 'PENDING',
+        },
+        include: {
+          user: true,
+          friends: true,
+        },
+      });
+      return pendingRequests;
+    }
     async deleteAccount(userId: string) {
         try {
           // Delete related data
