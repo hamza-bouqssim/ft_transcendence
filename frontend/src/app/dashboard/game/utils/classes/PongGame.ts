@@ -655,18 +655,15 @@ class PongGame {
 
 	updateBallVelocity = (): void => {
 		// Limit Velocity Value
-		console.log("Before velocity update:", this.currentBallVelocity.y);
+		// console.log("Before velocity update:", this.currentBallVelocity.y);
 		// console.log("Before velocity update:", this.currentBallVelocity.x);
 		const xVelocity = this.currentBallVelocity.x;
-		
-		// ... rest of your code ...
 
 		if (
 			this.currentBallVelocity.y >= 10 ||
 			(this.currentBallVelocity.y < 0 && this.currentBallVelocity.y >= -10)
 		)
 			return;
-
 		else if (this.lastDirection === "top") {
 			this.currentBallVelocity.y -= this.map(
 				1,
@@ -693,10 +690,11 @@ class PongGame {
 			y: this.currentBallVelocity.y,
 		});
 
-		console.log("After velocity update:", this.currentBallVelocity.y);
+		// console.log("After velocity update:", this.currentBallVelocity.y);
 	};
 
 	moveBotPaddle = (): void => {
+		// possible To Win
 		// Update random position after 3 seconds
 		// this.updatePositionInterval = setInterval(() => {
 		// 	let currentPositionX =
