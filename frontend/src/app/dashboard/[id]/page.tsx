@@ -89,6 +89,9 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 	  const { updateChannel, channel } = useContext(socketContext);
 	const {register, handleSubmit, formState: { errors }} = useForm<CreateConversationParams>();
 	const onSubmit = async  (data : CreateConversationParams) => {
+		if (!data.message.trim()) {
+			return;
+		  }
 	  try{
 		const res = await dispatch(createConversationThunk({
 			display_name: userinfo?.display_name, // Use the display_name from userinfo

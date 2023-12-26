@@ -20,21 +20,12 @@ export const InfoChat = () => {
       }else
         user = channel?.recipient;
     }
-   
-
       return user;
   }
 
 
   return (
-    // <div className='p-20'>
-    //       <div >
-    //         <Image src={fetchDataUser()?.avatar_url as string} className="h-20 w-20 rounded-[50%] bg-black " alt="Description of the image" width={80}   height={80} />
-    //       </div>
-    //       <div className='text-black'>{fetchDataUser()?.display_name}</div>
-
-
-    // </div>
+ 
 										<div className=" flex flex-col items-center justify-center gap-3 overflow-hidden rounded-[20px] p-5 ">
 											
 											<Image
@@ -51,12 +42,12 @@ export const InfoChat = () => {
                         <span className="text-[25px] text-[--purple-color]">
                         @{fetchDataUser()?.username}
 												</span>
-                        <h2 className="text-[20px] text-gray-800">
-												Member PingPong depuis{" "}
-												<span className="text-[25px] text-[--purple-color]">
-                        {fetchDataUser()?.display_name}
-												</span>
-											</h2>
+                        {/* <h2 className="text-[20px] text-gray-800">
+												  Member PingPong depuis{" "}
+												  <span className="text-[25px] text-[--purple-color]">
+                            {fetchDataUser()?.display_name}
+												  </span>
+											  </h2> */}
 										
 										</div>
   )

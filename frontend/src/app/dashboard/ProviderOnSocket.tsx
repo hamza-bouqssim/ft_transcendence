@@ -7,6 +7,8 @@ import { AppDispatch } from '../store';
 import { socketContext } from '../utils/context/socketContext';
 import { useRouter } from 'next/navigation';
 import { fetchGetRequestsThunk } from '../store/requestsSlice';
+import { fetchBlocksThunk } from '../store/blockSlice';
+import { fetchMessagesThunk } from '../store/messageSlice';
 
 
 const ProviderOnSocket = () => {
@@ -36,7 +38,6 @@ const ProviderOnSocket = () => {
 					dispatch(fetchNotificationThunk());
 				});
         socket.on('newFriendRequest', (data : any) => {
-          console.log("enter here");
           dispatch(fetchGetRequestThunk());
           dispatch(fetchNumberPending());
           dispatch(fetchCountNotification());
@@ -45,7 +46,28 @@ const ProviderOnSocket = () => {
 
     
     
-              });
+         });
+         socket.on('blockNotification', (data : any) =>{
+          dispatch(fetchBlocksThunk());
+          dispatch(fetchGetAllFriendsThunk());
+          dispatch(fetchGetRequestsThunk());
+    
+    
+          if (channel && channel.id) {
+            dispatch(fetchMessagesThunk(channel.id));
+          }
+          
+        })
+        socket.on('debloqueNotification', (data : any)=>{
+          dispatch(fetchBlocksThunk());
+          dispatch(fetchGetAllFriendsThunk());
+          dispatch(fetchGetRequestsThunk())
+          if(channel != null)
+          {
+            dispatch(fetchMessagesThunk(channel.id));
+          }
+    
+        })
         socket.on('newRequestToPlay', (data : any)=>{
           dispatch(fetchCountNotification());
           dispatch(fetchNotificationThunk());
@@ -76,6 +98,8 @@ const ProviderOnSocket = () => {
             socket.off('newFriendRequest');
             socket.off('RefuseNotification');     
             socket.off('newRequestToPlay');
+            socket.off('blockNotification');
+            socket.off('debloqueNotification');
             socket.off('AcceptPLayNotification');
             socket.off('RefusePLayNotification');
             socket.off('deleteNOtification');
@@ -84,7 +108,7 @@ const ProviderOnSocket = () => {
     
           };
             
-          }, [socket, dispatch, route]);
+          }, [socket, dispatch, route, channel]);
         
   return (
     <div>

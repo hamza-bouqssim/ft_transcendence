@@ -20,7 +20,6 @@ constructor(private  conversationService : ConversationsService , private eventE
     try {
         const user =req.user
         const returnValue = await this.conversationService.createConversations(user,  request.display_name, request.message);
-        console.log("retur here-->", returnValue);
         return res.status(200).json({ success: true, response: returnValue });
     } catch (err) {
         return res.status(401).json({ success: false, message: err.message || 'An unexpected error occurred' });

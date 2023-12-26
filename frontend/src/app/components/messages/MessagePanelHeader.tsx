@@ -19,6 +19,7 @@ import { User, Members, ConversationTypes } from "@/app/utils/types";
 import { updateRooms } from "@/app/store/roomsSlice";
 import { ToastContainer, toast } from "react-toastify";
 import { AppDispatch } from "@/app/store";
+import { fetchUsersThunk } from "@/app/store/usersSlice";
 
 interface MessagePanelHeaderProps {
 	setUpdateRome: (value: boolean) => void;
@@ -97,8 +98,15 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
       });
     }
 	};
+	const { users, Userstatus, Usererror } = useSelector(
+		(state: any) => state.users,
+	);
 
+	useEffect(() => {
+		dispatch(fetchUsersThunk());
+	}, [dispatch]);
 	return (
+		
 		<div className="flex items-center justify-between rounded-full  bg-[#F2F3FD] p-5  text-black">
 			<div className="flex items-center">
 				<FaArrowLeft
