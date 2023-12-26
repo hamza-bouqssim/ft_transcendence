@@ -58,11 +58,9 @@ const InviteField = () => {
             setUserData(data);
           })
           .catch((err:any) => console.log(err));
-      }, );
-    
+      },[] );
 
-
-
+  
 	return (
 		<div className="p-1">
 			{others.map((user) => (

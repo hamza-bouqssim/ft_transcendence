@@ -3,20 +3,20 @@ import { getAllRequests } from "../utils/api";
 import { RequestTypes } from "../utils/types";
 
 
-export interface requestState {
+export interface requestsState {
 	requests: RequestTypes[];
 	status: "success" | "failed" | "idle" | "loading"; // Add 'idle' status
 	error: string | null;
 }
 
-const initialState: requestState = {
+const initialState: requestsState = {
 	requests: [],
 	status: "idle", // Initial status is 'idle'
 	error: null,
 };
 
 
-export const fetchGetRequestsThunk = createAsyncThunk("request/fetchGetRequestThunk",async (_, { rejectWithValue }) => {
+export const fetchGetRequestsThunk = createAsyncThunk("requests/fetchGetRequestsThunk",async (_, { rejectWithValue }) => {
 		
 			const response = await getAllRequests();
 			return response.data;

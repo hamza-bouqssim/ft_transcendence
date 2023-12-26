@@ -77,7 +77,7 @@ export const InfoGroups = () => {
       return () => {
           document.removeEventListener('click', handleDocumentClick);
       };
-  }, [valide,]);
+  }, [valide]);
 
   return (
     <>

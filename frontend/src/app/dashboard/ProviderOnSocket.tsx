@@ -9,6 +9,8 @@ import { useRouter } from 'next/navigation';
 import { fetchGetRequestsThunk } from '../store/requestsSlice';
 import { fetchBlocksThunk } from '../store/blockSlice';
 import { fetchMessagesThunk } from '../store/messageSlice';
+import { useSetAtom } from 'jotai';
+import { OpponentData } from './game/utils/data';
 
 
 const ProviderOnSocket = () => {
@@ -18,6 +20,8 @@ const ProviderOnSocket = () => {
     const socket = useContext(socketContext).socket
 
 	const dispatch= useDispatch<AppDispatch>();
+
+  const setMapIndex = useSetAtom(OpponentData);
 
     useEffect(() => {
         socket.on('AcceptNotification', (data : any) => {
@@ -31,7 +35,13 @@ const ProviderOnSocket = () => {
 
         });
         socket.on("AcceptPLayNotification", (payload: any) => {
+          console.log("accept notifff---------------------------------------------------------------");
 					if (payload.accept) {
+            setMapIndex((prevData) => ({
+              ...prevData,
+              isRotate: true,
+              mapIndex: 0,
+            }));
 						route.push("/dashboard/game/online-game/match-making?mapIndex=0");
 					}
 					dispatch(fetchCountNotification());
@@ -108,7 +118,7 @@ const ProviderOnSocket = () => {
     
           };
             
-          }, [socket, dispatch, route, channel]);
+          }, [socket]);
         
   return (
     <div>

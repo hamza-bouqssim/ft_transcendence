@@ -226,33 +226,33 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 		const { friends, status, error } = useSelector((state: any) => state.friends);
 		const {Userdata} = useContext(socketContext);
 
-		
-   
 
-	 
-		const sendRequest_handle =  async () =>{
+		const sendRequest_handle = async () => {
 			const userIdToFind = params.id;
-
-    			const foundUser = users.find((user : User) => user.id === userIdToFind);
-				if(foundUser){
-					try{
-
-						const response = await SendRequest(foundUser.display_name);
-						
-						if (response.data.success) {
-							const SuccessMessage = response.data.response.message;
-							ToastSuccess(`${SuccessMessage}`);
-						  } else {
-							ToastError(`Error:.... `);
-						
-						  }
-					
-					} catch (err: any) {
-					  ToastError(`Error: Request alrighdy sent..!`);
+			const foundUser = users.find((user: User) => user.id === userIdToFind);
 		  
-					}
+			if (foundUser) {
+		  
+			  try {
+				// Dispatch the fetchRequestThunk action
+				const resultAction = await dispatch(fetchRequestThunk({
+				  display_name: foundUser.display_name,
+				}));
+		  
+				// Access the result of the thunk action
+				if (fetchRequestThunk.fulfilled.match(resultAction)) {
+				  const SuccessMessage = resultAction.payload.response.message;
+				  dispatch(fetchGetRequestsThunk())
+
+				  ToastSuccess(`${SuccessMessage}`);
+				} else {
+				  ToastError(`Error:.... `);
 				}
-		}
+			  } catch (err: any) {
+				ToastError(`Error: Request already sent..!`);
+			  }
+			}
+		  };
 		
 		  const handleClickAcceptRequest = async () => {
 			const matchingRequest = requests.find(

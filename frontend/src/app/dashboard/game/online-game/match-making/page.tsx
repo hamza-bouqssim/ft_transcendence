@@ -16,6 +16,7 @@ const MatchMaking = () => {
 	const mapIndex: string | null = searchParams.get("mapIndex");
 	const router = useRouter();
 	const gameSocket = useGameSocket();
+
 	const checkQueryValue = (): boolean => {
 		if (mapIndex) {
 			const isValidIndex = /^[0-2]$/.test(mapIndex);
@@ -45,9 +46,10 @@ const MatchMaking = () => {
 			});
 		};
 		gameSocket.emit("startGame", {
-			indexMap: mapIndex,
+			indexMap: opponentPlayer.mapIndex,
 		});
 		gameSocket.on("knowOpponent", handleKnowOpponent);
+
 		return () => {
 			gameSocket.off("knowOpponent", handleKnowOpponent);
 			gameSocket.off("redirectUser", handleRedirectUser);

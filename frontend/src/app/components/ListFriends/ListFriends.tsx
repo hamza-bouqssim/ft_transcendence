@@ -155,7 +155,6 @@ const ListFriends = () => {
 								ToastError(`Error: ${errorMessage}`);
 							} else {
 								ToastSuccess("PLay request sent successfully");
-								router.push(`/dashboard/game/online-game/maps`);
 							}
 						} catch (err: any) {
 							ToastError(
