@@ -47,8 +47,10 @@ const OnlineGame = ({ mapIndex }: any) => {
 		width: 560,
 		height: 836,
 	});
-
+	console.log("InviteField")
 	useEffect(() => {
+		
+
 		const parentWidth: number = parentCanvasRef.current?.clientWidth!;
 		const parentHeight: number = parentCanvasRef.current?.clientHeight!;
 

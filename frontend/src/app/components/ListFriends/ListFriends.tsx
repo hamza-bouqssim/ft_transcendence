@@ -76,6 +76,7 @@ const ListFriends = () => {
 	);
 
 	useEffect(() => {
+		
 		dispatch(fetchGetAllFriendsThunk());
 		dispatch(fetchUsersThunk());
 	}, [dispatch]);

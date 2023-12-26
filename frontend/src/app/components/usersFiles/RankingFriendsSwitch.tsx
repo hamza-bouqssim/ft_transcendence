@@ -93,6 +93,8 @@ const RankingFriendsSwitch = () => {
     const { id } = useParams();
       
     useEffect(() => {
+      
+
       const id_user = id;
       dispatch(fetchUserInfo(id_user))
         .unwrap()

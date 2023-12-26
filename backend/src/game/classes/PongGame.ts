@@ -633,9 +633,9 @@ export class PongGame {
 	}
 
 	handleClearGame() {
-		const displayBodies = (str: string) => {
-			for (let body of this.engine.world.bodies) ;
-		};
+		// const displayBodies = (str: string) => {
+		// 	for (let body of this.engine.world.bodies) console.log(body);
+		// };
 
 		// displayBodies('before');
 

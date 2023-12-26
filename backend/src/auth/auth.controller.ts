@@ -126,7 +126,6 @@ export class AuthController {
     @UseGuards(AuthGuard('jwt'))
     async isAuthentication( @Req() request, @Res() res,) {
       try {
-        console.log(request.user)
         await this.authService.findUser(request.user.id) 
         return res.status(200).json({ isAuth: true});
       } catch (error) {

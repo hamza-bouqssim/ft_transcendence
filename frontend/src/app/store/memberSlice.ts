@@ -38,6 +38,7 @@ const initialStateMember: MemberState = {
 
 export const getAllMembers = createAsyncThunk('members/getAllMembers', async (roomId: string, { rejectWithValue }) => {
   try {
+    console.log("redaux")
     const response = await getAllMembersApi(roomId);
     return response.data.data;
   } catch (error : any) {
@@ -47,7 +48,17 @@ export const getAllMembers = createAsyncThunk('members/getAllMembers', async (ro
 
 export const quitMember = createAsyncThunk('members/quitMember', async (roomId: string, { rejectWithValue }) => {
   try {
+    console.log(roomId)
     const response = await quitRoom(roomId);
+    return response.data.data;
+  } catch (error : any) {
+    return rejectWithValue(error.message || 'Failed to quit members');
+  }
+});
+export const addMemberToRooms = createAsyncThunk('members/addMemberToRooms', async (memberdata:Memberdata, { rejectWithValue }) => {
+  try {
+    console.log("redaux")
+    const response = await addMemberToRooms(memberdata);
     return response.data.data;
   } catch (error : any) {
     return rejectWithValue(error.message || 'Failed to quit members');
@@ -55,6 +66,7 @@ export const quitMember = createAsyncThunk('members/quitMember', async (roomId: 
 });
 export const makeAdminMember = createAsyncThunk('members/makeAdminMember', async (memberdata:Memberdata, { rejectWithValue }) => {
   try {
+    console.log("redaux")
     const response = await makeAdmin(memberdata.id,memberdata.userId);
     return response.data.data;
   } catch (error : any) {
@@ -64,6 +76,7 @@ export const makeAdminMember = createAsyncThunk('members/makeAdminMember', async
 
 export const makeMember = createAsyncThunk('members/makeMember', async (memberdata:Memberdata, { rejectWithValue }) => {
   try {
+    console.log("redaux")
     const response = await Member(memberdata.id,memberdata.userId);
     return response.data.data;
   } catch (error : any ) {
@@ -72,6 +85,7 @@ export const makeMember = createAsyncThunk('members/makeMember', async (memberda
 });
 export const kickMembers = createAsyncThunk('members/kickMembers', async (memberdata:Memberdata, { rejectWithValue }) => {
   try {
+    console.log("redaux")
     const response = await kickMember(memberdata.id,memberdata.userId);
     return response.data.data;
   } catch (error : any) {
@@ -80,6 +94,7 @@ export const kickMembers = createAsyncThunk('members/kickMembers', async (member
 });
 export const mutMembers = createAsyncThunk('members/mutMembers', async (memberdata:Memberdata, { rejectWithValue }) => {
   try {
+    console.log("redaux")
     const response = await mutMember(memberdata.id,memberdata.userId);
     return response.data.data;
   } catch (error : any) {
@@ -88,6 +103,7 @@ export const mutMembers = createAsyncThunk('members/mutMembers', async (memberda
 });
 export const banMembers = createAsyncThunk('members/banMembers', async (memberdata:Memberdata, { rejectWithValue }) => {
   try {
+    console.log("redaux")
     const response = await banMember(memberdata.id, memberdata.userId);
     return response.data.data;
   } catch (error:any) {
@@ -123,7 +139,22 @@ const membersSlice = createSlice({
         state.status = 'failed';
         state.error = action.payload;
       })
-    
+      // .addCase(banMembers.pending, (state: any) => {
+      //   state.status = 'loading';
+      // })
+      // .addCase(banMembers.fulfilled, (state: any, action: PayloadAction<Member[]>) => {
+      //   state.status = 'succeeded';
+      //   console.log(action.payload)
+      //   state.members = state.members.map((member) => ({
+      //     ...member,
+      //     Status: member.user_id === action.payload ? 'Ban' : member.Status,
+      //   }));
+      // })
+      // .addCase(banMembers.rejected, (state: any, action: PayloadAction<string>) => {
+      //   state.status = 'failed';
+      //   state.error = action.payload;
+      // })
+      
   },
 });
 

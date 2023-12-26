@@ -19,19 +19,21 @@ const initialState: NotificationState = {
 
 
 export const fetchNotificationThunk = createAsyncThunk('notification/fetchNotificationThunk', async (_,{rejectWithValue} ) => {
-    
+  console.log("redaux")
     const response = await getNotification();
     return response.data;
 
 })
 
 export const fetchCountNotification = createAsyncThunk('notificationCount/fetchNotification', async (_,{rejectWithValue})=>{
+  console.log("redaux")
   const response = await getNumberNotification();
   return response.data
 })
 
 
 export const fetchdeleteNotification = createAsyncThunk('notification/delete', async (idNotif : string, { rejectWithValue })=>{ 
+  console.log("redaux")
   const response = await deleteNotification(idNotif);
   return response;
 

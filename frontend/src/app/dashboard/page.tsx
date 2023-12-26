@@ -25,6 +25,8 @@ const Dashboard = () => {
 
 	const [history_match, setHistoryMatch] = useState<HistoryMatchesType[]>([]);
 	useEffect(() => {
+		
+
 		const fetchMatchHistory = async () => {
 			try {
 				if (Userdata?.id) {
@@ -40,6 +42,8 @@ const Dashboard = () => {
 	}, [Userdata?.id]);
 
 	useEffect(() => {
+		
+
 		const fetchGameStates = async () => {
 			try {
 				if (Userdata?.id) {

@@ -89,6 +89,7 @@ const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 	};
 
 	useEffect(() => {
+		
 		const fetchUserInfo = async () => {
 			try {
 				if (userId) {
@@ -103,6 +104,7 @@ const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 	}, [userId]);
 
 	useEffect(() => {
+		
 		const fetchGameStates = async () => {
 			try {
 				const response = await getRanking();

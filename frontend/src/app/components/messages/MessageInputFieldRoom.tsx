@@ -5,9 +5,12 @@ import { LuSendHorizonal } from "react-icons/lu";
 import { CiImageOn } from "react-icons/ci";
 import { socketContext } from "@/app/utils/context/socketContext";
 import {useContext, useEffect,useState}  from "react"
-import { MessageType, messageTypes } from "@/app/utils/types";
+import { BloqueList, MessageType, User, messageTypes } from "@/app/utils/types";
 import {useRouter,usePathname} from 'next/navigation'
 import { useDispatch, useSelector } from 'react-redux';
+import { fetchBlockedUsers, fetchBlocksThunk } from "@/app/store/blockSlice";
+import { AppDispatch } from "@/app/store";
+
 interface Members {
 	id: string;
 	user_id: string;
@@ -35,46 +38,51 @@ interface Member {
   user_id: string; 
   Status: string;  
 }
+export type BloqueListRoom = {
+  id : string;
+  userOne : User;
+  userTwo : User;
+
+}
 const MessageInputFieldRoom: FC<props> = ({setMessage, Message}) => {
     const pathname = usePathname();
     const socket = useContext(socketContext).socket;
     const { channel } = useContext(socketContext);
     const [content, setContent] = useState('');
     const {Userdata} = useContext(socketContext)
+    const dispatch = useDispatch<AppDispatch>();
     const { members, status, error } = useSelector((state:any) => state.member);
-  
+    const { blocked} = useSelector((state:any) => state.friendsBlock);
+    useEffect(() => {
+      dispatch(fetchBlockedUsers())
+    }, [dispatch]);
+    console.log(blocked)
     useEffect(() => {
       const handleOnMessage = (message: any) => {
-        setMessage((prevMessages: messageTypes[]) => [...prevMessages, message]);
-      };
-    
-      if (pathname.includes('chat')) {
-        socket.on('onMessage', handleOnMessage);
-      } else {
-        socket.on('messageRome', handleOnMessage);
-      }
-    
-      return () => {
-        if (pathname.includes('chat')) {
-          socket.off('onMessage', handleOnMessage);
-        } else {
-          socket.off('messageRome', handleOnMessage);
+        const isBlocked = blocked.some(
+          (elem: BloqueListRoom) =>
+            elem.userOne.id === message.senderId || elem.userTwo.id === message.senderId
+        );
+      
+        console.log(isBlocked);
+      
+        if (!isBlocked || message.senderId === Userdata?.id) {
+          setMessage((prevMessages: messageTypes[]) => [...prevMessages, message]);
         }
       };
-    }, [channel?.id, socket, pathname, setMessage]);
+      
+      socket.on('messageRome', handleOnMessage);
+      return () => {
+          socket.off('messageRome', handleOnMessage);
+      };
+    }, [channel?.id, socket]);
 
+    console.log()
   
     const sendMessage = async () => {
         if(!content)
             return
-        if(pathname.includes("chat"))
-        {
-            socket.emit("message.create", { participentsId: channel?.id, content: content });
-        }
-        else
-        {
-            socket.emit("messageRome", { chatRoomId: channel?.id, content: content });
-        }
+      socket.emit("messageRome", { chatRoomId: channel?.id, content: content });
       setContent('');
     };
     const handleEnter =(event:any) => {

@@ -50,6 +50,7 @@ const MessageContainer = () => {
     const scrollRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
+      
       const joinRoom = (id: string) => {
         if (oldId) socket.emit("leaveToRoom", { id: oldId });
         socket.emit("joinToRoom", { id: id });
@@ -64,10 +65,13 @@ const MessageContainer = () => {
           joinRoom(id);
         }
       }
+      
     }, [dispatch, channel, oldId, socket, setOldId]);
     useEffect(() => {
+      
       scrollRef.current?.scrollIntoView();
     }, [messages]);
+    
 
     const breakContentIntoLines = (content : string, lineLength : number) => {
       const regex = new RegExp(`.{1,${lineLength}}`, 'g');

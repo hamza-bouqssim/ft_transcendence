@@ -35,6 +35,7 @@ const CreatGroups: React.FC<CreateGroupsProps> = ({
 	const { updateChannel, channel } = useContext(socketContext);
 	const [idUserAdd, setIdUserAdd] = useState<string[]>([]);
 	const { rooms, status, error } = useSelector((state: any) => state.room);
+	console.log("useState")
 	const handleCreateGroup = () => {
 		if (groupPrivacy === "Protected" && !groupPassword) {
 			toast.error("Password are required for a Protected group.");
