@@ -244,19 +244,22 @@ export class UserService {
         });
       
         const chatRooms = await this.prisma.chatRoom.findMany({
-            where: {
-              AND: [
-                {
-                  name: {
-                    contains: name,
-                  },
+          where: {
+            AND: [
+              {
+                name: {
+                  contains: name,
                 },
-                {
-                  Privacy: "Public",
+              },
+              {
+                Privacy: {
+                  in: ["Public", "Protected"],
                 },
-              ],
-            },
-          });
+              },
+            ],
+          },
+        });
+        
 
           // const blockedUsers = await this.prisma.blockList.findMany({
           //   where: {

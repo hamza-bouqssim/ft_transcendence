@@ -15,7 +15,7 @@ export const InfoChat = () => {
     let user;
     if(pathname.includes("chat"))
     {
-      if(channel?.recipient.display_name === Userdata?.display_name){
+      if(channel?.recipientId === Userdata?.id){
         user = channel?.sender;
       }else
         user = channel?.recipient;
