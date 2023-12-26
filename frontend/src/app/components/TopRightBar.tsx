@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronDown, faBell } from "@fortawesome/free-solid-svg-icons";
+import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { LogoutButton, MenuButton } from "./Buttons";
 import { useEffect, useState, useContext, useRef } from "react";
 import { getAuthUser, getNumberNotification, getlogout } from "../utils/api";
@@ -13,13 +13,9 @@ import { socketContext } from "../utils/context/socketContext";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../store";
 import { fetchCountNotification } from "../store/notificationSlice";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-type Change = {
-	menu: boolean;
-	onClick: any;
-};
-
-const TopRightBar = (props: Change) => {
+const TopRightBar = () => {
 	const dispatch = useDispatch<AppDispatch>();
 	const { notification, status, error, count } = useSelector(
 		(state: any) => state.notification,
@@ -150,17 +146,16 @@ const TopRightBar = (props: Change) => {
 						</span>
 					</div>
 
-					<FontAwesomeIcon
+					<ExpandMoreIcon
 						ref={faChevronDownRef}
-						icon={faChevronDown}
-						className={`transform cursor-pointer text-2xl duration-500 ease-in-out hover:text-[--pink-color] lg:text-3xl ${
+						className={`inline-block transform cursor-pointer text-2xl hover:text-[--pink-color] lg:text-3xl ${
 							rotate ? "rotate-[180deg]" : "rotate-0"
 						}`}
-						onClick={() => {
-							setRotate(!rotate);
+						style={{
+							transition: "transform 0.5s ease-in-out",
 						}}
+						onClick={() => setRotate(!rotate)}
 					/>
-
 					{rotate && (
 						<div
 							ref={subMenuRef}

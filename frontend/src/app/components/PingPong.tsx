@@ -1,10 +1,11 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 const PingPong = (props: any) => {
 	const threeContainer = useRef<HTMLDivElement>(null);
+	const meshes = useRef<THREE.Mesh[]>([]);
 
 	useEffect(() => {
 		const scene: THREE.Scene = new THREE.Scene();
@@ -24,11 +25,13 @@ const PingPong = (props: any) => {
 
 		renderer.setSize(window.innerWidth, window.innerHeight);
 
-		window.addEventListener("resize", () => {
+		const handleResize = () => {
 			camera.aspect = window.innerWidth / window.innerHeight;
 			camera.updateProjectionMatrix();
 			renderer.setSize(window.innerWidth, window.innerHeight);
-		});
+		};
+
+		window.addEventListener("resize", handleResize);
 		threeContainer.current?.appendChild(renderer.domElement);
 
 		const controls: OrbitControls = new OrbitControls(
@@ -49,26 +52,34 @@ const PingPong = (props: any) => {
 		];
 
 		for (let i = 0; i < 200; i++) {
-			const mesh: THREE.Mesh<THREE.SphereGeometry, THREE.MeshStandardMaterial> =
-				new THREE.Mesh(
-					new THREE.SphereGeometry(5, 32, 16),
-					new THREE.MeshStandardMaterial({
-						color: colArr[Math.floor(Math.random() * colArr.length)],
-					}),
-				);
+			const sphereGeometry: THREE.SphereGeometry = new THREE.SphereGeometry(
+				5,
+				32,
+				16,
+			);
+			const mesh: THREE.Mesh = new THREE.Mesh(
+				sphereGeometry,
+				new THREE.MeshStandardMaterial({
+					color: colArr[Math.floor(Math.random() * colArr.length)],
+				}),
+			);
 			scene.add(mesh);
 			mesh.position.set(
 				Math.random() * (max - min + 1) + min,
 				Math.random() * (max - min + 1) + min,
 				Math.random() * (max - min + 1) + min,
 			);
+
+			// Store references to the meshes
+			meshes.current.push(mesh);
 		}
+
 		// Create a directional light
 		const directionalLight: THREE.DirectionalLight = new THREE.DirectionalLight(
 			0xffffff,
 			1,
 		);
-		directionalLight.position.set(0, 10, 4); // Set the position of the light
+		directionalLight.position.set(0, 10, 4);
 		scene.add(directionalLight);
 
 		//Create an ambient light
@@ -81,6 +92,22 @@ const PingPong = (props: any) => {
 			controls.update();
 		};
 		animate();
+
+		return () => {
+			meshes.current.forEach((mesh) => {
+				mesh.geometry.dispose();
+			});
+
+			// Remove meshes from the scene
+			meshes.current.forEach((mesh) => {
+				scene.remove(mesh);
+			});
+			scene.children = [];
+
+			renderer.dispose();
+			controls.dispose();
+			window.removeEventListener("resize", handleResize);
+		};
 	}, []);
 
 	return (
