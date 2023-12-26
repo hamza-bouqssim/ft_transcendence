@@ -115,6 +115,13 @@ export type BloquesTypes = {
 }
 
 
+export type BloqueList = {
+    id : string;
+    userOne : User;
+    userTwo : User;
+}
+
+
 export type MessageType = {
     id: number;
     content: string;

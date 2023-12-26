@@ -116,7 +116,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	async startGame(invite: any) {
 		if (!invite) return;
-		console.log("creaet queue", invite)
 		const idGame = invite.user1.id;
 		invite.state = 'panding'
 		this.emitToUser2InGame(
@@ -206,10 +205,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		// const invite = this.getQueueInvite(client.user.sub);
 		if(+data.indexMap < 0 || +data.indexMap > 2)
 			return
-		console.log("payload", data);
 		const user = await this.gameservice.findUserById(client.user.sub);
 		if (wait || (game && game.status !== 'invite')) {
-			console.log("redirect");
 			client.emit('redirectUser', {
 				display_name: user.display_name,
 			});
@@ -367,18 +364,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		@ConnectedSocket() socket: AuthenticatedSocket,
 	) {
 		const game = this.getQueueGame(socket.user.sub);
-		console.log("try to start game",socket.user,game.launch)
 		if (!game) return;
 		if (
 			game &&
 			!game.launch &&
 			(game.socket1 === socket.id || game.socket2 === socket.id)
 		) {
-			console.log("true========")
 			game.launch = true;
 			return;
 		}
-		console.log("start game",socket.user)
 		game.duration = new Date();
 		game.status = 'playing';
 		this.mapPong[game.user1.id] = new PongGame(this, game);

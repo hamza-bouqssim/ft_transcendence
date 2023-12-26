@@ -7,7 +7,7 @@ import { AppDispatch } from '../store';
 import { socketContext } from '../utils/context/socketContext';
 import { useRouter } from 'next/navigation';
 import { fetchGetRequestsThunk } from '../store/requestsSlice';
-import { fetchBlocksThunk } from '../store/blockSlice';
+import { fetchBlockedUsers, fetchBlocksThunk } from '../store/blockSlice';
 import { fetchMessagesThunk } from '../store/messageSlice';
 import { useSetAtom } from 'jotai';
 import { OpponentData } from './game/utils/data';
@@ -35,7 +35,6 @@ const ProviderOnSocket = () => {
 
         });
         socket.on("AcceptPLayNotification", (payload: any) => {
-          console.log("accept notifff---------------------------------------------------------------");
 					if (payload.accept) {
             setMapIndex((prevData) => ({
               ...prevData,
@@ -61,6 +60,8 @@ const ProviderOnSocket = () => {
           dispatch(fetchBlocksThunk());
           dispatch(fetchGetAllFriendsThunk());
           dispatch(fetchGetRequestsThunk());
+          dispatch(fetchBlockedUsers());
+
     
     
           if (channel && channel.id) {
@@ -71,7 +72,9 @@ const ProviderOnSocket = () => {
         socket.on('debloqueNotification', (data : any)=>{
           dispatch(fetchBlocksThunk());
           dispatch(fetchGetAllFriendsThunk());
-          dispatch(fetchGetRequestsThunk())
+          dispatch(fetchGetRequestsThunk());
+          dispatch(fetchBlockedUsers());
+
           if(channel != null)
           {
             dispatch(fetchMessagesThunk(channel.id));

@@ -126,6 +126,15 @@ export class FriendRequestController {
       
 
     }
+
+    @Get("blocked")
+    async blocked(@Req() req){
+      const user = req.user;
+      const result = await this.friendshipService.whichBlocked(user.id);
+      return result;
+      
+
+    }
     
 
   

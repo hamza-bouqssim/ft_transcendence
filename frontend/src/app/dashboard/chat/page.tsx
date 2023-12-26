@@ -8,7 +8,7 @@ import { useDispatch } from "react-redux"
 import { AppDispatch } from "@/app/store"
 import { fetchGetRequestThunk, fetchNumberPending } from "@/app/store/requestSlice";
 import { fetchGetAllFriendsThunk } from "@/app/store/friendsSlice";
-import { fetchBlocksThunk } from "@/app/store/blockSlice";
+import { fetchBlockedUsers, fetchBlocksThunk } from "@/app/store/blockSlice";
 import { fetchUsersThunk } from "@/app/store/usersSlice";
 import { fetchConversationThunk } from "@/app/store/conversationSlice";
 import { fetchMessagesThunk } from "@/app/store/messageSlice";
@@ -73,7 +73,9 @@ const ConversationChannelPagechat = () => {
     socket.on('blockNotification', (data : any) =>{
       dispatch(fetchBlocksThunk());
       dispatch(fetchGetAllFriendsThunk());
-      dispatch(fetchGetRequestsThunk())
+      dispatch(fetchGetRequestsThunk());
+      dispatch(fetchBlockedUsers());
+
 
       if (channel && channel.id) {
         dispatch(fetchMessagesThunk(channel.id));
@@ -83,7 +85,9 @@ const ConversationChannelPagechat = () => {
     socket.on('debloqueNotification', (data : any)=>{
       dispatch(fetchBlocksThunk());
       dispatch(fetchGetAllFriendsThunk());
-      dispatch(fetchGetRequestsThunk())
+      dispatch(fetchGetRequestsThunk());
+      dispatch(fetchBlockedUsers());
+
 
       
       if(channel != null)

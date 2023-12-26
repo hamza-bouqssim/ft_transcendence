@@ -9,13 +9,13 @@ import "./page.css"
 import RankingUserSwitch from '@/app/components/RankingUserSwitch';
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/app/store";
-import { fetchBlockFriendThunk, fetchBlocksThunk, fetchDebloqueUserThunk } from '@/app/store/blockSlice';
+import { fetchBlockFriendThunk, fetchBlockedUsers, fetchBlocksThunk, fetchDebloqueUserThunk } from '@/app/store/blockSlice';
 import { toast } from 'react-toastify';
 import { fetchAcceptFriendRequestThunk, fetchGetRequestThunk, fetchRequestThunk } from '@/app/store/requestSlice';
 import AchievementsList from '@/app/components/AchievementsList';
 import { HistoryMatchesType, ResultsType, UserInfoType } from '../Imports';
 import { fetchUsersThunk } from '@/app/store/usersSlice';
-import { CreateConversationParams, User } from '@/app/utils/types';
+import { BloqueList, CreateConversationParams, User } from '@/app/utils/types';
 import { fetchGetAllFriendsThunk } from '@/app/store/friendsSlice';
 import { socketContext } from '@/app/utils/context/socketContext';
 import { fetchGetRequestsThunk } from '@/app/store/requestsSlice';
@@ -27,7 +27,8 @@ import { userInfo } from 'os';
 const Dashboard = ({ params }: { params: { id: string } }) => {
 	
 	
-	const { friendsBlock , fstatus, ferror } = useSelector((state:any) => state.friendsBlock);
+	const { friendsBlock , blocked, fstatus, ferror } = useSelector((state:any) => state.friendsBlock);
+	console.log("bloc here-->", blocked);
 	const dispatch = useDispatch<AppDispatch>();
 
 	const [results, setResults] = useState<ResultsType>();
@@ -134,7 +135,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 				const message = responseData.data?.response?.message;
 				if (message) {
 					ToastSuccess(message);
-					dispatch(fetchBlocksThunk());
+					dispatch(fetchBlockedUsers());
 					setSwitch(true);					
 				}else {
 				const responseData = res.payload as {message?: string};
@@ -157,8 +158,8 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 			const message = responseData.data?.response?.message;
 			if (message) {
 				ToastSuccess(message);
-				dispatch(fetchBlocksThunk())
-				setSwitch(false);
+				dispatch(fetchBlockedUsers());
+				
 			} else {
 				const responseData = res.payload as {message?: string};
 				const message = responseData.message;
@@ -170,16 +171,24 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 		}
 		};
 
-	
 		useEffect(() => {
 			dispatch(fetchBlocksThunk());
-		}, [dispatch]);
+			dispatch(fetchBlockedUsers());
+		  
+			const isBlocked = blocked.some(
+			  (elem: BloqueList) =>
+				(elem.userOne.id === Userdata?.id && elem.userTwo.id === params.id) ||
+				(elem.userOne.id === params.id && elem.userTwo.id === Userdata?.id)
+			);
+		  
+			setSwitch(!isBlocked);
+		  }, [dispatch]);
 
 		
-
-		useEffect(() => {
-		friendsBlock.some((friend: any) => friend.id === params.id) ? setSwitch(false): setSwitch(true);
-		}, [friendsBlock, params.id, dispatch]);
+		
+		// useEffect(() => {
+		// friendsBlock.some((friend: any) => friend.id === params.id) ? setSwitch(false): setSwitch(true);
+		// }, [friendsBlock, params.id, dispatch]);
 
 		
 		useEffect(() => {
@@ -292,7 +301,10 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 								priority={true}
 							/>
 							<div className="align-center absolute bottom-5 left-10 flex items-center justify-center gap-4">
-							{requests.some((request: any) => request.user_id === Userdata?.id && request.friend_id === params.id) ? (
+							{!blocked.some((elem: BloqueList) =>((elem.userOne.id === Userdata?.id && elem.userTwo.id === params.id) ||(elem.userOne.id === params.id && elem.userTwo.id === Userdata?.id))
+								) ? 
+								<>
+								{requests.some((request: any) => request.user_id === Userdata?.id && request.friend_id === params.id) ? (
 									<button className="h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover] hover:duration-300">
 										Pending Request
 									</button>
@@ -309,12 +321,15 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 										Send Request
 									</button>
 							)}
-											<button onKeyPress={handleEnter}
-											className="hover:duration- h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover]"
-											onClick={() => setShowMessageBlock(true)}
-										>
-											Send Message
-										</button>
+							<button onKeyPress={handleEnter}
+									className="hover:duration- h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover]"
+									onClick={() => setShowMessageBlock(true)}
+								>
+									Send Message
+								</button>
+								</>
+							: null}
+							
 
 								{friendsBlock.some((friend: any) => friend.id === params.id) ? (
 									<button
@@ -324,6 +339,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 										Unblock
 									</button>
 								) : (
+									
 									<button
 										className="hover:duration-175 h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover]"
 										onClick={() => handleBlockButtonClick()}
@@ -363,7 +379,8 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 							)}
 						</div>
 
-						{_switch ? (
+						{!blocked.some((elem: BloqueList) =>((elem.userOne.id === Userdata?.id && elem.userTwo.id === params.id) ||(elem.userOne.id === params.id && elem.userTwo.id === Userdata?.id))
+						)? (
 							<div>
 								<div className="boxes">
 									<Boxes title="WINS" value={results?.win} color="#6A67F3" />
@@ -411,11 +428,13 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 							<RankingUserSwitch
 								userId={params.id}
 								userInfo={userinfo}
-								_switch={_switch}
+								_switch={!blocked.some((elem: BloqueList) =>((elem.userOne.id === Userdata?.id && elem.userTwo.id === params.id) ||(elem.userOne.id === params.id && elem.userTwo.id === Userdata?.id))
+									)}
 							/>
 						</div>
 
-						{_switch ? (
+						{!blocked.some((elem: BloqueList) =>((elem.userOne.id === Userdata?.id && elem.userTwo.id === params.id) ||(elem.userOne.id === params.id && elem.userTwo.id === Userdata?.id))
+						)? (
 							<div className="achievements-container">
 								<div className="achievements">
 									<h1>Achievements</h1>

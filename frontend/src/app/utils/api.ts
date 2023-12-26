@@ -65,6 +65,7 @@ export const pending_request_play = () => axios.get(`http://localhost:8000/user/
 
 export const getAllUsers = async () => axios.get(`http://localhost:8000/user/All-users`, config);
 
+export const blockedUsers = async () => axios.get(`http://localhost:8000/friend-request/blocked`, config);
 //count number of the notification
 
 export const getNumberNotification = async () => axios.get(`http://localhost:8000/friend-request/notification_count`, config);

@@ -160,8 +160,6 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
 
         @OnEvent("request.created")
         sendFriendRequestNotification(data : any) {
-            console.log("enter hererr");
-            console.log("data here-->", data.friendData.friend_id);
             const message = `${data.friendData.user.display_name} send you request to be friends`;
             this.server.to(data.friendData.friend_id).emit('newFriendRequest', data);
             const type = "requestFriend";
