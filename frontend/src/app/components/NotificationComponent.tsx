@@ -38,6 +38,7 @@ const NotificationComponent = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { notification, status, error } = useSelector((state:any) => state.notification);
     useEffect(() => {
+      
         dispatch(fetchNotificationThunk());
       }, [dispatch]);
       const handleAcceptRequestPlay = (requestId: string) => {

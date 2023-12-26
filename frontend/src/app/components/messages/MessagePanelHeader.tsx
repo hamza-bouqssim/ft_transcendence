@@ -24,6 +24,8 @@ import { fetchUsersThunk } from "@/app/store/usersSlice";
 interface MessagePanelHeaderProps {
 	setUpdateRome: (value: boolean) => void;
 	updateRome: boolean;
+	setOldData:(value: ConversationTypes) => void;
+	olddata :ConversationTypes;
 }
 
 interface Member {
@@ -33,6 +35,8 @@ interface Member {
 const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 	setUpdateRome,
 	updateRome,
+	setOldData,
+	olddata,
 }) => {
 	const pathname = usePathname();
 	const { members, status, error } = useSelector((state: any) => state.member);
@@ -46,6 +50,8 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 	};
 
 	useEffect(() => {
+		
+		
 		const handleTyping = (typing: any) => {
 			if (typing.userId !== Userdata?.id) {
 				setIsTyping(typing.status);
@@ -62,14 +68,18 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 	}, [Userdata?.id, socket]);
 
 	useEffect(() => {
+		
+
 		setUpdateRome(false);
 	}, [channel, setUpdateRome]);
 
 	useEffect(() => {
+		
+
 		if(channel?.id)
 			dispatch(getAllMembers(channel?.id));
 	}, [dispatch, channel]);
-
+	console.log("InviteField")
 	// Image src
 
 	const InfoRecipient = () => {
@@ -81,13 +91,6 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 		return test;
 	};
 
-	const [olddata, setOldData] = useState< ConversationTypes | null>();
-	useEffect(() => {
-		if (channel) {
-			setOldData(channel);
-		}
-	}, [channel]);
-
 	const handleUpdate = () => {
     if(olddata)
     {
@@ -95,6 +98,12 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
         if (res.error) {
           toast.error(res.payload);
         }
+		else
+		{
+			updateChannel(res.payload)
+			toast.success("Update Room Successfully! 🎉");
+		}
+			
       });
     }
 	};
@@ -170,28 +179,30 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 						>
 							close
 						</button>
-						<button
-							onClick={handleUpdate}
-							className={`${
-								olddata === channel
-									? "   "
-									: "flex items-center justify-center  "
-							} w-fit rounded-full bg-[#EA7F87] px-5  py-2 text-[14px] text-white`}
-						>
-							Update
-							{status.update === "loading" ? (
-								<div className="ml-3 flex items-center justify-center ">
-									<div
-										className=" h-5   w-5 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] text-[white] motion-reduce:animate-[spin_1.5s_linear_infinite]"
-										role="status"
-									>
-										<span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
-											Loading...
-										</span>
+						{channel !== olddata && 
+							<button
+								onClick={handleUpdate}
+								className={`${
+									olddata === channel
+										? "   "
+										: "flex items-center justify-center  "
+								} w-fit rounded-full bg-[#EA7F87] px-5  py-2 text-[14px] text-white`}
+							>
+								Update
+								{status.update === "loading" ? (
+									<div className="ml-3 flex items-center justify-center ">
+										<div
+											className=" h-5   w-5 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] text-[white] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+											role="status"
+										>
+											<span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+												Loading...
+											</span>
+										</div>
 									</div>
-								</div>
-							) : null}
-						</button>
+								) : null}
+							</button>
+						} 
 					</div>
 				)
 			) : null}

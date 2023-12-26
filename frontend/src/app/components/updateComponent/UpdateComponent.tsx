@@ -14,18 +14,24 @@ import { RestFriend } from "../RestFriend/RestFriend";
 import Image from "next/image";
 import { ConversationTypes } from "@/app/utils/types";
 
-const UpdateComponent = () => {
+interface UpdateComponentProps {
+	setOldData:(value: ConversationTypes) => void;
+	olddata :ConversationTypes;
+}
+
+
+const UpdateComponent:FC<UpdateComponentProps> = (
+	{
+		setOldData,
+		olddata,
+	}
+) => {
+	
 	const { updateChannel, channel } = useContext(socketContext);
 	const dispatch = useDispatch();
 	const [password, setPassword] = useState<string | null>(null);
 	const { rooms, status, error } = useSelector((state: any) => state.room);
-	const [olddata, setOldData] = useState<ConversationTypes | null>(null);
-
-	useEffect(() => {
-		if (channel) {
-			setOldData(channel);
-		}
-	}, [channel]);
+	
 
 	return (
 		<div className=" no-scrollbar relative h-[calc(100%-90px)]  overflow-auto">
@@ -156,7 +162,7 @@ const UpdateComponent = () => {
 				</div>
 			)}
 
-			<div className="no-scrollbar mt-5  h-[40%] min-h-[200px] w-full overflow-auto  rounded-xl bg-[#F2F3FD]   text-black">
+			<div className="no-scrollbar mt-5   w-full overflow-auto  rounded-xl    text-black">
 				<RestFriend></RestFriend>
 			</div>
 			<div className="h-10"></div>

@@ -24,6 +24,8 @@ const ProviderOnSocket = () => {
   const setMapIndex = useSetAtom(OpponentData);
 
     useEffect(() => {
+      
+
         socket.on('AcceptNotification', (data : any) => {
           dispatch(fetchGetRequestThunk());
           dispatch(fetchGetAllFriendsThunk());

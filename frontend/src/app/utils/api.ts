@@ -65,7 +65,7 @@ export const pending_request_play = () => axios.get(`http://localhost:8000/user/
 
 export const getAllUsers = async () => axios.get(`http://localhost:8000/user/All-users`, config);
 
-export const blockedUsers = async () => axios.get(`http://localhost:8000/friend-request/blocked`, config);
+
 //count number of the notification
 
 export const getNumberNotification = async () => axios.get(`http://localhost:8000/friend-request/notification_count`, config);
@@ -107,6 +107,9 @@ export const getAllRequests = async() => axios.get(`http://localhost:8000/user/a
 
 export const findConversationUsers = async ( display_name : string, message : string) => axios.post(`http://localhost:8000/chat/findConversationUser`, {display_name : display_name , message : message}, config);
 // tabel friends
+
+
+export const blockedUsers = async () => axios.get(`http://localhost:8000/friend-request/blocked`, config);
 
 export const tableFriends = async () => axios.get(`http://localhost:8000/user/table-friends`, config);
 
@@ -232,6 +235,12 @@ export const deleteAccount = () => {
 
 export const getUserInfos = (id:string) => {
   const response = API.post("/user/get_user", {id_user:id});
+  return response;
+}
+
+export const addMemberToRooms = (id:string ,userId:string) =>
+{
+  const response = API.post("/rooms/addMemberToRooms",{id,userId})
   return response;
 }
 

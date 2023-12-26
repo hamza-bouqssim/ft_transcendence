@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronDown, faBell } from "@fortawesome/free-solid-svg-icons";
+import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { LogoutButton, MenuButton } from "./Buttons";
 import { useEffect, useState, useContext, useRef } from "react";
 import { getAuthUser, getNumberNotification, getlogout } from "../utils/api";
@@ -13,13 +13,9 @@ import { socketContext } from "../utils/context/socketContext";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../store";
 import { fetchCountNotification } from "../store/notificationSlice";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-type Change = {
-	menu: boolean;
-	onClick: any;
-};
-
-const TopRightBar = (props: Change) => {
+const TopRightBar = () => {
 	const dispatch = useDispatch<AppDispatch>();
 	const { notification, status, error, count } = useSelector(
 		(state: any) => state.notification,
@@ -47,6 +43,7 @@ const TopRightBar = (props: Change) => {
 	};
 	const { Userdata, setUserdata } = useContext(socketContext);
 	useEffect(() => {
+		
 		dispatch(fetchCountNotification());
 		getAuthUser()
 			.then(({ data }) => {
@@ -70,6 +67,7 @@ const TopRightBar = (props: Change) => {
 			ToastError(`Failed to logout`);
 		}
 	};
+	console.log("useState")
 	const menuRef = useRef<HTMLDivElement>(null);
 	const subMenuRef = useRef<HTMLDivElement>(null);
 	const faChevronDownRef = useRef<SVGSVGElement>(null);
@@ -83,6 +81,7 @@ const TopRightBar = (props: Change) => {
 	};
 
 	useEffect(() => {
+		
 		if (notfication) {
 			document.addEventListener("click", handleDocumentClick);
 		} else {
@@ -95,6 +94,7 @@ const TopRightBar = (props: Change) => {
 	}, [notfication]);
 
 	useEffect(() => {
+		
 		const handleCLickEvent = (e: MouseEvent) => {
 			if (!faChevronDownRef.current?.contains(e.target as Node))
 				setRotate(false);
@@ -150,17 +150,16 @@ const TopRightBar = (props: Change) => {
 						</span>
 					</div>
 
-					<FontAwesomeIcon
+					<ExpandMoreIcon
 						ref={faChevronDownRef}
-						icon={faChevronDown}
-						className={`transform cursor-pointer text-2xl duration-500 ease-in-out hover:text-[--pink-color] lg:text-3xl ${
+						className={`inline-block transform cursor-pointer text-2xl hover:text-[--pink-color] lg:text-3xl ${
 							rotate ? "rotate-[180deg]" : "rotate-0"
 						}`}
-						onClick={() => {
-							setRotate(!rotate);
+						style={{
+							transition: "transform 0.5s ease-in-out",
 						}}
+						onClick={() => setRotate(!rotate)}
 					/>
-
 					{rotate && (
 						<div
 							ref={subMenuRef}

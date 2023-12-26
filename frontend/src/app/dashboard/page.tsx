@@ -13,6 +13,7 @@ import { ResultsType } from "./Imports";
 import { useRouter } from "next/navigation";
 
 const Dashboard = () => {
+	console.log("DASHBOARD");
 	const { Userdata } = useContext(socketContext);
 	const router = useRouter();
 
@@ -24,6 +25,8 @@ const Dashboard = () => {
 
 	const [history_match, setHistoryMatch] = useState<HistoryMatchesType[]>([]);
 	useEffect(() => {
+		
+
 		const fetchMatchHistory = async () => {
 			try {
 				if (Userdata?.id) {
@@ -39,6 +42,8 @@ const Dashboard = () => {
 	}, [Userdata?.id]);
 
 	useEffect(() => {
+		
+
 		const fetchGameStates = async () => {
 			try {
 				if (Userdata?.id) {

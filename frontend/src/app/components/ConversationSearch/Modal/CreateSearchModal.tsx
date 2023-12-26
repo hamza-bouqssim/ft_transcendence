@@ -42,6 +42,7 @@ type props = {
     const {Userdata} = useContext(socketContext);
 
     useEffect(() => {
+        
         // Define a function to fetch search results
         const fetchSearchResults = async () => {
             try {
@@ -69,6 +70,7 @@ type props = {
 
     }, [searchQuery]);
     useEffect(() => {
+        
         const handleKeyDown = (e : KeyboardEvent) => e.key === 'Escape' && setShow(false);
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);

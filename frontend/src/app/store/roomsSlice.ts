@@ -36,6 +36,7 @@ const initialState: RoomState = {
 
 export const getAllRooms = createAsyncThunk('rooms/getAllRooms', async (_,{rejectWithValue} ) => {
   try {
+	console.log("redaux")
     const response = await getAllRoomsApi();
     return response.data.data; 
   } catch (error : any) {
@@ -50,6 +51,7 @@ export const getAllRooms = createAsyncThunk('rooms/getAllRooms', async (_,{rejec
 export const createRooms = createAsyncThunk('rooms/createRooms', async (data: createRoom,{rejectWithValue}) => {
   try
   {
+	console.log("redaux")
     const response = await createRoomsApi(data);
     return response.data.data;
   } catch (error : any) {
@@ -63,6 +65,7 @@ export const createRooms = createAsyncThunk('rooms/createRooms', async (data: cr
 
 export const updateRooms = createAsyncThunk('rooms/updateRooms', async (data: ConversationTypes | null,{rejectWithValue}) => {
   try {
+	console.log("redaux")
     const response = await updateRoomsApi(data);    
     return response.data.data;
   } catch (error : any) {

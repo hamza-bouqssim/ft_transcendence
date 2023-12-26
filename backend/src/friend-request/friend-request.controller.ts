@@ -126,7 +126,6 @@ export class FriendRequestController {
       
 
     }
-
     @Get("blocked")
     async blocked(@Req() req){
       const user = req.user;

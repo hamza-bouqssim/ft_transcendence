@@ -12,6 +12,8 @@ const PlayMode = () => {
 
 	const dispatch= useDispatch<AppDispatch>();
 	useEffect(()=>{
+		
+
 		socket.on('Ingame', (data : any)=>{
 			dispatch(fetchUsersThunk())
 			dispatch(fetchGetAllFriendsThunk());

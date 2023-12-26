@@ -15,6 +15,7 @@ const GameSocketProvider = ({ children }: { children: ReactNode }) => {
 	const [socket, setSocket] = useState<Socket | null>(null);
 
 	useEffect(() => {
+
 		const gameSocket = io("http://localhost:8000/game", {
 			// transports: ["websocket", "polling", "flashsocket"],
 			// autoConnect: false,
@@ -24,10 +25,9 @@ const GameSocketProvider = ({ children }: { children: ReactNode }) => {
 	}, []);
 
 	useEffect(() => {
+		
+
 		if (!socket) return;
-
-		// socket.connect();
-
 		return () => {
 			socket.disconnect();
 		};

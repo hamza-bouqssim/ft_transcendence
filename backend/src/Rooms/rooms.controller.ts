@@ -221,8 +221,14 @@ export class RoomsController {
   async addMemberToRooms(@Res() res: any,@Req() req , @Body() memberUpdate:Member)
   {
     try {
+      
       const {id}=req.user
       const update = await this.roomsService.addMemberToRooms(id,memberUpdate);
+      console.log(update)
+      this.eventEmitter.emit(
+        'order.updateMember',
+        memberUpdate.id,null,null
+      );
       return res.status(200).json({data: update });
     }
     catch (error) {

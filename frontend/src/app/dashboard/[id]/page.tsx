@@ -168,8 +168,9 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 			ToastError("Failed to block this friend. Please try again.");
 		}
 		};
-
 		useEffect(() => {
+			
+
 			dispatch(fetchBlocksThunk());
 			dispatch(fetchBlockedUsers());
 		  
@@ -190,6 +191,8 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 
 		
 		useEffect(() => {
+			
+
 			const fetchMatchHistory = async () => {
 			try {
 				if (params.id) {
@@ -205,6 +208,8 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 		}, [params.id]);
 
 		useEffect(() => {
+			
+
 			const fetchGameStates = async () => { 
 			try {
 				if (params.id) {
