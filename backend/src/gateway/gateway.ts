@@ -30,6 +30,8 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
     private NsessionOfuser: Map<string, number> = new Map();
     async handleConnection(socket : AuthenticatedSocket) {
         const userId = socket.user.sub;
+        if (!socket.user)
+            return;
         if(socket.user)
         {  
             if (!this.NsessionOfuser.has(userId)) {
