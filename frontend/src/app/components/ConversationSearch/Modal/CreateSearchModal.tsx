@@ -74,7 +74,7 @@ type props = {
         const handleKeyDown = (e : KeyboardEvent) => e.key === 'Escape' && setShow(false);
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    })
+    },[])
 
 
     const handleOverlayClick = (e : React.MouseEvent<HTMLDivElement, MouseEvent>) => {

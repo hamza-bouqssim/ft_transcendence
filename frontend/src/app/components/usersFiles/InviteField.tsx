@@ -29,7 +29,7 @@ const InviteField = () => {
         }).catch((err)=>{
         }
         );
-      },)
+      },[])
 
 
 	  useEffect (() => {
@@ -40,7 +40,7 @@ const InviteField = () => {
 		}).catch((err)=>{
 		}
 		);
-	  },);
+	  },[]);
 
 	  useEffect(() => {
 		const usersWithoutFriends = Users.filter(
@@ -58,7 +58,7 @@ const InviteField = () => {
             setUserData(data);
           })
           .catch((err:any) => console.log(err));
-      }, );
+      },[]);
     
 
 
