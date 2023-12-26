@@ -13,6 +13,7 @@ import { ResultsType } from "./Imports";
 import { useRouter } from "next/navigation";
 
 const Dashboard = () => {
+	console.log("DASHBOARD");
 	const { Userdata } = useContext(socketContext);
 	const router = useRouter();
 
