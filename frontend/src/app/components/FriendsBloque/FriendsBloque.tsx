@@ -41,6 +41,7 @@ const FriendsBloque = () =>{
     const { friendsBlock , status, error } = useSelector((state:any) => state.friendsBlock);
    
     useEffect(() => {
+      
       dispatch(fetchBlocksThunk())
     }, [dispatch]);
  

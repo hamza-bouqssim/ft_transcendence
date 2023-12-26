@@ -61,7 +61,7 @@ const OnlineFriends = () => {
 	const dispatch = useDispatch<AppDispatch>();
 	const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 	const { updateChannel, channel } = useContext(socketContext);
-
+	console.log("useState")
 	const handleMenuClick = (friendId: string) => {
 		setOpenMenuId(openMenuId === friendId ? null : friendId);
 	};
@@ -70,6 +70,8 @@ const OnlineFriends = () => {
 	);
 	const { friends, status, error } = useSelector((state: any) => state.friends);
 	useEffect(() => {
+		
+
 		dispatch(fetchUsersThunk());
 		dispatch(fetchGetAllFriendsThunk());
 	}, [dispatch]);
@@ -127,8 +129,6 @@ const OnlineFriends = () => {
 							}
 						};
 						const handlePLayingRequest = async (display_name: string) => {
-							console.log("elem-->", elem);
-							console.log("display----->", display_name);
 							try {
 								const response = await dispatch(
 									fetchSendRequestPLay(display_name),

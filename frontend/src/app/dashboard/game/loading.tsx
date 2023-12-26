@@ -7,6 +7,7 @@ const LoadingPage = () => {
 	const router = useRouter();
 
 	useEffect(() => {
+		
 		const loadingTimeout = setTimeout(() => {
 			router.push("/");
 		}, 3000);

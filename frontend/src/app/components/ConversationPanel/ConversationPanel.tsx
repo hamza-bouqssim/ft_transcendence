@@ -5,7 +5,6 @@ import { useContext, useEffect, useState } from "react";
 
 const ConversationPanel = () => {
 
-    // console.log(user);
     return (
         <Page>
                 <ConversationPannelStyle>

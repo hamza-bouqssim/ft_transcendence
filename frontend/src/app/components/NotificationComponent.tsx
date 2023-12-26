@@ -38,6 +38,7 @@ const NotificationComponent = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { notification, status, error } = useSelector((state:any) => state.notification);
     useEffect(() => {
+      
         dispatch(fetchNotificationThunk());
       }, [dispatch]);
       const handleAcceptRequestPlay = (requestId: string) => {
@@ -75,7 +76,6 @@ const NotificationComponent = () => {
       }
 
       const handleClickAcceptPLay = async (id : string) =>{
-        console.log("plllaaayyy-->", id);
         try {
          
             await dispatch(fetchAcceptRequestPlay(id));
@@ -100,7 +100,6 @@ const NotificationComponent = () => {
       }
 
       const deleteNotification = async (id : string) =>{
-        console.log("delete notif-->", id);
         try{
             await dispatch(fetchdeleteNotification(id));
             ToastSuccess("delete notification Succefully !");

@@ -101,12 +101,10 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
     
     @OnEvent("order.created")
     async onNotificationCreate(data:any) {
-        console.log(data)
         const userAdmin = data.members.find((userAdmin) => userAdmin.Status=== "Owner")
         data.members.map((member) => {
             if(member.Status !== "Owner")
             {
-                console.log(member)
                 this.roomsService.notificationRoom(data.id,member.user_id,1)
                 const message = `${userAdmin.user.display_name } Join you to ${data.name}`;
                 this.server.to(member.user_id).emit('notification', message);
@@ -153,6 +151,15 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
             this.server.to(member.user_id).emit('updateMember', {roomId:RoomId,idUserleave:id,types:types});         
         })
     }
+
+
+
+
+
+
+
+
+
     //chat room 
 
 
@@ -268,7 +275,6 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         @OnEvent('chat.AcceptPLayNotification')
 	    async handleAcceptPLayNotification(data: any) {
 	
-        console.log(data)
 		this.server.to(data.req_play.senderId).emit("AcceptPLayNotification",{accept:true});
         this.server.to(data.req_play.recipientId).emit("AcceptPLayNotification",{accept:true});
         }

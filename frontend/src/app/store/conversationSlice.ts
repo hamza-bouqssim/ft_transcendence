@@ -19,7 +19,7 @@ const initialState: ConversationsState = {
 
 export const createConversationThunk = createAsyncThunk('conversations/create', async(params: CreateConversationParams , { rejectWithValue })=>{
   try {
-
+    console.log("redaux")
     const response = await createConversation(params.display_name, params.message);
     
  
@@ -40,6 +40,7 @@ export const createConversationThunk = createAsyncThunk('conversations/create', 
 })
 
 export const fetchConversationThunk = createAsyncThunk('conversations/fetch', async () => {
+  console.log("redaux")
   const response = await getConversation();
   return response.data; // Assuming your API response has a 'data' property
 
@@ -48,6 +49,7 @@ export const fetchConversationThunk = createAsyncThunk('conversations/fetch', as
 
 
 export const fetchConversationUserThunk = createAsyncThunk('conversation/fetch',async(display_name : string) =>{
+  console.log("redaux")
   const response = await findConversationUsers(display_name);
   return response;
 
@@ -55,6 +57,7 @@ export const fetchConversationUserThunk = createAsyncThunk('conversation/fetch',
 
 
 export const fetchDeleteConversation = createAsyncThunk('deleteConversation/fetch', async(conversationId : string)=>{
+  console.log("redaux")
   const response = await deleteConversation(conversationId);
   return response;
 })

@@ -23,6 +23,7 @@ const initialState: MessagesState = {
 
 
 export const fetchMessagesThunk = createAsyncThunk('messages/fetch', async (id : string) => {
+  console.log("redaux")
     const response = await getConversationMessage(id);
     return response.data;
   })

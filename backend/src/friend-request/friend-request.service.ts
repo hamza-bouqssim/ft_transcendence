@@ -601,4 +601,24 @@ export class FriendRequestService {
 			return { success: false, message: 'Error deleting notification' };
 		}
 	}
+
+	async whichBlocked(id : string){
+		const test = await this.prisma.blockList.findMany({
+			where : {
+				OR:[
+					{userOneId : id },
+					{userTwoId : id }
+				]
+			},
+			include : {
+				userOne : true,
+				userTwo : true,
+			}
+			
+
+		})
+		console.log("test here-->", test);
+		return test;
+
+	}
 }

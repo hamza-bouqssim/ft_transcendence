@@ -8,7 +8,7 @@ import { deleteAvatar } from "../utils/api";
 const MyAccount = () => {
 	const { Userdata, setUserdata } = useContext(socketContext);
 	const newAPI = axios.create();
-
+	console.log("useState")
 	const [src, setSrc] = useState<string>("/assets/user2.jpeg");
 	const [_image, setImage] = useState();
 

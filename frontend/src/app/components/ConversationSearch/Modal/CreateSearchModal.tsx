@@ -43,6 +43,7 @@ type props = {
 
 
     useEffect(() => {
+        
         // Define a function to fetch search results
         const fetchSearchResults = async () => {
             try {
@@ -55,7 +56,6 @@ type props = {
                 });
                 if (response.ok) {
                     const data = await response.json();
-                    console.log("data here-->", data);
                     setSearchResults(data);
                 }
             } catch (error) {
@@ -71,17 +71,17 @@ type props = {
 
     }, [searchQuery]);
     useEffect(() => {
+        
         const handleKeyDown = (e : KeyboardEvent) => e.key === 'Escape' && setShow(false);
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    })
+    },[])
 
 
     const handleOverlayClick = (e : React.MouseEvent<HTMLDivElement, MouseEvent>) => {
 
         const { current } = ref;
         if(current === e.target){
-            console.log('close Modal');
         }
     };
     const updatePage = (elem : ConversationTypes) =>{

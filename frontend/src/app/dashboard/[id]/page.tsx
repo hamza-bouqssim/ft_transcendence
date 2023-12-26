@@ -96,7 +96,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 			ToastError("Failed to block this friend. Please try again.");
 		}
 		};
-
+		console.log("InviteField")
 		//========> USE EFFECTS
 
 		// //========> DISPATCH SEND REQUEST
@@ -106,22 +106,30 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 
 		//========> DISPATCH BLOCK
 		useEffect(() => {
+			
+
 			dispatch(fetchBlocksThunk());
 		}, [dispatch]);
 
 		//========> IF THE REQUEST CREATED CHANGE BUTTON  [SEND REQUEST] TO [PENDING REQUEST]
 		useEffect(() => {
+			
+
 			const friendRequestExists = request.some((friend: any) => friend.friendId === params.id);
 			setSendReq(!friendRequestExists);
 		}, [request, params.id]);
 
 		////========> IF THE USER EXIST IN THE BLOCK LIST DISPLAY [UNBLOCK] BUTTON, IF NOT EXIST DISPLAY [BLOCK]
 		useEffect(() => {
+			
+
 		friendsBlock.some((friend: any) => friend.id === params.id) ? setSwitch(false): setSwitch(true);
 		}, [friendsBlock, params.id, dispatch]);
 
 		//========> FETCHING ANOTHER INFORMATIONS OF ANOTHER USER BY IT'S ID, AND THE ID I TOOKEN FROM THE QUERY.
 		useEffect(() => {
+			
+
 			const fetchUserInfo = async () => {
 			try {
 				if (params.id) {
@@ -138,6 +146,8 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 
 		//========> FETCHING MATCH HISTORY DATA
 		useEffect(() => {
+			
+
 			const fetchMatchHistory = async () => {
 			try {
 				if (params.id) {
@@ -154,6 +164,8 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 
 		//========> FETCHING STATE OF THE USER RESULTS
 		useEffect(() => {
+			
+
 			const fetchGameStates = async () => { 
 			try {
 				if (params.id) {

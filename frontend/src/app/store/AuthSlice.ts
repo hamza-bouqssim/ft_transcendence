@@ -17,6 +17,7 @@ const initialState: UsersAuthState = {
 
 export const fetchAuthUser = createAsyncThunk('AuthUser/fetchAuthUser', async (_,{rejectWithValue} ) => {
   const response = await getAuthUser();
+  console.log("redaux")
   return response.data;
 })
 

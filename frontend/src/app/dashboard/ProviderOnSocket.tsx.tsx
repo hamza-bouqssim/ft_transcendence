@@ -17,6 +17,8 @@ const ProviderOnSocket = () => {
 	const dispatch= useDispatch<AppDispatch>();
 
     useEffect(() => {
+      
+
         socket.on('AcceptNotification', (data : any) => {
           dispatch(fetchGetRequestThunk());
           dispatch(fetchGetAllFriendsThunk());
@@ -24,10 +26,8 @@ const ProviderOnSocket = () => {
           dispatch(fetchNumberPending());
           dispatch(fetchNotificationThunk());
           dispatch(fetchCountNotification());
-          console.log(null)
         });
         socket.on("AcceptPLayNotification", (payload: any) => {
-          console.log("accepppppppppppppppppppppppppppp",payload)
 					if (payload.accept) {
 						route.push("/dashboard/game/online-game/match-making?mapIndex=0");
 					}

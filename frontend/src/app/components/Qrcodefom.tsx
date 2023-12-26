@@ -19,6 +19,7 @@ export function Qrcodeform({ closeQrForm }: Props) {
 	const [message, setMessage] = useState("");
 
 	useEffect(() => {
+		
 		generateQrcode()
 			.then((res) => {
 				setQRCodeData(res.data.qrcode);

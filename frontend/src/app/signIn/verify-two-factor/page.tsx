@@ -17,7 +17,6 @@ const TwoFactorVerify = () => {
     const _verificationCode = async () => {
         // setLoading(true);
           await confirm(otp).then((res)=>{
-            console.log("success", res);
             setIsVerified(res.data.success);
             setMessage(res.data.message)
             if(res.data.success)

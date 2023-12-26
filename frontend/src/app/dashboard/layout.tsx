@@ -90,6 +90,8 @@ export default function RootLayout({
 	const [minHeight, setMinHeight] = useState<any>(1320);
 
 	useEffect(() => {
+		
+
 		setMinHeight(getChildrenSize.current?.children[0]?.clientHeight);
 		const handleResizeWindow = () =>
 			setMinHeight(getChildrenSize.current?.children[0]?.clientHeight);
@@ -102,33 +104,41 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body>
-				<div
-					className={`flex h-screen w-full text-white`}
-					style={{ minHeight: `${minHeight + 170}px` }}
-				>
+			<div className="flex h-screen w-full text-white">
 					<AppWithProviders socket={socket}>
-						{shouldHide() ? null : <SideBar />}
-						{shouldHide() ? null : (
-							<TopRightBar
-								menu={change.menu}
-								onClick={() =>
-									setChange({
-										...change,
-										sideBar: false,
-										chatBox: false,
-										menu: !change.menu,
-									})
-								}
-							/>
-						)}
+					{(pathName.endsWith("/online_game") || pathName.endsWith("/bot_game")) ? null : (
+						<SideBar
+							sideBar={change.sideBar}
+							onClick={() =>
+								setChange({
+									...change,
+									sideBar: !change.sideBar,
+									chatBox: false,
+									menu: false,
+								})
+							}
+						/>
+					)}
+
+					<TopRightBar
+						menu={change.menu}
+						onClick={() =>
+							setChange({
+								...change,
+								sideBar: false,
+								chatBox: false,
+								menu: !change.menu,
+							})
+						}
+					/>
+
+					{/* <div className="mt-[70px] h-[85%] w-full lg:flex lg:items-center lg:justify-evenly min-[1750px]:ml-72 min-[1750px]:mt-[90px] min-[1750px]:w-[86%]">
+						{children}
+					</div> */}
 
 						<ChangeContext.Provider value={changeValues}>
-							<div
-								ref={getChildrenSize}
-								className={`min-h-[${minHeight + 170}px] h-full w-full`}
-							>
-								{children}
-							</div>
+							<ProviderOnSocket></ProviderOnSocket>
+							<div className="h-full w-full">{children}</div>
 						</ChangeContext.Provider>
 					</AppWithProviders>
 				</div>

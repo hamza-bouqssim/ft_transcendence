@@ -16,7 +16,6 @@
 
 // 	const router = useRouter();
 	
-// 	// console.log("user data form",Userdata);
 // 	const [display2fa,setDisplay2fa] = useState(false);
 // 	const [show, setShow] = useState<boolean>(false);
 // 	const [_username, setUsername] = useState("");
@@ -88,12 +87,10 @@
 // 	}
 // 	const _disable = async () => {
 // 		  await disable2Fa().then((res)=>{
-// 			console.log("success", res);
 // 			// setIsVerified(res.data.success);
 // 			setUserdata({...Userdata, tfa_enabled: false});
 // 		  })
 // 		  .catch((e) =>{
-// 		  console.log("error:", e);
 // 		})
 // 	  }
 // 	return (
@@ -214,7 +211,6 @@ const Form = ({ img }: FormProps) => {
 	const { Userdata, setUserdata }: any = useContext(socketContext);
 
 	const router = useRouter();
-	// console.log("user data form",Userdata);
 	const [display2fa, setDisplay2fa] = useState(false);
 	const [show, setShow] = useState<boolean>(false);
 	const [_username, setUsername] = useState("");
@@ -225,7 +221,9 @@ const Form = ({ img }: FormProps) => {
 	const [success, setSuccess] = useState(true);
 	const [uSuccess, setUSuccess] = useState(true);
 	const [dSuccess, setDSuccess] = useState(true);
+	console.log("useState")
 	useEffect(() => {
+		
 		// Set initial values from Userdata only if the state is empty
 		if (!_username) {
 			setUsername(Userdata?.username || "");
@@ -290,7 +288,6 @@ const Form = ({ img }: FormProps) => {
 	const _disable = async () => {
 		await disable2Fa()
 			.then((res) => {
-				console.log("success", res);
 				// setIsVerified(res.data.success);
 				setUserdata({ ...Userdata, tfa_enabled: false });
 			})

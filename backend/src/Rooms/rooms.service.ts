@@ -72,7 +72,6 @@ export class RoomsService {
     if (!chatRooms || chatRooms.length === 0) {
       throw new HttpException("No chat rooms found for the given user.", HttpStatus.BAD_REQUEST );
     }
-    console.log(chatRooms[0].messageRome)
   
     return chatRooms;
   }
@@ -136,7 +135,6 @@ export class RoomsService {
 
   async updateRooms(data:UpdateChatRoom,id:string)
   {
-    console.log("data",data)
     const existingChatRoom = await this.prisma.chatRoom.findUnique({
       where: { id: data.id },
       include: {
@@ -165,11 +163,15 @@ export class RoomsService {
     }
 
     const ChatRoomName = await this.prisma.chatRoom.findFirst({
-      where: { name: data.name },
+      where: {
+        name: data.name,
+        NOT: {
+          id: existingChatRoom.id,
+        },
+      },
     });
-
-    if(ChatRoomName)
-    {
+    
+    if (ChatRoomName) {
       throw new HttpException(`Room with name ${data.name} already exists`, HttpStatus.BAD_REQUEST);
     }
     
@@ -228,7 +230,7 @@ export class RoomsService {
       
       let members;
       
-      if (userRole?.Status === "Owner") {
+      if (userRole?.Status === "Owner" || userRole?.Status === "Admin") {
       members = await this.prisma.member.findMany({
         where: {
           chatRoomId: roomId.id,
@@ -277,7 +279,7 @@ export class RoomsService {
       },
     });
     
-    if ( userRole?.Status !== 'Owner') {
+    if ( userRole?.Status !== 'Owner' && userRole?.Status !== 'Admin') {
       throw new HttpException("User is not an admin in the room", HttpStatus.BAD_REQUEST);
     }
     const userRole1 = await this.prisma.member.findFirst({
@@ -286,18 +288,12 @@ export class RoomsService {
         chatRoomId: memberUpdate.id,
       },
     });
-    if (userRole1?.Status === 'Owner') {
-      throw new HttpException("can t ban owner in the room", HttpStatus.BAD_REQUEST);
+    if (userRole1?.Status === 'Owner' || (userRole?.Status === 'Admin' &&  userRole1?.Status === 'Admin' )) {
+      throw new HttpException("can t ban owner or Admin ban admin in the room", HttpStatus.BAD_REQUEST);
     }
-    const userBan = await this.prisma.member.findFirst({
-      where: {
-        user_id: memberUpdate.userId,
-        chatRoomId: memberUpdate.id,
-      },
-    });
     const updatedMember = await this.prisma.member.update({
       where: {
-        id: userBan.id,
+        id: userRole1.id,
       },
       data: {
         Status: "Ban",
@@ -317,8 +313,8 @@ export class RoomsService {
         chatRoomId: memberUpdate.id,
       },
     });
-    if (userRole?.Status !== 'Owner' ) {
-      throw new HttpException("User is not an admin in the room", HttpStatus.BAD_REQUEST);
+    if ( userRole?.Status !== 'Owner' && userRole?.Status !== 'Admin') {
+        throw new HttpException("User is not an admin in the room", HttpStatus.BAD_REQUEST);
     }
     const userRole1 = await this.prisma.member.findFirst({
       where: {
@@ -326,19 +322,13 @@ export class RoomsService {
         chatRoomId: memberUpdate.id,
       },
     });
-    if (userRole1?.Status === 'Owner') {
+    if (userRole1?.Status === 'Owner'|| (userRole?.Status === 'Admin' &&  userRole1?.Status === 'Admin' )) {
       throw new HttpException("can t Mut owner in the room", HttpStatus.BAD_REQUEST);
     }
-    
-    const userMut = await this.prisma.member.findFirst({
-      where: {
-        user_id: memberUpdate.userId,
-        chatRoomId: memberUpdate.id,
-      },
-    });
+  
     const updatedMember = await this.prisma.member.update({
       where: {
-        id: userMut.id,
+        id: userRole1.id,
       },
       data: {
         Status: "Mut",
@@ -360,7 +350,7 @@ export class RoomsService {
       },
     });
     
-    if  (userRole?.Status !== 'Owner' ) {
+    if ( userRole?.Status !== 'Owner' && userRole?.Status !== 'Admin') {
       throw new HttpException("User is not an admin in the room", HttpStatus.BAD_REQUEST);
     }
     const userRole1 = await this.prisma.member.findFirst({
@@ -369,19 +359,13 @@ export class RoomsService {
         chatRoomId: memberUpdate.id,
       },
     });
-    if (userRole1?.Status === 'Owner') {
+    if (userRole1?.Status === 'Owner'|| (userRole?.Status === 'Admin' &&  userRole1?.Status === 'Admin' )) {
       throw new HttpException("can t kick owner in the room", HttpStatus.BAD_REQUEST);
     }
-    
-    const userkick = await this.prisma.member.findFirst({
-      where: {
-        user_id: memberUpdate.userId,
-        chatRoomId: memberUpdate.id,
-      },
-    });
+
     const updatedMember = await this.prisma.member.update({
       where: {
-        id: userkick.id,
+        id: userRole1.id,
       },
       data: {
         Status: "kick",
@@ -391,6 +375,7 @@ export class RoomsService {
     return updatedMember;
     
   }
+
   async Member(id: string, memberUpdate: Member)
   {
     const userRole = await this.prisma.member.findFirst({
@@ -400,19 +385,22 @@ export class RoomsService {
       },
     });
     
-    if  (userRole?.Status !== 'Owner') {
+    if ( userRole?.Status !== 'Owner' && userRole?.Status !== 'Admin') {
       throw new HttpException("User is not an admin in the room", HttpStatus.BAD_REQUEST);
     }
     
-    const userkick = await this.prisma.member.findFirst({
+    const userRole1 = await this.prisma.member.findFirst({
       where: {
         user_id: memberUpdate.userId,
         chatRoomId: memberUpdate.id,
       },
     });
+    if (userRole1?.Status === 'Owner'|| (userRole?.Status === 'Admin' &&  userRole1?.Status === 'Admin' )) {
+      throw new HttpException("can t kick owner in the room", HttpStatus.BAD_REQUEST);
+    }
     const updatedMember = await this.prisma.member.update({
       where: {
-        id: userkick.id,
+        id: userRole1.id,
       },
       data: {
         Status: "Member",
@@ -604,7 +592,6 @@ export class RoomsService {
       throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
     }
 
-    console.log(isRoom)
     const isMember = await this.prisma.member.findFirst({
       where: {
         user_id: id,
@@ -683,7 +670,6 @@ export class RoomsService {
 
 
   async getAllFreind(id: string) {
-    console.log(id)
       const friends = await this.prisma.friend.findMany({
         where: {
           OR: [
@@ -804,7 +790,6 @@ export class RoomsService {
       });
   
       if (!chatRoom) {
-        console.log('Chat room not found.');
         return null;
       }
   
@@ -836,7 +821,6 @@ export class RoomsService {
                 },
               });
       
-              console.log('Notification room updated:', updatedNotification);
             }
         }
       }

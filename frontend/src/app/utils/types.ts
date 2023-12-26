@@ -112,6 +112,12 @@ export type BloquesTypes = {
     avatar_url : string;
     userBloque : User;
 }
+export type BloqueList = {
+    id : string;
+    UserOne : User;
+    UserTwo : User;
+
+}
 
 
 export type MessageType = {

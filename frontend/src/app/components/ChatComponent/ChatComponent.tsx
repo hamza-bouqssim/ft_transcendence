@@ -87,7 +87,9 @@ const ChatComponnent = () => {
 	const handleMenuClick = (conversationId: string) => {
 		setOpenMenuId(openMenuId === conversationId ? null : conversationId);
 	};
+	console.log("useState")
 	useEffect(() => {
+		
 		dispatch(fetchConversationThunk());
 		dispatch(fetchAuthUser());
 	}, [dispatch]);

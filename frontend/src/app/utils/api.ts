@@ -107,6 +107,9 @@ export const searchingBar = async (name : string) => axios.post(`http://localhos
 export const findConversationUsers = async ( display_name : string) => axios.post(`http://localhost:8000/chat/findConversationUser`, {display_name : display_name}, config);
 // tabel friends
 
+
+export const blockedUsers = async () => axios.get(`http://localhost:8000/friend-request/blocked`, config);
+
 export const tableFriends = async () => axios.get(`http://localhost:8000/user/table-friends`, config);
 
 export const createRoomsApi = (data:createRoom) =>{
@@ -231,6 +234,12 @@ export const deleteAccount = () => {
 
 export const getUserInfos = (id:string) => {
   const response = API.post("/user/get_user", {id_user:id});
+  return response;
+}
+
+export const addMemberToRooms = (id:string ,userId:string) =>
+{
+  const response = API.post("/rooms/addMemberToRooms",{id,userId})
   return response;
 }
 

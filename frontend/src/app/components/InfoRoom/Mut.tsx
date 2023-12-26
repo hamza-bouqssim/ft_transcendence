@@ -30,7 +30,6 @@ export const Mut = () => {
   const { channel } = useContext(socketContext);
   const dispatch = useDispatch();
 
-  console.log("hi")
   if (status =="loading") {
     return(
       <div className="flex items-center justify-center mt-5">

@@ -33,6 +33,8 @@ const BotGame = ({ mapIndex }: any) => {
 	const pathName = usePathname();
 
 	useEffect(() => {
+		
+
 		const parentWidth: number = parentCanvasRef.current?.clientWidth!;
 		const parentHeight: number = parentCanvasRef.current?.clientHeight!;
 
@@ -58,6 +60,8 @@ const BotGame = ({ mapIndex }: any) => {
 	}, []);
 
 	useEffect(() => {
+		
+
 		let timerInterval: NodeJS.Timeout;
 		let scoreInterval: NodeJS.Timeout;
 

@@ -50,6 +50,7 @@ const MessageContainer = () => {
     const scrollRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
+      
       const joinRoom = (id: string) => {
         if (oldId) socket.emit("leaveToRoom", { id: oldId });
         socket.emit("joinToRoom", { id: id });
@@ -64,17 +65,18 @@ const MessageContainer = () => {
           joinRoom(id);
         }
       }
+      
     }, [dispatch, channel, oldId, socket, setOldId]);
     useEffect(() => {
+      
       scrollRef.current?.scrollIntoView();
     }, [messages]);
+    
 
     const breakContentIntoLines = (content : string, lineLength : number) => {
       const regex = new RegExp(`.{1,${lineLength}}`, 'g');
       return content.match(regex) || [];
     };
-    // console.log("sender here-->", messages.participent.sender.id);
-    // console.log("recipient here-->", messages.participent.recipient);
     const debloqueFromPanel  = async () =>{
         let user : User | undefined;
         if( channel && channel?.sender.id === Userdata?.id)
