@@ -42,33 +42,37 @@ export class UserService {
     }
 
 
-    async changeDisplayedName(_email: string, newDisplayedName: string){
-        const find = await this.prisma.user.findUnique({where: {email:_email}});        
-            if(!find)
-                throw new HttpException("User Not Found!", HttpStatus.BAD_REQUEST); 
-            if (find.display_name === newDisplayedName)
-                throw new Error("This Display Name already in use, Choose another one !!!");
+    async changeDisplayedName(_email: string, newDisplayedName: string) {
+      const find = await this.prisma.user.findUnique({ where: { email: _email } });
+  
+      if (!find) {
+          throw new HttpException("User Not Found!", HttpStatus.BAD_REQUEST);
+      }
+      
+      const search = await this.prisma.user.findUnique({
+          where: {
+              display_name: newDisplayedName //rgatnoui
+          }
+      });
+  
+      if ((search) && search.email != _email) {
+          throw new Error("This Display Name already in use, Choose another one !!!");
+      }
+      
+      if(!search){
+        const updatedDisplayName = await this.prisma.user.update({
+            where: { email: _email },
+            data: { display_name: newDisplayedName }
+        });
 
-        const search = await this.prisma.user.findUnique({
-            where : {
-            display_name: newDisplayedName
+        if (!updatedDisplayName) {
+            throw new Error("Error");
         }
-        })
-
-        if(search)
-        {
-            throw new HttpException("Display_name alrighdy in use", HttpStatus.BAD_REQUEST);
-        }
-
-        const updatedDipslayName = await this.prisma.user.update({
-            where: {email: _email},
-            data: {display_name: newDisplayedName}
-        })
-
-        if(!updatedDipslayName)
-            throw new HttpException("Error", HttpStatus.BAD_REQUEST);
-        
-        return {message : 'Update display_name  succefully'}    }
+      }
+  
+  
+          return { message: 'Update display_name successfully' };
+  }
 
 
 
@@ -244,19 +248,21 @@ export class UserService {
         });
       
         const chatRooms = await this.prisma.chatRoom.findMany({
-            where: {
-              AND: [
-                {
-                  name: {
-                    contains: name,
-                  },
+          where: {
+            AND: [
+              {
+                name: {
+                  contains: name,
                 },
-                {
-                  Privacy: "Public",
+              },
+              {
+                Privacy: {
+                  in: ["Public", "Protected"],
                 },
-              ],
-            },
-          });
+              },
+            ],
+          },
+        });
 
           // const blockedUsers = await this.prisma.blockList.findMany({
           //   where: {

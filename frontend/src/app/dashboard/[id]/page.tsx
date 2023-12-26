@@ -28,7 +28,6 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 	
 	
 	const { friendsBlock , blocked, fstatus, ferror } = useSelector((state:any) => state.friendsBlock);
-	console.log("bloc here-->", blocked);
 	const dispatch = useDispatch<AppDispatch>();
 
 	const [results, setResults] = useState<ResultsType>();
@@ -75,7 +74,6 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 	}, [params.id]);
 
 	const handleEnter = (event: any) => {
-		console.log("herere");
 		if (event.key === 'Enter') {
 		  event.preventDefault();
 		  const formData = {
