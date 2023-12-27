@@ -20,7 +20,6 @@ const InviteField = () => {
 
 
 	// fetch all users
-	console.log("InviteField")
 	useEffect (() => {
         dispatch(fetchUserTable())
         .unwrap()

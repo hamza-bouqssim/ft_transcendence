@@ -214,8 +214,19 @@ export const banMember =(id:string ,userId:string) =>
 }
 
 export const getMatchHistory = (id: string) =>{
-  const response = API.post("/game/myhistory", {userId:id});
-  return response;
+  try{
+    const response = API.post("/game/myhistory", {userId:id});
+    return response;
+
+  }catch(error : any){
+    if (error.response && error.response.data) {
+      return error.response.data;
+    } else {
+      return ('Failed to get MatchHistory');
+    }
+
+  }
+
 }
 
 export const getStates = (id: string) =>{

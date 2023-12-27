@@ -22,7 +22,7 @@ export class WebSocketAdapter extends IoAdapter {
     }
 
     const COOKIE_SECRET: string = "my-secret";
-    const signedCookies = cookieParser.signedCookie(token, COOKIE_SECRET);
+    cookieParser.signedCookie(token, COOKIE_SECRET);
 
     try {
       const decodedToken = jwt.verify(token, COOKIE_SECRET) as Record<string, any>;

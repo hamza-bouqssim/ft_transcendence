@@ -38,11 +38,18 @@ export const createConversationThunk = createAsyncThunk(
 );
 
 
-export const fetchConversationThunk = createAsyncThunk('conversations/fetch', async () => {
-  console.log("redaux")
-  const response = await getConversation();
-  return response.data; // Assuming your API response has a 'data' property
-
+export const fetchConversationThunk = createAsyncThunk('conversations/fetch', async (_,{rejectWithValue} ) => {
+  try{
+    const response = await getConversation();
+    return response.data.data;
+  }catch(error : any){
+    if (error.response && error.response.data) {
+      return rejectWithValue(error.response.data);
+    } else {
+      return rejectWithValue('Failed to fetch convarsation');
+    }
+  }
+  
 });
 
 
@@ -54,7 +61,6 @@ export const fetchConversationUserThunk = createAsyncThunk('conversation/fetch',
 
 
 export const fetchDeleteConversation = createAsyncThunk('deleteConversation/fetch', async(conversationId : string)=>{
-  console.log("redaux")
   const response = await deleteConversation(conversationId);
   return response;
 })

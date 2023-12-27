@@ -30,9 +30,14 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
     private NsessionOfuser: Map<string, number> = new Map();
     async handleConnection(socket : AuthenticatedSocket) {
         const userId = socket.user.sub;
-        if (!socket.user)
+        const userdb = await this.prisma.user.findUnique({
+            where:{
+                id:userId
+            }
+        })
+        if (!socket.user || !userdb)
             return;
-        if(socket.user)
+        if(socket.user && userdb)
         {  
             if (!this.NsessionOfuser.has(userId)) {
                 

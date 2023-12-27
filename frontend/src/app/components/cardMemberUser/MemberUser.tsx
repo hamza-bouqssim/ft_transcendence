@@ -23,7 +23,6 @@ interface MemberUserProps {
 export const MemberUser: React.FC<MemberUserProps> = ({ idUserAdd, setIdUserAdd }) => {  
   const { friends, status, error } = useSelector((state:any) => state.friends);
   const dispatch = useDispatch<AppDispatch>();
-  console.log("hi")
   useEffect(() => {
     
     dispatch(fetchGetAllFriendsThunk());

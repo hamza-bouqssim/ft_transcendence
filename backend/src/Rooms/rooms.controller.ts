@@ -224,7 +224,6 @@ export class RoomsController {
       
       const {id}=req.user
       const update = await this.roomsService.addMemberToRooms(id,memberUpdate);
-      console.log(update)
       this.eventEmitter.emit(
         'order.updateMember',
         memberUpdate.id,null,null

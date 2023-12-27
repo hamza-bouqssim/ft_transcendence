@@ -168,20 +168,20 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 			ToastError("Failed to block this friend. Please try again.");
 		}
 		};
-		useEffect(() => {
+		// useEffect(() => {
 			
 
-			dispatch(fetchBlocksThunk());
-			dispatch(fetchBlockedUsers());
+		// 	dispatch(fetchBlocksThunk());
+		// 	dispatch(fetchBlockedUsers());
 		  
-			const isBlocked = blocked.some(
-			  (elem: BloqueList) =>
-				(elem.userOne.id === Userdata?.id && elem.userTwo.id === params.id) ||
-				(elem.userOne.id === params.id && elem.userTwo.id === Userdata?.id)
-			);
+		// 	const isBlocked = blocked.some(
+		// 	  (elem: BloqueList) =>
+		// 		(elem.userOne.id === Userdata?.id && elem.userTwo.id === params.id) ||
+		// 		(elem.userOne.id === params.id && elem.userTwo.id === Userdata?.id)
+		// 	);
 		  
-			setSwitch(!isBlocked);
-		  }, [dispatch]);
+		// 	setSwitch(!isBlocked);
+		//   }, [dispatch]);
 
 		
 		
@@ -271,7 +271,6 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 				(request: any) =>
 				  request.user_id === params.id && request.friend_id === Userdata?.id
 			  );
-			  console.log("request id-->", matchingRequest.id);
 			  if(matchingRequest){
 				try {
 			 

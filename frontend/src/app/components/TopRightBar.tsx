@@ -67,7 +67,6 @@ const TopRightBar = () => {
 			ToastError(`Failed to logout`);
 		}
 	};
-	console.log("useState")
 	const menuRef = useRef<HTMLDivElement>(null);
 	const subMenuRef = useRef<HTMLDivElement>(null);
 	const faChevronDownRef = useRef<SVGSVGElement>(null);

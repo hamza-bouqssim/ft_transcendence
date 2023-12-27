@@ -655,8 +655,6 @@ class PongGame {
 
 	updateBallVelocity = (): void => {
 		// Limit Velocity Value
-		// console.log("Before velocity update:", this.currentBallVelocity.y);
-		// console.log("Before velocity update:", this.currentBallVelocity.x);
 		const xVelocity = this.currentBallVelocity.x;
 
 		if (
@@ -690,7 +688,6 @@ class PongGame {
 			y: this.currentBallVelocity.y,
 		});
 
-		// console.log("After velocity update:", this.currentBallVelocity.y);
 	};
 
 	moveBotPaddle = (): void => {

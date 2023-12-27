@@ -21,7 +21,6 @@ export const fetchMessagesUnreadThunk = createAsyncThunk('messagesUnread/fetch',
     return response.data;
   })
 export const markConversationAsRead = createAsyncThunk('AsReadMessage/fetch', async (id : string) =>{
-  console.log("redaux") 
   await markConversationAsRead(id);
 })
 

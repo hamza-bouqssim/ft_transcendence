@@ -56,7 +56,6 @@ const MessageInputFieldRoom: FC<props> = ({setMessage, Message}) => {
     useEffect(() => {
       dispatch(fetchBlockedUsers())
     }, [dispatch]);
-    console.log(blocked)
     useEffect(() => {
       const handleOnMessage = (message: any) => {
         const isBlocked = blocked.some(
@@ -64,7 +63,6 @@ const MessageInputFieldRoom: FC<props> = ({setMessage, Message}) => {
             elem.userOne.id === message.senderId || elem.userTwo.id === message.senderId
         );
       
-        console.log(isBlocked);
       
         if (!isBlocked || message.senderId === Userdata?.id) {
           setMessage((prevMessages: messageTypes[]) => [...prevMessages, message]);
@@ -77,7 +75,6 @@ const MessageInputFieldRoom: FC<props> = ({setMessage, Message}) => {
       };
     }, [channel?.id, socket]);
 
-    console.log()
   
     const sendMessage = async () => {
         if(!content)

@@ -24,8 +24,8 @@ import { fetchUsersThunk } from "@/app/store/usersSlice";
 interface MessagePanelHeaderProps {
 	setUpdateRome: (value: boolean) => void;
 	updateRome: boolean;
-	setOldData:(value: ConversationTypes) => void;
-	olddata :ConversationTypes;
+	setOldData:(value: ConversationTypes  | null) => void;
+	olddata :ConversationTypes | null;
 }
 
 interface Member {
@@ -79,7 +79,6 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 		if(channel?.id)
 			dispatch(getAllMembers(channel?.id));
 	}, [dispatch, channel]);
-	console.log("InviteField")
 	// Image src
 
 	const InfoRecipient = () => {

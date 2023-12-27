@@ -2,7 +2,7 @@
 import { InputField, MessageContainerStyle, MessagePanelStyle, MessagePannelBody, MessagePannelHeaderStyle } from "@/app/utils/styles"
 import MessageContainer from "./MessageContainer";
 import MessageInputField from "./MessageInputFieldRoom";
-import { messageTypes } from "@/app/utils/types";
+import { ConversationTypes, messageTypes } from "@/app/utils/types";
 import { FC, useState } from "react";
 import MessagePanelHeader from "./MessagePanelHeader";
 import { usePathname } from "next/navigation";

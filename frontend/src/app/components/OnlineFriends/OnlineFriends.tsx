@@ -61,7 +61,6 @@ const OnlineFriends = () => {
 	const dispatch = useDispatch<AppDispatch>();
 	const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 	const { updateChannel, channel } = useContext(socketContext);
-	console.log("useState")
 	const handleMenuClick = (friendId: string) => {
 		setOpenMenuId(openMenuId === friendId ? null : friendId);
 	};

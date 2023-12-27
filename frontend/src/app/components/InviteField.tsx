@@ -16,7 +16,6 @@ const InviteField = () => {
 	const dispatch = useDispatch<AppDispatch>();
 
 
-console.log("InviteField")
 	// fetch all users
 	useEffect (() => {
 		
