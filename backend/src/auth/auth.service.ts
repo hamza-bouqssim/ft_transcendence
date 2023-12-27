@@ -119,6 +119,8 @@ export class AuthService {
 
 	async findUser(id: string) {
 		const user = await this.prisma.user.findUnique({ where: { id: id } });
+		if(!user)
+			return null
 		return user;
 	}
 

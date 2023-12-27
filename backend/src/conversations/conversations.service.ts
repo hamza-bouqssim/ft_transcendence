@@ -60,10 +60,22 @@ export class ConversationsService  {
       this.eventEmitter.emit('createConversation.created', {
         conversation
       });
-      // this.userService.notificationMessage( conversation., messages.participents.recipientId);
 
-      return {message : 'Conversation create succefully'}
+      return {message : 'Conversation create succefully', conversation}
 
+  }
+
+  async checkIfBlocked(userId : string, blockedUserId : string) {
+    // Perform a database query to check if the user is blocked by the other user
+    const blockListEntry = await this.prisma.blockList.findFirst({
+      where: {
+        userOneId: userId,
+        userTwoId: blockedUserId,
+      },
+    });
+  
+    // Return true if blocked, false otherwise
+    return !!blockListEntry;
   }
 
   async create_conversations(user : User, display_name : string){
@@ -71,7 +83,13 @@ export class ConversationsService  {
       const recipient = await this.userService.findByDisplayName(display_name)
       if(!recipient)
             throw new HttpException('User not found so cannot create Conversation' , HttpStatus.BAD_REQUEST)
-      
+      const isSenderBlocked = await this.checkIfBlocked(user.id, recipient.id);
+
+      const isRecipientBlocked = await this.checkIfBlocked(recipient.id, user.id);
+                  
+      if (isSenderBlocked || isRecipientBlocked) {
+            throw new Error("Interaction not allowed. Users are blocked.");
+      }
       const Participent = await this.findParticipent(display_name, user);
       if(!Participent)
       {
@@ -130,8 +148,15 @@ export class ConversationsService  {
           recipient: {
             connect: { display_name: _display_name}
           }
+          
+        },
+        include :{
+          sender : true,
+          recipient : true,
         }
+       
       });
+
 
         return newParticipent
     }
@@ -164,6 +189,7 @@ export class ConversationsService  {
           },
         },
       });
+        
     
       return chatParticipents;
     }
@@ -256,7 +282,7 @@ async createMessags(user : any, params: CreateMessageParams) {
     return messageCreate;
   }
 
-async findConversationUsers(user : any, _display_name : string)
+async findConversationUsers(user : any, _display_name : string, message : string)
 {
   const chat = await this.prisma.chatParticipents.findFirst({
     where: {
@@ -269,6 +295,37 @@ async findConversationUsers(user : any, _display_name : string)
       sender: true,
       recipient: true,
     },
+  });
+
+  const messageCreate= await this.prisma.message.create({
+    data: {
+      content : message,
+      sender: {
+        connect: { id: user.id },
+      },
+      participents: {
+        connect: { id: chat.id },
+      },
+    },
+    include: {
+      sender: true,
+      participents: {
+        include: {
+          sender: true,
+          recipient: true,
+        },
+      },
+    },
+  });
+
+  await this.prisma.chatParticipents.update({
+    where: { id: chat.id },
+    data: {
+      lastMessageId: messageCreate.id,
+    },
+  });
+  this.eventEmitter.emit('createConversation.created', {
+    chat
   });
   return chat;
 }

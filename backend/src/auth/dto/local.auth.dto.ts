@@ -30,7 +30,7 @@
 //     @IsString()
 //     rank: string
 // }
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsEmail, IsNotEmpty, IsString } from "class-validator";
 
 export class LocalAuthDto {
     @IsString()
@@ -39,6 +39,7 @@ export class LocalAuthDto {
 
     @IsString()
     @IsNotEmpty()
+    @IsEmail()
     email: string;
 
     @IsString()

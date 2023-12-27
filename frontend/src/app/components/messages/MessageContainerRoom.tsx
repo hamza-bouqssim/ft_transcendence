@@ -30,33 +30,25 @@ const MessageContainerRoom = () => {
         [oldId, socket, setOldId]
       );
       useEffect(() => {
+      
+
     if(channel){
         const id = channel.id;
         
-        if (pathname.includes("chat")) {
-          getConversationMessage(id)
-            .then((data: any) => {
-              joinRoom(id);
-              setMessage(data.data);
-            })
-            .catch((err: any) => console.log(err));
-        } else {
+
           getConversationMessageRoom(id)
             .then((data: any) => {
               joinRoom(id);
               setMessage(data.data.data);
             })
             .catch((err: any) => console.log(err));
-        }
       }
     }, [channel?.id]);
   
-   
     useEffect(()=>{
       scrollRef.current?.scrollIntoView()
     },[Message])
 
-    console.log(Message)
     return (
         
         <>

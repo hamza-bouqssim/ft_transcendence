@@ -30,7 +30,14 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
     private NsessionOfuser: Map<string, number> = new Map();
     async handleConnection(socket : AuthenticatedSocket) {
         const userId = socket.user.sub;
-        if(socket.user)
+        const userdb = await this.prisma.user.findUnique({
+            where:{
+                id:userId
+            }
+        })
+        if (!socket.user || !userdb)
+            return;
+        if(socket.user && userdb)
         {  
             if (!this.NsessionOfuser.has(userId)) {
                 
@@ -101,12 +108,10 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
     
     @OnEvent("order.created")
     async onNotificationCreate(data:any) {
-        console.log(data)
         const userAdmin = data.members.find((userAdmin) => userAdmin.Status=== "Owner")
         data.members.map((member) => {
             if(member.Status !== "Owner")
             {
-                console.log(member)
                 this.roomsService.notificationRoom(data.id,member.user_id,1)
                 const message = `${userAdmin.user.display_name } Join you to ${data.name}`;
                 this.server.to(member.user_id).emit('notification', message);
@@ -153,6 +158,15 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
             this.server.to(member.user_id).emit('updateMember', {roomId:RoomId,idUserleave:id,types:types});         
         })
     }
+
+
+
+
+
+
+
+
+
     //chat room 
 
 
@@ -161,7 +175,7 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         @OnEvent("request.created")
         sendFriendRequestNotification(data : any) {
             const message = `${data.friendData.user.display_name} send you request to be friends`;
-            this.server.emit('newFriendRequest', data);
+            this.server.to(data.friendData.friend_id).emit('newFriendRequest', data);
             const type = "requestFriend";
             const requestId = data.friendData.id;
 
@@ -267,10 +281,15 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
 
         @OnEvent('chat.AcceptPLayNotification')
 	    async handleAcceptPLayNotification(data: any) {
-	
-        console.log(data)
+              await this.prisma.requestPlay.delete({
+                    where : {
+                        id : data.req_play.id
+
+                    }
+                })
 		this.server.to(data.req_play.senderId).emit("AcceptPLayNotification",{accept:true});
         this.server.to(data.req_play.recipientId).emit("AcceptPLayNotification",{accept:true});
+              
         }
         
 
@@ -290,17 +309,7 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
     
 
     
-    // @OnEvent("requestPlay.created")
-    // sendRequestToPLay(data : any){
-        
-    //     const message = `${data.requestToPlay.Sender.display_name} send you request to play`;
-    //     const type = "requestPLay";
-    //     const requestId = data.requestToPlay.id;
-    //     console.log("requestId-->", requestId);
-    //     this.server.to(data.requestToPlay.recipient.id).emit(`newRequestToPlay`,data);
-    //     this.userService.createNotification(data.requestToPlay.Sender, data.requestToPlay.recipient, message, type, requestId);
-        
-    // }
+ 
     
    
        

@@ -19,12 +19,12 @@ export function Qrcodeform({ closeQrForm }: Props) {
 	const [message, setMessage] = useState("");
 
 	useEffect(() => {
+		
 		generateQrcode()
 			.then((res) => {
 				setQRCodeData(res.data.qrcode);
 			})
 			.catch(() => {
-				console.log("Error");
 			});
 	}, []);
   
@@ -42,10 +42,8 @@ export function Qrcodeform({ closeQrForm }: Props) {
 			})
 			.catch((e) => {
 				setLoading(false);
-				console.log("error:", e);
 			});
 	};
-	console.log("isVerified:", isVerified);
 	return (
 		<div className="absolute bottom-0 left-0 right-0 top-0 z-30 m-auto h-[600px] w-[380px] overflow-hidden rounded-[20px] bg-white">
 			<div className="relative flex h-full flex-col  items-center font-['Whitney_Semibold']">

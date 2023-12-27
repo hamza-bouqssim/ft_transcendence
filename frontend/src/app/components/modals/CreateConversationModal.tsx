@@ -41,7 +41,6 @@ const CreateConversationModal: FC<props> = ({ setShow }) => {
 	  };
         const {register, handleSubmit, formState: { errors }} = useForm<CreateConversationParams>();
         const dispatch = useDispatch<AppDispatch>();
-
         const onSubmit = async  (data : CreateConversationParams) => {
           try{
             const res = await dispatch(createConversationThunk(data));
@@ -70,7 +69,6 @@ const CreateConversationModal: FC<props> = ({ setShow }) => {
 
         const { current } = ref;
         if(current === e.target){
-            console.log('close Modal');
         }
     };
    

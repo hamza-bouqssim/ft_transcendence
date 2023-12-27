@@ -28,7 +28,6 @@ interface Member {
 export const Owner = () => {
   const { members, status, error } = useSelector((state:any) => state.member);
   const { channel } = useContext(socketContext);
-  console.log("hi")
 
   if (status =="loading") {
     return(

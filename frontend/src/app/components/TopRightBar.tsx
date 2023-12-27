@@ -43,6 +43,7 @@ const TopRightBar = () => {
 	};
 	const { Userdata, setUserdata } = useContext(socketContext);
 	useEffect(() => {
+		
 		dispatch(fetchCountNotification());
 		getAuthUser()
 			.then(({ data }) => {
@@ -52,7 +53,6 @@ const TopRightBar = () => {
 				}));
 			})
 			.catch((err) => {
-				console.log(err);
 			});
 	}, [setUserdata, dispatch]);
 	const router = useRouter();
@@ -74,13 +74,13 @@ const TopRightBar = () => {
 	const [rotate, setRotate] = useState<boolean>(false);
 
 	const handleDocumentClick = (event: any) => {
-		console.log(notfication);
 		if (menuRef.current && !menuRef.current.contains(event.target)) {
 			setNotefication(false);
 		}
 	};
 
 	useEffect(() => {
+		
 		if (notfication) {
 			document.addEventListener("click", handleDocumentClick);
 		} else {
@@ -93,6 +93,7 @@ const TopRightBar = () => {
 	}, [notfication]);
 
 	useEffect(() => {
+		
 		const handleCLickEvent = (e: MouseEvent) => {
 			if (!faChevronDownRef.current?.contains(e.target as Node))
 				setRotate(false);

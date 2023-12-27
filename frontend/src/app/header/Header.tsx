@@ -42,6 +42,8 @@ const Header = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const controller = new AbortController();
     useEffect(() => {
+		
+
             setLoading(true);
             getAuthUser().then(({data}) => {
                 setUser(data);
@@ -80,7 +82,6 @@ const Header = () => {
 			ToastSuccess("Logout succeffuly");
 		} catch (err) {
 			ToastError("failed to logout");
-			console.log(err);
 		}
 	};
 

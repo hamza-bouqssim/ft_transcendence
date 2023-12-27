@@ -8,7 +8,6 @@ import { deleteAvatar } from "../utils/api";
 const MyAccount = () => {
 	const { Userdata, setUserdata } = useContext(socketContext);
 	const newAPI = axios.create();
-
 	const [src, setSrc] = useState<string>("/assets/user2.jpeg");
 	const [_image, setImage] = useState();
 
@@ -26,8 +25,6 @@ const MyAccount = () => {
 				formData,
 			); //access the /dnbhh.../ from the env
 
-			console.log(res.data.secure_url);
-			// await changePhoto(res.data.secure_url).then((result) => console.log(result));
 			setImage(res.data.secure_url);
 			// setUserdata({ ...Userdata, avatar_url: res.data.secure_url });
 			setUserdata((prevUserdata) => ({
@@ -36,7 +33,6 @@ const MyAccount = () => {
 				id: prevUserdata?.id || "",
 			}));
 		} catch (err) {
-			console.log(err);
 		}
 	};
 
@@ -52,7 +48,6 @@ const MyAccount = () => {
 					}));
 			});
 		} catch (err) {
-			console.log(err);
 		}
 	};
 	return (

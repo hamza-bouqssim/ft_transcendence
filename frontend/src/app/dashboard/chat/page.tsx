@@ -8,13 +8,14 @@ import { useDispatch } from "react-redux"
 import { AppDispatch } from "@/app/store"
 import { fetchGetRequestThunk, fetchNumberPending } from "@/app/store/requestSlice";
 import { fetchGetAllFriendsThunk } from "@/app/store/friendsSlice";
-import { fetchBlocksThunk } from "@/app/store/blockSlice";
+import { fetchBlockedUsers, fetchBlocksThunk } from "@/app/store/blockSlice";
 import { fetchUsersThunk } from "@/app/store/usersSlice";
 import { fetchConversationThunk } from "@/app/store/conversationSlice";
 import { fetchMessagesThunk } from "@/app/store/messageSlice";
 import { ConversationTypes, messageTypes } from "@/app/utils/types";
 import { fetchCountNotification, fetchNotificationThunk } from "@/app/store/notificationSlice";
 import { useRouter } from "next/navigation";
+import { fetchGetRequestsThunk } from "@/app/store/requestsSlice";
 
 const ConversationChannelPagechat = () => { 
   const { updateChannel, channel } = useContext(socketContext);
@@ -25,6 +26,8 @@ const ConversationChannelPagechat = () => {
 	const dispatch= useDispatch<AppDispatch>();
 
   useEffect(() => {
+    
+
     socket.on('AcceptNotification', (data : any) => {
       dispatch(fetchGetRequestThunk());
       dispatch(fetchGetAllFriendsThunk());
@@ -32,6 +35,8 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchNumberPending());
       dispatch(fetchNotificationThunk());
       dispatch(fetchCountNotification());
+      dispatch(fetchGetRequestsThunk())
+
 
 
     });
@@ -40,6 +45,8 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchNumberPending());
       dispatch(fetchCountNotification());
       dispatch(fetchNotificationThunk());
+      dispatch(fetchGetRequestsThunk())
+
 
 
 		  });
@@ -47,12 +54,7 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchCountNotification());
       dispatch(fetchNotificationThunk());
     })
-    // socket.on('AcceptPLayNotification', (data : any)=>{
-    //   if(data.accept)
-    //   {
-    //     route.push("/dashboard/game/-game/match-making?mapIndex=0")
-    //   }
-    // })
+
     socket.on('RefusePLayNotification', (data : any)=>{
       dispatch(fetchCountNotification());
       dispatch(fetchNotificationThunk());
@@ -62,6 +64,8 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchNumberPending());
       dispatch(fetchNotificationThunk());
       dispatch(fetchCountNotification());
+      dispatch(fetchGetRequestsThunk());
+
 
     })
     socket.on('deleteNOtification', (data : any)=>{
@@ -71,6 +75,9 @@ const ConversationChannelPagechat = () => {
     socket.on('blockNotification', (data : any) =>{
       dispatch(fetchBlocksThunk());
       dispatch(fetchGetAllFriendsThunk());
+      dispatch(fetchGetRequestsThunk());
+      dispatch(fetchBlockedUsers());
+
 
       if (channel && channel.id) {
         dispatch(fetchMessagesThunk(channel.id));
@@ -80,6 +87,10 @@ const ConversationChannelPagechat = () => {
     socket.on('debloqueNotification', (data : any)=>{
       dispatch(fetchBlocksThunk());
       dispatch(fetchGetAllFriendsThunk());
+      dispatch(fetchGetRequestsThunk());
+      dispatch(fetchBlockedUsers());
+
+
       
       if(channel != null)
       {

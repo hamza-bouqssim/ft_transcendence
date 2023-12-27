@@ -16,6 +16,7 @@ const MatchMaking = () => {
 	const mapIndex: string | null = searchParams.get("mapIndex");
 	const router = useRouter();
 	const gameSocket = useGameSocket();
+
 	const checkQueryValue = (): boolean => {
 		if (mapIndex) {
 			const isValidIndex = /^[0-2]$/.test(mapIndex);
@@ -28,6 +29,8 @@ const MatchMaking = () => {
 	const [opponentPlayer, setOpponentPlayer] = useAtom(OpponentData);
 
 	useEffect(() => {
+		
+
 		const handleRedirectUser = (payload: any) => {
 			if (Userdata?.display_name === payload.display_name)
 				router.push("/dashboard", { scroll: false });
@@ -44,18 +47,16 @@ const MatchMaking = () => {
 				scroll: false,
 			});
 		};
-		console.log("setup start game event");
 		gameSocket.emit("startGame", {
-			indexMap: mapIndex,
+			indexMap: opponentPlayer.mapIndex,
 		});
 		gameSocket.on("knowOpponent", handleKnowOpponent);
+
 		return () => {
-			console.log("remove start game event");
 			gameSocket.off("knowOpponent", handleKnowOpponent);
 			gameSocket.off("redirectUser", handleRedirectUser);
 		};
 	}, []);
-	console.log("map index:", opponentPlayer.mapIndex);
 
 	return (
 		<>

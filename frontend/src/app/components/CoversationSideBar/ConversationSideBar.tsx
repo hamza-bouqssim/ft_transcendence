@@ -34,11 +34,9 @@ const CoversationSideBar = () => {
 	const [show, setShow] = useState<any>(false);
 	const dispatch = useDispatch<AppDispatch>();
 	const { request, status, error, countRequest  } = useSelector((state:any) => state.request);
-	console.log("count pend here", countRequest);
 	useEffect(()=>{
 		dispatch(fetchNumberPending());
 	},[dispatch]);
-	
     return (
 		<div className="w-full h-full relative p-2  xl:rounded-[20px] pt-4 bg-white">
 			<div className="flex items-center rounded-full justify-between w-3/4 mb-4  mx-auto  bg-[#DFDFDF]">

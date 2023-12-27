@@ -15,7 +15,6 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy)
         });
     }
     async validate(accessToken: string, refreshToken: string, profile: any){
-        console.log(profile._json.login + " " + profile._json.usual_full_name);
         const dto: AuthDto = {
             email: profile.emails[0]?.value,
             username: profile._json.usual_full_name,

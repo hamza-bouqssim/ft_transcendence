@@ -68,6 +68,7 @@ export const InfoGroups = () => {
   };
 
   useEffect(() => {
+    
       if (valide) {
           document.addEventListener('click', handleDocumentClick);
       } else {
@@ -77,7 +78,7 @@ export const InfoGroups = () => {
       return () => {
           document.removeEventListener('click', handleDocumentClick);
       };
-  }, [valide,]);
+  }, [valide]);
 
   return (
     <>
@@ -106,7 +107,7 @@ export const InfoGroups = () => {
                     <Member></Member>
                   </AccordionContent>
                 </AccordionItem>
-                {members?.some((member:Members) => member.Status === "Owner" && member.user_id === Userdata?.id) &&
+                {members?.some((member:Members) => (member.Status === "Owner"  || member.Status === "Admin" )&& member.user_id === Userdata?.id) &&
                 
               <>
                 <AccordionItem value="item-2">

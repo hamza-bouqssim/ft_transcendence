@@ -47,13 +47,20 @@ export const getAllMembers = createAsyncThunk('members/getAllMembers', async (ro
 
 export const quitMember = createAsyncThunk('members/quitMember', async (roomId: string, { rejectWithValue }) => {
   try {
-    console.log(roomId)
     const response = await quitRoom(roomId);
     return response.data.data;
   } catch (error : any) {
     return rejectWithValue(error.message || 'Failed to quit members');
   }
 });
+// export const addMemberToRooms = createAsyncThunk('members/addMemberToRooms', async (memberdata:Memberdata, { rejectWithValue }) => {
+//   try {
+//     const response = await addMemberToRooms(memberdata);
+//     return response.data.data;
+//   } catch (error : any) {
+//     return rejectWithValue(error.message || 'Failed to quit members');
+//   }
+// });
 export const makeAdminMember = createAsyncThunk('members/makeAdminMember', async (memberdata:Memberdata, { rejectWithValue }) => {
   try {
     const response = await makeAdmin(memberdata.id,memberdata.userId);
@@ -129,7 +136,6 @@ const membersSlice = createSlice({
       // })
       // .addCase(banMembers.fulfilled, (state: any, action: PayloadAction<Member[]>) => {
       //   state.status = 'succeeded';
-      //   console.log(action.payload)
       //   state.members = state.members.map((member) => ({
       //     ...member,
       //     Status: member.user_id === action.payload ? 'Ban' : member.Status,

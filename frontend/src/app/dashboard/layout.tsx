@@ -15,7 +15,7 @@ import { Socket } from "socket.io-client";
 import { usePathname } from "next/navigation";
 import { ConversationTypes, User } from "../utils/types";
 import { Group } from "three";
-import ProviderOnSocket from "./ProviderOnSocket.tsx";
+import ProviderOnSocket from "./ProviderOnSocket";
 import { ToastContainer, toast } from "react-toastify";
 import { ChangeContext } from "./game/utils/data";
 
@@ -112,21 +112,10 @@ export default function RootLayout({
 				>
 					<AppWithProviders socket={socket}>
 						{shouldHide() ? null : <SideBar />}
-						{shouldHide() ? null : (
-							<TopRightBar
-								menu={change.menu}
-								onClick={() =>
-									setChange({
-										...change,
-										sideBar: false,
-										chatBox: false,
-										menu: !change.menu,
-									})
-								}
-							/>
-						)}
+						{shouldHide() ? null : <TopRightBar />}
 
 						<ChangeContext.Provider value={changeValues}>
+							<ProviderOnSocket></ProviderOnSocket>
 							<div
 								ref={getChildrenSize}
 								className={`h-full w-full`}

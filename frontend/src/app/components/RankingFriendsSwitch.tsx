@@ -7,8 +7,39 @@ import Image from "next/image";
 import { socketContext } from "../utils/context/socketContext";
 import { getRanking, getUserInfos } from "../utils/api";
 import { PlayerType, UserInfoType } from "../dashboard/Imports";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch } from "../store";
+import { fetchGetAllFriendsThunk } from "../store/friendsSlice";
+import { fetchUsersThunk } from "../store/usersSlice";
+import { ConversationSideBarContainer, ConversationSideBarItem, IngameStyling, OflineStyling, OnlineStyling } from "../utils/styles";
+import { CreateRequestParams, FriendsTypes } from "../utils/types";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { fetchRequestThunk } from "../store/requestSlice";
+import { ToastContainer, toast } from 'react-toastify';
 
 const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
+	const ToastError = (message: any) => {
+		toast.error(message, {
+		  position: toast.POSITION.TOP_RIGHT,
+		  autoClose: 5000,
+		  hideProgressBar: false,
+		  closeOnClick: true,
+		  pauseOnHover: true,
+		  draggable: true,
+		});
+	  };
+	
+	  const ToastSuccess = (message: any) => {
+		toast.success(message, {
+		  position: toast.POSITION.TOP_RIGHT,
+		  autoClose: 5000,
+		  hideProgressBar: false,
+		  closeOnClick: true,
+		  pauseOnHover: true,
+		  draggable: true,
+		});
+	  };
 	const [showRank, setShowRank] = useState(false);
 	const [showFriends, setShowFriends] = useState(false);
 	const [showSendReqCompo, setShowSendReqCompo] = useState(false);
@@ -17,6 +48,8 @@ const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 	const { Userdata } = useContext(socketContext);
 	const [userinfo, setUserInfo] = useState<UserInfoType>();
 	const [players, setPlayers] = useState<PlayerType[]>([]);
+	const {register, handleSubmit, formState: { errors }} = useForm<CreateRequestParams>();
+
 
 	const _showRank = () => {
 		setShowRank(true);
@@ -56,6 +89,7 @@ const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 	};
 
 	useEffect(() => {
+		
 		const fetchUserInfo = async () => {
 			try {
 				if (userId) {
@@ -63,7 +97,6 @@ const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 					setUserInfo(response.data);
 				}
 			} catch (error) {
-				console.log("Error fetching user information:", error);
 			}
 		};
 
@@ -71,18 +104,49 @@ const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 	}, [userId]);
 
 	useEffect(() => {
+		
 		const fetchGameStates = async () => {
 			try {
 				const response = await getRanking();
 				setPlayers(response.data);
 			} catch (error) {
-				console.log("Error fetching match history:", error);
 			}
 		};
 
 		fetchGameStates();
 	}, [Userdata?.id]);
+	const { friends, status, error } = useSelector((state: any) => state.friends);
+	const { users, Userstatus, Usererror } = useSelector(
+		(state: any) => state.users,
+	);
+	const dispatch = useDispatch<AppDispatch>();
+	const router = useRouter();
 
+
+	useEffect(() => {
+		dispatch(fetchGetAllFriendsThunk());
+		dispatch(fetchUsersThunk());
+	}, [dispatch]);
+
+	const onSubmit = async  (data : CreateRequestParams) => {
+		try {
+		  const response = await dispatch(fetchRequestThunk(data));
+	
+		  if (response.payload && response.payload.message) {
+			const errorMessage = response.payload.message;
+			ToastError(`Error: ${errorMessage}`);
+		  } else {
+			ToastSuccess("Friend request sent successfully");
+			
+		  }
+		} catch (err: any) {
+		  ToastError(`Error: ${err.message || 'An unexpected error occurred'}!`);
+
+		}
+		  
+		 
+	  }
+	 
 	return (
 		<div className="flex h-full w-full flex-col items-center gap-2 overflow-hidden rounded-[70px] bg-white pb-10 pt-5">
 			<div className="flex h-[22%] w-[80%] items-center gap-1 rounded-[50px] bg-gray-100 p-2 ">
@@ -205,6 +269,59 @@ const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 					<div className=" scrollbar-hide overflow-auto">
 						<InviteField />
 					</div>
+					<div className="px-2.5">
+
+					{friends.map(function (elem: FriendsTypes) {
+					const user = users.find((user: any) => user.id === elem.id);
+					const getStatusColor = () => {
+						if (user) {
+							switch (user.status) {
+								case "online":
+									return "green"; // Online status color
+								case "offline":
+									return "red"; // Offline status color
+								case "inGame":
+									return "blue"; // In-game status color
+								default:
+									return "black"; // Default color or any other status
+							}
+						}
+						return "black"; // Default color if user not found
+					};
+					
+					
+					function handleClick() {
+						router.push(`/dashboard/${elem.id}`);
+					}
+					return (
+						<div className="flex gap-5 m-3" key={elem.id}>
+							<div className="flex">
+								<Image
+									src={elem.avatar_url}
+									className="h-14 w-14 rounded-[50%] bg-black "
+									alt="Description of the image"
+									width={60}
+									height={60}
+								/>
+								{getStatusColor() === "green" ? (
+									<OnlineStyling />
+								) : getStatusColor() === "red" ? (
+									<OflineStyling />
+								) : (
+									<IngameStyling />
+								)}
+							</div>
+
+							<div>
+								<span onClick={()=> handleClick()}className="text-black block font-bold text-sm cursor-pointer">{elem.display_name}</span>
+							</div>
+
+							
+						</div>
+						
+					);
+				})}
+					</div>
 
 					<button
 						onClick={_sendreq}
@@ -220,16 +337,17 @@ const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 
 			{showSendReqCompo && (
 				<div className="relative flex h-[75%] w-[90%] flex-col">
-					<div className="flex h-[25%] w-full justify-between  p-1">
+					<form  onSubmit={handleSubmit(onSubmit)} className="flex h-[25%] w-full justify-between  p-1">
 						<input
+							{...register('display_name', {required: 'display_name is required'})} 
 							type="text"
 							className="rounded-[10px] bg-[#F2F3FD]  px-[4px] text-[#949494] placeholder-[#949494] outline-none"
-							placeholder="Search For a Friend"
+							placeholder="Send Request"
 						/>
 						<button className="h-full w-[49%] rounded-[10px] bg-[#498CDA]">
-							Search
+							Send Request
 						</button>
-					</div>
+					</form>
 					<button
 						onClick={_backTo}
 						className="absolute bottom-0 right-0 mb-[-35px] mr-4 rounded-full"
