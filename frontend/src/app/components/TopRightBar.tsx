@@ -43,6 +43,7 @@ const TopRightBar = () => {
 	};
 	const { Userdata, setUserdata } = useContext(socketContext);
 	useEffect(() => {
+		
 		dispatch(fetchCountNotification());
 		getAuthUser()
 			.then(({ data }) => {
@@ -66,6 +67,7 @@ const TopRightBar = () => {
 			ToastError(`Failed to logout`);
 		}
 	};
+	console.log("useState")
 	const menuRef = useRef<HTMLDivElement>(null);
 	const subMenuRef = useRef<HTMLDivElement>(null);
 	const faChevronDownRef = useRef<SVGSVGElement>(null);
@@ -79,6 +81,7 @@ const TopRightBar = () => {
 	};
 
 	useEffect(() => {
+		
 		if (notfication) {
 			document.addEventListener("click", handleDocumentClick);
 		} else {
@@ -91,6 +94,7 @@ const TopRightBar = () => {
 	}, [notfication]);
 
 	useEffect(() => {
+		
 		const handleCLickEvent = (e: MouseEvent) => {
 			if (!faChevronDownRef.current?.contains(e.target as Node))
 				setRotate(false);

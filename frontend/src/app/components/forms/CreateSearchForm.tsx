@@ -25,6 +25,7 @@ export const CreateSearchForm = () => {
         const [searchResults, setSearchResults] = useState<UsersTypes[]>([]);
     
         useEffect(() => {
+            
             // Define a function to fetch search results
             const fetchSearchResults = async () => {
                 try {

@@ -43,6 +43,8 @@ const SendRequest  = () => {
     const { request, status, error } = useSelector((state:any) => state.request);
   
     useEffect(() => {
+      
+
       dispatch(fetchGetRequestThunk())
     }, [dispatch]);
  

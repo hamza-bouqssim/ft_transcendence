@@ -153,6 +153,15 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
             this.server.to(member.user_id).emit('updateMember', {roomId:RoomId,idUserleave:id,types:types});         
         })
     }
+
+
+
+
+
+
+
+
+
     //chat room 
 
 

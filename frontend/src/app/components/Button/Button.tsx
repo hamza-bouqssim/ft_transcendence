@@ -15,6 +15,7 @@ interface ButtonProps {
 }
 
 const Button : React.FC<ButtonProps>= ({type, fullWidth, children, secondary, danger, disabled, OnClick}) => {
+    console.log("hi")
     return (
    
             <button onClick={OnClick} type={type} disabled={disabled} className={styles.btn}>{children} </button>

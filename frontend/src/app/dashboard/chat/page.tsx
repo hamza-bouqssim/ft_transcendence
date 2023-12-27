@@ -26,6 +26,8 @@ const ConversationChannelPagechat = () => {
 	const dispatch= useDispatch<AppDispatch>();
 
   useEffect(() => {
+    
+
     socket.on('AcceptNotification', (data : any) => {
       dispatch(fetchGetRequestThunk());
       dispatch(fetchGetAllFriendsThunk());

@@ -39,6 +39,7 @@ export const createConversationThunk = createAsyncThunk(
 
 
 export const fetchConversationThunk = createAsyncThunk('conversations/fetch', async () => {
+  console.log("redaux")
   const response = await getConversation();
   return response.data; // Assuming your API response has a 'data' property
 
@@ -53,6 +54,7 @@ export const fetchConversationUserThunk = createAsyncThunk('conversation/fetch',
 
 
 export const fetchDeleteConversation = createAsyncThunk('deleteConversation/fetch', async(conversationId : string)=>{
+  console.log("redaux")
   const response = await deleteConversation(conversationId);
   return response;
 })

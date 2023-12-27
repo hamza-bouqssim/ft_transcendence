@@ -29,6 +29,8 @@ const MatchMaking = () => {
 	const [opponentPlayer, setOpponentPlayer] = useAtom(OpponentData);
 
 	useEffect(() => {
+		
+
 		const handleRedirectUser = (payload: any) => {
 			if (Userdata?.display_name === payload.display_name)
 				router.push("/dashboard", { scroll: false });

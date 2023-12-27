@@ -263,6 +263,7 @@ export class UserService {
             ],
           },
         });
+        
 
           // const blockedUsers = await this.prisma.blockList.findMany({
           //   where: {
@@ -282,6 +283,7 @@ export class UserService {
       
         // Concatenate the arrays of users and chat rooms
         const result = [...users, ...chatRooms];
+        docker-compose down
       
         return result;
       }
@@ -467,7 +469,6 @@ export class UserService {
               ],
             },
           });
-      
           await this.prisma.stateGame.deleteMany({
             where: {
               user_id: userId,

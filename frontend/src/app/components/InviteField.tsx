@@ -16,10 +16,10 @@ const InviteField = () => {
 	const dispatch = useDispatch<AppDispatch>();
 
 
-
+console.log("InviteField")
 	// fetch all users
-
 	useEffect (() => {
+		
         dispatch(fetchUserTable())
         .unwrap()
         .then(({data}) => {
@@ -31,6 +31,7 @@ const InviteField = () => {
 
 
 	  useEffect (() => {
+		
 		dispatch(fetchUsersThunk())
 		.unwrap()
 		.then(({data}) => {
@@ -41,6 +42,7 @@ const InviteField = () => {
 	  },[]);
 
 	  useEffect(() => {
+		
 		const usersWithoutFriends = Users?.filter(
 		  (user) => !friends.some((friend) => friend?.id === user.id)
 		);

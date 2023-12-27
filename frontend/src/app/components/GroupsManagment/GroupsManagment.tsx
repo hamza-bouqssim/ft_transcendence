@@ -24,10 +24,12 @@ const GroupsManagement = () => {
   const [roomsdata, setRoomsData] = useState<ConversationTypes[]>([]);
 
   useEffect(() => {
+    
     dispatch(getAllRooms())
   }, [dispatch]);
 
   useEffect(()=>{
+    
     setRoomsData(rooms)
   },[rooms])
 
