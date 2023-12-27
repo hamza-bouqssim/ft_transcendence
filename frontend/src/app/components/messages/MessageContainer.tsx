@@ -47,6 +47,8 @@ const MessageContainer = () => {
     const {Userdata} = useContext(socketContext);
     const dispatch = useDispatch<AppDispatch>();
     const { messages, status, error , isSenderBlocked , isRecipientBlocked} = useSelector((state:any) => state.messages);
+    console.log("isSender-->",isSenderBlocked );
+    console.log("isRecipient-->", isRecipientBlocked);
     const scrollRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {

@@ -42,11 +42,10 @@ const CreateConversationModal: FC<props> = ({ setShow }) => {
         const {register, handleSubmit, formState: { errors }} = useForm<CreateConversationParams>();
         const dispatch = useDispatch<AppDispatch>();
         const onSubmit = async  (data : CreateConversationParams) => {
-          try{
+
             const res = await dispatch(createConversationThunk(data));
               if (res.payload && typeof res.payload === 'object') {
-                const responseData = res.payload as { data?: { response?: { message?: string } } };
-                const message = responseData.data?.response?.message;
+                const message = res.payload.response?.message;
                 if (message) {
                     ToastSuccess(message);
 
@@ -57,10 +56,7 @@ const CreateConversationModal: FC<props> = ({ setShow }) => {
                     ToastError(message);
                 }
             }
-          }catch(err : any){
-            ToastError(err.message || "An unexpected error occurred");
-          }
-        
+       
 
         }
 

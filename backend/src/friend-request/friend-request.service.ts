@@ -437,24 +437,11 @@ export class FriendRequestService {
 				],
 			},
 			include: {
-				sender: {
-					select: {
-						id: true,
-						username: true,
-						display_name: true,
-						avatar_url: true,
-					},
-				},
-				recipient: {
-					select: {
-						id: true,
-						username: true,
-						display_name: true,
-						avatar_url: true,
-					},
-				},
+				sender : true,
+				recipient : true,
 			},
 		});
+		console.log("chat here-->", chatParticipents);
 
 		this.eventEmitter.emit('requestBlock.created', {
 			chatParticipents,
@@ -463,10 +450,10 @@ export class FriendRequestService {
 		return { message: 'Blocked succefully' };
 	}
 
-	async unblock(senderId: string, recipientId: string) {
-		const user = await this.prisma.user.findFirst({ where: { id: senderId } });
+	async unblock(userOne: string, userTwo: string) {
+		const user = await this.prisma.user.findFirst({ where: { id: userOne } });
 		const recipientUser = await this.prisma.user.findFirst({
-			where: { id: recipientId },
+			where: { id: userTwo },
 		});
 	
 		if (!user || !recipientUser) {
@@ -474,7 +461,7 @@ export class FriendRequestService {
 		}
 		const checkBlocking = await this.prisma.blockList.findFirst({
 			where: {
-				AND: [{ userOneId: senderId, userTwoId: recipientId }],
+				AND: [{ userOneId: userOne, userTwoId: userTwo }],
 			},
 		});
 		if (!checkBlocking)
@@ -492,29 +479,16 @@ export class FriendRequestService {
 		const chatParticipents = await this.prisma.chatParticipents.findFirst({
 			where: {
 				OR: [
-					{ senderId: senderId, recipientId: recipientId },
-					{ senderId: recipientId, recipientId: senderId },
+					{ senderId: userOne, recipientId: userTwo },
+					{ senderId: userTwo, recipientId: userOne },
 				],
 			},
 			include: {
-				sender: {
-					select: {
-						id: true,
-						username: true,
-						display_name: true,
-						avatar_url: true,
-					},
-				},
-				recipient: {
-					select: {
-						id: true,
-						username: true,
-						display_name: true,
-						avatar_url: true,
-					},
-				},
+				sender : true,
+				recipient : true,
 			},
 		});
+		console.log("chat here-->", chatParticipents);
 
 		this.eventEmitter.emit('requestDebloque.created', {
 			chatParticipents,

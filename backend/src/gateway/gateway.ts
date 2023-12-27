@@ -73,19 +73,6 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         client.leave (roomId.id);
     }
 
-    // @SubscribeMessage('cleanNot')
-    // cleanNotification(client: AuthenticatedSocket, roomId: RoomId)
-    // {
-    //     this.roomsService.cleanNotification(client.user.sub,roomId.id)
-    // }
-
-
-    // @SubscribeMessage('getNor')
-    // GetNotification(client: AuthenticatedSocket, roomId: RoomId)
-    // {
-    //     this.roomsService.cleanNotification(client.user.sub,roomId.id)
-    // }
-
  
     @SubscribeMessage('messageRome')
     async handleMessage(client: AuthenticatedSocket, createMessageRoom: CreateMessageRoom){
@@ -227,10 +214,12 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         }
         @OnEvent('requestBlock.created')
         blockListNotification(data : any){
+            console.log("data block  here-->", data);
             this.server.emit('blockNotification', data.chatParticipents);
         }
         @OnEvent('requestDebloque.created')
         debloqueNotification(data: any){
+            console.log("debloque here-->", data);
             this.server.emit('debloqueNotification', data.chatParticipents);
         }
         @OnEvent('online.created')

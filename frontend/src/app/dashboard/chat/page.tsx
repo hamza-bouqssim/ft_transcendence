@@ -35,7 +35,10 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchNumberPending());
       dispatch(fetchNotificationThunk());
       dispatch(fetchCountNotification());
-      dispatch(fetchGetRequestsThunk())
+      dispatch(fetchGetRequestsThunk());
+      dispatch(fetchBlocksThunk());
+		  dispatch(fetchBlockedUsers());
+		  dispatch(fetchUsersThunk());
 
 
 
@@ -45,7 +48,12 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchNumberPending());
       dispatch(fetchCountNotification());
       dispatch(fetchNotificationThunk());
-      dispatch(fetchGetRequestsThunk())
+      dispatch(fetchGetRequestsThunk());
+
+      dispatch(fetchBlocksThunk());
+		  dispatch(fetchBlockedUsers());
+		  dispatch(fetchUsersThunk());
+		  dispatch(fetchGetAllFriendsThunk());
 
 
 
@@ -65,6 +73,10 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchNotificationThunk());
       dispatch(fetchCountNotification());
       dispatch(fetchGetRequestsThunk());
+      dispatch(fetchBlocksThunk());
+		dispatch(fetchBlockedUsers());
+		dispatch(fetchUsersThunk());
+		dispatch(fetchGetAllFriendsThunk());
 
 
     })
@@ -73,10 +85,17 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchCountNotification());
     })
     socket.on('blockNotification', (data : any) =>{
+      console.log("here bloque chat socket");
       dispatch(fetchBlocksThunk());
       dispatch(fetchGetAllFriendsThunk());
       dispatch(fetchGetRequestsThunk());
       dispatch(fetchBlockedUsers());
+
+		dispatch(fetchUsersThunk());
+
+    
+      if(data)
+        dispatch(fetchMessagesThunk(data.id));
 
 
       if (channel && channel.id) {
@@ -85,10 +104,15 @@ const ConversationChannelPagechat = () => {
       
     })
     socket.on('debloqueNotification', (data : any)=>{
+      console.log("here debloque chat socket");
+
       dispatch(fetchBlocksThunk());
       dispatch(fetchGetAllFriendsThunk());
       dispatch(fetchGetRequestsThunk());
       dispatch(fetchBlockedUsers());
+		  dispatch(fetchUsersThunk());
+      if(data)
+        dispatch(fetchMessagesThunk(data.id));
 
 
       
@@ -121,6 +145,8 @@ const ConversationChannelPagechat = () => {
 
 		socket.on('createConversation', (data : any)=>{
       dispatch(fetchConversationThunk());
+      if(data)
+        dispatch(fetchMessagesThunk(data.chat.id));
 
     });
     socket.on('deleteFriendship', (data : any)=>{
@@ -143,6 +169,7 @@ const ConversationChannelPagechat = () => {
       }
 
 		})
+    
       return () => {
         socket.off('AcceptNotification');
         socket.off('newFriendRequest');

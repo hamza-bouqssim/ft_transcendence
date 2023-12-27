@@ -23,11 +23,13 @@ import { createConversationThunk, fetchConversationUserThunk } from '../../store
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { userInfo } from 'os';
+import { User } from 'lucide-react';
 
 const Dashboard = ({ params }: { params: { id: string } }) => {
 	
 	
 	const { friendsBlock , blocked, fstatus, ferror } = useSelector((state:any) => state.friendsBlock);
+	console.log("blocked here-->", blocked);
 	const dispatch = useDispatch<AppDispatch>();
 
 	const [results, setResults] = useState<ResultsType>();
@@ -36,6 +38,9 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 	const [showMessageBlock, setShowMessageBlock] = useState(false);
 	const [ _switch, setSwitch ] = useState(true);
 	const [sendReq, setSendReq] = useState(true);
+	const { requests, statusReq, errorReq } = useSelector((state:any) => state.requests);
+	const { friends, status, error } = useSelector((state: any) => state.friends);
+	const {Userdata} = useContext(socketContext);
 
 	const ToastError = (message: any) => {
 		toast.error(message, {
@@ -111,29 +116,50 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 	  }catch(err : any){
 		const userIdToFind = params.id;
 		const foundUser = users.find((user : User) => user.id === userIdToFind);
-
-		 const res = await dispatch(fetchConversationUserThunk(
+	
+			const res = await dispatch(fetchConversationUserThunk(
 			{
-				display_name : userinfo?.display_name,
-				message: data.message,
+					display_name : userinfo?.display_name,
+					message: data.message,
 			}
-		 ));
-		 	router.push("/dashboard/chat")
-		 	const elem = res.payload;
-			updateChannel(elem);
+			 ));
+				 router.push("/dashboard/chat")
+				 const elem = res.payload;
+				updateChannel(elem);
+
+		
+		
+
+		
+		 
 	  }
 	
 
 	}
+	useEffect(() => {
+		dispatch(fetchBlocksThunk());
+		dispatch(fetchBlockedUsers());
+		dispatch(fetchUsersThunk());
+		dispatch(fetchGetRequestsThunk())
+		dispatch(fetchGetAllFriendsThunk());
+	}, [dispatch, Userdata?.id]);
+
 	const handleUnblockButtonClick = async () => {
 		try {
 			const res = await dispatch(fetchDebloqueUserThunk(params.id));
+			dispatch(fetchBlocksThunk());
+			dispatch(fetchBlockedUsers());
+			dispatch(fetchUsersThunk());
+			dispatch(fetchGetRequestsThunk())
+			dispatch(fetchGetAllFriendsThunk());
 			if (res.payload && typeof res.payload === 'object') {
 				const responseData = res.payload as { data?: { response?: { message?: string } } };
 				const message = responseData.data?.response?.message;
 				if (message) {
+					console.log("enter here unblock");
 					ToastSuccess(message);
 					dispatch(fetchBlockedUsers());
+					dispatch(fetchBlocksThunk());
 					setSwitch(true);					
 				}else {
 				const responseData = res.payload as {message?: string};
@@ -151,12 +177,19 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 	const handleBlockButtonClick = async () => {
 		try {
 			const res = await dispatch(fetchBlockFriendThunk(params.id));
+			dispatch(fetchBlocksThunk());
+			dispatch(fetchBlockedUsers());
+			dispatch(fetchUsersThunk());
+			dispatch(fetchGetRequestsThunk())
+			dispatch(fetchGetAllFriendsThunk());
 			if (res.payload && typeof res.payload === 'object') {
 			const responseData = res.payload as { data?: { response?: { message?: string } } };
 			const message = responseData.data?.response?.message;
 			if (message) {
+				console.log("enter here block");
 				ToastSuccess(message);
 				dispatch(fetchBlockedUsers());
+				dispatch(fetchBlocksThunk());
 				
 			} else {
 				const responseData = res.payload as {message?: string};
@@ -228,15 +261,8 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 		const { users, Userstatus, Usererror } = useSelector(
 			(state: any) => state.users,
 		);
-		useEffect(() => {
-			dispatch(fetchUsersThunk());
-			dispatch(fetchGetRequestsThunk())
-			dispatch(fetchGetAllFriendsThunk());
-		}, [dispatch]);
+	
 
-		const { requests, statusReq, errorReq } = useSelector((state:any) => state.requests);
-		const { friends, status, error } = useSelector((state: any) => state.friends);
-		const {Userdata} = useContext(socketContext);
 
 
 		const sendRequest_handle = async () => {
@@ -245,7 +271,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 		  
 			if (foundUser) {
 		  
-			  try {
+			 
 				// Dispatch the fetchRequestThunk action
 				const resultAction = await dispatch(fetchRequestThunk({
 				  display_name: foundUser.display_name,
@@ -260,9 +286,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 				} else {
 				  ToastError(`Error:.... `);
 				}
-			  } catch (err: any) {
-				ToastError(`Error: Request already sent..!`);
-			  }
+			
 			}
 		  };
 		
