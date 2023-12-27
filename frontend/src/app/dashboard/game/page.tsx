@@ -1,9 +1,9 @@
 "use client";
-import PlayModeCard from "@/app/components/PlayModeCard";
-import { AppDispatch } from "@/app/store";
-import { fetchGetAllFriendsThunk } from "@/app/store/friendsSlice";
-import { fetchUsersThunk } from "@/app/store/usersSlice";
-import { socketContext } from "@/app/utils/context/socketContext";
+import PlayModeCard from "../../components/PlayModeCard";
+import { AppDispatch } from "../../store";
+import { fetchGetAllFriendsThunk } from "../../store/friendsSlice";
+import { fetchUsersThunk } from "../../store/usersSlice";
+import { socketContext } from "../../utils/context/socketContext";
 import { useContext, useEffect } from "react";
 import { useDispatch } from "react-redux";
 

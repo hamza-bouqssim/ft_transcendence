@@ -1,4 +1,4 @@
-import { socketContext } from '@/app/utils/context/socketContext';
+import { socketContext } from '../../utils/context/socketContext';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import React, { useContext } from 'react'

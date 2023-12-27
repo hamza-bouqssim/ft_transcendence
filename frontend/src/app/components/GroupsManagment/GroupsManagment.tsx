@@ -3,12 +3,12 @@ import { IoMdAdd } from "react-icons/io";
 import { useRouter, usePathname } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useContext, useState } from 'react';
-import { getAllRooms } from '@/app/store/roomsSlice';
-import { socketContext } from "@/app/utils/context/socketContext";
+import { getAllRooms } from '../../store/roomsSlice';
+import { socketContext } from "../../utils/context/socketContext";
 import Image from "next/image";
-import { AppDispatch } from "@/app/store";
+import { AppDispatch } from "../../store";
 import ListRome from "./ListRome";
-import { ConversationTypes } from "@/app/utils/types";
+import { ConversationTypes } from "../../utils/types";
 
 
 

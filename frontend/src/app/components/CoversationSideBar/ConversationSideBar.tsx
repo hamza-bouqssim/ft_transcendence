@@ -12,14 +12,14 @@ import ListFriends from "../ListFriends/ListFriends";
 import SendRequest from "../SendRequest/SendRequest";
 import FriendsBloque from "../FriendsBloque/FriendsBloque";
 import { useContext } from "react";
-import {socketContext } from "@/app/utils/context/socketContext";
+import {socketContext } from "../../utils/context/socketContext";
 import { SendRequestForm } from "../forms/SendRequestForm"
 import { FaCheck } from "react-icons/fa"
 import CreateSearchModal from "../ConversationSearch/Modal/CreateSearchModal"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { useDispatch, useSelector } from "react-redux"
-import { AppDispatch } from "@/app/store"
-import { fetchNumberPending } from "@/app/store/requestSlice"
+import { AppDispatch } from "../../store"
+import { fetchNumberPending } from "../../store/requestSlice"
 import { FiSearch } from "react-icons/fi";
 import { IoChatbubbleOutline } from "react-icons/io5";
 import { SerachGroup } from "../SeachGroup/SerachGroup"

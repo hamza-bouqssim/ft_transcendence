@@ -1,7 +1,0 @@
-{
-	"plugins": ["prettier-plugin-tailwindcss"],
-	"purge": ["./src/**/*.{js,jsx,ts,tsx}", "./pages/**/*.{js,jsx,ts,tsx}"],
-	"theme": {},
-	"variants": {},
-	"useTabs": true
-}

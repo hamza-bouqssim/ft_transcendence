@@ -5,11 +5,11 @@ import { FaBan } from "react-icons/fa";
 import { BsFillMicMuteFill } from "react-icons/bs";
 import { RiAdminLine } from "react-icons/ri";
 import { MdGroupAdd } from "react-icons/md";
-import { socketContext } from '@/app/utils/context/socketContext';
+import { socketContext } from '../../utils/context/socketContext';
 import { useDispatch, useSelector } from 'react-redux';
 import { TiUserDelete } from "react-icons/ti";
-import { banMembers, getAllMembers, kickMembers, makeAdminMember, makeMember, mutMembers } from '@/app/store/memberSlice';
-import { AppDispatch } from '@/app/store';
+import { banMembers, getAllMembers, kickMembers, makeAdminMember, makeMember, mutMembers } from '../../store/memberSlice';
+import { AppDispatch } from '../../store';
 
 interface Member {
   id: string;

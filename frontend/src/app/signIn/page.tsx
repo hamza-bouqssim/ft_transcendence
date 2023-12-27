@@ -1,5 +1,5 @@
 "use client";
-import SignInForm from "@/app/components/SignInForm";
+import SignInForm from "../components/SignInForm";
 import PingPong from "../components/PingPong";
 import { GoogleSignInButton, IntraSignInButton } from "../components/Buttons";
 import Link from "next/link";

@@ -8,11 +8,11 @@ import { FaCheck } from "react-icons/fa6";
 import { IoClose } from "react-icons/io5";
 import { ToastContainer, toast } from "react-toastify";
 
-import { socketContext } from "@/app/utils/context/socketContext";
-import { updateRooms } from "@/app/store/roomsSlice"; // Update with the correct path
+import { socketContext } from "../../utils/context/socketContext";
+import { updateRooms } from "../../store/roomsSlice"; // Update with the correct path
 import { RestFriend } from "../RestFriend/RestFriend";
 import Image from "next/image";
-import { ConversationTypes } from "@/app/utils/types";
+import { ConversationTypes } from "../../utils/types";
 
 interface UpdateComponentProps {
 	setOldData:(value: ConversationTypes | null) => void;

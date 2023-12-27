@@ -2,14 +2,14 @@
 import { ToastContainer, toast } from "react-toastify";
 import React, { useState, useContext, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createRooms } from "@/app/store/roomsSlice"; // Update with the correct path
+import { createRooms } from "../../store/roomsSlice"; // Update with the correct path
 import { BiImageAdd } from "react-icons/bi";
 import { FaCheck } from "react-icons/fa";
-import { socketContext } from "@/app/utils/context/socketContext";
+import { socketContext } from "../../utils/context/socketContext";
 import { MemberUser } from "../cardMemberUser/MemberUser";
-import { FriendsTypes } from "@/app/utils/types";
+import { FriendsTypes } from "../../utils/types";
 import Image from "next/image";
-import { AppDispatch } from "@/app/store";
+import { AppDispatch } from "../../store";
 
 interface CreateGroupsProps {
 	setNewRooms: React.Dispatch<React.SetStateAction<boolean>>;

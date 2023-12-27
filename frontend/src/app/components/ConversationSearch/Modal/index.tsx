@@ -1,4 +1,4 @@
-import { ModalContainerSearchingStyle, ModalContainerStyle, ModalContentBodySearchingStyle, ModalContentBodyStyle, ModalHeadersSearchingStyle, ModalHeadersStyle } from "@/app/utils/styles";
+import { ModalContainerSearchingStyle, ModalContainerStyle, ModalContentBodySearchingStyle, ModalContentBodyStyle, ModalHeadersSearchingStyle, ModalHeadersStyle } from "../../../utils/styles";
 import { FC, PropsWithChildren } from "react";
 
 export const ModalHeaderSearching : FC<PropsWithChildren> = ({ children }) => {

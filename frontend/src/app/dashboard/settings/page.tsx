@@ -1,5 +1,5 @@
 "use client";
-import MyAccount from "@/app/components/MyAccount";
+import MyAccount from "../../components/MyAccount";
 import Image from "next/image";
 
 const Settings = () => {

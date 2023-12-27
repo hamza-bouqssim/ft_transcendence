@@ -89,26 +89,26 @@ export default function RootLayout({
 		return validPaths.some((path) => pathName.includes(path));
 	};
 
-	const getChildrenSize = useRef<any>(null);
+	// const getChildrenSize = useRef<any>(null);
+// 
+	// const [minHeight, setMinHeight] = useState<any>(966);
 
-	const [minHeight, setMinHeight] = useState<any>(966);
-
-	useEffect(() => {
-		const handleResizeWindow = () =>
-			setMinHeight(getChildrenSize.current?.children[0]?.clientHeight + 170);
-		if (pathName.endsWith("/dashboard")) {
-			handleResizeWindow();
-			window.addEventListener("resize", handleResizeWindow);
-		} else setMinHeight(966);
-		return () => window.removeEventListener("resize", handleResizeWindow);
-	}, [pathName]);
+	// useEffect(() => {
+	// 	const handleResizeWindow = () =>
+	// 		setMinHeight(getChildrenSize.current?.children[0]?.clientHeight + 170);
+	// 	if (pathName.endsWith("/dashboard")) {
+	// 		handleResizeWindow();
+	// 		window.addEventListener("resize", handleResizeWindow);
+	// 	} else setMinHeight(966);
+	// 	return () => window.removeEventListener("resize", handleResizeWindow);
+	// }, [pathName]);
 
 	return (
 		<html lang="en">
 			<body>
 				<div
 					className={`flex h-screen w-full text-white`}
-					style={{ minHeight: `${minHeight}px` }}
+					// style={{ minHeight: `${minHeight}px` }}
 				>
 					<AppWithProviders socket={socket}>
 						{shouldHide() ? null : <SideBar />}
@@ -117,9 +117,9 @@ export default function RootLayout({
 						<ChangeContext.Provider value={changeValues}>
 							<ProviderOnSocket></ProviderOnSocket>
 							<div
-								ref={getChildrenSize}
+								// ref={getChildrenSize}
 								className={`h-full w-full`}
-								style={{ minHeight: `${minHeight}px` }}
+								// style={{ minHeight: `${minHeight}px` }}
 							>
 								{children}
 							</div>

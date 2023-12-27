@@ -83,7 +83,7 @@ export const changeDisplayedName = async (DisplayName : string) => axios.post(`h
 export const changeUserName = async (UserName : string) => axios.post(`http://localhost:8000/user/changeusername`, {newUserName: UserName}, config);
 
 
-export const dataUser = async (id_user: string) => axios.post(`http://localhost:8000/user/get_user`, {id_user : id_user}, config);
+export const dataUser = async (id_user: string | string[]) => axios.post(`http://localhost:8000/user/get_user`, {id_user : id_user}, config);
 
 
 export const getUnreadMessages = async (conversationId : string) => axios.post(`http://localhost:8000/chat/unread-messages`, {conversationId : conversationId}, config)

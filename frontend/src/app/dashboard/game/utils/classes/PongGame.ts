@@ -1,4 +1,3 @@
-import { Howl } from "howler";
 import { getCurrentSizes } from "../data";
 import {
 	Bodies,

@@ -1,21 +1,21 @@
 "use client";
 
-import CoversationSideBar from "@/app/components/CoversationSideBar/ConversationSideBar";
+import CoversationSideBar from "../../components/CoversationSideBar/ConversationSideBar";
 import { useContext, useEffect, useState , PropsWithChildren} from "react";
-import MessagePanel from "@/app/components/messages/MessagePanel";
-import {socketContext } from "@/app/utils/context/socketContext";
+import MessagePanel from "../../components/messages/MessagePanel";
+import {socketContext } from "../../utils/context/socketContext";
 import { useDispatch } from "react-redux"
-import { AppDispatch } from "@/app/store"
-import { fetchGetRequestThunk, fetchNumberPending } from "@/app/store/requestSlice";
-import { fetchGetAllFriendsThunk } from "@/app/store/friendsSlice";
-import { fetchBlockedUsers, fetchBlocksThunk } from "@/app/store/blockSlice";
-import { fetchUsersThunk } from "@/app/store/usersSlice";
-import { fetchConversationThunk } from "@/app/store/conversationSlice";
-import { fetchMessagesThunk } from "@/app/store/messageSlice";
-import { ConversationTypes, messageTypes } from "@/app/utils/types";
-import { fetchCountNotification, fetchNotificationThunk } from "@/app/store/notificationSlice";
+import { AppDispatch } from "../../store"
+import { fetchGetRequestThunk, fetchNumberPending } from "../../store/requestSlice";
+import { fetchGetAllFriendsThunk } from "../../store/friendsSlice";
+import { fetchBlockedUsers, fetchBlocksThunk } from "../../store/blockSlice";
+import { fetchUsersThunk } from "../../store/usersSlice";
+import { fetchConversationThunk } from "../../store/conversationSlice";
+import { fetchMessagesThunk } from "../../store/messageSlice";
+import { ConversationTypes, messageTypes } from "../../utils/types";
+import { fetchCountNotification, fetchNotificationThunk } from "../../store/notificationSlice";
 import { useRouter } from "next/navigation";
-import { fetchGetRequestsThunk } from "@/app/store/requestsSlice";
+import { fetchGetRequestsThunk } from "../../store/requestsSlice";
 
 const ConversationChannelPagechat = () => { 
   const { updateChannel, channel } = useContext(socketContext);

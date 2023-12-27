@@ -2,15 +2,15 @@
 import {  useEffect, useState } from "react"
 import {useRouter} from "next/navigation"
 import { usePathname } from 'next/navigation'
-import ConversationSearch from "@/app/components/ConversationSearch/page"
-import ChatComponnent from "@/app/components/ChatComponent/ChatComponent"
-import GroupsManagement from "@/app/components/GroupsManagment/GroupsManagment"
-import CreatGroups from "@/app/components/CreateGroups/CreateGroups"
+import ConversationSearch from "../../../components/ConversationSearch/page"
+import ChatComponnent from "../../../components/ChatComponent/ChatComponent"
+import GroupsManagement from "../../../components/GroupsManagment/GroupsManagment"
+import CreatGroups from "../../../components/CreateGroups/CreateGroups"
 import {IoMdAdd} from 'react-icons/io'
-import OnlineFriends from "@/app/components/OnlineFriends/OnlineFriends"
-import ListFriends from "@/app/components/ListFriends/ListFriends"
-import SendRequest from "@/app/components/SendRequest/SendRequest"
-import FriendsBloque from "@/app/components/FriendsBloque/FriendsBloque"
+import OnlineFriends from "../../../components/OnlineFriends/OnlineFriends"
+import ListFriends from "../../../components/ListFriends/ListFriends"
+import SendRequest from "../../../components/SendRequest/SendRequest"
+import FriendsBloque from "../../../components/FriendsBloque/FriendsBloque"
 
 const CoversationSideBar = () => {
 	const [newRooms , setNewRooms]  = useState<boolean>(false)
