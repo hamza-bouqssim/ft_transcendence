@@ -23,7 +23,7 @@ import { createConversationThunk, fetchConversationUserThunk } from '../../store
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { userInfo } from 'os';
-import { User } from 'lucide-react';
+import AuthCheck from '@/app/utils/AuthCheck';
 
 const Dashboard = ({ params }: { params: { id: string } }) => {
 	
@@ -313,7 +313,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 	  
 
 	return (
-		<div>
+		<AuthCheck>
 			<div className="container">
 				<div className="row">
 					<div className="col-1">
@@ -471,7 +471,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 					</div>
 				</div>
 			</div>
-		</div>
+		</AuthCheck>
 	);
 };
 export default Dashboard;

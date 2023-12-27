@@ -1,8 +1,11 @@
 import Image from 'next/image'
 import imageHamza from '/public/assets/hamza.png'
+import AuthCheck from '@/app/utils/AuthCheck';
 const Profile = () =>
 {
     return(
+        <AuthCheck>
+
         <div className=' absolute top-0 w-full h-full'>
             <div className="h-auto  w-auto flex flex-col  xl:ml-96 lg:ml-72 md:mx-4 max-w-[2000px] min-[3200px]:m-auto font-['Whitney_Bold']">
                 <h1 className="xl:text-[100px] lg:text-2xl text-xl mt-20">
@@ -57,6 +60,7 @@ const Profile = () =>
                 </div>
             </div>
         </div>
+    </AuthCheck>
     );
 }
 export default Profile;

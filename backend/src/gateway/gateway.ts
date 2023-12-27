@@ -35,8 +35,11 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
                 id:userId
             }
         })
+        console.log(userdb)
         if (!socket.user || !userdb)
+        {
             return;
+        }
         if(socket.user && userdb)
         {  
             if (!this.NsessionOfuser.has(userId)) {

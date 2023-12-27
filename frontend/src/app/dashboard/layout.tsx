@@ -18,6 +18,7 @@ import { Group } from "three";
 import ProviderOnSocket from "./ProviderOnSocket";
 import { ToastContainer, toast } from "react-toastify";
 import { ChangeContext } from "./game/utils/data";
+import AuthCheck from "../utils/AuthCheck";
 
 // export const SideBarContext: any = createContext<any>(null);
 // export const ChangeContext: React.Context<any> = createContext(null);
@@ -106,10 +107,11 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body>
+			<AuthCheck>
 				<div
 					className={`flex h-screen w-full text-white`}
 					// style={{ minHeight: `${minHeight}px` }}
-				>
+					>
 					<AppWithProviders socket={socket}>
 						{shouldHide() ? null : <SideBar />}
 						{shouldHide() ? null : <TopRightBar />}
@@ -126,6 +128,7 @@ export default function RootLayout({
 						</ChangeContext.Provider>
 					</AppWithProviders>
 				</div>
+			</AuthCheck>
 			</body>
 		</html>
 	);

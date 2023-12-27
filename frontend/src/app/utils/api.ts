@@ -255,3 +255,11 @@ export const addMemberToRooms = (id:string ,userId:string) =>
   return response;
 }
 
+export const isAuth = () =>
+{
+  const response = API.post("/auth/isAuth")
+  console.log(response)
+  return response;
+}
+
+

@@ -16,6 +16,7 @@ import { ConversationTypes, messageTypes } from "../../utils/types";
 import { fetchCountNotification, fetchNotificationThunk } from "../../store/notificationSlice";
 import { useRouter } from "next/navigation";
 import { fetchGetRequestsThunk } from "../../store/requestsSlice";
+import AuthCheck from "@/app/utils/AuthCheck";
 
 const ConversationChannelPagechat = () => { 
   const { updateChannel, channel } = useContext(socketContext);
@@ -194,6 +195,8 @@ const ConversationChannelPagechat = () => {
 		
 	  }, [socket, dispatch, channel?.id, channel, updateChannel]);
     return ( 
+      <AuthCheck>
+        
         <div className=" flex h-screen  xl:container xl:mx-auto">  
           <div className={`h-full  xl:p-10 xl"pl-5 xl:pr-2 ${!channel ? 'block w-full xl:w-[35%]  ' : 'hidden xl:block  xl:w-[35%] '}`}>
             <CoversationSideBar />
@@ -204,9 +207,10 @@ const ConversationChannelPagechat = () => {
             </div>
           :
           <div className="xl:my-10 xl:mr-10  w-full xl:ml-2 xl:w-[65%]   xl:mt-32 hidden xl:flex items-center justify-center">Invite friend to new chat room</div>
-          }
+        }
           </div>
 
+        </AuthCheck>
     );
 }
  

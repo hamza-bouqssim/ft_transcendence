@@ -17,6 +17,7 @@ import { fetchMessagesThunk } from "../../store/messageSlice";
 import { fetchConversationThunk } from "../../store/conversationSlice";
 import { getAllRooms } from "../../store/roomsSlice";
 import { getAllMembers } from "../../store/memberSlice";
+import AuthCheck from '@/app/utils/AuthCheck';
 
 
 const ConversationChannelPage = () => {
@@ -53,7 +54,7 @@ const ConversationChannelPage = () => {
 
 	},[socket,Userdata])
     return ( 
-      <>
+      <AuthCheck>
             <div className=" flex h-screen  xl:container xl:mx-auto">
               <div className={`h-full  xl:p-10 xl"pl-5 xl:pr-2 ${!channel ? 'block w-full xl:w-[35%]  ' : 'hidden xl:block  xl:w-[35%] '}`}>
                 <CoversationSideBar />
@@ -67,7 +68,7 @@ const ConversationChannelPage = () => {
               }
               </div>
               
-              </>
+              </AuthCheck>
 
      );
 }
