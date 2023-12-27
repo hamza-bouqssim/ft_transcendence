@@ -3,6 +3,8 @@ import {
 	BadRequestException,
 	ConflictException,
 	Injectable,
+	InternalServerErrorException,
+	NotFoundException,
 	UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
@@ -97,30 +99,82 @@ export class AuthService {
 		return res.send({ msg: 'Logged out Succesfully !' });
 	}
 
-	async validateUser(dto: AuthDto) {
-		const user = await this.prisma.user.findUnique({
-			where: { email: dto.email },
-		});
-		if (user) return user;
+	// async validateUser(dto: AuthDto) {
+	// 	const user = await this.prisma.user.findUnique({
+	// 		where: { email: dto.email },
+	// 	});
+	// 	if (user) return user;
 
-		const createNewUser = await this.prisma.user.create({
+	// 	const createNewUser = await this.prisma.user.create({
+	// 		data: {
+	// 			username: dto.username,
+	// 			email: dto.email,
+	// 			password: '',
+	// 			display_name: dto.display_name,
+	// 			avatar_url: dto.avatar_url,
+	// 			two_factor_auth: '',
+	// 			two_factor_secret_key: '',
+	// 		},
+	// 	});
+	// 	return createNewUser;
+	// }
+
+	async validateUser(dto: AuthDto) {
+		try {
+		  const user = await this.prisma.user.findUnique({
+			where: { email: dto.email },
+		  });
+	  
+		  if (user) {
+			return user;
+		  }
+	  
+		  const createNewUser = await this.prisma.user.create({
 			data: {
-				username: dto.username,
-				email: dto.email,
-				password: '',
-				display_name: dto.display_name,
-				avatar_url: dto.avatar_url,
-				two_factor_auth: '',
-				two_factor_secret_key: '',
+			  username: dto.username,
+			  email: dto.email,
+			  password: '',
+			  display_name: dto.display_name,
+			  avatar_url: dto.avatar_url,
+			  two_factor_auth: '',
+			  two_factor_secret_key: '',
 			},
-		});
-		return createNewUser;
-	}
+		  });
+	  
+		  return createNewUser;
+		} catch (error) {
+			console.error('Error in validateUser:', error);
+		
+			// Handle specific errors based on the type of error
+			if (error.code === 'P2021') {
+			  // PrismaClientKnownRequestError: Table does not exist
+			  // Respond with a 404 Not Found or a user-friendly message
+			  throw new NotFoundException('User not found');
+			} else {
+			  // Generic error response
+			  throw new InternalServerErrorException('Internal server error');
+			}
+		  }
+	  }
+
+	// async findUser(id: string) {
+	// 	const user = await this.prisma.user.findUnique({ where: { id: id } });
+	// 	return user;
+	// }
 
 	async findUser(id: string) {
-		const user = await this.prisma.user.findUnique({ where: { id: id } });
-		return user;
-	}
+		try {
+		  const user = await this.prisma.user.findUnique({
+			where: { id: id },
+		  });
+		  
+		  return user;
+		} catch (error) {
+		  console.error('Error in findUser:', error);
+		  throw new Error('User failed');
+		}
+	  }
+	  
 
 	async generateNickname(email: string): Promise<string> {
 		const username = email.split('@')[0];
