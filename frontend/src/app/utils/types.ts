@@ -16,6 +16,7 @@ export type UserCredentialsParams = {
 export type RequestTypes = {
     id : string;
     user : User;
+    friends : User;
 }
 
 export type User = {
@@ -57,7 +58,7 @@ export type ConversationTypes = {
 	recipientId: string;
 	senderId: string;
 	lastMessage: MessageType;
-	Privacy: string;
+	Privacy: string | "Public";
 	password: string | null;
 	createdAt: Date;
 	updatedAt: Date;
@@ -111,6 +112,14 @@ export type BloquesTypes = {
     username : string;
     avatar_url : string;
     userBloque : User;
+}
+
+
+
+export type BloqueList = {
+    id : string;
+    userOne : User;
+    userTwo : User;
 }
 
 
@@ -168,7 +177,7 @@ export type CreateMessageParams = {
 }
 
 export type CreateConversationParams ={
-    display_name : string;
+    display_name? : string;
     message : string;
 }
 

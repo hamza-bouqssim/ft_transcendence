@@ -19,7 +19,6 @@ const initialState: NotificationState = {
 
 
 export const fetchNotificationThunk = createAsyncThunk('notification/fetchNotificationThunk', async (_,{rejectWithValue} ) => {
-    
     const response = await getNotification();
     return response.data;
 

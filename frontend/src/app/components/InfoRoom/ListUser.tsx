@@ -53,6 +53,7 @@ const ListUser: React.FC<Props> = ({member}) => {
   };
 
   useEffect(() => {
+    
       if (valide) {
           document.addEventListener('click', handleDocumentClick);
       } else {
@@ -156,10 +157,16 @@ const ListUser: React.FC<Props> = ({member}) => {
                   <h1>{member?.Status}</h1>
                 </div>
               </div>
-              {members?.some((member:Member) => member.Status === "Owner" && member.user_id === Userdata?.id) && member?.Status!== "Owner" && <MdOutlineMoreVert onClick={()=>{setOption(!option)}} size={25} />}      
+              {members?.some((member:Member) =>( member.Status === "Admin") && member.user_id === Userdata?.id) 
+              && member?.Status !== "Admin"  
+              && <MdOutlineMoreVert onClick={()=>{setOption(!option)}} size={25} />} 
+               {members?.some((member:Member) =>( member.Status === "Owner") && member.user_id === Userdata?.id) 
+              && member?.Status !== "Owner"  
+              && <MdOutlineMoreVert onClick={()=>{setOption(!option)}} size={25} />} 
+     
         </div>
-          {option  && members?.some((member:Member) => member.Status === "Owner" && member.user_id === Userdata?.id) && 
-          <div ref={optionRef}  className="absolute p-2 rounded-xl right-1 flex flex-col  justify-between items-start    w-[150px] h-[150px] bg-white drop-shadow-md">
+          {option  && members?.some((member:Member) => (member.Status === "Owner" || member.Status === "Admin")  && member.user_id === Userdata?.id) && 
+          <div ref={optionRef}  className="absolute z-50 p-2 rounded-xl right-1 flex flex-col  justify-between items-start    w-[150px] h-[150px] bg-white drop-shadow-md">
            {member?.Status!== "Mut" &&  
               <button onClick={()=>{setValide("Mut")}} className="text-[15px] p-1 flex justify-center items-center">
                  <BsFillMicMuteFill  className="mr-2"></BsFillMicMuteFill>
@@ -176,7 +183,7 @@ const ListUser: React.FC<Props> = ({member}) => {
               <MdGroupAdd  className="mr-2"></MdGroupAdd>
               Make Member</button>
             }
-            {member?.Status!== "Admin" &&  
+            {member?.Status!== "Admin" && member?.Status !== "Owner" &&
               <button  onClick={()=>{setValide("Admin")}} className="text-[15px] p-1 flex justify-center items-center">
               <RiAdminLine className="mr-2"></RiAdminLine>
               Make Admin</button>

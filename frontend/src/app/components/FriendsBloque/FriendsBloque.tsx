@@ -41,6 +41,7 @@ const FriendsBloque = () =>{
     const { friendsBlock , status, error } = useSelector((state:any) => state.friendsBlock);
    
     useEffect(() => {
+      
       dispatch(fetchBlocksThunk())
     }, [dispatch]);
  
@@ -68,6 +69,7 @@ const FriendsBloque = () =>{
       const handleMenuClick = (friendId: string) => {
         setOpenMenuId(openMenuId === friendId ? null : friendId);
     };
+    
     return (
         <Conversation>
          

@@ -1,7 +1,7 @@
 "use client";
 
-import { getMatchHistory, getStates, getUserInfos} from '@/app/utils/api';
-import { useState, useEffect } from 'react';
+import { SendRequest, getMatchHistory, getStates, getUserInfos} from '@/app/utils/api';
+import { useState, useEffect, useContext } from 'react';
 import Boxes from '@/app/components/Boxes';
 import HistoryMatches from '@/app/components/HistoryMatches';
 import Image from 'next/image';
@@ -9,17 +9,25 @@ import "./page.css"
 import RankingUserSwitch from '@/app/components/RankingUserSwitch';
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/app/store";
-import { fetchBlockFriendThunk, fetchBlocksThunk, fetchDebloqueUserThunk } from '@/app/store/blockSlice';
+import { fetchBlockFriendThunk, fetchBlockedUsers, fetchBlocksThunk, fetchDebloqueUserThunk } from '@/app/store/blockSlice';
 import { toast } from 'react-toastify';
-import { fetchRequestThunk } from '@/app/store/requestSlice';
+import { fetchAcceptFriendRequestThunk, fetchGetRequestThunk, fetchRequestThunk } from '@/app/store/requestSlice';
 import AchievementsList from '@/app/components/AchievementsList';
 import { HistoryMatchesType, ResultsType, UserInfoType } from '../Imports';
+import { fetchUsersThunk } from '@/app/store/usersSlice';
+import { BloqueList, CreateConversationParams, User } from '@/app/utils/types';
+import { fetchGetAllFriendsThunk } from '@/app/store/friendsSlice';
+import { socketContext } from '@/app/utils/context/socketContext';
+import { fetchGetRequestsThunk } from '@/app/store/requestsSlice';
+import { createConversationThunk, fetchConversationUserThunk } from '@/app/store/conversationSlice';
+import { useForm } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
+import { userInfo } from 'os';
 
 const Dashboard = ({ params }: { params: { id: string } }) => {
 	
 	
-	const { friendsBlock , fstatus, ferror } = useSelector((state:any) => state.friendsBlock);
-	const { request, status, error } = useSelector((state:any) => state.request);
+	const { friendsBlock , blocked, fstatus, ferror } = useSelector((state:any) => state.friendsBlock);
 	const dispatch = useDispatch<AppDispatch>();
 
 	const [results, setResults] = useState<ResultsType>();
@@ -50,6 +58,73 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 		draggable: true,
 	});
 	};
+	useEffect(() => {
+		const fetchUserInfo = async () => {
+		try {
+			if (params.id) {
+			const response = await getUserInfos(params.id);
+			setUserInfo(response.data);
+			}
+		} catch (error) {
+			console.log('Error fetching user information:', error);
+		}
+		};
+
+		fetchUserInfo();
+	}, [params.id]);
+
+	const handleEnter = (event: any) => {
+		if (event.key === 'Enter') {
+		  event.preventDefault();
+		  const formData = {
+			display_name: userinfo?.display_name || '', // Provide a default value if display_name is undefined
+			message: event.target.value,
+		  };
+		  onSubmit(formData);
+		}
+	  };
+	  const router = useRouter();
+
+	  const { updateChannel, channel } = useContext(socketContext);
+	const {register, handleSubmit, formState: { errors }} = useForm<CreateConversationParams>();
+	const onSubmit = async  (data : CreateConversationParams) => {
+		if (!data.message.trim()) {
+			return;
+		  }
+	  try{
+		const res = await dispatch(createConversationThunk({
+			display_name: userinfo?.display_name, // Use the display_name from userinfo
+			message: data.message, // Use the message from the input field
+		  }));
+
+		  if (res.payload && typeof res.payload === 'object') {
+			
+			const message = res.payload.response.message;
+			
+			if (message) {
+				ToastSuccess(message);
+				const elem = res.payload.response.conversation
+				router.push("/dashboard/chat")
+				updateChannel(elem);
+			}
+		}
+	  }catch(err : any){
+		const userIdToFind = params.id;
+		const foundUser = users.find((user : User) => user.id === userIdToFind);
+
+		 const res = await dispatch(fetchConversationUserThunk(
+			{
+				display_name : userinfo?.display_name,
+				message: data.message,
+			}
+		 ));
+		 	router.push("/dashboard/chat")
+		 	const elem = res.payload;
+			updateChannel(elem);
+	  }
+	
+
+	}
 	const handleUnblockButtonClick = async () => {
 		try {
 			const res = await dispatch(fetchDebloqueUserThunk(params.id));
@@ -58,11 +133,8 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 				const message = responseData.data?.response?.message;
 				if (message) {
 					ToastSuccess(message);
-					dispatch(fetchBlocksThunk())
-					setSwitch(true);
-					
-					
-					
+					dispatch(fetchBlockedUsers());
+					setSwitch(true);					
 				}else {
 				const responseData = res.payload as {message?: string};
 				const message = responseData.message;
@@ -84,8 +156,8 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 			const message = responseData.data?.response?.message;
 			if (message) {
 				ToastSuccess(message);
-				dispatch(fetchBlocksThunk())
-				setSwitch(false);
+				dispatch(fetchBlockedUsers());
+				
 			} else {
 				const responseData = res.payload as {message?: string};
 				const message = responseData.message;
@@ -96,48 +168,31 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 			ToastError("Failed to block this friend. Please try again.");
 		}
 		};
+		// useEffect(() => {
+			
 
-		//========> USE EFFECTS
+		// 	dispatch(fetchBlocksThunk());
+		// 	dispatch(fetchBlockedUsers());
+		  
+		// 	const isBlocked = blocked.some(
+		// 	  (elem: BloqueList) =>
+		// 		(elem.userOne.id === Userdata?.id && elem.userTwo.id === params.id) ||
+		// 		(elem.userOne.id === params.id && elem.userTwo.id === Userdata?.id)
+		// 	);
+		  
+		// 	setSwitch(!isBlocked);
+		//   }, [dispatch]);
 
-		// //========> DISPATCH SEND REQUEST
-		// useEffect(()=> {
-		// 	dispatch(fetchRequestThunk());
-		// }, [dispatch]);
+		
+		
+		// useEffect(() => {
+		// friendsBlock.some((friend: any) => friend.id === params.id) ? setSwitch(false): setSwitch(true);
+		// }, [friendsBlock, params.id, dispatch]);
 
-		//========> DISPATCH BLOCK
+		
 		useEffect(() => {
-			dispatch(fetchBlocksThunk());
-		}, [dispatch]);
+			
 
-		//========> IF THE REQUEST CREATED CHANGE BUTTON  [SEND REQUEST] TO [PENDING REQUEST]
-		useEffect(() => {
-			const friendRequestExists = request.some((friend: any) => friend.friendId === params.id);
-			setSendReq(!friendRequestExists);
-		}, [request, params.id]);
-
-		////========> IF THE USER EXIST IN THE BLOCK LIST DISPLAY [UNBLOCK] BUTTON, IF NOT EXIST DISPLAY [BLOCK]
-		useEffect(() => {
-		friendsBlock.some((friend: any) => friend.id === params.id) ? setSwitch(false): setSwitch(true);
-		}, [friendsBlock, params.id, dispatch]);
-
-		//========> FETCHING ANOTHER INFORMATIONS OF ANOTHER USER BY IT'S ID, AND THE ID I TOOKEN FROM THE QUERY.
-		useEffect(() => {
-			const fetchUserInfo = async () => {
-			try {
-				if (params.id) {
-				const response = await getUserInfos(params.id);
-				setUserInfo(response.data);
-				}
-			} catch (error) {
-				console.log('Error fetching user information:', error);
-			}
-			};
-
-			fetchUserInfo();
-		}, [params.id]);
-
-		//========> FETCHING MATCH HISTORY DATA
-		useEffect(() => {
 			const fetchMatchHistory = async () => {
 			try {
 				if (params.id) {
@@ -152,8 +207,9 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 			fetchMatchHistory();
 		}, [params.id]);
 
-		//========> FETCHING STATE OF THE USER RESULTS
 		useEffect(() => {
+			
+
 			const fetchGameStates = async () => { 
 			try {
 				if (params.id) {
@@ -167,6 +223,68 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 
 			fetchGameStates();
 		}, [params.id]);
+
+		//send request 
+		const { users, Userstatus, Usererror } = useSelector(
+			(state: any) => state.users,
+		);
+		useEffect(() => {
+			dispatch(fetchUsersThunk());
+			dispatch(fetchGetRequestsThunk())
+			dispatch(fetchGetAllFriendsThunk());
+		}, [dispatch]);
+
+		const { requests, statusReq, errorReq } = useSelector((state:any) => state.requests);
+		const { friends, status, error } = useSelector((state: any) => state.friends);
+		const {Userdata} = useContext(socketContext);
+
+
+		const sendRequest_handle = async () => {
+			const userIdToFind = params.id;
+			const foundUser = users.find((user: User) => user.id === userIdToFind);
+		  
+			if (foundUser) {
+		  
+			  try {
+				// Dispatch the fetchRequestThunk action
+				const resultAction = await dispatch(fetchRequestThunk({
+				  display_name: foundUser.display_name,
+				}));
+		  
+				// Access the result of the thunk action
+				if (fetchRequestThunk.fulfilled.match(resultAction)) {
+				  const SuccessMessage = resultAction.payload.response.message;
+				  dispatch(fetchGetRequestsThunk())
+
+				  ToastSuccess(`${SuccessMessage}`);
+				} else {
+				  ToastError(`Error:.... `);
+				}
+			  } catch (err: any) {
+				ToastError(`Error: Request already sent..!`);
+			  }
+			}
+		  };
+		
+		  const handleClickAcceptRequest = async () => {
+			const matchingRequest = requests.find(
+				(request: any) =>
+				  request.user_id === params.id && request.friend_id === Userdata?.id
+			  );
+			  if(matchingRequest){
+				try {
+			 
+					await dispatch(fetchAcceptFriendRequestThunk(matchingRequest.id));
+					ToastSuccess("You are accepting the request !");
+		  
+				  } catch (error) {
+					ToastError(`Error accepting friend request: ${error}`);
+		  
+				  }
+
+			  }		
+			
+		  };
 
 	  
 
@@ -185,29 +303,35 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 								priority={true}
 							/>
 							<div className="align-center absolute bottom-5 left-10 flex items-center justify-center gap-4">
-								{_switch ? (
-									<>
-										{sendReq ? (
-											<>
-												<button className="h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover] hover:duration-300">
-													Send Request
-												</button>
-											</>
-										) : (
-											<>
-												<button className="h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover] hover:duration-300">
-													Pending Request
-												</button>
-											</>
-										)}
-										<button
-											className="hover:duration- h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover]"
-											onClick={() => setShowMessageBlock(true)}
-										>
-											Send Message
-										</button>
-									</>
-								) : null}
+							{!blocked.some((elem: BloqueList) =>((elem.userOne.id === Userdata?.id && elem.userTwo.id === params.id) ||(elem.userOne.id === params.id && elem.userTwo.id === Userdata?.id))
+								) ? 
+								<>
+								{requests.some((request: any) => request.user_id === Userdata?.id && request.friend_id === params.id) ? (
+									<button className="h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover] hover:duration-300">
+										Pending Request
+									</button>
+							) :requests.some((request: any) => request.user_id === params.id && request.friend_id === Userdata?.id)? (
+									<button onClick={() => handleClickAcceptRequest()} className="h-12 rounded-2xl bg-[--green-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--green-hover] hover:duration-300">
+										Respond to Request
+									</button>
+							) :friends.some((friend: any) => friend.id === params.id) ? (
+									<button className="h-12 rounded-2xl bg-[--pink-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--gray-hover] hover:duration-300" disabled>
+										Friends
+									</button>
+							) : (
+									<button className="h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover] hover:duration-300" onClick={() => sendRequest_handle()}> 
+										Send Request
+									</button>
+							)}
+							<button onKeyPress={handleEnter}
+									className="hover:duration- h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover]"
+									onClick={() => setShowMessageBlock(true)}
+								>
+									Send Message
+								</button>
+								</>
+							: null}
+							
 
 								{friendsBlock.some((friend: any) => friend.id === params.id) ? (
 									<button
@@ -217,6 +341,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 										Unblock
 									</button>
 								) : (
+									
 									<button
 										className="hover:duration-175 h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover]"
 										onClick={() => handleBlockButtonClick()}
@@ -244,9 +369,11 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 												priority={true}
 											/>
 											<input
+												 {...register('message', {required: 'message is required'})}
 												type="text"
 												className="w-full rounded-xl border-2 border-[--purple-color]  p-4 text-black outline-[--purple-color]"
 												placeholder="Send Message"
+												onKeyPress={handleEnter}
 											/>
 										</div>
 									</div>
@@ -254,7 +381,8 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 							)}
 						</div>
 
-						{_switch ? (
+						{!blocked.some((elem: BloqueList) =>((elem.userOne.id === Userdata?.id && elem.userTwo.id === params.id) ||(elem.userOne.id === params.id && elem.userTwo.id === Userdata?.id))
+						)? (
 							<div>
 								<div className="boxes">
 									<Boxes title="WINS" value={results?.win} color="#6A67F3" />
@@ -302,11 +430,13 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 							<RankingUserSwitch
 								userId={params.id}
 								userInfo={userinfo}
-								_switch={_switch}
+								_switch={!blocked.some((elem: BloqueList) =>((elem.userOne.id === Userdata?.id && elem.userTwo.id === params.id) ||(elem.userOne.id === params.id && elem.userTwo.id === Userdata?.id))
+									)}
 							/>
 						</div>
 
-						{_switch ? (
+						{!blocked.some((elem: BloqueList) =>((elem.userOne.id === Userdata?.id && elem.userTwo.id === params.id) ||(elem.userOne.id === params.id && elem.userTwo.id === Userdata?.id))
+						)? (
 							<div className="achievements-container">
 								<div className="achievements">
 									<h1>Achievements</h1>

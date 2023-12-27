@@ -44,12 +44,12 @@ const RankingUserSwitch = ({
 	const { Userdata } = useContext(socketContext);
 
 	useEffect(() => {
+		
 		const fetchGameStates = async () => {
 			try {
 				const response = await getRanking();
 				setPlayers(response.data);
 			} catch (error) {
-				console.log("Error fetching match history:", error);
 			}
 		};
 

@@ -65,6 +65,7 @@ export const pending_request_play = () => axios.get(`http://localhost:8000/user/
 
 export const getAllUsers = async () => axios.get(`http://localhost:8000/user/All-users`, config);
 
+
 //count number of the notification
 
 export const getNumberNotification = async () => axios.get(`http://localhost:8000/friend-request/notification_count`, config);
@@ -102,10 +103,13 @@ export const changeAvatar = async (avatarFormData: FormData) => {
     return axios.post(`http://localhost:8000/user/changeAvatar`, avatarFormData, config);
   };
 export const searchingBar = async (name : string) => axios.post(`http://localhost:8000/friend-request/search`, {name: name}, config);
+export const getAllRequests = async() => axios.get(`http://localhost:8000/user/all-pending-request`, config);
 
-
-export const findConversationUsers = async ( display_name : string) => axios.post(`http://localhost:8000/chat/findConversationUser`, {display_name : display_name}, config);
+export const findConversationUsers = async ( display_name : string, message : string) => axios.post(`http://localhost:8000/chat/findConversationUser`, {display_name : display_name , message : message}, config);
 // tabel friends
+
+
+export const blockedUsers = async () => axios.get(`http://localhost:8000/friend-request/blocked`, config);
 
 export const tableFriends = async () => axios.get(`http://localhost:8000/user/table-friends`, config);
 
@@ -210,8 +214,19 @@ export const banMember =(id:string ,userId:string) =>
 }
 
 export const getMatchHistory = (id: string) =>{
-  const response = API.post("/game/myhistory", {userId:id});
-  return response;
+  try{
+    const response = API.post("/game/myhistory", {userId:id});
+    return response;
+
+  }catch(error : any){
+    if (error.response && error.response.data) {
+      return error.response.data;
+    } else {
+      return ('Failed to get MatchHistory');
+    }
+
+  }
+
 }
 
 export const getStates = (id: string) =>{
@@ -231,6 +246,12 @@ export const deleteAccount = () => {
 
 export const getUserInfos = (id:string) => {
   const response = API.post("/user/get_user", {id_user:id});
+  return response;
+}
+
+export const addMemberToRooms = (id:string ,userId:string) =>
+{
+  const response = API.post("/rooms/addMemberToRooms",{id,userId})
   return response;
 }
 

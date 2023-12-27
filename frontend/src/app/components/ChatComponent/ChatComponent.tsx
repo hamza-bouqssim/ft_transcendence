@@ -71,6 +71,8 @@ const ChatComponnent = () => {
 	const [show, setShow] = useState<any>(false);
 	const { updateChannel, channel } = useContext(socketContext);
 	const [oldId, setOldId] = useState(null);
+	const { Userdata} = useContext(socketContext);
+
 	const dispatch = useDispatch<AppDispatch>();
 	const [unreadConversations, setUnreadConversations] = useState<Set<string>>(
 		new Set(),
@@ -88,6 +90,7 @@ const ChatComponnent = () => {
 		setOpenMenuId(openMenuId === conversationId ? null : conversationId);
 	};
 	useEffect(() => {
+		
 		dispatch(fetchConversationThunk());
 		dispatch(fetchAuthUser());
 	}, [dispatch]);
@@ -183,7 +186,6 @@ const ChatComponnent = () => {
 			ToastError("Failed to delete the conversation. Please try again.");
 		}
 	};
-
 	return (
 		<>
 			{/* Conditionally render CreateConversationModal if show is true */}
@@ -207,7 +209,7 @@ const ChatComponnent = () => {
 
 					{/* Conversations Section */}
 					<div className="p-2">
-						{conversations.map((elem: ConversationTypes) => {
+						{conversations && conversations.map((elem: ConversationTypes) => {
 							const unreadCount = messagesUnread[elem.id] || 0;
 
 							// Function to handle clicking on a conversation
@@ -218,8 +220,15 @@ const ChatComponnent = () => {
 							}
 
 							// Function to handle clicking on a user
-							function handleClickUser() {
-								router.push(`/dashboard/${elem.recipientId}`);
+							function handleClickUser() 
+							{
+								let user : User;
+								if(elem.recipientId === Userdata?.id)
+									user = elem.sender;
+								else
+									user = elem.recipient;
+
+								router.push(`/dashboard/${user.id}`);
 							}
 
 							return (

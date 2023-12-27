@@ -2,11 +2,6 @@ import React, {useState,useEffect} from 'react'
 
 export const SerachGroup = () => {
     const[groupName,setGroupName]= useState("")
-    useEffect(() => {
-    
-    
-    
-    }, [])
     
   return (
     <div>

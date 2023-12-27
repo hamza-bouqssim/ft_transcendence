@@ -24,6 +24,7 @@ export class UserController {
 	@UseGuards(AuthGuard('jwt'))
 	async grabMyInfos(@Req() req) {
 		const user = req.user;
+
 		return {
 			id: user.id,
 			username: user.username,
@@ -37,8 +38,17 @@ export class UserController {
 
 	@Get('finduser/:username')
 	@UseGuards(AuthGuard('jwt'))
-	findUser(@Param('username') username: string) {
-		return this.userService.findUser(username);
+	findUser(@Param('username') username: string , @Res() res) {
+		try{
+			const result = this.userService.findUser(username);
+			return res.status(200).json(result);
+
+		}catch(err : any){
+			return res.status(401).json(err.response);
+
+		}
+		
+		
 	}
 
 	@Post('changedisplayname')
@@ -139,6 +149,12 @@ export class UserController {
 		} catch (error) {
 			return res.status(500).json({ message: error });
 		}
+	}
+
+	@Get('all-pending-request')
+	async allPendingRquest(){
+		const all_request = await this.userService.all_pending_request();
+		return all_request; 
 	}
 	@Get('count-pending')
 	@UseGuards(AuthGuard('jwt'))

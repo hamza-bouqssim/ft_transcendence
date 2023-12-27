@@ -16,10 +16,9 @@ const InviteField = () => {
 	const dispatch = useDispatch<AppDispatch>();
 
 
-
 	// fetch all users
-
 	useEffect (() => {
+		
         dispatch(fetchUserTable())
         .unwrap()
         .then(({data}) => {
@@ -27,10 +26,11 @@ const InviteField = () => {
         }).catch((err)=>{
         }
         );
-      },)
+      },[])
 
 
 	  useEffect (() => {
+		
 		dispatch(fetchUsersThunk())
 		.unwrap()
 		.then(({data}) => {
@@ -38,9 +38,10 @@ const InviteField = () => {
 		}).catch((err)=>{
 		}
 		);
-	  },);
+	  },[]);
 
 	  useEffect(() => {
+		
 		const usersWithoutFriends = Users?.filter(
 		  (user) => !friends.some((friend) => friend?.id === user.id)
 		);

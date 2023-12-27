@@ -45,12 +45,11 @@ export class AuthController {
 		if (user.tfa_enabled) {
 			const token = this.jwtService.sign(payload);
 			res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
-			return res.send({ success: false, message: 'tfa enabled' });
+			return res.send({ valid: true, message: 'tfa enabled' });
 		}
 
 		const token = this.jwtService.sign(payload);
 		res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
-
 		return res.send({ signed: true, message: 'Signed Successfully' });
 	}
 
@@ -125,7 +124,6 @@ export class AuthController {
     @UseGuards(AuthGuard('jwt'))
     async isAuthentication( @Req() request, @Res() res,) {
       try {
-        console.log(request.user)
         await this.authService.findUser(request.user.id) 
         return res.status(200).json({ isAuth: true});
       } catch (error) {

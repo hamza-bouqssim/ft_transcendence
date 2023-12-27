@@ -13,10 +13,10 @@ import { socket, socketContext } from "../utils/context/socketContext";
 import { store } from "../store";
 import { Socket } from "socket.io-client";
 import { usePathname } from "next/navigation";
-import { ConversationTypes,  User } from "../utils/types";
+import { ConversationTypes, User } from "../utils/types";
 import { Group } from "three";
-import ProviderOnSocket from "./ProviderOnSocket.tsx";
-import { ToastContainer, toast } from 'react-toastify';
+import ProviderOnSocket from "./ProviderOnSocket";
+import { ToastContainer, toast } from "react-toastify";
 import { ChangeContext } from "./game/utils/data";
 
 // export const SideBarContext: any = createContext<any>(null);
@@ -34,23 +34,27 @@ type Props = {
 };
 
 function AppWithProviders({ children }: PropsWithChildren & Props) {
-	const [channel, setChannel] = useState<ConversationTypes |null>(null); // Initial value
-	const[oldId,setOldId] = useState<string>("");
-	const[Userdata,setUserdata] = useState<User |  null>(null);
-	const updateChannel = (newAddress: ConversationTypes| null) => {
-	  setChannel(newAddress);
+	const [channel, setChannel] = useState<ConversationTypes | null>(null); // Initial value
+	const [oldId, setOldId] = useState<string>("");
+	const [Userdata, setUserdata] = useState<User | null>(null);
+	const updateChannel = (newAddress: ConversationTypes | null) => {
+		setChannel(newAddress);
 	};
 	return (
-		<Provider store={store} >
-			<socketContext.Provider 
-				value={{socket,
-						updateChannel,
-						channel,
-						oldId,
-						setOldId,
-						Userdata,
-						setUserdata
-					}}>{children}</socketContext.Provider>
+		<Provider store={store}>
+			<socketContext.Provider
+				value={{
+					socket,
+					updateChannel,
+					channel,
+					oldId,
+					setOldId,
+					Userdata,
+					setUserdata,
+				}}
+			>
+				{children}
+			</socketContext.Provider>
 		</Provider>
 	);
 }
@@ -87,45 +91,35 @@ export default function RootLayout({
 
 	const getChildrenSize = useRef<any>(null);
 
-	const [minHeight, setMinHeight] = useState<any>(1320);
+	const [minHeight, setMinHeight] = useState<any>(966);
 
 	useEffect(() => {
-		setMinHeight(getChildrenSize.current?.children[0]?.clientHeight);
 		const handleResizeWindow = () =>
-			setMinHeight(getChildrenSize.current?.children[0]?.clientHeight);
-
-		window.addEventListener("resize", handleResizeWindow);
-
+			setMinHeight(getChildrenSize.current?.children[0]?.clientHeight + 170);
+		if (pathName.endsWith("/dashboard")) {
+			handleResizeWindow();
+			window.addEventListener("resize", handleResizeWindow);
+		} else setMinHeight(966);
 		return () => window.removeEventListener("resize", handleResizeWindow);
-	}, [getChildrenSize.current?.children[0]?.clientHeight, pathName]);
+	}, [pathName]);
 
 	return (
 		<html lang="en">
 			<body>
 				<div
 					className={`flex h-screen w-full text-white`}
-					style={{ minHeight: `${minHeight + 170}px` }}
+					style={{ minHeight: `${minHeight}px` }}
 				>
 					<AppWithProviders socket={socket}>
 						{shouldHide() ? null : <SideBar />}
-						{shouldHide() ? null : (
-							<TopRightBar
-								menu={change.menu}
-								onClick={() =>
-									setChange({
-										...change,
-										sideBar: false,
-										chatBox: false,
-										menu: !change.menu,
-									})
-								}
-							/>
-						)}
+						{shouldHide() ? null : <TopRightBar />}
 
 						<ChangeContext.Provider value={changeValues}>
+							<ProviderOnSocket></ProviderOnSocket>
 							<div
 								ref={getChildrenSize}
-								className={`min-h-[${minHeight + 170}px] h-full w-full`}
+								className={`h-full w-full`}
+								style={{ minHeight: `${minHeight}px` }}
 							>
 								{children}
 							</div>

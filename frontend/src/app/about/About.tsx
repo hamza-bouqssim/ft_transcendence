@@ -24,7 +24,6 @@ const About = () => {
 			</div>
 		);
 	});
-
 	return (
 		<section
 			id="about"

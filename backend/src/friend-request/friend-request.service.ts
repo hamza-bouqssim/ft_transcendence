@@ -239,13 +239,11 @@ export class FriendRequestService {
 				requestId: requestId,
 			},
 		});
-		console.log("emitit l sokaina")
 		this.eventEmitter.emit('game.accept', {
 			req_play,
 		});
 		
 
-		console.log("accccccccccccccccccccccccccccccccccccccccccept")
 
 		return { message: 'Accept request to play succesfully' };
 	}
@@ -470,8 +468,7 @@ export class FriendRequestService {
 		const recipientUser = await this.prisma.user.findFirst({
 			where: { id: recipientId },
 		});
-		console.log('user: ', user);
-		console.log('rec : ', recipientUser);
+	
 		if (!user || !recipientUser) {
 			throw new HttpException('User Not Found!', HttpStatus.BAD_REQUEST);
 		}
@@ -600,5 +597,23 @@ export class FriendRequestService {
 			console.error('Error deleting notification:', error);
 			return { success: false, message: 'Error deleting notification' };
 		}
+	}
+	async whichBlocked(id : string){
+		const test = await this.prisma.blockList.findMany({
+			where : {
+				OR:[
+					{userOneId : id },
+					{userTwoId : id }
+				]
+			},
+			include : {
+				userOne : true,
+				userTwo : true,
+			}
+			
+
+		})
+		return test;
+
 	}
 }

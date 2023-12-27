@@ -24,14 +24,15 @@ const GroupsManagement = () => {
   const [roomsdata, setRoomsData] = useState<ConversationTypes[]>([]);
 
   useEffect(() => {
+    
     dispatch(getAllRooms())
   }, [dispatch]);
 
   useEffect(()=>{
+    
     setRoomsData(rooms)
   },[rooms])
 
-  console.log("dasdsadasdasdasdsadsasa")
 
   // useEffect(() => {
   //   // Sort the rooms when the data changes

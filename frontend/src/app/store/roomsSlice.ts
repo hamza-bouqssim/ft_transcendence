@@ -39,7 +39,6 @@ export const getAllRooms = createAsyncThunk('rooms/getAllRooms', async (_,{rejec
     const response = await getAllRoomsApi();
     return response.data.data; 
   } catch (error : any) {
-    console.log(error)
     if (error.response && error.response.data) {
       return rejectWithValue(error.response.data);
     } else {
@@ -54,7 +53,6 @@ export const createRooms = createAsyncThunk('rooms/createRooms', async (data: cr
     const response = await createRoomsApi(data);
     return response.data.data;
   } catch (error : any) {
-    console.log(error.response)
     if (error.response && error.response.data) {
       return rejectWithValue(error.response.data);
     } else {
@@ -68,7 +66,6 @@ export const updateRooms = createAsyncThunk('rooms/updateRooms', async (data: Co
     const response = await updateRoomsApi(data);    
     return response.data.data;
   } catch (error : any) {
-    console.log(error.response)
     if (error.response && error.response.data) {
       return rejectWithValue(error.response.data);
     } else {
@@ -121,7 +118,6 @@ const roomSlice = createSlice({
 				(state: any, action: PayloadAction<ConversationTypes>) => {
 					state.status.update = "succeeded";
 					const updateData = action.payload;
-					console.log(updateData);
 					const index = state.rooms.findIndex(
 						(room: ConversationTypes) => room.id === updateData.id,
 					);

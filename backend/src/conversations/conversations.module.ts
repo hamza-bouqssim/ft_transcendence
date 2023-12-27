@@ -4,7 +4,6 @@ import { ConversationsController } from './conversations.controller';
 import { ConversationsService } from './conversations.service';
 import { PrismaService } from 'prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Module({
   imports:[],

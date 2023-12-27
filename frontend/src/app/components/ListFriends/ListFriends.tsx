@@ -58,7 +58,6 @@ const ListFriends = () => {
 
 	const [Friends, setFriends] = useState<FriendsTypes[]>([]);
 	const { updateChannel, channel } = useContext(socketContext);
-
 	const dispatch = useDispatch<AppDispatch>();
 	const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 	const [change, setChange] = useState<{
@@ -77,6 +76,7 @@ const ListFriends = () => {
 	);
 
 	useEffect(() => {
+		
 		dispatch(fetchGetAllFriendsThunk());
 		dispatch(fetchUsersThunk());
 	}, [dispatch]);
@@ -147,7 +147,6 @@ const ListFriends = () => {
 					};
 
 					const handlePLayingRequest = async (display_name: string) => {
-						console.log("display_name here-->", display_name);
 						try {
 							const response = await dispatch(
 								fetchSendRequestPLay(display_name),
@@ -157,7 +156,6 @@ const ListFriends = () => {
 								ToastError(`Error: ${errorMessage}`);
 							} else {
 								ToastSuccess("PLay request sent successfully");
-								router.push(`/dashboard/game/online-game/maps`);
 							}
 						} catch (err: any) {
 							ToastError(

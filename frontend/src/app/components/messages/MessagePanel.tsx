@@ -2,27 +2,42 @@
 import { InputField, MessageContainerStyle, MessagePanelStyle, MessagePannelBody, MessagePannelHeaderStyle } from "@/app/utils/styles"
 import MessageContainer from "./MessageContainer";
 import MessageInputField from "./MessageInputFieldRoom";
-import { messageTypes } from "@/app/utils/types";
+import { ConversationTypes, messageTypes } from "@/app/utils/types";
 import { FC, useState } from "react";
 import MessagePanelHeader from "./MessagePanelHeader";
 import { usePathname } from "next/navigation";
 import { postNewMessage } from "@/app/utils/api";
 import UpdateComponent from "../updateComponent/UpdateComponent";
 import { InfoRoom } from "../InfoRoom/InfoRoom";
-import {useContext} from 'react'
+import {useContext,useEffect} from 'react'
 import MessageContainerRoom from "./MessageContainerRoom";
+import { socketContext } from "@/app/utils/context/socketContext";
 
 
 const MessagePanel = () => {
 
-        const [updateRome,setUpdateRome] = useState<boolean>(false)
-        const pathname = usePathname()
-        console.log(pathname)
+    const [updateRome,setUpdateRome] = useState<boolean>(false)
+    const pathname = usePathname()
+    const { updateChannel, channel } = useContext(socketContext);
+    const [olddata, setOldData] = useState<ConversationTypes | null>(null);
+    
+    useEffect(() => {
+      
+
+        if (channel) {
+            setOldData(channel);
+        }
+    }, [channel]);
      
     return (
         <div className="p-2 md:p-6   h-full flex items-center w-full justify-between"> 
                 <div className="md:w-[60%] h-full w-full"> 
-                    <MessagePanelHeader setUpdateRome={setUpdateRome} updateRome={updateRome} />
+                    <MessagePanelHeader 
+                        setUpdateRome={setUpdateRome}
+                        updateRome={updateRome}  
+                        setOldData={setOldData} 
+                        olddata={olddata}
+                    />
                     { !updateRome ? 
                         <>
                             {pathname.includes('chat') ? 
@@ -31,7 +46,10 @@ const MessagePanel = () => {
                             }
                         </>
                         :
-                        <UpdateComponent></UpdateComponent>
+                        <UpdateComponent 
+                            olddata={olddata} 
+                            setOldData={setOldData}
+                        ></UpdateComponent>
                     }
                 </div>
             <div className="hidden md:block md:w-[40%]  pl-4  h-full ">

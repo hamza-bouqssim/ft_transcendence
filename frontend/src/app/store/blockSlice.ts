@@ -1,16 +1,18 @@
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { DebloqueUser, bloqueFriend, getAllFriends, getBloques } from '../utils/api';
-import { BloquesTypes, FriendsTypes } from '../utils/types';
+import { DebloqueUser, blockedUsers, bloqueFriend, getAllFriends, getBloques } from '../utils/api';
+import { BloqueList, BloquesTypes, FriendsTypes } from '../utils/types';
 
 
 interface BlockState {
   friendsBlock: BloquesTypes[];
+  blocked: BloqueList[];
   status: 'idle' | 'loading' | 'success' | 'failed';
   error: string | null;
 }
 
 const initialState: BlockState = {
   friendsBlock: [],
+  blocked : [],
   status: 'idle',
   error: null,
 };
@@ -34,6 +36,10 @@ const initialState: BlockState = {
     }
     
   })
+  export const fetchBlockedUsers = createAsyncThunk('request/usersBLoque', async() =>{
+    const response = await blockedUsers();
+    return response.data;
+  })
   
   export const fetchBlocksThunk = createAsyncThunk('friendsBlock/fetchBlockFriendThunk ', async (_,{rejectWithValue} ) => {
     try{
@@ -48,9 +54,7 @@ const initialState: BlockState = {
             return rejectWithValue('Failed to fetch requests');
       
           }
-
     }
-   
   
   });
   
@@ -115,6 +119,17 @@ const BlockSlice = createSlice({
         // state.friendsBlock = action.payload;
       })
       .addCase(fetchDebloqueUserThunk.rejected, (state: any, action : any) => {;
+        state.status = 'failed';
+        state.error = action.payload;
+        
+      }).addCase(fetchBlockedUsers.pending, (state : any) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchBlockedUsers.fulfilled, (state : any, action : any) => {
+        state.status = 'success';
+        state.blocked  = action.payload;
+      })
+      .addCase(fetchBlockedUsers.rejected, (state: any, action : any) => {;
         state.status = 'failed';
         state.error = action.payload;
         

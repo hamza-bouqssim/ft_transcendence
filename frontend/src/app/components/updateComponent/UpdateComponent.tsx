@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { FC } from "react";
 import { MdEdit } from "react-icons/md";
 import { useContext, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,23 +14,29 @@ import { RestFriend } from "../RestFriend/RestFriend";
 import Image from "next/image";
 import { ConversationTypes } from "@/app/utils/types";
 
-const UpdateComponent = () => {
+interface UpdateComponentProps {
+	setOldData:(value: ConversationTypes | null) => void;
+	olddata :ConversationTypes | null;
+}
+
+
+const UpdateComponent:FC<UpdateComponentProps> = (
+	{
+		setOldData,
+		olddata,
+	}
+) => {
+	
 	const { updateChannel, channel } = useContext(socketContext);
 	const dispatch = useDispatch();
 	const [password, setPassword] = useState<string | null>(null);
 	const { rooms, status, error } = useSelector((state: any) => state.room);
-	const [olddata, setOldData] = useState<ConversationTypes | null>(null);
-
-	useEffect(() => {
-		if (channel) {
-			setOldData(channel);
-		}
-	}, [channel]);
+	
 
 	return (
 		<div className=" no-scrollbar relative h-[calc(100%-90px)]  overflow-auto">
 			{error && <div>{error}</div>}
-			<div className="mt-7 flex items-center justify-center ">
+			{/* <div className="mt-7 flex items-center justify-center ">
 				<div className="mx-auto flex w-auto  items-center justify-center rounded-full bg-[#F2F3FD] p-4">
 					<Image
 						className="h-20 w-20 rounded-full  bg-cover"
@@ -51,12 +57,13 @@ const UpdateComponent = () => {
 							value={olddata?.name as string}
 							className="text-black"
 							onSave={(val: string) => {
-								setOldData((prevData: ConversationTypes | null) => {
+								setOldData((prevData: ConversationTypes|null) => {
 									if (prevData) {
-										return { ...prevData, name: val };
+									  return { ...prevData, name: val };
+									} else {
+									  return null;
 									}
-									return null; // or handle the case where prevData is null
-								});
+								  });
 							}}
 							inputProps={{
 								style: {
@@ -68,8 +75,8 @@ const UpdateComponent = () => {
 					</div>
 				</div>
 			</div>
-			<hr className="mx-auto  my-10 w-1/2" />
-			<div className="mx-auto my-8 flex w-[90%] items-center justify-between text-black ">
+			<hr className="mx-auto  my-10 w-1/2" /> */}
+			{/* <div className="mx-auto my-8 flex w-[90%] items-center justify-between text-black ">
 				<label>
 					<input
 						type="radio"
@@ -128,8 +135,8 @@ const UpdateComponent = () => {
 					/>
 					Protected
 				</label>
-			</div>
-			{olddata?.Privacy === "Protected" && (
+			</div> */}
+			{/* {olddata?.Privacy === "Protected" && (
 				<div className="mx-auto flex w-[80%] items-center justify-center">
 					<input
 						onChange={(e) => {
@@ -154,9 +161,9 @@ const UpdateComponent = () => {
 						change
 					</button>
 				</div>
-			)}
+			)} */}
 
-			<div className="no-scrollbar mt-5  h-[40%] min-h-[200px] w-full overflow-auto  rounded-xl bg-[#F2F3FD]   text-black">
+			<div className="no-scrollbar mt-5   w-full overflow-auto  rounded-xl    text-black">
 				<RestFriend></RestFriend>
 			</div>
 			<div className="h-10"></div>

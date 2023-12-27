@@ -26,7 +26,6 @@ export class RoomsController {
       const chatRoom = await this.roomsService.getAllRooms(id);
       return res.status(200).json({data: chatRoom });
     } catch (error) {
-      console.log(error.response)
       return res.status(401).json(error.response);
     }
 
@@ -63,7 +62,6 @@ export class RoomsController {
       );
       return res.status(200).json({data: update });
     } catch (error) {
-      console.log(error)
       return res.status(500).json(error.response);
     }
 
@@ -93,7 +91,6 @@ export class RoomsController {
       const friend = await this.roomsService.getAllFreind(id);
       return res.status(200).json({data: friend });
     } catch (error) {
-      console.log(error.response)
       return res.status(500).json(error.response);
     }
   }
@@ -107,7 +104,6 @@ export class RoomsController {
       const member = await this.roomsService.allMember(id,RoomId);
       return res.status(200).json({data: member });
     } catch (error) {
-      console.log(error.response)
       return res.status(500).json(error.response);
     }
     
@@ -126,7 +122,6 @@ export class RoomsController {
       );
       return res.status(200).json({data: member });
     } catch (error) {
-      console.log(error.response)
       return res.status(500).json(error.response);
     }
     
@@ -145,7 +140,6 @@ export class RoomsController {
       );
       return res.status(200).json({data: member });
     } catch (error) {
-      console.log(error.response)
       return res.status(500).json(error.response);
     }
     
@@ -164,7 +158,6 @@ export class RoomsController {
       );
       return res.status(200).json({data: member });
     } catch (error) {
-      console.log(error.response)
       return res.status(500).json(error.response);
     }
     
@@ -182,7 +175,6 @@ export class RoomsController {
       );
       return res.status(200).json({data: member });
     } catch (error) {
-      console.log(error.response)
       return res.status(500).json(error.response);
     }
 
@@ -200,7 +192,6 @@ export class RoomsController {
       );
       return res.status(200).json({data: response });
     } catch (error) {
-      console.log(error.response)
       return res.status(500).json(error.response);
     }
     
@@ -219,7 +210,6 @@ export class RoomsController {
       );
       return res.status(200).json({data: update });
     } catch (error) {
-      console.log(error.response)
       return res.status(500).json(error.response);
     }
     
@@ -231,12 +221,16 @@ export class RoomsController {
   async addMemberToRooms(@Res() res: any,@Req() req , @Body() memberUpdate:Member)
   {
     try {
+      
       const {id}=req.user
       const update = await this.roomsService.addMemberToRooms(id,memberUpdate);
+      this.eventEmitter.emit(
+        'order.updateMember',
+        memberUpdate.id,null,null
+      );
       return res.status(200).json({data: update });
     }
     catch (error) {
-      console.log(error.response)
       return res.status(500).json(error.response);
     }
 
@@ -253,7 +247,6 @@ export class RoomsController {
       const response = await this.roomsService.joinRooms(id,joinRooms);
       return res.status(200).json({data: response });
     } catch (error) {
-      console.log(error.response)
       return res.status(500).json(error.response);
     }
 
@@ -268,7 +261,6 @@ export class RoomsController {
       const allRoom = await this.roomsService.findRoom(id);
       return res.status(200).json({data: allRoom });
     } catch (error) {
-      console.log(error.response)
       return res.status(500).json(error.response);
     }
 

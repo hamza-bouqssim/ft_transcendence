@@ -32,6 +32,7 @@ export const fetchGetAllFriendsThunk = createAsyncThunk('friends/fetchGetAllFrie
 
 export const fetchRemoveFriendship =  createAsyncThunk('removeFriend',  async (display_name : string, { rejectWithValue } ) =>{
   const response = await  removeFriendship(display_name);
+
   return response;
 })
 

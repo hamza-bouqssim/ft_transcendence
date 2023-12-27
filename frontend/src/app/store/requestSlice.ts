@@ -97,7 +97,6 @@ export const fetchNumberPending = createAsyncThunk(
 	"request/pendingCount",
 	async (_, { rejectWithValue }) => {
 		const response = await getNumberPending();
-		console.log("response pen-->", response.data);
 		return response.data;
 	},
 );
