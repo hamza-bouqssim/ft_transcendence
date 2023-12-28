@@ -106,7 +106,7 @@ const RankingUserSwitch = ({
 				<div className=" scrollbar-hide relative  flex h-[75%] w-full items-center justify-center gap-10 overflow-auto rounded-[50px]">
 					<div className="h-[110px] w-[110px] overflow-hidden rounded-full border-4 border-solid border-amber-900 bg-gray-100">
 						<Image
-							src={players[1]?.picture}
+							src={players[2]?.picture || "/assets/unknown.png"}
 							className="h-[110px] w-[110px] rounded-full "
 							alt="Description of the image"
 							width={250}
@@ -116,7 +116,7 @@ const RankingUserSwitch = ({
 
 					<div className="absolute top-0 h-[140px] w-[140px] overflow-hidden rounded-full border-4 border-solid border-amber-500 bg-gray-100 hover:bg-black">
 						<Image
-							src={players[0]?.picture}
+							src={players[0]?.picture || "/assets/unknown.png"}
 							className="h-[140px] w-[140px] rounded-full "
 							alt="Description of the image"
 							width={250}
@@ -126,7 +126,7 @@ const RankingUserSwitch = ({
 
 					<div className="h-[110px] w-[110px] overflow-hidden rounded-full border-4 border-solid border-gray-700 bg-gray-100">
 						<Image
-							src={players[2]?.picture}
+							src={players[1]?.picture || "/assets/unknown.png"}
 							className="h-[110px] w-[110px] rounded-full "
 							alt="Description of the image"
 							width={250}

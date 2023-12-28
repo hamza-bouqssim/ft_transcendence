@@ -12,6 +12,8 @@ import { fetchMessagesThunk } from '../store/messageSlice';
 import { useSetAtom } from 'jotai';
 import { OpponentData } from './game/utils/data';
 import { fetchUsersThunk } from '../store/usersSlice';
+import { fetchConversationThunk } from '../store/conversationSlice';
+import { ConstructionOutlined } from '@mui/icons-material';
 
 
 const ProviderOnSocket = () => {
@@ -66,7 +68,7 @@ const ProviderOnSocket = () => {
     
          });
          socket.on('blockNotification', (data : any) =>{
-          console.log("here provider bloque");
+          console.log("chat here-->");
           dispatch(fetchBlocksThunk());
           dispatch(fetchBlockedUsers());
           dispatch(fetchGetAllFriendsThunk());
@@ -81,7 +83,7 @@ const ProviderOnSocket = () => {
           
         })
         socket.on('debloqueNotification', (data : any)=>{
-          console.log("here provider debloque");
+          console.log("chat here-->");
 
           dispatch(fetchBlocksThunk());
           dispatch(fetchGetAllFriendsThunk());
@@ -124,6 +126,30 @@ const ProviderOnSocket = () => {
         socket.on('deleteFriendship', (data : any)=>{
           dispatch(fetchGetAllFriendsThunk());
         })
+        socket.on('createConversation', (data : any)=>{
+          dispatch(fetchConversationThunk());
+
+
+          if( channel?.id === data.conversation.id)
+          {
+              dispatch(fetchMessagesThunk(data.conversation.id));
+    
+          }
+          
+    
+    
+        });
+
+        socket.on('createConversationMessage', (data : any)=>{
+          dispatch(fetchConversationThunk());
+          if( channel?.id === data.chat.id)
+          {
+              dispatch(fetchMessagesThunk(data.chat.id));
+    
+          }
+          
+
+        })
        
           return () => {
             socket.off('AcceptNotification');
@@ -136,11 +162,14 @@ const ProviderOnSocket = () => {
             socket.off('RefusePLayNotification');
             socket.off('deleteNOtification');
             socket.off('deleteFriendship');
+            socket.off('createConversationMessage');
+            socket.off('createConversation');
+
     
     
           };
             
-          }, [socket, dispatch]);
+          }, [socket, dispatch, channel?.id, channel, updateChannel]);
         
   return (
     <div>

@@ -56,7 +56,6 @@ export const fetchConversationThunk = createAsyncThunk('conversations/fetch', as
 export const fetchConversationUserThunk = createAsyncThunk('conversation/fetch',async(params: CreateConversationParams) =>{
   //try{
     const response = await findConversationUsers(params.display_name ?? '' , params.message);
-    console.log("res here-->", response.data);
     return response.data;
 
   // }catch(error : any){

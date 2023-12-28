@@ -251,14 +251,13 @@ export const getUserInfos = (id:string) => {
 
 export const addMemberToRooms = (id:string ,userId:string) =>
 {
-  const response = API.post("/rooms/addMemberToRooms",{id,userId})
+  const response = API.post("/rooms/addMemberToRooms",{id,userId});
   return response;
 }
 
 export const isAuth = () =>
 {
-  const response = API.post("/auth/isAuth")
-  console.log(response)
+  const response = API.post("/auth/isAuth");
   return response;
 }
 

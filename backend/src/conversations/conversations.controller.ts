@@ -58,11 +58,11 @@ async findConversationUser(@Body() request: {display_name : string, message : st
     // }
    
 }
-@Get(':id')
-async getconversationById(@Param('id') id: string){
-    const conversation = await this.conversationService.findConversationById(id);
-    return conversation;
-}
+// @Get(':id')
+// async getconversationById(@Param('id') id: string){
+//     const conversation = await this.conversationService.findConversationById(id);
+//     return conversation;
+// }
 
 
 @Get('/messages/:conversationId')

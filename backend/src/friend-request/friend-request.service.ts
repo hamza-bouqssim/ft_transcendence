@@ -441,7 +441,6 @@ export class FriendRequestService {
 				recipient : true,
 			},
 		});
-		console.log("chat here-->", chatParticipents);
 
 		this.eventEmitter.emit('requestBlock.created', {
 			chatParticipents,
@@ -488,7 +487,6 @@ export class FriendRequestService {
 				recipient : true,
 			},
 		});
-		console.log("chat here-->", chatParticipents);
 
 		this.eventEmitter.emit('requestDebloque.created', {
 			chatParticipents,

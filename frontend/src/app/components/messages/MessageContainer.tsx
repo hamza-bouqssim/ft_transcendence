@@ -47,8 +47,8 @@ const MessageContainer = () => {
     const {Userdata} = useContext(socketContext);
     const dispatch = useDispatch<AppDispatch>();
     const { messages, status, error , isSenderBlocked , isRecipientBlocked} = useSelector((state:any) => state.messages);
-    console.log("isSender-->",isSenderBlocked );
-    console.log("isRecipient-->", isRecipientBlocked);
+
+
     const scrollRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
@@ -80,6 +80,11 @@ const MessageContainer = () => {
       return content.match(regex) || [];
     };
     const debloqueFromPanel  = async () =>{
+      if (channel) {
+        const id = channel.id;
+        dispatch(fetchMessagesThunk(id));
+      }
+
         let user : User | undefined;
         if( channel && channel?.sender.id === Userdata?.id)
             user = channel?.recipient;
@@ -99,6 +104,18 @@ const MessageContainer = () => {
         }
         
     }
+    const [shouldRenderUnblockButton, setShouldRenderUnblockButton] = useState(false);
+    useEffect(() => {
+  
+      if (
+        (isSenderBlocked && Userdata?.display_name === channel?.sender.display_name) ||
+        (isRecipientBlocked && Userdata?.display_name === channel?.recipient.display_name)
+      ) {
+        setShouldRenderUnblockButton(true);
+      } else {
+        setShouldRenderUnblockButton(false);
+      }
+    }, [isSenderBlocked, isRecipientBlocked, Userdata, channel]);
     return (
 
        <>
@@ -145,7 +162,7 @@ const MessageContainer = () => {
         <div ref={scrollRef}></div>
 
         </div>
-        {(isSenderBlocked && Userdata?.display_name === channel?.sender.display_name) || (isRecipientBlocked && Userdata?.display_name === channel?.recipient.display_name) ? (
+        {shouldRenderUnblockButton ? (
           <button onClick={() => debloqueFromPanel()} className="w-full p-4 py-3 bg-[#5B8CD3] px-4 mr-2 rounded-full" >
             Unblock
           </button>
