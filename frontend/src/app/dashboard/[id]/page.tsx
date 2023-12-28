@@ -1,7 +1,7 @@
 "use client";
 
 import { SendRequest, getMatchHistory, getStates, getUserInfos} from '../../utils/api';
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useRef } from 'react';
 import Boxes from '../../components/Boxes';
 import HistoryMatches from '../../components/HistoryMatches';
 import Image from 'next/image';
@@ -44,6 +44,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 	const {register, handleSubmit, formState: { errors }} = useForm<CreateConversationParams>();
 	const [buttonType, setButtonType] = useState('');
 		const [IsBloqued, setIsBloqued] = useState(false);
+
 
 	const ToastError = (message: any) => {
 		toast.error(message, {
@@ -127,11 +128,10 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 			 ));
 				 router.push("/dashboard/chat")
 				 const elem = res.payload;
-				updateChannel(elem); 
+				updateChannel(elem);		 
 	  }
-	
-
 	}
+
 	useEffect(() => {
 		dispatch(fetchBlocksThunk());
 		dispatch(fetchBlockedUsers());
@@ -302,6 +302,19 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 			
 		  };
 
+		  //USEEFFECT TO DISABLE OUTSIDE CLICK
+		  const refOne = useRef(null);
+		  useEffect(() => {
+			document.addEventListener("click", handleClickOutside, true);
+		  }, [])
+		  // FUNCTION TO HANDLE THE OUTSIDE CLICK
+
+		  const handleClickOutside = (e) => {
+			
+				if(!refOne.current?.contains(e.target))
+					setShowMessageBlock(false);
+		  }
+
 	  
 
 	return (
@@ -322,17 +335,16 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 							{!IsBloqued
 								 ? 
 								<>
-								{
-								buttonType === 'pendingRequest' ? (
-									<button className="h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover] hover:duration-300">
+								{requests.some((request: any) => request.user_id === Userdata?.id && request.friend_id === params.id) ? (
+									<button className="h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover] hover:duration-300 hover:bg-[--purple-hover]">
 										Pending Request
 									</button>
-								) : buttonType === 'respondToRequest' ? (
-										<button onClick={() => handleClickAcceptRequest()} className="h-12 rounded-2xl bg-[--green-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--green-hover] hover:duration-300">
-											Respond to Request
-										</button>
-								) : buttonType === 'friends' ? (
-									<button className="h-12 rounded-2xl bg-[--pink-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--gray-hover] hover:duration-300" disabled>
+							) :requests.some((request: any) => request.user_id === params.id && request.friend_id === Userdata?.id)? (
+									<button onClick={() => handleClickAcceptRequest()} className="h-12 rounded-2xl bg-[--green-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover] hover:duration-300">
+										Respond to Request
+									</button>
+							) :friends.some((friend: any) => friend.id === params.id) ? (
+									<button className="h-12 rounded-2xl bg-[--pink-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover] hover:duration-300" disabled>
 										Friends
 									</button>
 								) : (
@@ -370,7 +382,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 							{showMessageBlock && (
 								<>
 									<div className="fixed bottom-0 left-0 right-0 top-0 z-10  h-full w-full rounded-[60px] bg-[#00000095] p-10 opacity-100 backdrop-blur-md">
-										<div className="absolute bottom-0 left-0 right-0 top-0 z-30 m-auto flex h-[280px] w-[380px] flex-col items-center justify-center gap-3 overflow-hidden rounded-[20px] bg-white px-5 shadow-xl">
+										<div className="absolute bottom-0 left-0 right-0 top-0 z-30 m-auto flex h-[280px] w-[380px] flex-col items-center justify-center gap-3 overflow-hidden rounded-[20px] bg-white px-5 shadow-xl" ref={refOne}>
 											<h2 className="text-[20px] text-gray-800">
 												Send Message to{" "}
 												<span className="text-[25px] text-[--purple-color]">
