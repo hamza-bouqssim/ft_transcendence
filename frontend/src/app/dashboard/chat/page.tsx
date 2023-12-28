@@ -75,9 +75,9 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchCountNotification());
       dispatch(fetchGetRequestsThunk());
       dispatch(fetchBlocksThunk());
-		dispatch(fetchBlockedUsers());
-		dispatch(fetchUsersThunk());
-		dispatch(fetchGetAllFriendsThunk());
+		  dispatch(fetchBlockedUsers());
+		  dispatch(fetchUsersThunk());
+		  dispatch(fetchGetAllFriendsThunk());
 
 
     })
@@ -86,13 +86,13 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchCountNotification());
     })
     socket.on('blockNotification', (data : any) =>{
-      console.log("here bloque chat socket");
+      console.log("provider here");
       dispatch(fetchBlocksThunk());
       dispatch(fetchGetAllFriendsThunk());
       dispatch(fetchGetRequestsThunk());
       dispatch(fetchBlockedUsers());
 
-		dispatch(fetchUsersThunk());
+		  dispatch(fetchUsersThunk());
 
     
       if(data)
@@ -105,8 +105,6 @@ const ConversationChannelPagechat = () => {
       
     })
     socket.on('debloqueNotification', (data : any)=>{
-      console.log("here debloque chat socket");
-
       dispatch(fetchBlocksThunk());
       dispatch(fetchGetAllFriendsThunk());
       dispatch(fetchGetRequestsThunk());
@@ -144,12 +142,29 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchGetAllFriendsThunk());
     })
 
-		socket.on('createConversation', (data : any)=>{
+    socket.on('createConversation', (data : any)=>{
       dispatch(fetchConversationThunk());
-      if(data)
-        dispatch(fetchMessagesThunk(data.chat.id));
+
+      if( channel?.id === data.conversation.id)
+      {
+          dispatch(fetchMessagesThunk(data.conversation.id));
+
+      }
+      
+
 
     });
+
+    socket.on('createConversationMessage', (data : any)=>{
+      dispatch(fetchConversationThunk());
+      if( channel?.id === data.chat.id)
+      {
+          dispatch(fetchMessagesThunk(data.chat.id));
+
+      }
+      
+
+    })
     socket.on('deleteFriendship', (data : any)=>{
       dispatch(fetchGetAllFriendsThunk());
     })
@@ -186,6 +201,7 @@ const ConversationChannelPagechat = () => {
         socket.off('Ingame');
         socket.off('IngameOffline');
         socket.off('newRequestToPlay');
+        socket.off('createConversationMessage');
         // socket.off('AcceptPLayNotification');
         socket.off('RefusePLayNotification');
         socket.off('deleteNOtification')

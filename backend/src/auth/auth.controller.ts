@@ -65,7 +65,6 @@ export class AuthController {
 	@Get('google/redirect')
 	@UseGuards(AuthGuard('google'))
 	googleRedirect(@Res() res: Response, @Req() req) {
-		console.log(req.user)
 
 		const user = req.user;
 		const payload = { sub: user.id, email: user.email };
@@ -126,7 +125,6 @@ export class AuthController {
     @UseGuards(AuthGuard('jwt'))
     async isAuthentication( @Req() request, @Res() res,) {
       try {
-		console.log("Adasdasd")
         await this.authService.findUser(request.user.id) 
         return res.status(200).json({ isAuth: true});
       } catch (error) {

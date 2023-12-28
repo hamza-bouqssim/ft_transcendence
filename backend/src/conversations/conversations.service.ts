@@ -341,9 +341,10 @@ async findConversationUsers(user : any, _display_name : string, message : string
       lastMessageId: messageCreate.id,
     },
   });
-  this.eventEmitter.emit('createConversation.created', {
+  this.eventEmitter.emit('createConversationMessage.created', {
     chat
   });
+  console.log("chat here-->", chat);
   return chat;
 }
 
@@ -374,8 +375,7 @@ async getMessageByConversationId(conversationId : string){
   }
   const isSenderBlocked = await this.userService.isBlockedByUser(chatParticipents.sender.id, chatParticipents.recipient.id);
   const isRecipientBlocked = await this.userService.isBlockedByUser(chatParticipents.recipient.id, chatParticipents.sender.id);
-  console.log("isSender-->", isSenderBlocked);
-  console.log("is recipient -->", isRecipientBlocked);
+
   return { messages: chatParticipents.messages, isSenderBlocked, isRecipientBlocked};
 }
 

@@ -35,7 +35,6 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
                 id:userId
             }
         })
-        console.log(userdb)
         if (!socket.user || !userdb)
         {
             return;
@@ -217,12 +216,10 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         }
         @OnEvent('requestBlock.created')
         blockListNotification(data : any){
-            console.log("data block  here-->", data);
             this.server.emit('blockNotification', data.chatParticipents);
         }
         @OnEvent('requestDebloque.created')
         debloqueNotification(data: any){
-            console.log("debloque here-->", data);
             this.server.emit('debloqueNotification', data.chatParticipents);
         }
         @OnEvent('online.created')
@@ -236,8 +233,20 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
 
         @OnEvent('createConversation.created')
         createConversation(data : any)
-        {            
-            this.server.emit('createConversation', data);
+        {   
+           
+            this.server.to(data.conversation.sender.id).to(data.conversation.recipient.id).emit('createConversation', data);
+          
+        }
+
+        @OnEvent('createConversationMessage.created')
+        createConversationMessage(data : any)
+        {
+          
+
+            this.server.to(data.chat.sender.id).to(data.chat.recipient.id).emit('createConversationMessage', data);
+
+
         }
 
         @OnEvent('deleteConversation.created')

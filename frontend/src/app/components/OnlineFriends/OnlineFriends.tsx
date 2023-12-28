@@ -67,9 +67,9 @@ const OnlineFriends = () => {
 	const { users, Userstatus, Usererror } = useSelector(
 		(state: any) => state.users,
 	);
+	console.log("users in online -->", users);
 	const { friends, status, error } = useSelector((state: any) => state.friends);
 	useEffect(() => {
-		
 
 		dispatch(fetchUsersThunk());
 		dispatch(fetchGetAllFriendsThunk());
