@@ -1,8 +1,11 @@
 "use client";
 import {
 	AvatarStyle,
+	IngameStyling,
 	MessageItemAvatar,
 	MessagePannelHeaderStyle,
+	OflineStyling,
+	OnlineStyling,
 } from "../../utils/styles";
 import { IoMdSettings } from "react-icons/io";
 import { usePathname, useRouter } from "next/navigation";
@@ -48,7 +51,15 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 	const goBack = () => {
 		updateChannel(null);
 	};
+	const { users, Userstatus, Usererror } = useSelector(
+		(state: any) => state.users,
+	);
 
+	useEffect(() => {
+		dispatch(fetchUsersThunk());
+	}, [dispatch]);
+
+	
 	useEffect(() => {
 		
 		
@@ -86,9 +97,24 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 
 		if (channel?.recipient.id === Userdata?.id) {
 			test = channel?.sender;
-		} else test = channel?.recipient;
+		} else 
+			test = channel?.recipient;
+		
 		return test;
 	};
+	const checkTheStatus = () =>{
+		let test: User | undefined;
+
+		if (channel?.recipient.id === Userdata?.id) {
+			test = channel?.sender;
+		} else 
+			test = channel?.recipient;
+		const user = users.find((user: User) => user.id === test?.id);
+		if(user)
+			return user && user?.status;
+		else
+			return ""
+	}
 
 	const handleUpdate = () => {
     if(olddata)
@@ -106,13 +132,8 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
       });
     }
 	};
-	const { users, Userstatus, Usererror } = useSelector(
-		(state: any) => state.users,
-	);
 
-	useEffect(() => {
-		dispatch(fetchUsersThunk());
-	}, [dispatch]);
+
 	return (
 		
 		<div className="flex items-center justify-between rounded-full  bg-[#F2F3FD] p-5  text-black">
@@ -132,13 +153,16 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 					/>
 				)}
 				{!channel?.picture && InfoRecipient()?.avatar_url && (
-					<Image
+					<div className="flex">
+						<Image
 						src={InfoRecipient()?.avatar_url as string}
 						className="w-[50px] rounded-full"
 						alt=""
 						width={30}
 						height={30}
-					/>
+						/>
+						{checkTheStatus() === 'online' ? (<OnlineStyling/>) :  checkTheStatus() === 'offline' ? (<OflineStyling/>) :( <IngameStyling/>)}
+					</div>					
 				)}
 				{channel?.name && (
 					<div>

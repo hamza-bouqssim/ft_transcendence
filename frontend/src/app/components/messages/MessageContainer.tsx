@@ -126,7 +126,7 @@ const MessageContainer = () => {
             messages.map((m: messageTypes) => (
                 <div className={`flex w-full mt-2 space-x-3 max-w-xs ${Userdata?.id === m.sender.id ? 'self-end' : 'self-start'} overflow-y-auto`} key={m.id}>                <Image
                   src={m.sender?.avatar_url}
-                  className="h-10 w-10 rounded-[50%] bg-black "
+                  className="h-10 w-10 rounded-[50%] bg-black"
                   alt="Description of the image"
                   width={60}
                   height={60}
@@ -135,27 +135,35 @@ const MessageContainer = () => {
                 <div className={`flex-1`}>
                   <div className="flex gap-4	" key={m.id}>
                     <span
-                      className="senderName"
+                      className="senderName  font-['Whitney_Semibold']"
                       style={{
                         color: Userdata?.id === m.sender.id ? '#8982a6' : '#778ba5',
                       }}
                     >
                       {m.sender.display_name}
                     </span>
-                    <span className="text-sm text-gray-800	">
+                    {/* <span className="text-sm text-gray-800	 font-['Whitney_Semibold']">
                       {formatRelative(new Date(m.createdAt), new Date())}
-                    </span>
+                    </span> */}
                   </div >
 
                   <div
-                    className={`relative ml-3 text-sm  py-2 px-4 shadow rounded-xl bg-[#7093c5]  ${
-                      Userdata?.display_name === m.sender.display_name ? 'bg-[#718baf] ' : 'bg-[#7093c5] '
+                    className={`relative ml-3 text-sm  py-2 px-4 shadow rounded-xl bg-[#5B8CD3] font-['Whitney_Semibold'] ${
+                      Userdata?.display_name === m.sender.display_name ? 'bg-[#5B8CD3] ' : 'bg-[--gray-color] text-black'
                     }`}
                   >
                     {breakContentIntoLines(m.content, 30).map((line, index) => (
-                        <div key={index}>{line}</div>
-                              ))} </div>
-                </div>
+                        <div key={index}>{line}</div> ))} 
+                            <span className="text-sm  font-['Whitney_Semibold absolute bottom-2 right-3 text-gray-200"> {new Date(m.createdAt).toLocaleTimeString()}</span>
+
+                  </div>
+                           
+                  </div>
+              
+                    {/* {formatRelative(new Date(m.createdAt), new Date())} */}
+
+
+               
               </div>
             ))}
         </MessageContainerStyle>
@@ -165,6 +173,7 @@ const MessageContainer = () => {
         {shouldRenderUnblockButton ? (
           <button onClick={() => debloqueFromPanel()} className="w-full p-4 py-3 bg-[#5B8CD3] px-4 mr-2 rounded-full" >
             Unblock
+
           </button>
         
         ) : (!isRecipientBlocked && !isSenderBlocked) ? (

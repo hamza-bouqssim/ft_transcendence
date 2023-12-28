@@ -26,6 +26,7 @@ export type User = {
     username : string;
     display_name : string;
     avatar_url : string;
+    status : string;
 }
 export type chat = {
     id : string;
