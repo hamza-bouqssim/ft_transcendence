@@ -104,15 +104,15 @@ export class PongGame {
 		// This Function Will Run In All Maps:
 		this.handleDefaultGameMap();
 
-		switch (this.mapIndex) {
-			case 1:
-				this.handleGameCircleObstacles();
-				break;
+		// switch (this.mapIndex) {
+		// 	case 1:
+		// 		this.handleGameCircleObstacles();
+		// 		break;
 
-			case 2:
-				this.handleVerticalObstacles();
-				break;
-		}
+		// 	case 2:
+		// 		this.handleVerticalObstacles();
+		// 		break;
+		// }
 
 		this.gameGatway.emitToUser1InGame(this.user1, {}, 'launchGame');
 		this.gameGatway.emitToUser2InGame(this.user2, {}, 'launchGame');
@@ -255,7 +255,7 @@ export class PongGame {
 			// topRect,
 		]);
 
-		this.setBallVelocity();
+		// this.setBallVelocity();
 	}
 
 	handleGameCircleObstacles() {
@@ -479,7 +479,7 @@ export class PongGame {
 				'updateBallPosition',
 			);
 			this.calcScore();
-		}, 10);
+		}, 15);
 		this.handleDetectCollision();
 	}
 

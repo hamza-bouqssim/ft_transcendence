@@ -14,10 +14,8 @@ import { store } from "../store";
 import { Socket } from "socket.io-client";
 import { usePathname } from "next/navigation";
 import { ConversationTypes, User } from "../utils/types";
-import { Group } from "three";
 import ProviderOnSocket from "./ProviderOnSocket";
 import { ToastContainer, toast } from "react-toastify";
-import { ChangeContext } from "./game/utils/data";
 
 // export const SideBarContext: any = createContext<any>(null);
 // export const ChangeContext: React.Context<any> = createContext(null);
@@ -89,41 +87,41 @@ export default function RootLayout({
 		return validPaths.some((path) => pathName.includes(path));
 	};
 
-	const getChildrenSize = useRef<any>(null);
+	// const getChildrenSize = useRef<any>(null);
 
-	const [minHeight, setMinHeight] = useState<any>(966);
+	// const [minHeight, setMinHeight] = useState<any>(966);
 
-	useEffect(() => {
-		const handleResizeWindow = () =>
-			setMinHeight(getChildrenSize.current?.children[0]?.clientHeight + 170);
-		if (pathName.endsWith("/dashboard")) {
-			handleResizeWindow();
-			window.addEventListener("resize", handleResizeWindow);
-		} else setMinHeight(966);
-		return () => window.removeEventListener("resize", handleResizeWindow);
-	}, [pathName]);
+	// useEffect(() => {
+	// 	const handleResizeWindow = () =>
+	// 		setMinHeight(getChildrenSize.current?.children[0]?.clientHeight + 170);
+	// 	if (pathName.endsWith("/dashboard")) {
+	// 		handleResizeWindow();
+	// 		window.addEventListener("resize", handleResizeWindow);
+	// 	} else setMinHeight(966);
+	// 	return () => window.removeEventListener("resize", handleResizeWindow);
+	// }, [pathName]);
 
 	return (
 		<html lang="en">
 			<body>
 				<div
 					className={`flex h-screen w-full text-white`}
-					style={{ minHeight: `${minHeight}px` }}
+					// style={{ minHeight: `${minHeight}px` }}
 				>
 					<AppWithProviders socket={socket}>
 						{shouldHide() ? null : <SideBar />}
 						{shouldHide() ? null : <TopRightBar />}
 
-						<ChangeContext.Provider value={changeValues}>
+						{/* <ChangeContext.Provider value={changeValues}> */}
 							<ProviderOnSocket></ProviderOnSocket>
 							<div
-								ref={getChildrenSize}
+								// ref={getChildrenSize}
 								className={`h-full w-full`}
-								style={{ minHeight: `${minHeight}px` }}
+								// style={{ minHeight: `${minHeight}px` }}
 							>
 								{children}
 							</div>
-						</ChangeContext.Provider>
+						{/* </ChangeContext.Provider> */}
 					</AppWithProviders>
 				</div>
 			</body>

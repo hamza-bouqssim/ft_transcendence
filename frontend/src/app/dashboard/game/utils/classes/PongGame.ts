@@ -159,7 +159,7 @@ class PongGame {
 				background: "#3A3561",
 				width: this.divWidth,
 				height: this.divHeight,
-				wireframes: false,
+				wireframes: true,
 			},
 		});
 
@@ -173,7 +173,7 @@ class PongGame {
 		this.movePaddle();
 
 		//Run Game
-		this.startGame();
+		if (!this.socket) this.startGame();
 	}
 
 	defaultGameMap = (): void => {
@@ -468,7 +468,9 @@ class PongGame {
 		};
 
 		this.socket.on("setBallVelocity", this.handleSetVelocity);
-		this.socket.on("updateBallPosition", this.handleSetPosition);
+		setTimeout(() => {
+			this.socket.on("updateBallPosition", this.handleSetPosition);
+		}, 3000);
 
 		// this.socket.on("updateBallVelocity", (data: any) => {
 		// 	Body.setVelocity(this.ball!, {
@@ -687,7 +689,6 @@ class PongGame {
 			x: this.currentBallVelocity.x,
 			y: this.currentBallVelocity.y,
 		});
-
 	};
 
 	moveBotPaddle = (): void => {
@@ -783,7 +784,6 @@ class PongGame {
 	};
 
 	clear = (): void => {
-		
 		Composite.remove(engine.world, this.topPaddle!);
 		Composite.remove(engine.world, this.bottomPaddle!);
 		Composite.remove(engine.world, this.rightRect!);

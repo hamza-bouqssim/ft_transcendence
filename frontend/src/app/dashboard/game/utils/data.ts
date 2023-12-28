@@ -46,8 +46,8 @@ export const getCurrentSizes = (
 	return [newWidth, newHeight];
 };
 
-export const SideBarContext: any = createContext<any>(null);
-export const ChangeContext: React.Context<any> = createContext(null);
+// export const SideBarContext: any = createContext<any>(null);
+// export const ChangeContext: React.Context<any> = createContext(null);
 
 //  calculateWidthHeight(): [number, number] {
 // 		let width: number, height: number;
