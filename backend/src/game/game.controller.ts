@@ -1,8 +1,8 @@
+/* eslint-disable prettier/prettier */
 import {
 	Controller,
 	Post,
 	Get,
-	Delete,
 	Body,
 	UseGuards,
 	Res,
@@ -47,13 +47,13 @@ export class GameController {
 
 			res.status(200).json(modifiedHistory);
 		} catch (error) {
-			return {};
+			return res.status(401).json(error.response);
 		}
 	}
 
 	@Get('ranking')
 	@UseGuards(AuthGuard('jwt'))
-	async getAllRanking() {
+	async getAllRanking(@Res() res) {
 		try {
 			const rating = await this.gameService.getRanks();
 			const modifiedRank = rating.map((entry, index) => ({
@@ -62,9 +62,9 @@ export class GameController {
 				username: entry.user.username,
 				picture: entry.user.avatar_url,
 			}));
-			return modifiedRank;
+			return res.status(200).json(modifiedRank);
 		} catch (error) {
-			return {};
+			return  res.status(401).json(error.response)
 		}
 	}
 
@@ -75,9 +75,7 @@ export class GameController {
 			const results = await this.gameService.getResult(request.userId);
 			return res.status(200).json(results);
 		} catch (error) {
-			return {};
+			return res.status(401).json(error.response);
 		}
 	}
-
-	
 }

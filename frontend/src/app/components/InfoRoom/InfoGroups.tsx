@@ -1,7 +1,7 @@
 "use client"
 import React ,{useContext,useState,useRef,useEffect} from 'react'
 import {MdEdit} from 'react-icons/md'
-import { socketContext } from '@/app/utils/context/socketContext'
+import { socketContext } from '../../utils/context/socketContext'
 import { Member } from './Member'
 import { Ban } from './Ban'
 import { Mut } from './Mut'
@@ -15,11 +15,11 @@ import {
 } from "@/components/ui/accordion"
 import { HiOutlineLogout } from "react-icons/hi";
 import Button from '../Button/Button'
-import { quitMember } from '@/app/store/memberSlice'
-import { getAllRooms } from '@/app/store/roomsSlice'
+import { quitMember } from '../../store/memberSlice'
+import { getAllRooms } from '../../store/roomsSlice'
 import { Owner } from './Owner'
 import { Admin } from './Admin'
-import { AppDispatch } from '@/app/store'
+import { AppDispatch } from '../../store'
 
 interface Members {
   id: string;

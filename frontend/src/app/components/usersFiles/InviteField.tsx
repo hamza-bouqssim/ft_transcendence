@@ -2,10 +2,10 @@ import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
-import { FriendsTypes } from "@/app/utils/types";
-import { AppDispatch } from "@/app/store";
+import { FriendsTypes } from "../../utils/types";
+import { AppDispatch } from "../../store";
 import { useDispatch } from "react-redux";
-import { fetchUserInfo, fetchUserTable, fetchUsersThunk } from "@/app/store/usersSlice";
+import { fetchUserInfo, fetchUserTable, fetchUsersThunk } from "../../store/usersSlice";
 import { useParams } from "next/navigation";
 
 const InviteField = () => {
@@ -20,7 +20,6 @@ const InviteField = () => {
 
 
 	// fetch all users
-	console.log("InviteField")
 	useEffect (() => {
         dispatch(fetchUserTable())
         .unwrap()
@@ -56,8 +55,7 @@ const InviteField = () => {
       useEffect(() => {
 		
 
-        const id_user = id;
-        dispatch(fetchUserInfo(id_user)).unwrap()
+        dispatch(fetchUserInfo(id)).unwrap()
           .then(( data :any) => {
             setUserData(data);
           })

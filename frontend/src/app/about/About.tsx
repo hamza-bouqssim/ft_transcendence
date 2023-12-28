@@ -24,7 +24,6 @@ const About = () => {
 			</div>
 		);
 	});
-	console.log("hi")
 	return (
 		<section
 			id="about"

@@ -266,6 +266,7 @@ export class GameService {
 				totalMatch:true,
 			},
 		});
+
 		return history;
 	}
 

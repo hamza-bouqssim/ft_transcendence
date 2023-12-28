@@ -17,7 +17,6 @@ const initialState: FriendsState = {
 
 export const fetchGetAllFriendsThunk = createAsyncThunk('friends/fetchGetAllFriendsThunk',  async (_,{rejectWithValue} )  =>{
   try{
-    console.log("redaux")
     const response = await getAllFriends();
     return response.data;
   }catch(error : any){
@@ -32,7 +31,6 @@ export const fetchGetAllFriendsThunk = createAsyncThunk('friends/fetchGetAllFrie
 })
 
 export const fetchRemoveFriendship =  createAsyncThunk('removeFriend',  async (display_name : string, { rejectWithValue } ) =>{
-  console.log("redaux")
   const response = await  removeFriendship(display_name);
 
   return response;

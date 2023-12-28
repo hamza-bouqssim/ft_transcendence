@@ -1,6 +1,6 @@
 "use client"
-import { Qrcodeform } from "@/app/components/Qrcodefom"
-import { confirm, verifyCode } from "@/app/utils/api"
+import { Qrcodeform } from "../../components/Qrcodefom"
+import { confirm, verifyCode } from "../../utils/api"
 import { faXmark } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { useRouter } from "next/navigation"

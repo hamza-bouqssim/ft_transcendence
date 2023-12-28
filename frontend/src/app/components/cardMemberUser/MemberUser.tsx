@@ -1,7 +1,7 @@
 "use client"
-import { AppDispatch } from '@/app/store';
-import {  fetchGetAllFriendsThunk } from '@/app/store/friendsSlice';
-import { FriendsTypes, UsersTypes } from '@/app/utils/types';
+import { AppDispatch } from '../../store';
+import {  fetchGetAllFriendsThunk } from '../../store/friendsSlice';
+import { FriendsTypes, UsersTypes } from '../../utils/types';
 import Image from 'next/image';
 import React  , {useEffect,useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
@@ -23,7 +23,6 @@ interface MemberUserProps {
 export const MemberUser: React.FC<MemberUserProps> = ({ idUserAdd, setIdUserAdd }) => {  
   const { friends, status, error } = useSelector((state:any) => state.friends);
   const dispatch = useDispatch<AppDispatch>();
-  console.log("hi")
   useEffect(() => {
     
     dispatch(fetchGetAllFriendsThunk());

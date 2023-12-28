@@ -20,7 +20,6 @@ const initialState: UsersState = {
 
 export const fetchUsersThunk = createAsyncThunk('users/fetchUsersThunk', async (_,{rejectWithValue} ) => {
     try{
-      console.log("redaux")
       const response = await getAllUsers();
       return response.data;
 
@@ -38,7 +37,6 @@ export const fetchUsersThunk = createAsyncThunk('users/fetchUsersThunk', async (
 
   export const fetchUpdateDisplayName = createAsyncThunk('users/updateDisplay', async (display_name: string, { rejectWithValue }) => {
     try {
-      console.log("redaux")
       const response = await changeDisplayedName(display_name);
       return response.data;
     } catch (error : any) {
@@ -48,7 +46,6 @@ export const fetchUsersThunk = createAsyncThunk('users/fetchUsersThunk', async (
   
   export const fetchUpdateUserName = createAsyncThunk('users/updateUserName', async (username: string, {rejectWithValue}) => {
     try {
-      console.log("redaux")
       const response = await changeUserName(username);
       return response.data;
     } catch (error : any) {
@@ -57,12 +54,10 @@ export const fetchUsersThunk = createAsyncThunk('users/fetchUsersThunk', async (
   });
 
   export const fetchUserTable = createAsyncThunk('users/table', async()=>{
-    console.log("redaux")
     const response = await tableFriends();
     return response;
   })
-  export const fetchUserInfo = createAsyncThunk('user/data', async (id_user: string) =>{
-    console.log("redaux")
+  export const fetchUserInfo = createAsyncThunk('user/data', async (id_user: string | string[]) =>{
     const response = await dataUser(id_user);
     return response;
   })
@@ -73,7 +68,6 @@ export const fetchUpdateAvatar = createAsyncThunk(
   'users/updateAvatar',
   async (formData: FormData, { rejectWithValue }) => {
     try {
-      console.log("redaux")
       const response = await changeAvatar(formData);
       return response.data;
     } catch (error: any) {
@@ -83,7 +77,6 @@ export const fetchUpdateAvatar = createAsyncThunk(
 );
 
 export const fetchSearch = createAsyncThunk('users/search', async(name :string, { rejectWithValue })=>{
-  console.log("redaux")
   const response = await searchingBar(name);
   return response;
 })

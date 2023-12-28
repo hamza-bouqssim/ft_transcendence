@@ -29,7 +29,6 @@ const Form = ({ img }: FormProps) => {
 	const [success, setSuccess] = useState(true);
 	const [uSuccess, setUSuccess] = useState(true);
 	const [dSuccess, setDSuccess] = useState(true);
-	console.log("useState")
 	useEffect(() => {
 		
 		// Set initial values from Userdata only if the state is empty

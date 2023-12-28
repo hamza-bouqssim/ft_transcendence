@@ -5,13 +5,12 @@ import { AuthService } from '../auth.service';
 import { Request } from 'express';
 
 
-const extractCookie = (req: Request): string | null => {
+const extractCookie = (req: Request ): string | null => {
   if (req.cookies && req.cookies.token) {
       return req.cookies.token;
   }
   if(req.body && req.body.token)
     return req.body.token;
-
   return null;
 }
 

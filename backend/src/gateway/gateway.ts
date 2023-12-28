@@ -30,9 +30,17 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
     private NsessionOfuser: Map<string, number> = new Map();
     async handleConnection(socket : AuthenticatedSocket) {
         const userId = socket.user.sub;
-        if (!socket.user)
+        const userdb = await this.prisma.user.findUnique({
+            where:{
+                id:userId
+            }
+        })
+        console.log(userdb)
+        if (!socket.user || !userdb)
+        {
             return;
-        if(socket.user)
+        }
+        if(socket.user && userdb)
         {  
             if (!this.NsessionOfuser.has(userId)) {
                 
@@ -67,19 +75,6 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
     handleLeaveRome (client: Socket, roomId: RoomId) {
         client.leave (roomId.id);
     }
-
-    // @SubscribeMessage('cleanNot')
-    // cleanNotification(client: AuthenticatedSocket, roomId: RoomId)
-    // {
-    //     this.roomsService.cleanNotification(client.user.sub,roomId.id)
-    // }
-
-
-    // @SubscribeMessage('getNor')
-    // GetNotification(client: AuthenticatedSocket, roomId: RoomId)
-    // {
-    //     this.roomsService.cleanNotification(client.user.sub,roomId.id)
-    // }
 
  
     @SubscribeMessage('messageRome')
@@ -222,10 +217,12 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         }
         @OnEvent('requestBlock.created')
         blockListNotification(data : any){
+            console.log("data block  here-->", data);
             this.server.emit('blockNotification', data.chatParticipents);
         }
         @OnEvent('requestDebloque.created')
         debloqueNotification(data: any){
+            console.log("debloque here-->", data);
             this.server.emit('debloqueNotification', data.chatParticipents);
         }
         @OnEvent('online.created')

@@ -1,17 +1,17 @@
 "use client"
-import { InputField, MessageContainerStyle, MessagePanelStyle, MessagePannelBody, MessagePannelHeaderStyle } from "@/app/utils/styles"
+import { InputField, MessageContainerStyle, MessagePanelStyle, MessagePannelBody, MessagePannelHeaderStyle } from "../../utils/styles"
 import MessageContainer from "./MessageContainer";
 import MessageInputField from "./MessageInputFieldRoom";
-import { messageTypes } from "@/app/utils/types";
+import { ConversationTypes, messageTypes } from "../../utils/types";
 import { FC, useState } from "react";
 import MessagePanelHeader from "./MessagePanelHeader";
 import { usePathname } from "next/navigation";
-import { postNewMessage } from "@/app/utils/api";
+import { postNewMessage } from "../../utils/api";
 import UpdateComponent from "../updateComponent/UpdateComponent";
 import { InfoRoom } from "../InfoRoom/InfoRoom";
 import {useContext,useEffect} from 'react'
 import MessageContainerRoom from "./MessageContainerRoom";
-import { socketContext } from "@/app/utils/context/socketContext";
+import { socketContext } from "../../utils/context/socketContext";
 
 
 const MessagePanel = () => {

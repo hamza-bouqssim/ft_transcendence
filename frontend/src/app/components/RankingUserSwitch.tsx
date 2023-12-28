@@ -24,7 +24,6 @@ const RankingUserSwitch = ({
 	const [showSendReqCompo, setShowSendReqCompo] = useState(false);
 	const [clickedButton, setClickedButton] = useState("user");
 	const [showuser, setShowUser] = useState(true);
-	console.log("useState")
 	const _showRank = () => {
 		setShowRank(true);
 		setShowFriends(false);

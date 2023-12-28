@@ -11,6 +11,7 @@ import { fetchBlockedUsers, fetchBlocksThunk } from '../store/blockSlice';
 import { fetchMessagesThunk } from '../store/messageSlice';
 import { useSetAtom } from 'jotai';
 import { OpponentData } from './game/utils/data';
+import { fetchUsersThunk } from '../store/usersSlice';
 
 
 const ProviderOnSocket = () => {
@@ -32,8 +33,10 @@ const ProviderOnSocket = () => {
           dispatch(fetchCountNotification());
           dispatch(fetchNumberPending());
           dispatch(fetchNotificationThunk());
-          dispatch(fetchCountNotification());
-          dispatch(fetchGetRequestsThunk())
+          dispatch(fetchGetRequestsThunk());
+          dispatch(fetchBlocksThunk());
+          dispatch(fetchBlockedUsers());
+          dispatch(fetchUsersThunk());
 
         });
         socket.on("AcceptPLayNotification", (payload: any) => {
@@ -53,16 +56,22 @@ const ProviderOnSocket = () => {
           dispatch(fetchNumberPending());
           dispatch(fetchCountNotification());
           dispatch(fetchNotificationThunk());
-          dispatch(fetchGetRequestsThunk())
+          dispatch(fetchGetRequestsThunk());
+          dispatch(fetchBlocksThunk());
+		      dispatch(fetchBlockedUsers());
+		      dispatch(fetchUsersThunk());
+		      dispatch(fetchGetAllFriendsThunk());
 
     
     
          });
          socket.on('blockNotification', (data : any) =>{
+          console.log("here provider bloque");
           dispatch(fetchBlocksThunk());
+          dispatch(fetchBlockedUsers());
           dispatch(fetchGetAllFriendsThunk());
           dispatch(fetchGetRequestsThunk());
-          dispatch(fetchBlockedUsers());
+          
 
     
     
@@ -72,10 +81,14 @@ const ProviderOnSocket = () => {
           
         })
         socket.on('debloqueNotification', (data : any)=>{
+          console.log("here provider debloque");
+
           dispatch(fetchBlocksThunk());
           dispatch(fetchGetAllFriendsThunk());
           dispatch(fetchGetRequestsThunk());
           dispatch(fetchBlockedUsers());
+          dispatch(fetchUsersThunk());
+
 
           if(channel != null)
           {
@@ -96,7 +109,11 @@ const ProviderOnSocket = () => {
           dispatch(fetchNumberPending());
           dispatch(fetchNotificationThunk());
           dispatch(fetchCountNotification());
-          dispatch(fetchGetRequestsThunk())
+          dispatch(fetchGetRequestsThunk());
+          dispatch(fetchBlocksThunk());
+          dispatch(fetchBlockedUsers());
+          dispatch(fetchUsersThunk());
+          dispatch(fetchGetAllFriendsThunk());
 
     
         })
@@ -123,7 +140,7 @@ const ProviderOnSocket = () => {
     
           };
             
-          }, [socket]);
+          }, [socket, dispatch]);
         
   return (
     <div>

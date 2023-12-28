@@ -6,9 +6,9 @@ import { usePathname, useRouter } from "next/navigation";
 import {
 	LoserPlayerPopUp,
 	WinnerPlayerPopUp,
-} from "@/app/components/GamePopUp";
+} from "../../../components/GamePopUp";
 import { getCurrentSizes } from "../utils/data";
-import PlayerScore from "@/app/components/PlayerScore";
+import PlayerScore from "../../../components/PlayerScore";
 
 const BotGame = ({ mapIndex }: any) => {
 	const router = useRouter();

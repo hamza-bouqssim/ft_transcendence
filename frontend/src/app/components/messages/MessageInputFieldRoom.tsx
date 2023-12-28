@@ -1,15 +1,15 @@
 "use client"
-import { MessageInputFieldContainer, MessageInput, BtnStyling } from "@/app/utils/styles"
+import { MessageInputFieldContainer, MessageInput, BtnStyling } from "../../utils/styles"
 import { Dispatch, SetStateAction, FC } from "react";
 import { LuSendHorizonal } from "react-icons/lu";
 import { CiImageOn } from "react-icons/ci";
-import { socketContext } from "@/app/utils/context/socketContext";
+import { socketContext } from "../../utils/context/socketContext";
 import {useContext, useEffect,useState}  from "react"
-import { BloqueList, MessageType, User, messageTypes } from "@/app/utils/types";
+import { BloqueList, MessageType, User, messageTypes } from "../../utils/types";
 import {useRouter,usePathname} from 'next/navigation'
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchBlockedUsers, fetchBlocksThunk } from "@/app/store/blockSlice";
-import { AppDispatch } from "@/app/store";
+import { fetchBlockedUsers, fetchBlocksThunk } from "../../store/blockSlice";
+import { AppDispatch } from "../../store";
 
 interface Members {
 	id: string;
@@ -56,7 +56,6 @@ const MessageInputFieldRoom: FC<props> = ({setMessage, Message}) => {
     useEffect(() => {
       dispatch(fetchBlockedUsers())
     }, [dispatch]);
-    console.log(blocked)
     useEffect(() => {
       const handleOnMessage = (message: any) => {
         const isBlocked = blocked.some(
@@ -64,7 +63,6 @@ const MessageInputFieldRoom: FC<props> = ({setMessage, Message}) => {
             elem.userOne.id === message.senderId || elem.userTwo.id === message.senderId
         );
       
-        console.log(isBlocked);
       
         if (!isBlocked || message.senderId === Userdata?.id) {
           setMessage((prevMessages: messageTypes[]) => [...prevMessages, message]);
@@ -77,7 +75,6 @@ const MessageInputFieldRoom: FC<props> = ({setMessage, Message}) => {
       };
     }, [channel?.id, socket]);
 
-    console.log()
   
     const sendMessage = async () => {
         if(!content)

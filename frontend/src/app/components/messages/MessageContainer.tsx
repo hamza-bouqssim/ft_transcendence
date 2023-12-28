@@ -1,16 +1,16 @@
-import {MessageContainerStyle, MessageItemAvatar, MessageItemContainer, MessageItemContent, MessageItemDetails, MessageItemHeader} from "@/app/utils/styles"
-import { ConversationTypes, User, messageTypes } from "@/app/utils/types";
+import {MessageContainerStyle, MessageItemAvatar, MessageItemContainer, MessageItemContent, MessageItemDetails, MessageItemHeader} from "../../utils/styles"
+import { ConversationTypes, User, messageTypes } from "../../utils/types";
 import { FC, useEffect, useState,useContext, useRef } from "react";
 import {formatRelative} from 'date-fns'
-import { getAuthUser } from "@/app/utils/api";
+import { getAuthUser } from "../../utils/api";
 import MessageInputField from "./MessageInputField";
-import {socketContext } from "@/app/utils/context/socketContext";
-import {getConversationMessage} from '@/app/utils/api'
+import {socketContext } from "../../utils/context/socketContext";
+import {getConversationMessage} from '../../utils/api'
 import Image from  'next/image'
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch } from "@/app/store";
-import { MessagesState, fetchMessagesThunk } from "@/app/store/messageSlice";
-import { fetchDebloqueUserThunk } from "@/app/store/blockSlice";
+import { AppDispatch } from "../../store";
+import { MessagesState, fetchMessagesThunk } from "../../store/messageSlice";
+import { fetchDebloqueUserThunk } from "../../store/blockSlice";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -47,6 +47,8 @@ const MessageContainer = () => {
     const {Userdata} = useContext(socketContext);
     const dispatch = useDispatch<AppDispatch>();
     const { messages, status, error , isSenderBlocked , isRecipientBlocked} = useSelector((state:any) => state.messages);
+    console.log("isSender-->",isSenderBlocked );
+    console.log("isRecipient-->", isRecipientBlocked);
     const scrollRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {

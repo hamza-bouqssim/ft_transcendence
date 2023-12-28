@@ -33,7 +33,6 @@ export class AuthController {
 		@Res() res: Response,
 	) {
 		const user = await this.authService.signIn(dto);
-		console.log("USER: ||||  ", user);
 		const payload = { sub: user.id, email: user.email };
 
 		if (user.first_time) {
@@ -51,7 +50,6 @@ export class AuthController {
 
 		const token = this.jwtService.sign(payload);
 		res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
-
 		return res.send({ signed: true, message: 'Signed Successfully' });
 	}
 
@@ -67,6 +65,8 @@ export class AuthController {
 	@Get('google/redirect')
 	@UseGuards(AuthGuard('google'))
 	googleRedirect(@Res() res: Response, @Req() req) {
+		console.log(req.user)
+
 		const user = req.user;
 		const payload = { sub: user.id, email: user.email };
 
@@ -126,6 +126,7 @@ export class AuthController {
     @UseGuards(AuthGuard('jwt'))
     async isAuthentication( @Req() request, @Res() res,) {
       try {
+		console.log("Adasdasd")
         await this.authService.findUser(request.user.id) 
         return res.status(200).json({ isAuth: true});
       } catch (error) {

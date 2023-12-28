@@ -11,9 +11,9 @@ import { socketContext } from "../utils/context/socketContext";
 import { HistoryMatchesType } from "./Imports";
 import { ResultsType } from "./Imports";
 import { useRouter } from "next/navigation";
+import AuthCheck from "../utils/AuthCheck";
 
 const Dashboard = () => {
-	console.log("DASHBOARD");
 	const { Userdata } = useContext(socketContext);
 	const router = useRouter();
 
@@ -59,7 +59,7 @@ const Dashboard = () => {
 	}, [Userdata?.id]);
 
 	return (
-		<div>
+		<AuthCheck>
 			<div className="container">
 				<div className="row">
 					<div className="col-1">
@@ -202,7 +202,7 @@ const Dashboard = () => {
 					</div>
 				</div>
 			</div>
-		</div>
+		</AuthCheck>
 	);
 };
 export default Dashboard;

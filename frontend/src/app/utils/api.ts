@@ -83,7 +83,7 @@ export const changeDisplayedName = async (DisplayName : string) => axios.post(`h
 export const changeUserName = async (UserName : string) => axios.post(`http://localhost:8000/user/changeusername`, {newUserName: UserName}, config);
 
 
-export const dataUser = async (id_user: string) => axios.post(`http://localhost:8000/user/get_user`, {id_user : id_user}, config);
+export const dataUser = async (id_user: string | string[]) => axios.post(`http://localhost:8000/user/get_user`, {id_user : id_user}, config);
 
 
 export const getUnreadMessages = async (conversationId : string) => axios.post(`http://localhost:8000/chat/unread-messages`, {conversationId : conversationId}, config)
@@ -214,8 +214,19 @@ export const banMember =(id:string ,userId:string) =>
 }
 
 export const getMatchHistory = (id: string) =>{
-  const response = API.post("/game/myhistory", {userId:id});
-  return response;
+  try{
+    const response = API.post("/game/myhistory", {userId:id});
+    return response;
+
+  }catch(error : any){
+    if (error.response && error.response.data) {
+      return error.response.data;
+    } else {
+      return ('Failed to get MatchHistory');
+    }
+
+  }
+
 }
 
 export const getStates = (id: string) =>{
@@ -243,4 +254,12 @@ export const addMemberToRooms = (id:string ,userId:string) =>
   const response = API.post("/rooms/addMemberToRooms",{id,userId})
   return response;
 }
+
+export const isAuth = () =>
+{
+  const response = API.post("/auth/isAuth")
+  console.log(response)
+  return response;
+}
+
 

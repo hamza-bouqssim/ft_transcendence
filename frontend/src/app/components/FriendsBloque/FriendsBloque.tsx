@@ -1,14 +1,14 @@
-import { getBloques } from "@/app/utils/api";
-import { Conversation, ConversationSideBarContainer, ConversationSideBarItem } from "@/app/utils/styles";
-import { BloquesTypes, User } from "@/app/utils/types";
+import { getBloques } from "../../utils/api";
+import { Conversation, ConversationSideBarContainer, ConversationSideBarItem } from "../../utils/styles";
+import { BloquesTypes, User } from "../../utils/types";
 import { faChevronDown, faEllipsis, faUserMinus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { MenuButton2 } from "../Buttons";
-import { fetchBlocksThunk, fetchDebloqueUserThunk } from "@/app/store/blockSlice";
+import { fetchBlocksThunk, fetchDebloqueUserThunk } from "../../store/blockSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch } from "@/app/store";
+import { AppDispatch } from "../../store";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 

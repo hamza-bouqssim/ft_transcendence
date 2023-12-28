@@ -20,7 +20,6 @@ const initialState: BlockState = {
  
   export const fetchBlockFriendThunk = createAsyncThunk('request/block',async(id : string ,{rejectWithValue}) => {
     try{
-      console.log("redaux")
       const response = await bloqueFriend(id);
       if(!response.data.success){
         throw new Error(response.data.error)
@@ -44,7 +43,6 @@ const initialState: BlockState = {
   
   export const fetchBlocksThunk = createAsyncThunk('friendsBlock/fetchBlockFriendThunk ', async (_,{rejectWithValue} ) => {
     try{
-      console.log("redaux")
         const response = await getBloques();
         return response.data;
 

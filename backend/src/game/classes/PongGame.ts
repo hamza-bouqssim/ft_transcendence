@@ -461,7 +461,7 @@ export class PongGame {
 					},
 					'updatePaddlePosition',
 				);
-		}, 15);
+		}, 10);
 	}
 
 	startGame() {
@@ -479,7 +479,7 @@ export class PongGame {
 				'updateBallPosition',
 			);
 			this.calcScore();
-		}, 15);
+		}, 10);
 		this.handleDetectCollision();
 	}
 
@@ -633,13 +633,7 @@ export class PongGame {
 	}
 
 	handleClearGame() {
-		// const displayBodies = (str: string) => {
-		// 	for (let body of this.engine.world.bodies) console.log(body);
-		// };
-
-		// displayBodies('before');
-
-		// Remove Basic Bodies In Default Map
+		
 		Composite.remove(this.engine.world, this.topPaddle);
 		Composite.remove(this.engine.world, this.bottomPaddle);
 		Composite.remove(this.engine.world, this.rightRect);

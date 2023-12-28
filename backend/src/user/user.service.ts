@@ -283,7 +283,6 @@ export class UserService {
       
         // Concatenate the arrays of users and chat rooms
         const result = [...users, ...chatRooms];
-        docker-compose down
       
         return result;
       }

@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import { getAuthUser, getlogout } from "../utils/api";
 import { User } from "../utils/types";
 import { useRouter } from "next/navigation";
-import { deleteCookie } from "cookies-next";
 
 type Change = {
 	menu: boolean;

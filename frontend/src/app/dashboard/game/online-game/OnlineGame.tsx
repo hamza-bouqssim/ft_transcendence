@@ -1,14 +1,14 @@
 "use client";
 import { useContext, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import PlayerScore from "@/app/components/PlayerScore";
+import PlayerScore from "../../../components/PlayerScore";
 import PongGame from "../utils/classes/PongGame";
 import {
 	LoserPlayerPopUp,
 	WinnerPlayerPopUp,
-} from "@/app/components/GamePopUp";
-import { socketContext } from "@/app/utils/context/socketContext";
-import { useGameSocket } from "@/app/providers/game-socket-provider";
+} from "../../../components/GamePopUp";
+import { socketContext } from "../../../utils/context/socketContext";
+import { useGameSocket } from "../../../providers/game-socket-provider";
 import { OpponentData, getCurrentSizes } from "../utils/data";
 import { useAtomValue, useSetAtom } from "jotai";
 
@@ -47,7 +47,6 @@ const OnlineGame = ({ mapIndex }: any) => {
 		width: 560,
 		height: 836,
 	});
-	console.log("InviteField")
 	useEffect(() => {
 		
 

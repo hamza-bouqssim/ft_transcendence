@@ -1,6 +1,6 @@
 "use client";
 
-import { GameSocketProvider } from "@/app/providers/game-socket-provider";
+import { GameSocketProvider } from "../../../../providers/game-socket-provider";
 import { ReactNode } from "react";
 
 const GameLayout = ({ children }: { children: ReactNode }) => {

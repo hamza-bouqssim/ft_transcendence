@@ -1,11 +1,11 @@
-import {MessageContainerStyle, MessageItemAvatar, MessageItemContainer, MessageItemContent, MessageItemDetails, MessageItemHeader} from "@/app/utils/styles"
-import { User, messageTypes } from "@/app/utils/types";
+import {MessageContainerStyle, MessageItemAvatar, MessageItemContainer, MessageItemContent, MessageItemDetails, MessageItemHeader} from "../../utils/styles"
+import { User, messageTypes } from "../../utils/types";
 import { FC, useEffect, useState,useContext ,useRef, useCallback} from "react";
 import {formatRelative} from 'date-fns'
-import { getAuthUser, getConversationMessageRoom } from "@/app/utils/api";
+import { getAuthUser, getConversationMessageRoom } from "../../utils/api";
 import MessageInputField from "./MessageInputFieldRoom";
-import {socketContext } from "@/app/utils/context/socketContext";
-import {getConversationMessage} from '@/app/utils/api'
+import {socketContext } from "../../utils/context/socketContext";
+import {getConversationMessage} from '../../utils/api'
 import Image from  'next/image'
 import {usePathname} from 'next/navigation'
 

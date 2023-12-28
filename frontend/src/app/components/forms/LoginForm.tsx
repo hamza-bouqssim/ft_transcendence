@@ -1,13 +1,13 @@
 "use client";
 
-import { InputField, InputLabel } from "@/app/utils/styles";
-import { InputContainer } from "@/app/utils/styles";
-import { Button } from "@/app/utils/styles";
+import { InputField, InputLabel } from "../../utils/styles";
+import { InputContainer } from "../../utils/styles";
+import { Button } from "../../utils/styles";
 import styles from "./index.module.scss";
 import Link from "next/link";
-import { UserCredentialsParams } from "@/app/utils/types";
+import { UserCredentialsParams } from "../../utils/types";
 import { useForm } from "react-hook-form";
-import { postLoginUser } from "@/app/utils/api";
+import { postLoginUser } from "../../utils/api";
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';

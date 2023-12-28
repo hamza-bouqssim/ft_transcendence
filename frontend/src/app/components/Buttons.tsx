@@ -1,10 +1,8 @@
 import Image from "next/image";
-import { signIn, signOut } from "next-auth/react";
 import { getlogout, loginGoogle, postLoginUser } from "../utils/api";
 import { UserCredentialsParams } from "../utils/types";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { deleteCookie } from "cookies-next";
 import LogOut from "./LogOut";
 import Link from "next/link";
 

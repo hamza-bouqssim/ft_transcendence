@@ -163,18 +163,11 @@ export class AuthService {
 	// }
 
 	async findUser(id: string) {
-		try {
-		  const user = await this.prisma.user.findUnique({
-			where: { id: id },
-		  });
-		  
-		  return user;
-		} catch (error) {
-		  console.error('Error in findUser:', error);
-		  throw new Error('User failed');
-		}
-	  }
-	  
+		const user = await this.prisma.user.findUnique({ where: { id: id } });
+		if(!user)
+			return null
+		return user;
+	}
 
 	async generateNickname(email: string): Promise<string> {
 		const username = email.split('@')[0];

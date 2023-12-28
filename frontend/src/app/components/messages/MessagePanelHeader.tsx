@@ -3,29 +3,29 @@ import {
 	AvatarStyle,
 	MessageItemAvatar,
 	MessagePannelHeaderStyle,
-} from "@/app/utils/styles";
+} from "../../utils/styles";
 import { IoMdSettings } from "react-icons/io";
 import { usePathname, useRouter } from "next/navigation";
 import { IoClose } from "react-icons/io5";
 import { FC, useState } from "react";
 import { FaArrowLeft } from "react-icons/fa6";
 import { useContext, useEffect } from "react";
-import { socketContext } from "@/app/utils/context/socketContext";
+import { socketContext } from "../../utils/context/socketContext";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllMembers } from "@/app/store/memberSlice";
+import { getAllMembers } from "../../store/memberSlice";
 import { HiOutlineLogout } from "react-icons/hi";
 import Image from "next/image";
-import { User, Members, ConversationTypes } from "@/app/utils/types";
-import { updateRooms } from "@/app/store/roomsSlice";
+import { User, Members, ConversationTypes } from "../../utils/types";
+import { updateRooms } from "../../store/roomsSlice";
 import { ToastContainer, toast } from "react-toastify";
-import { AppDispatch } from "@/app/store";
-import { fetchUsersThunk } from "@/app/store/usersSlice";
+import { AppDispatch } from "../../store";
+import { fetchUsersThunk } from "../../store/usersSlice";
 
 interface MessagePanelHeaderProps {
 	setUpdateRome: (value: boolean) => void;
 	updateRome: boolean;
-	setOldData:(value: ConversationTypes) => void;
-	olddata :ConversationTypes;
+	setOldData:(value: ConversationTypes  | null) => void;
+	olddata :ConversationTypes | null;
 }
 
 interface Member {
@@ -79,7 +79,6 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 		if(channel?.id)
 			dispatch(getAllMembers(channel?.id));
 	}, [dispatch, channel]);
-	console.log("InviteField")
 	// Image src
 
 	const InfoRecipient = () => {
