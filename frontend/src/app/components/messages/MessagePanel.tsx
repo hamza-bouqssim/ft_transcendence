@@ -54,6 +54,7 @@ const MessagePanel = () => {
                 </div>
             <div className="hidden md:block md:w-[40%]  pl-4  h-full ">
                 <InfoRoom></InfoRoom>
+                
             </div>
 
         </div>

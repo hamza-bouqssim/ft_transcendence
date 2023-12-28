@@ -278,11 +278,11 @@ const ChatComponnent = () => {
 										</div>
 										
 										<div className="ml-4">
-											<span className="ConversationName">
+											<span className="ConversationName font-['Whitney_Semibold']">
 												{" "}
 												{getDisplayUser(elem)?.display_name}
 											</span>
-											<span className="h-5 overflow-hidden text-sm font-light text-gray-400">
+											<span className="h-5 overflow-hidden text-sm font-light text-gray-400 font-['Whitney_Semibold']">
 												{getDisplayLastMessage(elem)}
 											</span>
 										</div>
@@ -323,7 +323,7 @@ const ChatComponnent = () => {
 										)}
 									</div>
 
-									<div className="text-black">
+									<div className="text-black font-['Whitney_Semibold']">
 										{new Date(elem.createdAt).toLocaleTimeString()}
 									</div>
 								</div>

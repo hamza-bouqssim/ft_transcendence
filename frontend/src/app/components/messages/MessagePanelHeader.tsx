@@ -136,7 +136,7 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 
 	return (
 		
-		<div className="flex items-center justify-between rounded-full  bg-[#F2F3FD] p-5  text-black">
+		<div className="flex items-center justify-between rounded-full  bg-[#F2F3FD] p-5  text-black font-['Whitney_Semibold']">
 			<div className="flex items-center">
 				<FaArrowLeft
 					onClick={goBack}

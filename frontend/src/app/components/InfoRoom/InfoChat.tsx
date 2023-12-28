@@ -51,28 +51,38 @@ export const InfoChat = () => {
 	}
 
   return (
- 
-										<div className=" flex flex-col items-center justify-center gap-3 overflow-hidden rounded-[20px] p-5 ">
-											<div className='flex'>
-                          <Image
-                            src={fetchDataUser()?.avatar_url as string}
-                            className="w-[70px] rounded-full"
-                            alt=""
-                            width={120}
-                            height={120}
-                            priority={true}
-                          />
-                          {checkTheStatus() === 'online' ? (<OnlineStyling/>) :  checkTheStatus() === 'offline' ? (<OflineStyling/>) :( <IngameStyling/>)}
-                      </div>
+    <div className='relative bg-red-400 w-full h-[80%]'>
+            <Image
+              src={fetchDataUser()?.avatar_url as string}
+              className="absolute -top-[37px] left-[18px] w-[70px] rounded-full"
+              alt=""
+              width={120}
+              height={120}
+              priority={true}
+            />
+										{/* <div className=" bg-yellow-400 flex flex-col items-center justify-center gap-3 overflow-hidden rounded-[20px] p-5 ">
+                        <div className='flex'> */}
+                            {/* <Image
+                              src={fetchDataUser()?.avatar_url as string}
+                              className="w-[70px] rounded-full"
+                              alt=""
+                              width={120}
+                              height={120}
+                              priority={true}
+                            /> */}
+                            {/* {checkTheStatus() === 'online' ? (<OnlineStyling/>) :  checkTheStatus() === 'offline' ? (<OflineStyling/>) :( <IngameStyling/>)} */}
+                        {/* </div> */}
 											
-                      <span className="text-[25px] text-[--purple-color]">
+                      {/* <span className="text-[25px] text-[--pink-color] font-['Whitney_Semibold']">
                       {fetchDataUser()?.display_name}
 												</span>
-                        <span className="text-[25px] text-[--purple-color]">
+                        <span className="text-[25px] text-[--pink-color] font-['Whitney_Semibold']">
                         @{fetchDataUser()?.username}
-												</span>
+												</span> */}
                        
 										
-										</div>
+										{/* </div> */}
+
+        </div>
   )
 }

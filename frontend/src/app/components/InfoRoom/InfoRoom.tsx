@@ -7,7 +7,7 @@ export const InfoRoom = () => {
     const pathname = usePathname()
   
   return (
-    <div  className="bg-[#F2F3FD] w-full h-full rounded-2xl ">
+    <div  className="bg-[#F2F3FD] w-full h-full rounded-2xl overflow-hidden flex items-end">
         {pathname.includes("groups") ? <InfoGroups/> : <InfoChat/> }
         
     </div>
