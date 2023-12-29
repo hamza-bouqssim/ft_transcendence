@@ -68,9 +68,10 @@ const ProviderOnSocket = () => {
     
          });
          socket.on('blockNotification', (data : any) =>{
-          console.log("chat here-->");
           dispatch(fetchBlocksThunk());
           dispatch(fetchBlockedUsers());
+          dispatch(fetchNotificationThunk());
+          dispatch(fetchCountNotification());
           dispatch(fetchGetAllFriendsThunk());
           dispatch(fetchGetRequestsThunk());
           
@@ -83,11 +84,12 @@ const ProviderOnSocket = () => {
           
         })
         socket.on('debloqueNotification', (data : any)=>{
-          console.log("chat here-->");
-
+        
           dispatch(fetchBlocksThunk());
           dispatch(fetchGetAllFriendsThunk());
           dispatch(fetchGetRequestsThunk());
+          dispatch(fetchNotificationThunk());
+          dispatch(fetchCountNotification());
           dispatch(fetchBlockedUsers());
           dispatch(fetchUsersThunk());
 

@@ -88,6 +88,8 @@ const ConversationChannelPagechat = () => {
     socket.on('blockNotification', (data : any) =>{
       console.log("provider here");
       dispatch(fetchBlocksThunk());
+      dispatch(fetchNotificationThunk());
+      dispatch(fetchCountNotification());
       dispatch(fetchGetAllFriendsThunk());
       dispatch(fetchGetRequestsThunk());
       dispatch(fetchBlockedUsers());
@@ -109,6 +111,8 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchGetAllFriendsThunk());
       dispatch(fetchGetRequestsThunk());
       dispatch(fetchBlockedUsers());
+      dispatch(fetchNotificationThunk());
+      dispatch(fetchCountNotification());
 		  dispatch(fetchUsersThunk());
       if(data)
         dispatch(fetchMessagesThunk(data.id));

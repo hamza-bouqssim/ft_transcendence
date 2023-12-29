@@ -153,13 +153,12 @@ const MessageContainer = () => {
                   >
                     {breakContentIntoLines(m.content, 30).map((line, index) => (
                         <div key={index}>{line}</div> ))} 
-                            <span className="text-sm  font-['Whitney_Semibold absolute bottom-2 right-3 text-gray-600"> {new Date(m.createdAt).toLocaleTimeString()}</span>
+                            <span className="text-sm  font-['Whitney_Semibold absolute bottom-2 right-3 text-gray-600"> 	{new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}</span>
 
                   </div>
                            
                   </div>
               
-                    {/* {formatRelative(new Date(m.createdAt), new Date())} */}
 
 
                

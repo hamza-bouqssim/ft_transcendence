@@ -323,8 +323,8 @@ const ChatComponnent = () => {
 										)}
 									</div>
 
-									<div className="text-black font-['Whitney_Semibold']">
-										{new Date(elem.createdAt).toLocaleTimeString()}
+									<div className="text-gray-600 font-['Whitney_Semibold']">
+									{new Date(elem.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
 									</div>
 								</div>
 							);

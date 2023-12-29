@@ -412,6 +412,33 @@ export class FriendRequestService {
 				],
 			},
 		});
+		if(friendship)
+		{
+			const notification = await this.prisma.notificationGlobal.findFirst({
+				where: {
+					OR: [
+						{
+							AND: [
+								{ Sender_id: senderId, recipient_id: recipientId },
+								{ type: { in: ['requestFriend', 'playRequest'] } },
+							],
+						},
+						{
+							AND: [
+								{ Sender_id: recipientId, recipient_id: senderId },
+								{ type: { in: ['requestFriend', 'playRequest'] } },
+							],
+						},
+					],
+				},
+			});
+			
+			if (notification) {
+				await this.prisma.notificationGlobal.delete({
+					where: { id: notification.id },
+				});
+			}
+		}
 
 		if (friendshipPlay) {
 			await this.prisma.requestPlay.delete({
