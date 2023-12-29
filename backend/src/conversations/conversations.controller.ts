@@ -44,7 +44,7 @@ async  findConversation(@Req() req: any, @Res() res){
     
 }
 
-@Get('vue_conversation')
+@Post('vue_conversation')
 async show_conversation(@Body() request: {chat_id : string}    ){
             
     const conversation_Show = await this.conversationService.conversation_show(request.chat_id);

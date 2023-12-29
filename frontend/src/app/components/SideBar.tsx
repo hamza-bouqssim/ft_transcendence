@@ -9,7 +9,7 @@ import {
 import ListItem from "./ListItem";
 import Link from "next/link";
 import LogOut from "./LogOut";
-import { usePathname } from "next/navigation";
+ç
 import { useState } from "react";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";

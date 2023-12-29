@@ -27,6 +27,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store";
 import {
+	fetchConversationShow,
 	fetchConversationThunk,
 	fetchDeleteConversation,
 } from "../../store/conversationSlice";
@@ -243,11 +244,13 @@ const ChatComponnent = () => {
 
 					<div className="p-2">
 						{conversations && conversations.map((elem: ConversationTypes) => {
-							const unreadCount = messagesUnread[elem.id] || 0; 
+							const unreadCount = messagesUnread[elem.id] || 0;
+							
 
 							function handleClick() {
 								updateChannel(elem);
 								dispatch(fetchMessagesThunk(elem.id));
+								dispatch(fetchConversationShow(elem.id))
 							}
 
 							function handleClickUser() 
@@ -265,7 +268,7 @@ const ChatComponnent = () => {
 								<div
 										key={elem.id}
 										className={`flex cursor-pointer items-start justify-between rounded-lg px-2 py-3 hover:bg-[#F2F3FD] ${
-											(elem.vue === true && elem.sender.id !== Userdata?.id) ? 'bg-[--pink-color]' : ''
+											(elem.vue === false && elem.sender.id !== Userdata?.id && channel?.id !== elem.id) ? 'bg-[--pink-color]' : ''
 										}`}
                 >
 									{/* User Information Section */}

@@ -189,6 +189,10 @@ const ConversationChannelPagechat = () => {
       }
 
 		})
+    socket.on('show_conversation', (data : any)=>{
+      dispatch(fetchConversationThunk());
+
+    })
     
       return () => {
         socket.off('AcceptNotification');
@@ -208,7 +212,8 @@ const ConversationChannelPagechat = () => {
         socket.off('createConversationMessage');
         // socket.off('AcceptPLayNotification');
         socket.off('RefusePLayNotification');
-        socket.off('deleteNOtification')
+        socket.off('deleteNOtification');
+        socket.off('show_conversation');
 
 
       };

@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { ConversationTypes, CreateConversationParams } from '../utils/types'
-import { createConversation, deleteConversation, findConversationUsers, getConversation, getConversationMessage } from '../utils/api';
+import { conversationShow, createConversation, deleteConversation, findConversationUsers, getConversation, getConversationMessage } from '../utils/api';
 
 export interface ConversationsState {
   conversations: ConversationTypes[];
@@ -69,6 +69,12 @@ export const fetchConversationUserThunk = createAsyncThunk('conversation/fetch',
 
 })
 
+export const fetchConversationShow = createAsyncThunk('showConversation/fetch', async( chat_id : string) =>{
+  const response = await conversationShow(chat_id);
+  return response;
+
+})
+
 
 export const fetchDeleteConversation = createAsyncThunk('deleteConversation/fetch', async(conversationId : string)=>{
   const response = await deleteConversation(conversationId);
@@ -111,7 +117,11 @@ export const conversationsSlice = createSlice({
       state.status = 'loading';
     }).addCase(fetchDeleteConversation.fulfilled, (state, action) =>{
       state.status = 'success';
-    }).addCase(fetchDeleteConversation.rejected, (state, action) =>{
+    }).addCase(fetchConversationShow.pending, (state, action) =>{
+      state.status = 'loading';
+    }).addCase(fetchConversationShow.fulfilled, (state, action) =>{
+      state.status = 'success';
+    }).addCase(fetchConversationShow.rejected, (state, action) =>{
       state.status = 'failed';
     });
   }

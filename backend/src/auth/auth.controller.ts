@@ -73,18 +73,18 @@ export class AuthController {
 			const token = this.jwtService.sign(payload);
 			res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
 			this.gameState.createStateGame(user.id);
-			return res.redirect('http://10.13.10.3:3000/dashboard/settings');
+			return res.redirect('http://localhost:3000/dashboard/settings');
 		}
 
 		if (user.tfa_enabled) {
 			const token = this.jwtService.sign(payload);
 			res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
-			return res.redirect('http://10.13.10.3:3000/signIn/verify-two-factor');
+			return res.redirect('http://localhost:3000/signIn/verify-two-factor');
 		}
 
 		const token = this.jwtService.sign(payload);
 		res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
-		return res.redirect('http://10.13.10.3:3000/dashboard');
+		return res.redirect('http://localhost:3000/dashboard');
 	}
 
 	@Get('42/login')
@@ -101,24 +101,24 @@ export class AuthController {
 			const token = this.jwtService.sign(payload);
 			res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
 			this.gameState.createStateGame(user.id);
-			return res.redirect('http://10.13.10.3:3000/dashboard/settings');
+			return res.redirect('http://localhost:3000/dashboard/settings');
 		}
 
 		if (user.tfa_enabled) {
 			const token = this.jwtService.sign(payload);
 			res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
-			return res.redirect('http://10.13.10.3:3000/signIn/verify-two-factor');
+			return res.redirect('http://localhost:3000/signIn/verify-two-factor');
 		}
 
 		const token = this.jwtService.sign(payload);
 		res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
-		return res.redirect('http://10.13.10.3:3000/dashboard');
+		return res.redirect('http://localhost:3000/dashboard');
 	}
 
 	@Get('logout')
 	logout(@Req() req, @Res() res) {
 		res.clearCookie('token');
-		return res.redirect('http://10.13.10.3:3000/signIn');
+		return res.redirect('http://localhost:3000/signIn');
 	}
 
 	@Post('isAuth')

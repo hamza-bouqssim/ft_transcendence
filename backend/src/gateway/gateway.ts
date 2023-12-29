@@ -14,7 +14,7 @@ import { UserService } from 'src/user/user.service';
 
 @WebSocketGateway({
     cors:{
-        origin:['http://10.13.10.3:3000'],
+        origin:['http://localhost:3000'],
         credentials : true,
     },
     namespace: '/chat',
@@ -181,7 +181,7 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         @OnEvent('requestAccept.created')
         AcceptFriendRequestNotification(data : any){
             const message = `${data.req.friends.display_name} accept your request`;
-            this.server.emit('AcceptNotification', data);
+            this.server.to(data.req.user.id).emit('AcceptNotification', data);
             const type = "AcceptRequest";
             const requestId = data.req.id;
             this.userService.createNotification( data.req.friends,data.req.user, message, type, requestId);
@@ -256,6 +256,12 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         @OnEvent('deleteConversation.created')
         deleteConversation(payload: {chatParticipent : any , userId : string}){
             this.server.to(payload.userId).emit('deleteConversation', payload.chatParticipent);
+
+        }
+        @OnEvent('conversation_show.created')
+        conversation_show(data : any){
+            console.log("data here-->", data);
+            this.server.emit('show_conversation', data);
 
         }
 

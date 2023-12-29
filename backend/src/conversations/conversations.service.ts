@@ -250,7 +250,7 @@ async createMessags(user : any, params: CreateMessageParams) {
           deletedBy: {
             disconnect: [{ id: chat.recipient.id }, { id: chat.sender.id }],
           },
-          vue: true,
+          vue: false,
         },
         include :{
           deletedBy : true,
@@ -470,6 +470,10 @@ async conversation_show(chat_id : string){
       data: {
         vue: true,
       },
+    });
+
+    this.eventEmitter.emit('conversation_show.created', {
+      conversation
     });
   
 
