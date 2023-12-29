@@ -19,14 +19,14 @@ const RankedFriends: React.FC<RankedFriendsProps> = ({
 				<Image
 					src={picture}
 					alt=""
-					className="h-[30px] w-[30px] rounded-full"
+					className=" pointer-events-none select-none h-[30px] w-[30px] rounded-full"
 					height={30}
 					width={30}
 				/>
 			</div>
 
 			<div className="flex h-full w-[69%] items-center justify-between">
-				<h1>@{username}</h1>
+				<h1 className="select-none">@{username}</h1>
 			</div>
 		</div>
 	);

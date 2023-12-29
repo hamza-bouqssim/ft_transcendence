@@ -325,7 +325,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 						<div className="play relative rounded-[54px]">
 							<Image
 								src="/assets/hand.png"
-								className="thehand absolute  -right-[9px] -top-[41px] w-[490px] animate-bounce rounded-r-full"
+								className="pointer-events-none select-none thehand absolute  -right-[9px] -top-[41px] w-[490px] animate-bounce rounded-r-full"
 								alt=""
 								width="500"
 								height="500"
@@ -415,7 +415,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 							<div>
 								<div className="boxes">
 									<Boxes title="WINS" value={results?.win} color="#6A67F3" />
-									<Boxes title="RANK" value={results?.level} color="#498CDA" />
+									<Boxes title="LEVEL" value={results?.level} color="#498CDA" />
 									<Boxes title="LOSSES" value={results?.lose} color="#FC7785" />
 								</div>
 								<h1 className="mt-[20px]">History</h1>
