@@ -88,7 +88,7 @@ const Header = () => {
   };
 
   return (
-    <header className="px-[15%] py-[59px]">
+    <header className="px-[15%] py-[59px] 2xl:h-[75vh] 2xl:min-h-[930px]">
       <section className="flex items-center justify-between">
         <div>
           <Image
@@ -124,21 +124,22 @@ const Header = () => {
                 className="link-style"
                 onClick={() => {
                   document
-                    .getElementById("team")
+                    .getElementById("features")
                     ?.scrollIntoView({ block: "center" });
                 }}
               >
-                Team
+                {" "}
+                Features
               </a>
               <a
                 className="link-style"
                 onClick={() => {
                   document
-                    .getElementById("features")
+                    .getElementById("team")
                     ?.scrollIntoView({ block: "center" });
                 }}
               >
-                Features
+                Team
               </a>
               {!user ? (
                 <Link className="btn-style" href={"/signIn"}>
@@ -165,14 +166,14 @@ const Header = () => {
         </div>
       </section>
 
-      <section className="mt-16 flex flex-col items-center justify-between gap-10 md:mt-24 md:flex-row xl:mt-36">
+      <section className="mt-16 flex flex-col items-center justify-between gap-10 md:mt-24 md:flex-row xl:mt-36 2xl:mt-[20rem]">
         <div className="flex flex-col items-center gap-7 sm:px-0 sm:pt-12 xl:gap-10">
           <div className="text-center text-xl font-bold md:w-80 md:text-3xl lg:w-96 xl:text-4xl 2xl:w-[32rem] 2xl:text-5xl">
             <h1>Brace yourself for the epic battle ahead</h1>
           </div>
           <div className="flex flex-col items-center gap-12">
             <div className="py-2 md:text-xl xl:text-2xl">
-              <a href="#" className="btn-style">
+              <a href="./dashboard/game" className="btn-style">
                 Play
               </a>
             </div>
@@ -184,8 +185,8 @@ const Header = () => {
 
         <div className="pointer-events-none flex justify-center">
           <Image
-            className="rotate-[-18deg] rounded-2xl border-2 border-solid border-white mix-blend-lighten shadow-[0_0_50px_2px_var(--blue-color)] sm:w-64 lg:w-80 xl:w-96 2xl:w-[32rem]"
             key={1}
+            className="rotate-[-18deg] rounded-2xl border-2 border-solid border-white mix-blend-lighten shadow-[0_0_50px_2px_var(--blue-color)] sm:w-64 lg:w-80 xl:w-96 2xl:w-[26rem]"
             src="/assets/ping-pong.gif"
             width={190}
             height={190}

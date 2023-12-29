@@ -9,11 +9,11 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const Home = () => {
 	return (
-    <main className="font-['Whitney_BlackSC'] text-white">
+    <main className="font-['Whitney_BlackSC'] text-white container m-auto">
       <Header />
       <About />
-      <Team />
       <Features />
+      <Team />
       <Footer />
     </main>
   );

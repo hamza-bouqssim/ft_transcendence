@@ -113,6 +113,10 @@ body {
 	overflow-x: hidden;
 }
 
+/* body::-webkit-scrollbar {
+	display: none;
+} */
+
 * {
 	box-sizing: border-box;
 	scroll-behavior: smooth;
