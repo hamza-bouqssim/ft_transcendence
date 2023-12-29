@@ -53,18 +53,18 @@ export const fetchConversationThunk = createAsyncThunk('conversations/fetch', as
 });
 
 
-export const fetchConversationUserThunk = createAsyncThunk('conversation/fetch',async(params: CreateConversationParams) =>{
-  //try{
+export const fetchConversationUserThunk = createAsyncThunk('conversation/fetch',async(params: CreateConversationParams, {rejectWithValue}) =>{
+  try{
     const response = await findConversationUsers(params.display_name ?? '' , params.message);
     return response.data;
 
-  // }catch(error : any){
-  //   if (error.response && error.response.data) {
-  //     return rejectWithValue(error.response.data);
-  //   } else {
-  //     return rejectWithValue('Failed to fetch the conversation');
-  //   }
-  // }
+  }catch(error : any){
+    if (error.response && error.response.data) {
+      return rejectWithValue(error.response.data);
+    } else {
+      return rejectWithValue('Failed to fetch the conversation');
+    }
+  }
   
 
 })

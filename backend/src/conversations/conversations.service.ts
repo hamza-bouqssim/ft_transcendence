@@ -309,7 +309,7 @@ async findConversationUsers(user : any, _display_name : string, message : string
   });
   const isSenderBlocked = await this.checkIfBlocked(user.id, findRecipient.id);
 
-      const isRecipientBlocked = await this.checkIfBlocked(findRecipient.id, user.id);
+  const isRecipientBlocked = await this.checkIfBlocked(findRecipient.id, user.id);
                   
       if (isSenderBlocked || isRecipientBlocked) {
             throw new Error("Interaction not allowed. Users are blocked.");
@@ -344,7 +344,6 @@ async findConversationUsers(user : any, _display_name : string, message : string
   this.eventEmitter.emit('createConversationMessage.created', {
     chat
   });
-  console.log("chat here-->", chat);
   return chat;
 }
 

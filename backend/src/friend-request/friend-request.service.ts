@@ -269,6 +269,9 @@ export class FriendRequestService {
 				'You are not authorized to accept this friend request',
 				HttpStatus.BAD_REQUEST,
 			);
+		if (req.status !== 'PENDING') {
+			throw new HttpException('There is no request to accept it',HttpStatus.BAD_REQUEST);
+		}
 
 		await this.prisma.friend.update({
 			where: { id: requestId },

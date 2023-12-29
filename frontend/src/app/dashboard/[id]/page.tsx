@@ -118,16 +118,29 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 	  }catch(err : any){
 		const userIdToFind = params.id;
 		const foundUser = users.find((user : User) => user.id === userIdToFind);
-	
-			const res = await dispatch(fetchConversationUserThunk(
-			{
-					display_name : userinfo?.display_name,
-					message: data.message,
+			try{
+				const res = await dispatch(fetchConversationUserThunk(
+				{
+							display_name : userinfo?.display_name,
+							message: data.message,
+				}
+				));
+				
+				if(res.payload.response)
+				{
+					
+					router.push("/dashboard/chat");
+					const elem = res.payload.response;
+					updateChannel(elem); 
+
+				}
+				
+
+			}catch(err : any){
+				ToastError(`Interaction not allowed. Users are blocked`);
+
 			}
-			 ));
-				 router.push("/dashboard/chat")
-				 const elem = res.payload;
-				updateChannel(elem); 
+			
 	  }
 	
 
@@ -149,7 +162,6 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 				const responseData = res.payload as { data?: { response?: { message?: string } } };
 				const message = responseData.data?.response?.message;
 				if (message) {
-					console.log("enter here unblock");
 					ToastSuccess(message);
 					setSwitch(true);					
 				}else {
@@ -264,20 +276,27 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 		  
 			if (foundUser) {
 		  
-			 
+			 try{
 				const resultAction = await dispatch(fetchRequestThunk({
-				  display_name: foundUser.display_name,
-				}));
-		  
-				// Access the result of the thun action
-				if (fetchRequestThunk.fulfilled.match(resultAction)) {
-				  const SuccessMessage = resultAction.payload.response.message;
-				  dispatch(fetchGetRequestsThunk())
+					display_name: foundUser.display_name,
+				  }));
+			
+			
+				dispatch(fetchGetRequestsThunk());
 
-				  ToastSuccess(`${SuccessMessage}`);
-				} else {
-				  ToastError(`Error:.... `);
-				}
+				if (resultAction.payload && resultAction.payload.message) {
+					const errorMessage = resultAction.payload.message;
+					ToastError(`Error: ${errorMessage}`);
+				  } else {
+					ToastSuccess("Friend request sent successfully");
+					
+				  }
+
+			 }catch(err : any){
+				ToastError(`Error: ${err.message || 'An unexpected error occurred'}!`);
+
+			 }
+				
 			
 			}
 		  };
@@ -287,18 +306,29 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 				(request: any) =>
 				  request.user_id === params.id && request.friend_id === Userdata?.id
 			  );
-			  if(matchingRequest){
-				try {
-			 
-					await dispatch(fetchAcceptFriendRequestThunk(matchingRequest.id));
-					ToastSuccess("You are accepting the request !");
-		  
-				  } catch (error) {
-					ToastError(`Error accepting friend request: ${error}`);
-		  
-				  }
+			  try{
+				if(matchingRequest){
+					dispatch(fetchGetRequestsThunk());
+					dispatch(fetchGetAllFriendsThunk());
 
-			  }		
+
+				
+				 
+						const res = await dispatch(fetchAcceptFriendRequestThunk(matchingRequest.id));
+						const payloadData = res.payload.response as {  message: string  };
+						
+						ToastSuccess(`${payloadData.message}`);
+					 
+	
+				  }else {
+					ToastError(`there is no request to accept it `)
+				  }		
+
+			  }catch(err : any){
+				console.log("errr ");
+
+			  }
+			  
 			
 		  };
 

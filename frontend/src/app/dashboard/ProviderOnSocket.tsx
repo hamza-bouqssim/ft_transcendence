@@ -73,7 +73,9 @@ const ProviderOnSocket = () => {
           dispatch(fetchNotificationThunk());
           dispatch(fetchCountNotification());
           dispatch(fetchGetAllFriendsThunk());
-          dispatch(fetchGetRequestsThunk());
+          dispatch(fetchGetRequestThunk());
+          dispatch(fetchNumberPending());
+
           
 
     
@@ -87,11 +89,13 @@ const ProviderOnSocket = () => {
         
           dispatch(fetchBlocksThunk());
           dispatch(fetchGetAllFriendsThunk());
-          dispatch(fetchGetRequestsThunk());
+          dispatch(fetchGetRequestThunk());
           dispatch(fetchNotificationThunk());
           dispatch(fetchCountNotification());
           dispatch(fetchBlockedUsers());
           dispatch(fetchUsersThunk());
+          dispatch(fetchNumberPending());
+
 
 
           if(channel != null)

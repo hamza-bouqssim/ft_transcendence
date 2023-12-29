@@ -88,9 +88,12 @@ const CoversationSideBar = () => {
 					<button
 						onClick={()=>{setSelectUsers("EnAttent")}} className={`${(selectUsers ==='EnAttent') ? 'border-[#5B8CD3] border-b-4' : ''} p-3  px-6`}>Pending
 					</button>
-					<span className="absolute -right-[2px] -top[8px]  rounded-full text-white bg-[--pink-color] px-2 font-['Whitney_Bold']">
-						{countRequest}				
-					</span>
+				
+					{countRequest > 0 && (
+						<span className="absolute -right-[2px] -top[8px]  rounded-full text-white bg-[--pink-color] px-2 font-['Whitney_Bold']">
+							{countRequest}
+						</span>
+)}
 				</div>
  				<button
  					onClick={()=>{setSelectUsers("Bloques")}} className={`${(selectUsers ==='Bloques') ? 'border-[#5B8CD3] border-b-4' : ''} p-3  px-6 `}>Bloques

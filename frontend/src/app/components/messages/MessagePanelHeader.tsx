@@ -94,7 +94,6 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 
 	const InfoRecipient = () => {
 		let test: User | undefined;
-
 		if (channel?.recipient.id === Userdata?.id) {
 			test = channel?.sender;
 		} else 

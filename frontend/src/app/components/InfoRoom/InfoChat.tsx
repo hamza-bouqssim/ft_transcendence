@@ -52,7 +52,7 @@ export const InfoChat = () => {
 
   return (
     <div className='relative bg-[#CDCEDB] w-full h-[80%] flex flex-col gap-4 px-5 py-10 rounded-t-2xl'>
-      <div className='  flex '>
+      <div className='flex'>
         <Image
               src={fetchDataUser()?.avatar_url as string}
               className=" -top-[37px] left-[18px] w-[70px] rounded-full"
@@ -94,8 +94,8 @@ export const InfoChat = () => {
               <h1>Channels participate</h1>
               <span>{fetchDataUser()?.createdAt}</span>
               
-              </div> */}
-										
+              </div>
+										 */}
 
         </div>
   )
