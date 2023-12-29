@@ -1,5 +1,5 @@
-import { getAllMembers } from '@/app/store/memberSlice';
-import { socketContext } from '@/app/utils/context/socketContext';
+import { getAllMembers } from '../../store/memberSlice';
+import { socketContext } from '../../utils/context/socketContext';
 import React ,{useContext,useEffect} from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { MdOutlineMoreVert } from "react-icons/md";

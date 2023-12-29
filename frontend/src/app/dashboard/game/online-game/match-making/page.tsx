@@ -2,9 +2,9 @@
 import PlayerCard from "../../../../components/PlayerCard";
 import { useEffect, useContext } from "react";
 import { useRouter } from "next/navigation";
-import { socketContext } from "@/app/utils/context/socketContext";
+import { socketContext } from "../../../../utils/context/socketContext";
 import { useSearchParams } from "next/navigation";
-import { useGameSocket } from "@/app/providers/game-socket-provider";
+import { useGameSocket } from "../../../../providers/game-socket-provider";
 import { useAtom } from "jotai";
 import { OpponentData } from "../../utils/data";
 

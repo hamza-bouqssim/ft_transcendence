@@ -1,6 +1,6 @@
-import { getAuthUser } from "@/app/utils/api";
-import { Conversation, ConversationPannelStyle, Page } from "@/app/utils/styles";
-import { User } from "@/app/utils/types";
+import { getAuthUser } from "../../utils/api";
+import { Conversation, ConversationPannelStyle, Page } from "../../utils/styles";
+import { User } from "../../utils/types";
 import { useContext, useEffect, useState } from "react";
 
 const ConversationPanel = () => {

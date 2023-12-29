@@ -3,14 +3,17 @@ import {
 	Conversation,
 	ConversationSideBarContainer,
 	ConversationSideBarItem,
-} from "@/app/utils/styles";
+	IngameStyling,
+	OflineStyling,
+	OnlineStyling,
+} from "../../utils/styles";
 import {
 	ConversationTypes,
 	User,
 	UsersType,
 	UsersTypes,
 	messageTypes,
-} from "@/app/utils/types";
+} from "../../utils/types";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
@@ -20,28 +23,29 @@ import {
 	getAuthUser,
 	getConversation,
 	getUnreadMessages,
-} from "@/app/utils/api";
+} from "../../utils/api";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "@/app/store";
+import { AppDispatch, RootState } from "../../store";
 import {
 	fetchConversationThunk,
 	fetchDeleteConversation,
-} from "@/app/store/conversationSlice";
+} from "../../store/conversationSlice";
 import { formatRelative } from "date-fns";
 import { IoMdAdd } from "react-icons/io";
 import CreateConversationModal from "../modals/CreateConversationModal";
-import { socketContext } from "@/app/utils/context/socketContext";
-import { fetchMessagesThunk } from "@/app/store/messageSlice";
-import { fetchAuthUser } from "@/app/store/AuthSlice";
-import { fetchMessagesUnreadThunk } from "@/app/store/UnreadMessages";
+import { socketContext } from "../../utils/context/socketContext";
+import { fetchMessagesThunk } from "../../store/messageSlice";
+import { fetchAuthUser } from "../../store/AuthSlice";
+import { fetchMessagesUnreadThunk } from "../../store/UnreadMessages";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import {
 	fetchBlockFriendThunk,
 	fetchDebloqueUserThunk,
-} from "@/app/store/blockSlice";
+} from "../../store/blockSlice";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { fetchUsersThunk } from "@/app/store/usersSlice";
 
 const ChatComponnent = () => {
 	const ToastError = (message: any) => {
@@ -72,8 +76,17 @@ const ChatComponnent = () => {
 	const { updateChannel, channel } = useContext(socketContext);
 	const [oldId, setOldId] = useState(null);
 	const { Userdata} = useContext(socketContext);
-
 	const dispatch = useDispatch<AppDispatch>();
+
+	const { users, Userstatus, Usererror } = useSelector(
+		(state: any) => state.users,
+	);
+
+  useEffect(() => {
+		dispatch(fetchUsersThunk());
+	}, [dispatch]);
+
+
 	const [unreadConversations, setUnreadConversations] = useState<Set<string>>(
 		new Set(),
 	);
@@ -126,6 +139,22 @@ const ChatComponnent = () => {
 			display_name: truncatedDisplayName,
 		};
 	};
+
+	const checkTheStatus = (conversation: ConversationTypes) =>{
+		let test : User;
+		const userId = UsersAuth?.display_name;
+
+		if (conversation.sender.display_name !== userId) {
+			test = conversation.sender;
+		} else {
+			test = conversation.recipient;
+		}
+		const user = users.find((user: User) => user.id === test?.id);
+		if(user)
+			return user && user?.status;
+		else
+			return ""
+	}
 
 	const getDisplayLastMessage = (conversation: ConversationTypes) => {
 		let lastMessage = conversation.lastMessage;
@@ -188,13 +217,10 @@ const ChatComponnent = () => {
 	};
 	return (
 		<>
-			{/* Conditionally render CreateConversationModal if show is true */}
 			{show && <CreateConversationModal setShow={setShow} />}
 
-			{/* Conditionally render conversations if show is false */}
 			{!show && (
 				<div className="my-10 h-[calc(100%-200px)] overflow-auto text-black ">
-					{/* Header Section */}
 					<div className="flex gap-px border-2 border-solid p-2 px-20">
 						<h1 className="p-2 text-lg font-bold text-blue-500">
 							Private Messages
@@ -207,19 +233,16 @@ const ChatComponnent = () => {
 						</button>
 					</div>
 
-					{/* Conversations Section */}
 					<div className="p-2">
 						{conversations && conversations.map((elem: ConversationTypes) => {
 							const unreadCount = messagesUnread[elem.id] || 0;
 
-							// Function to handle clicking on a conversation
 							function handleClick() {
 								updateChannel(elem);
 								dispatch(fetchMessagesThunk(elem.id));
 								markConversationAsRead(elem.id);
 							}
 
-							// Function to handle clicking on a user
 							function handleClickUser() 
 							{
 								let user : User;
@@ -242,13 +265,18 @@ const ChatComponnent = () => {
 										className="flex items-center justify-start"
 										key={elem.id}
 									>
-										<Image
-											src={getDisplayUser(elem)?.avatar_url}
-											className="h-10 w-10 rounded-[50%] bg-black min-[1750px]:h-12 min-[1750px]:w-12"
-											alt="Description of the image"
-											width={60}
-											height={50}
-										/>
+										<div className="flex">
+											<Image
+												src={getDisplayUser(elem)?.avatar_url}
+												className="w-[50px] rounded-full"
+												alt="Description of the image"
+												width={30}
+												height={30}
+											/>
+											{checkTheStatus(elem) === 'online' ? (<OnlineStyling/>) :  checkTheStatus(elem) === 'offline' ? (<OflineStyling/>) :( <IngameStyling/>)}
+
+										</div>
+										
 										<div className="ml-4">
 											<span className="ConversationName">
 												{" "}
@@ -295,7 +323,6 @@ const ChatComponnent = () => {
 										)}
 									</div>
 
-									{/* Timestamp Section */}
 									<div className="text-black">
 										{new Date(elem.createdAt).toLocaleTimeString()}
 									</div>

@@ -1,19 +1,5 @@
-"use client";
-
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 
 const LoadingPage = () => {
-	const router = useRouter();
-
-	useEffect(() => {
-		
-		const loadingTimeout = setTimeout(() => {
-			router.push("/");
-		}, 3000);
-
-		return () => clearTimeout(loadingTimeout);
-	}, [router]);
 
 	return (
 		<div className="flex h-screen flex-col items-center justify-center">

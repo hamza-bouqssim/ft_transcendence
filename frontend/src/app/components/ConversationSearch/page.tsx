@@ -1,5 +1,5 @@
 "use client"
-import { UsersTypes } from "@/app/utils/types";
+import { UsersTypes } from "../../utils/types";
 import { useState, useEffect } from "react";
 import { MdSearch } from "react-icons/md";
 import styles from "./ConversationSearch.module.css"; 

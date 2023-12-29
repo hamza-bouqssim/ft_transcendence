@@ -26,6 +26,7 @@ export type User = {
     username : string;
     display_name : string;
     avatar_url : string;
+    status : string;
 }
 export type chat = {
     id : string;
@@ -42,9 +43,9 @@ export type chat = {
       
 
 export type Member = {
-
         isAdmin: boolean; 
         user_id: string; 
+        user:User
       
 } 
 
@@ -58,7 +59,7 @@ export type ConversationTypes = {
 	recipientId: string;
 	senderId: string;
 	lastMessage: MessageType;
-	Privacy: string | "Public";
+	Privacy: string ;
 	password: string | null;
 	createdAt: Date;
 	updatedAt: Date;

@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import Image from 'next/image';
-import { socketContext } from '@/app/utils/context/socketContext';
-import { ConversationTypes,  } from '@/app/utils/types';
+import { socketContext } from '../../utils/context/socketContext';
+import { ConversationTypes,  } from '../../utils/types';
 
 
 

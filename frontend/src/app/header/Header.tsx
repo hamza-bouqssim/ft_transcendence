@@ -9,11 +9,10 @@ import {
 	faBars,
 	faXmark,
 } from "@fortawesome/free-solid-svg-icons";
-import { getAuthUser, getlogout } from "../utils/api";
+import { getAuthUser } from "../utils/api";
 import { User } from "../utils/types";
 import { useRouter } from "next/navigation";
-import { deleteCookie } from "cookies-next";
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Header = () => {
@@ -73,16 +72,16 @@ const Header = () => {
 	};
 	const router = useRouter();
 	const logoutFunction =  async () =>{
-		try {
-			await getlogout();
-			let data;
-			deleteCookie("logged");
-			setUser(data);
-			router.push("/", { scroll: false });
-			ToastSuccess("Logout succeffuly");
-		} catch (err) {
-			ToastError("failed to logout");
-		}
+		// try {
+		// 	await getlogout();
+		// 	let data;
+		// 	deleteCookie("logged");
+		// 	setUser(data);
+		// 	router.push("/", { scroll: false });
+		// 	ToastSuccess("Logout succeffuly");
+		// } catch (err) {
+		// 	ToastError("failed to logout");
+		// }
 	};
 
 	return (
@@ -137,7 +136,7 @@ const Header = () => {
 									Sign In
 								</Link>
 							) : (
-								<Link href={"http://localhost:8000/auth/logout"} onClick={logoutFunction} className="btn-style">Sign Out</Link>
+								<Link href={"http://10.13.10.3:8000/auth/logout"} onClick={logoutFunction} className="btn-style">Sign Out</Link>
 							)}
 						</nav>
 					</div>

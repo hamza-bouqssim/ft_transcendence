@@ -1,14 +1,14 @@
 "use client"
-import { MessageInputFieldContainer, MessageInput, BtnStyling } from "@/app/utils/styles"
+import { MessageInputFieldContainer, MessageInput, BtnStyling } from "../../utils/styles"
 import { Dispatch, SetStateAction, FC } from "react";
 import { LuSendHorizonal } from "react-icons/lu";
 import { CiImageOn } from "react-icons/ci";
-import { socketContext } from "@/app/utils/context/socketContext";
+import { socketContext } from "../../utils/context/socketContext";
 import {useContext, useEffect,useState}  from "react"
-import { MessageType, messageTypes } from "@/app/utils/types";
-import { fetchMessagesThunk } from "@/app/store/messageSlice";
+import { MessageType, messageTypes } from "../../utils/types";
+import { fetchMessagesThunk } from "../../store/messageSlice";
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/app/store";
+import { AppDispatch } from "../../store";
 
 
 

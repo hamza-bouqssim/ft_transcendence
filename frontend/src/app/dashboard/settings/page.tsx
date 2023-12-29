@@ -1,9 +1,11 @@
 "use client";
-import MyAccount from "@/app/components/MyAccount";
+import AuthCheck from "@/app/utils/AuthCheck";
+import MyAccount from "../../components/MyAccount";
 import Image from "next/image";
 
 const Settings = () => {
 	return (
+		<AuthCheck>
 		<div className="mx-auto py-4 text-white xl:container">
 			<div className="">
 				<div className="my-16  flex  flex-col gap-16 rounded-[40px] bg-white p-4 md:p-10">
@@ -29,12 +31,13 @@ const Settings = () => {
 								width={500}
 								height={500}
 								alt="settings"
-							/>
+								/>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
+		</AuthCheck>
 	);
 };
 export default Settings;

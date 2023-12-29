@@ -1,16 +1,16 @@
-import { OverlayStyle } from "@/app/utils/styles"
+import { OverlayStyle } from "../../utils/styles"
 import { CreateConversationForm } from "../forms/CreateConversationForm"
 import { ModalContainer, ModalContentBody, ModalHeader } from "."
 import { Dispatch, FC, createRef, useEffect } from "react"
 import { MdClose } from "react-icons/md"
-import { createConversation } from "@/app/utils/api"
-import { CreateConversationParams } from "@/app/utils/types"
+import { createConversation } from "../../utils/api"
+import { CreateConversationParams } from "../../utils/types"
 import { useDispatch } from "react-redux"
-import { AppDispatch } from "@/app/store"
+import { AppDispatch } from "../../store"
 import { useForm } from "react-hook-form"
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { createConversationThunk } from "@/app/store/conversationSlice"
+import { createConversationThunk } from "../../store/conversationSlice"
 
 type props = {
 	setShow: Dispatch<React.SetStateAction<Boolean>>;
@@ -42,11 +42,10 @@ const CreateConversationModal: FC<props> = ({ setShow }) => {
         const {register, handleSubmit, formState: { errors }} = useForm<CreateConversationParams>();
         const dispatch = useDispatch<AppDispatch>();
         const onSubmit = async  (data : CreateConversationParams) => {
-          try{
+
             const res = await dispatch(createConversationThunk(data));
               if (res.payload && typeof res.payload === 'object') {
-                const responseData = res.payload as { data?: { response?: { message?: string } } };
-                const message = responseData.data?.response?.message;
+                const message = res.payload.response?.message;
                 if (message) {
                     ToastSuccess(message);
 
@@ -57,10 +56,7 @@ const CreateConversationModal: FC<props> = ({ setShow }) => {
                     ToastError(message);
                 }
             }
-          }catch(err : any){
-            ToastError(err.message || "An unexpected error occurred");
-          }
-        
+       
 
         }
 

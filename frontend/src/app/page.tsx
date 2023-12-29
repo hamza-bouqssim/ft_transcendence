@@ -1,8 +1,8 @@
 "use client";
-import Header from "@/app/header/Header";
-import About from "@/app/about/About";
-import Team from "@/app/team/Team";
-import Footer from "@/app/footer/Footer";
+import Header from "./header/Header";
+import About from "./about/About";
+import Team from "./team/Team";
+import Footer from "./footer/Footer";
 // import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 

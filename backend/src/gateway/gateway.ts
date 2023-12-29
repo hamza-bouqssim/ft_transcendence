@@ -14,7 +14,7 @@ import { UserService } from 'src/user/user.service';
 
 @WebSocketGateway({
     cors:{
-        origin:['http://localhost:3000'],
+        origin:['http://10.13.10.3:3000'],
         credentials : true,
     },
     namespace: '/chat',
@@ -36,7 +36,9 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
             }
         })
         if (!socket.user || !userdb)
+        {
             return;
+        }
         if(socket.user && userdb)
         {  
             if (!this.NsessionOfuser.has(userId)) {
@@ -73,22 +75,10 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         client.leave (roomId.id);
     }
 
-    // @SubscribeMessage('cleanNot')
-    // cleanNotification(client: AuthenticatedSocket, roomId: RoomId)
-    // {
-    //     this.roomsService.cleanNotification(client.user.sub,roomId.id)
-    // }
-
-
-    // @SubscribeMessage('getNor')
-    // GetNotification(client: AuthenticatedSocket, roomId: RoomId)
-    // {
-    //     this.roomsService.cleanNotification(client.user.sub,roomId.id)
-    // }
-
  
     @SubscribeMessage('messageRome')
     async handleMessage(client: AuthenticatedSocket, createMessageRoom: CreateMessageRoom){
+        console.log(createMessageRoom)
         const messageRome = await this.roomsService.createMessage(createMessageRoom,client.user.sub);
         this.roomsService.notificationRoomUpdate(messageRome.senderId,messageRome.chatRoomId)
         this.server.to(createMessageRoom.chatRoomId.toString()).emit ('messageRome', messageRome);
@@ -98,13 +88,16 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         this.server.to(id.toString()).emit ('Typing', {status: true,userId:userId});
     }
 
-
-    
     @SubscribeMessage('leaveTyping')
     handleLeaveTyoing (client: Socket, { id,userId}) {
         this.server.to(id.toString()).emit ('Typing',{status: false,userId:userId});
     }
     
+    @SubscribeMessage('searchRoom')
+    async searchRoom (client: AuthenticatedSocket, val:string) {
+        const resualt = await this.roomsService.findRoom(client.user.sub,val)
+        this.server.to(client.user.sub.toString()).emit ('resualtRoom', {resualt:resualt});
+    }
     
     @OnEvent("order.created")
     async onNotificationCreate(data:any) {
@@ -166,7 +159,7 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
 
 
 
-
+    //####################################################################################################################################
     //chat room 
 
 
@@ -244,8 +237,20 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
 
         @OnEvent('createConversation.created')
         createConversation(data : any)
-        {            
-            this.server.emit('createConversation', data);
+        {   
+           
+            this.server.to(data.conversation.sender.id).to(data.conversation.recipient.id).emit('createConversation', data);
+          
+        }
+
+        @OnEvent('createConversationMessage.created')
+        createConversationMessage(data : any)
+        {
+          
+
+            this.server.to(data.chat.sender.id).to(data.chat.recipient.id).emit('createConversationMessage', data);
+
+
         }
 
         @OnEvent('deleteConversation.created')

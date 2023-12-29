@@ -1,28 +1,29 @@
 "use client";
 
-import { SendRequest, getMatchHistory, getStates, getUserInfos} from '@/app/utils/api';
-import { useState, useEffect, useContext } from 'react';
-import Boxes from '@/app/components/Boxes';
-import HistoryMatches from '@/app/components/HistoryMatches';
+import { SendRequest, getMatchHistory, getStates, getUserInfos} from '../../utils/api';
+import { useState, useEffect, useContext, useRef } from 'react';
+import Boxes from '../../components/Boxes';
+import HistoryMatches from '../../components/HistoryMatches';
 import Image from 'next/image';
 import "./page.css"
-import RankingUserSwitch from '@/app/components/RankingUserSwitch';
+import RankingUserSwitch from '../../components/RankingUserSwitch';
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch } from "@/app/store";
-import { fetchBlockFriendThunk, fetchBlockedUsers, fetchBlocksThunk, fetchDebloqueUserThunk } from '@/app/store/blockSlice';
+import { AppDispatch } from "../../store";
+import { fetchBlockFriendThunk, fetchBlockedUsers, fetchBlocksThunk, fetchDebloqueUserThunk } from '../../store/blockSlice';
 import { toast } from 'react-toastify';
-import { fetchAcceptFriendRequestThunk, fetchGetRequestThunk, fetchRequestThunk } from '@/app/store/requestSlice';
-import AchievementsList from '@/app/components/AchievementsList';
+import { fetchAcceptFriendRequestThunk, fetchGetRequestThunk, fetchRequestThunk } from '../../store/requestSlice';
+import AchievementsList from '../../components/AchievementsList';
 import { HistoryMatchesType, ResultsType, UserInfoType } from '../Imports';
-import { fetchUsersThunk } from '@/app/store/usersSlice';
-import { BloqueList, CreateConversationParams, User } from '@/app/utils/types';
-import { fetchGetAllFriendsThunk } from '@/app/store/friendsSlice';
-import { socketContext } from '@/app/utils/context/socketContext';
-import { fetchGetRequestsThunk } from '@/app/store/requestsSlice';
-import { createConversationThunk, fetchConversationUserThunk } from '@/app/store/conversationSlice';
+import { fetchUsersThunk } from '../../store/usersSlice';
+import { BloqueList, CreateConversationParams, User } from '../../utils/types';
+import { fetchGetAllFriendsThunk } from '../../store/friendsSlice';
+import { socketContext } from '../../utils/context/socketContext';
+import { fetchGetRequestsThunk } from '../../store/requestsSlice';
+import { createConversationThunk, fetchConversationUserThunk } from '../../store/conversationSlice';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { userInfo } from 'os';
+import AuthCheck from '@/app/utils/AuthCheck';
 
 const Dashboard = ({ params }: { params: { id: string } }) => {
 	
@@ -36,6 +37,14 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 	const [showMessageBlock, setShowMessageBlock] = useState(false);
 	const [ _switch, setSwitch ] = useState(true);
 	const [sendReq, setSendReq] = useState(true);
+	const { requests, statusReq, errorReq } = useSelector((state:any) => state.requests);
+	const { friends, status, error } = useSelector((state: any) => state.friends);
+	const {Userdata} = useContext(socketContext);
+	const { updateChannel, channel } = useContext(socketContext);
+	const {register, handleSubmit, formState: { errors }} = useForm<CreateConversationParams>();
+	const [buttonType, setButtonType] = useState('');
+		const [IsBloqued, setIsBloqued] = useState(false);
+
 
 	const ToastError = (message: any) => {
 		toast.error(message, {
@@ -77,7 +86,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 		if (event.key === 'Enter') {
 		  event.preventDefault();
 		  const formData = {
-			display_name: userinfo?.display_name || '', // Provide a default value if display_name is undefined
+			display_name: userinfo?.display_name || '', 
 			message: event.target.value,
 		  };
 		  onSubmit(formData);
@@ -85,16 +94,15 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 	  };
 	  const router = useRouter();
 
-	  const { updateChannel, channel } = useContext(socketContext);
-	const {register, handleSubmit, formState: { errors }} = useForm<CreateConversationParams>();
+	 
 	const onSubmit = async  (data : CreateConversationParams) => {
 		if (!data.message.trim()) {
 			return;
 		  }
 	  try{
 		const res = await dispatch(createConversationThunk({
-			display_name: userinfo?.display_name, // Use the display_name from userinfo
-			message: data.message, // Use the message from the input field
+			display_name: userinfo?.display_name, 
+			message: data.message, 
 		  }));
 
 		  if (res.payload && typeof res.payload === 'object') {
@@ -111,29 +119,38 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 	  }catch(err : any){
 		const userIdToFind = params.id;
 		const foundUser = users.find((user : User) => user.id === userIdToFind);
-
-		 const res = await dispatch(fetchConversationUserThunk(
-			{
-				display_name : userinfo?.display_name,
-				message: data.message,
-			}
-		 ));
-		 	router.push("/dashboard/chat")
-		 	const elem = res.payload;
-			updateChannel(elem);
-	  }
 	
-
+			const res = await dispatch(fetchConversationUserThunk(
+			{
+					display_name : userinfo?.display_name,
+					message: data.message,
+			}
+			 ));
+				 router.push("/dashboard/chat")
+				 const elem = res.payload;
+				updateChannel(elem);		 
+	  }
 	}
+
+	useEffect(() => {
+		dispatch(fetchBlocksThunk());
+		dispatch(fetchBlockedUsers());
+		dispatch(fetchUsersThunk());
+		dispatch(fetchGetRequestsThunk())
+		dispatch(fetchGetAllFriendsThunk());
+	}, [dispatch, Userdata?.id]);
+
 	const handleUnblockButtonClick = async () => {
 		try {
 			const res = await dispatch(fetchDebloqueUserThunk(params.id));
+			dispatch(fetchBlockedUsers());
+			dispatch(fetchBlocksThunk());
 			if (res.payload && typeof res.payload === 'object') {
 				const responseData = res.payload as { data?: { response?: { message?: string } } };
 				const message = responseData.data?.response?.message;
 				if (message) {
+					console.log("enter here unblock");
 					ToastSuccess(message);
-					dispatch(fetchBlockedUsers());
 					setSwitch(true);					
 				}else {
 				const responseData = res.payload as {message?: string};
@@ -147,16 +164,17 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 			}
 		};
 	
-	//========> BLOCK
 	const handleBlockButtonClick = async () => {
 		try {
 			const res = await dispatch(fetchBlockFriendThunk(params.id));
+			dispatch(fetchBlockedUsers());
+			dispatch(fetchBlocksThunk());
 			if (res.payload && typeof res.payload === 'object') {
 			const responseData = res.payload as { data?: { response?: { message?: string } } };
 			const message = responseData.data?.response?.message;
 			if (message) {
 				ToastSuccess(message);
-				dispatch(fetchBlockedUsers());
+			
 				
 			} else {
 				const responseData = res.payload as {message?: string};
@@ -168,28 +186,36 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 			ToastError("Failed to block this friend. Please try again.");
 		}
 		};
-		// useEffect(() => {
-			
 
-		// 	dispatch(fetchBlocksThunk());
-		// 	dispatch(fetchBlockedUsers());
-		  
-		// 	const isBlocked = blocked.some(
-		// 	  (elem: BloqueList) =>
-		// 		(elem.userOne.id === Userdata?.id && elem.userTwo.id === params.id) ||
-		// 		(elem.userOne.id === params.id && elem.userTwo.id === Userdata?.id)
-		// 	);
-		  
-		// 	setSwitch(!isBlocked);
-		//   }, [dispatch]);
 
 		
-		
-		// useEffect(() => {
-		// friendsBlock.some((friend: any) => friend.id === params.id) ? setSwitch(false): setSwitch(true);
-		// }, [friendsBlock, params.id, dispatch]);
 
-		
+		useEffect(() => {
+		  // Your conditions
+		  const isPendingRequest = requests.some(
+			(request : any) => request.user_id === Userdata?.id && request.friend_id === params.id
+		  );
+		  const isRespondToRequest = requests.some(
+			(request : any) => request.user_id === params.id && request.friend_id === Userdata?.id
+		  );
+		  const isFriend = friends.some((friend : any) => friend.id === params.id);
+	  
+		  if (isPendingRequest) {
+			setButtonType('pendingRequest');
+		  } else if (isRespondToRequest) {
+			setButtonType('respondToRequest');
+		  } else if (isFriend) {
+			setButtonType('friends');
+		  } else {
+			setButtonType('sendRequest');
+		  }
+		  const isUserBlocked = blocked.some(
+			(elem : any) => 
+			  (elem.userOne.id === Userdata?.id && elem.userTwo.id === params.id) ||
+			  (elem.userOne.id === params.id && elem.userTwo.id === Userdata?.id)
+		  );
+		  setIsBloqued(isUserBlocked);
+		}, [requests, friends, blocked, Userdata?.id, params.id]);
 		useEffect(() => {
 			
 
@@ -228,15 +254,8 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 		const { users, Userstatus, Usererror } = useSelector(
 			(state: any) => state.users,
 		);
-		useEffect(() => {
-			dispatch(fetchUsersThunk());
-			dispatch(fetchGetRequestsThunk())
-			dispatch(fetchGetAllFriendsThunk());
-		}, [dispatch]);
+	
 
-		const { requests, statusReq, errorReq } = useSelector((state:any) => state.requests);
-		const { friends, status, error } = useSelector((state: any) => state.friends);
-		const {Userdata} = useContext(socketContext);
 
 
 		const sendRequest_handle = async () => {
@@ -245,13 +264,12 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 		  
 			if (foundUser) {
 		  
-			  try {
-				// Dispatch the fetchRequestThunk action
+			 
 				const resultAction = await dispatch(fetchRequestThunk({
 				  display_name: foundUser.display_name,
 				}));
 		  
-				// Access the result of the thunk action
+				// Access the result of the thun action
 				if (fetchRequestThunk.fulfilled.match(resultAction)) {
 				  const SuccessMessage = resultAction.payload.response.message;
 				  dispatch(fetchGetRequestsThunk())
@@ -260,9 +278,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 				} else {
 				  ToastError(`Error:.... `);
 				}
-			  } catch (err: any) {
-				ToastError(`Error: Request already sent..!`);
-			  }
+			
 			}
 		  };
 		
@@ -286,10 +302,23 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 			
 		  };
 
+		  //USEEFFECT TO DISABLE OUTSIDE CLICK
+		  const refOne = useRef(null);
+		  useEffect(() => {
+			document.addEventListener("click", handleClickOutside, true);
+		  }, [])
+		  // FUNCTION TO HANDLE THE OUTSIDE CLICK
+
+		  const handleClickOutside = (e) => {
+			
+				if(!refOne.current?.contains(e.target))
+					setShowMessageBlock(false);
+		  }
+
 	  
 
 	return (
-		<div>
+		<AuthCheck>
 			<div className="container">
 				<div className="row">
 					<div className="col-1">
@@ -303,27 +332,27 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 								priority={true}
 							/>
 							<div className="align-center absolute bottom-5 left-10 flex items-center justify-center gap-4">
-							{!blocked.some((elem: BloqueList) =>((elem.userOne.id === Userdata?.id && elem.userTwo.id === params.id) ||(elem.userOne.id === params.id && elem.userTwo.id === Userdata?.id))
-								) ? 
+							{!IsBloqued
+								 ? 
 								<>
 								{requests.some((request: any) => request.user_id === Userdata?.id && request.friend_id === params.id) ? (
-									<button className="h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover] hover:duration-300">
+									<button className="h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover] hover:duration-300 hover:bg-[--purple-hover]">
 										Pending Request
 									</button>
 							) :requests.some((request: any) => request.user_id === params.id && request.friend_id === Userdata?.id)? (
-									<button onClick={() => handleClickAcceptRequest()} className="h-12 rounded-2xl bg-[--green-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--green-hover] hover:duration-300">
+									<button onClick={() => handleClickAcceptRequest()} className="h-12 rounded-2xl bg-[--green-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover] hover:duration-300">
 										Respond to Request
 									</button>
 							) :friends.some((friend: any) => friend.id === params.id) ? (
-									<button className="h-12 rounded-2xl bg-[--pink-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--gray-hover] hover:duration-300" disabled>
+									<button className="h-12 rounded-2xl bg-[--pink-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover] hover:duration-300" disabled>
 										Friends
 									</button>
-							) : (
+								) : (
 									<button className="h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover] hover:duration-300" onClick={() => sendRequest_handle()}> 
 										Send Request
 									</button>
-							)}
-							<button onKeyPress={handleEnter}
+								)}
+								<button onKeyPress={handleEnter}
 									className="hover:duration- h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover]"
 									onClick={() => setShowMessageBlock(true)}
 								>
@@ -353,7 +382,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 							{showMessageBlock && (
 								<>
 									<div className="fixed bottom-0 left-0 right-0 top-0 z-10  h-full w-full rounded-[60px] bg-[#00000095] p-10 opacity-100 backdrop-blur-md">
-										<div className="absolute bottom-0 left-0 right-0 top-0 z-30 m-auto flex h-[280px] w-[380px] flex-col items-center justify-center gap-3 overflow-hidden rounded-[20px] bg-white px-5 shadow-xl">
+										<div className="absolute bottom-0 left-0 right-0 top-0 z-30 m-auto flex h-[280px] w-[380px] flex-col items-center justify-center gap-3 overflow-hidden rounded-[20px] bg-white px-5 shadow-xl" ref={refOne}>
 											<h2 className="text-[20px] text-gray-800">
 												Send Message to{" "}
 												<span className="text-[25px] text-[--purple-color]">
@@ -447,7 +476,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 					</div>
 				</div>
 			</div>
-		</div>
+		</AuthCheck>
 	);
 };
 export default Dashboard;

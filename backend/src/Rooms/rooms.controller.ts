@@ -252,20 +252,6 @@ export class RoomsController {
 
   }
 
-  @Get("/findRoom")
-  @UseGuards(AuthGuard("jwt"))
-  async findRoom(@Res() res: any,@Req() req)
-  {
-    try {
-      const {id}=req.user
-      const allRoom = await this.roomsService.findRoom(id);
-      return res.status(200).json({data: allRoom });
-    } catch (error) {
-      return res.status(500).json(error.response);
-    }
-
-  }
-
   
 
 }

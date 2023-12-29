@@ -19,7 +19,13 @@ export class ConversationsService  {
       const recipient = await this.userService.findByDisplayName(display_name)
       if(!recipient)
             throw new HttpException('User not found so cannot create Conversation' , HttpStatus.BAD_REQUEST)
-      
+      const isSenderBlocked = await this.checkIfBlocked(user.id, recipient.id);
+
+      const isRecipientBlocked = await this.checkIfBlocked(recipient.id, user.id);
+                        
+      if (isSenderBlocked || isRecipientBlocked) {
+            throw new Error("Interaction not allowed. Users are blocked.");
+      }
       const Participent = await this.findParticipent(display_name, user);
       if(!Participent)
       {
@@ -296,7 +302,18 @@ async findConversationUsers(user : any, _display_name : string, message : string
       recipient: true,
     },
   });
+  const findRecipient = await this.prisma.user.findFirst({
+    where : {
+      display_name : _display_name,
+    }
+  });
+  const isSenderBlocked = await this.checkIfBlocked(user.id, findRecipient.id);
 
+      const isRecipientBlocked = await this.checkIfBlocked(findRecipient.id, user.id);
+                  
+      if (isSenderBlocked || isRecipientBlocked) {
+            throw new Error("Interaction not allowed. Users are blocked.");
+      }
   const messageCreate= await this.prisma.message.create({
     data: {
       content : message,
@@ -324,9 +341,10 @@ async findConversationUsers(user : any, _display_name : string, message : string
       lastMessageId: messageCreate.id,
     },
   });
-  this.eventEmitter.emit('createConversation.created', {
+  this.eventEmitter.emit('createConversationMessage.created', {
     chat
   });
+  console.log("chat here-->", chat);
   return chat;
 }
 
@@ -357,6 +375,7 @@ async getMessageByConversationId(conversationId : string){
   }
   const isSenderBlocked = await this.userService.isBlockedByUser(chatParticipents.sender.id, chatParticipents.recipient.id);
   const isRecipientBlocked = await this.userService.isBlockedByUser(chatParticipents.recipient.id, chatParticipents.sender.id);
+
   return { messages: chatParticipents.messages, isSenderBlocked, isRecipientBlocked};
 }
 

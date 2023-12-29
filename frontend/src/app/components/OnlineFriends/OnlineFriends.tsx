@@ -1,6 +1,6 @@
 "use client";
 
-import { AppDispatch } from "@/app/store";
+import { AppDispatch } from "../../store";
 import {
 	Conversation,
 	ConversationSideBarContainer,
@@ -8,30 +8,30 @@ import {
 	HeaderOnlineUsers,
 	OflineStyling,
 	OnlineStyling,
-} from "@/app/utils/styles";
+} from "../../utils/styles";
 import { useDispatch, useSelector } from "react-redux";
 import { useContext, useEffect, useState } from "react";
-import { FriendsTypes, UsersTypes } from "@/app/utils/types";
-import { fetchUsersThunk } from "@/app/store/usersSlice";
-import { socketContext } from "@/app/utils/context/socketContext";
+import { FriendsTypes, UsersTypes } from "../../utils/types";
+import { fetchUsersThunk } from "../../store/usersSlice";
+import { socketContext } from "../../utils/context/socketContext";
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import { MenuButton, MenuButton2 } from "../Buttons";
-import { fetchBlockFriendThunk } from "@/app/store/blockSlice";
+import { fetchBlockFriendThunk } from "../../store/blockSlice";
 import { useRouter } from "next/navigation";
 import {
 	fetchGetAllFriendsThunk,
 	fetchRemoveFriendship,
-} from "@/app/store/friendsSlice";
+} from "../../store/friendsSlice";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
 	createConversationThunk,
 	fetchConversationUserThunk,
-} from "@/app/store/conversationSlice";
-import { fetchMessagesThunk } from "@/app/store/messageSlice";
-import { fetchSendRequestPLay } from "@/app/store/requestSlice";
+} from "../../store/conversationSlice";
+import { fetchMessagesThunk } from "../../store/messageSlice";
+import { fetchSendRequestPLay } from "../../store/requestSlice";
 
 const OnlineFriends = () => {
 	const ToastError = (message: any) => {
@@ -67,9 +67,9 @@ const OnlineFriends = () => {
 	const { users, Userstatus, Usererror } = useSelector(
 		(state: any) => state.users,
 	);
+	console.log("users in online -->", users);
 	const { friends, status, error } = useSelector((state: any) => state.friends);
 	useEffect(() => {
-		
 
 		dispatch(fetchUsersThunk());
 		dispatch(fetchGetAllFriendsThunk());

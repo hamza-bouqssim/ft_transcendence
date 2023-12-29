@@ -3,11 +3,11 @@ import InviteField from '../InviteField';
 import { faCheck, faPlus  } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import RankedFriends from '../RankedFriends';
-import { socketContext } from '@/app/utils/context/socketContext';
+import { socketContext } from '../../utils/context/socketContext';
 import Image from 'next/image';
-import { fetchUserInfo } from '@/app/store/usersSlice';
-import { FriendsTypes, User, UsersTypes } from '@/app/utils/types';
-import { AppDispatch } from '@/app/store';
+import { fetchUserInfo } from '../../store/usersSlice';
+import { FriendsTypes, User, UsersTypes } from '../../utils/types';
+import { AppDispatch } from '../../store';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'next/navigation';
 

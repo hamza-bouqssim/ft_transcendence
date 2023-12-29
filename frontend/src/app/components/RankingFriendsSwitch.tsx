@@ -223,7 +223,7 @@ const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 				<div className=" scrollbar-hide relative  flex h-[75%] w-full items-center justify-center gap-10 overflow-auto rounded-[50px]">
 					<div className="h-[110px] w-[110px] overflow-hidden rounded-full border-4 border-solid border-amber-900 bg-gray-100">
 						<Image
-							src={players[1]?.picture || "/assets/unknown.png"}
+							src={players[2]?.picture || "/assets/unknown.png"}
 							className="h-[110px] w-[110px] rounded-full "
 							alt=""
 							width={250}
@@ -243,7 +243,7 @@ const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 
 					<div className="h-[110px] w-[110px] overflow-hidden rounded-full border-4 border-solid border-gray-700 bg-gray-100">
 						<Image
-							src={players[2]?.picture || "/assets/unknown.png"}
+							src={players[1]?.picture || "/assets/unknown.png"}
 							className="h-[110px] w-[110px] rounded-full "
 							alt=""
 							width={250}
