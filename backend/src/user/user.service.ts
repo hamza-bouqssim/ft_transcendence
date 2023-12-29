@@ -454,12 +454,7 @@ export class UserService {
             },
           });
       
-          await this.prisma.session.deleteMany({
-            where: {
-              data: userId,
-            },
-          });
-      
+         
           await this.prisma.match_History.deleteMany({
             where: {
               OR: [

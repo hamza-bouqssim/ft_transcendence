@@ -27,7 +27,6 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store";
 import {
-	fetchConversationShow,
 	fetchConversationThunk,
 	fetchDeleteConversation,
 } from "../../store/conversationSlice";
@@ -108,6 +107,8 @@ const ChatComponnent = () => {
 		dispatch(fetchConversationThunk());
 		dispatch(fetchAuthUser());
 	}, [dispatch]);
+
+	
 
 	const handleDebloque = async (conversation: ConversationTypes) => {
 		const user = getDisplayUser(conversation);
@@ -221,7 +222,7 @@ const ChatComponnent = () => {
 		dispatch(fetchConversationThunk());
   			if (channel && channel.id) {
 				dispatch(fetchMessagesThunk(channel.id));
-  			}
+  		}
 
 	})
 	return (
@@ -244,13 +245,12 @@ const ChatComponnent = () => {
 
 					<div className="p-2">
 						{conversations && conversations.map((elem: ConversationTypes) => {
-							const unreadCount = messagesUnread[elem.id] || 0;
-							
+							const unreadCount = messagesUnread[elem.id] || 0; 
 
 							function handleClick() {
 								updateChannel(elem);
 								dispatch(fetchMessagesThunk(elem.id));
-								dispatch(fetchConversationShow(elem.id))
+								markConversationAsRead(elem.id);
 							}
 
 							function handleClickUser() 
@@ -266,11 +266,9 @@ const ChatComponnent = () => {
 
 							return (
 								<div
-										key={elem.id}
-										className={`flex cursor-pointer items-start justify-between rounded-lg px-2 py-3 hover:bg-[#F2F3FD] ${
-											(elem.vue === false && elem.sender.id !== Userdata?.id && channel?.id !== elem.id) ? 'bg-[--pink-color]' : ''
-										}`}
-                >
+									key={elem.id}
+									className={`flex crsor-pointer items-start justify-between rounded-lg px-2 py-3 hover:bg-[#F2F3FD]`}
+								>
 									{/* User Information Section */}
 									<div
 										onClick={handleClick}

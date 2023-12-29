@@ -469,7 +469,7 @@ export class RoomsService {
     }
   
     if (user?.Status === 'Owner') {
-      let oldOwner = await this.prisma.member.findFirst({
+      const oldOwner = await this.prisma.member.findFirst({
         where: {
           chatRoomId: roomId.id,
           user_id: { not: user.id },
@@ -775,7 +775,8 @@ export class RoomsService {
         where: { id: userId },
       });
   
-      if (!existingUser) {
+      if (!existingUser) 
+      {
         return null;
       }
   
@@ -827,7 +828,7 @@ export class RoomsService {
                 },
               });
             } else {
-              const updatedNotification = await this.prisma.notificationMessage.update({
+              await this.prisma.notificationMessage.update({
                 where: {
                   id: existingNotification.id,
                 },
@@ -842,6 +843,54 @@ export class RoomsService {
       return 'Notification messages updated successfully.';
   }
 
+  async notificationChatUpdate(senderId: string, chatId: string)
+  {
+    const chat = await this.prisma.chatParticipents.findUnique({
+      where: {
+        id: chatId,
+      },
+      include: {
+        recipient : true,
+      },
+    });
+
+    if (!chat) {
+      return null;
+    }
+    if(chat.recipient.id !== senderId)
+    {
+        const existingNotification = await this.prisma.notificationMessage.findFirst({
+          where: {
+            roomId: chatId,
+            userId: chat.recipient.id,
+          },
+        });
+  
+        if (!existingNotification) {
+          await this.prisma.notificationMessage.create({
+            data: {
+              roomId:   chatId,
+              userId: chat.recipient.id,
+              number: 1, 
+            },
+          });
+        } else {
+          await this.prisma.notificationMessage.update({
+            where: {
+              id: existingNotification.id,
+            },
+            data: {
+              number: existingNotification.number + 1,
+            },
+          });
+  
+        }
+    }
+
+
+  }
+
+
   async cleanNotification(userId:string,roomId:string)
   {
     const existingNotification = await this.prisma.notificationMessage.findFirst({
@@ -852,7 +901,7 @@ export class RoomsService {
     });
     if(!existingNotification)
       return
-    const cleanNotification = await this.prisma.notificationMessage.update({
+    await this.prisma.notificationMessage.update({
       where: {
         id: existingNotification.id,
       },
@@ -861,8 +910,9 @@ export class RoomsService {
       },
     });
     return 'Notification messages clean successfully.';
-
   }
+
+
 
   async DeleteNotification(userId:string,roomId:string)
   {
@@ -874,7 +924,7 @@ export class RoomsService {
     });
     if(!existingNotification)
       return
-    const cleanNotification = await this.prisma.notificationMessage.delete({
+    await this.prisma.notificationMessage.delete({
       where: {
         id: existingNotification.id,
       },

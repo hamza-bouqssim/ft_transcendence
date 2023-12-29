@@ -45,6 +45,7 @@ async  findConversation(@Req() req: any, @Res() res){
 }
 
 @Post('vue_conversation')
+@UseGuards(AuthGuard("jwt"))
 async show_conversation(@Body() request: {chat_id : string}    ){
             
     const conversation_Show = await this.conversationService.conversation_show(request.chat_id);
@@ -66,11 +67,6 @@ async findConversationUser(@Body() request: {display_name : string, message : st
     }
    
 }
-// @Get(':id')
-// async getconversationById(@Param('id') id: string){
-//     const conversation = await this.conversationService.findConversationById(id);
-//     return conversation;
-// }
 
 
 @Get('/messages/:conversationId')
@@ -81,20 +77,7 @@ async getMessagesFromConversation(@Param('conversationId') conversationId : stri
    return getMessages;
 }
 
-@Get('/:id/mark-as-read')
-@UseGuards(AuthGuard("jwt"))
 
-async markConversationAsRead(@Param('id') id: string) {
-  await this.conversationService.markConversationAsRead(id);
-}
-
-@Post('/unread-messages')
-@UseGuards(AuthGuard("jwt"))
-
-async getUnreadMessages(@Body() request: {conversationId : string}) {
-  const unreadMessages = await this.conversationService.findUnreadMessages(request.conversationId);
-  return unreadMessages;
-}
 
 // delete conversation
 
@@ -108,6 +91,21 @@ async getUnreadMessages(@Body() request: {conversationId : string}) {
       return deleteConversation;
      
   }
+
+  @Post('/getNottificatiofromchat')
+  @UseGuards(AuthGuard("jwt"))
+
+  async getNottificatiofromchat(@Body() request : {userId : string,roomId:string} , @Res() res)
+  {
+    try{
+         const notificationNumber = await this.conversationService.getNottificatiofromchat(request.userId,request.roomId);
+        return res.status(200).json({ success: true, response: notificationNumber });
+    }catch(error : any){
+        return res.status(401).json({ success: false, message: error.message || 'An unexpected error occurred' });
+    }
+  }
+
+
 
 
 }

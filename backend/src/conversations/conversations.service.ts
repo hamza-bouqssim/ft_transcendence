@@ -5,11 +5,12 @@ import {  User } from '@prisma/client';
 import { UserService } from 'src/user/user.service';
 import { CreateMessageParams } from 'src/utils/types';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { RoomsService } from 'src/Rooms/rooms.service';
 
 @Injectable()
 export class ConversationsService  {
 
-    constructor(private prisma : PrismaService, private userService : UserService, private readonly eventEmitter: EventEmitter2)
+    constructor(private prisma : PrismaService, private userService : UserService, private readonly eventEmitter: EventEmitter2, private readonly roomService : RoomsService)
     {
 
     }
@@ -63,10 +64,14 @@ export class ConversationsService  {
           lastMessageId: messageCreate.id,
         },
       });
+      await this.roomService.notificationRoom(conversation.id, user.id, 0 );
+      await this.roomService.notificationRoom(conversation.id,  recipient.id , 1 );
+
+
       this.eventEmitter.emit('createConversation.created', {
         conversation
       });
-
+       
       return {message : 'Conversation create succefully', conversation}
 
   }
@@ -276,16 +281,25 @@ async createMessags(user : any, params: CreateMessageParams) {
       },
        
       },
+
       
     });
    
 
-    await this.prisma.chatParticipents.update({
+    const chatFinal = await this.prisma.chatParticipents.update({
       where: { id: chat.id },
       data: {
         lastMessageId: messageCreate.id,
       },
+      include : {
+        sender : true,
+        recipient : true,
+      }
     });   
+
+
+
+    await this.roomService.notificationChatUpdate(chatFinal.sender.id, chatFinal.id)
     return messageCreate;
   }
 
@@ -452,7 +466,7 @@ async deleteConversation(conversationId: string, userId : string) {
   this.eventEmitter.emit('deleteConversation.created', {
     chatParticipent , userId
   });
-
+  this.roomService.DeleteNotification(userId, chatParticipent.id);
   return { message: 'Delete conversation successfully' };
 }
 
@@ -480,7 +494,16 @@ async conversation_show(chat_id : string){
   }
 
 }
-  
+
+async getNottificatiofromchat(userId : string, roomId:string){
+  const notificationNumber = await this.prisma.notificationMessage.findFirst({
+    where: { 
+      userId: userId ,
+      roomId:roomId
+    },
+  });
+  return notificationNumber.number;
+}
 
 }
 

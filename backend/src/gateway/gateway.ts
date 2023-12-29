@@ -66,8 +66,11 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
     //  room
 
     @SubscribeMessage('joinToRoom')
-    handleJoinRome(client: Socket, roomId: RoomId){
+    handleJoinRome(client: AuthenticatedSocket, roomId: RoomId){
+        this.roomsService.cleanNotification(client.user.sub, roomId.id);
          client.join(roomId.id.toString());
+
+         
     }
     
     @SubscribeMessage('leaveToRoom')

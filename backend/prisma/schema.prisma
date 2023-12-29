@@ -44,7 +44,6 @@ model User {
   recipientNotif NotificationGlobal[] @relation("recipient")
   senderPlay requestPlay[] @relation("sender_playing")
   recipientPlay requestPlay[] @relation("recipient_playing")
-  senderNotifMessage NotificationMessage[] @relation("senderMessage")
   senderOfmessage Message[] @relation("senderMessage")
   deleteByUser  ChatParticipents[] @relation("deletedBy")
   blockUserOne    blockList[] @relation("userOne")
@@ -57,6 +56,7 @@ model User {
   MatchHistory1               Match_History[]    @relation("playerOne")
   MatchHistory2               Match_History[]    @relation("playerTow")
   createdAt DateTime @default(now())
+  UserNotifmessage notificationMessage[]
 
 
 }
@@ -111,12 +111,6 @@ model ChatParticipents {
 
 
 
-model Session {
-  id String @id @default(uuid())
-  sid String @unique
-  data String
-  expiresAt DateTime
-}
 
 
 
@@ -135,13 +129,6 @@ model NotificationGlobal {
 
 }
 
-model NotificationMessage{
-  id String @id @default(uuid())
-  roomId String
-  userId String
-  number Int @default(0)
-  UserId User @relation("senderMessage",fields: [userId], references: [id])
-}
 
 
 
@@ -216,6 +203,15 @@ model StateGame {
   level      Float  @default(0.00)
   rating     Int    @default(1200)
   user       User   @relation(fields: [user_id], references: [id])
+}
+
+
+model notificationMessage {
+  id String @id @default(uuid())
+  userId String
+  user User @relation(fields : [userId], references: [id])
+  roomId String
+  number Int   @default(0)
 }
 
 
