@@ -48,8 +48,6 @@ const OnlineGame = ({ mapIndex }: any) => {
 		height: 836,
 	});
 	useEffect(() => {
-		
-
 		const parentWidth: number = parentCanvasRef.current?.clientWidth!;
 		const parentHeight: number = parentCanvasRef.current?.clientHeight!;
 

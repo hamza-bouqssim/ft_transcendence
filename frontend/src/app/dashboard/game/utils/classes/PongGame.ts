@@ -144,7 +144,7 @@ class PongGame {
 				background: "#3A3561",
 				width: this.divWidth,
 				height: this.divHeight,
-				wireframes: true,
+				wireframes: false,
 			},
 		});
 

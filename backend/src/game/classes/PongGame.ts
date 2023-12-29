@@ -117,7 +117,7 @@ export class PongGame {
 		this.gameGatway.emitToUser1InGame(this.user1, {}, 'launchGame');
 		this.gameGatway.emitToUser2InGame(this.user2, {}, 'launchGame');
 		this.handlePaddleMove();
-		// this.startGame();
+		this.startGame();
 	}
 
 	handleDefaultGameMap() {
@@ -255,7 +255,7 @@ export class PongGame {
 			// topRect,
 		]);
 
-		// this.setBallVelocity();
+		this.setBallVelocity();
 	}
 
 	handleGameCircleObstacles() {
@@ -472,6 +472,11 @@ export class PongGame {
 				clearInterval(this.updateBallPosition);
 				return;
 			}
+			Body.setPosition(this.ball, {
+				x: parseFloat(this.ball.position.x.toFixed(2)),
+				y: parseFloat(this.ball.position.y.toFixed(2)),
+			});
+			console.log('position', this.ball.position);
 			this.gameGatway.emitToGame(
 				this.user1,
 				this.user2,
@@ -479,7 +484,7 @@ export class PongGame {
 				'updateBallPosition',
 			);
 			this.calcScore();
-		}, 10);
+		}, 15);
 		this.handleDetectCollision();
 	}
 
@@ -489,6 +494,8 @@ export class PongGame {
 			x: this.defaultCanvasSizes.width / 2,
 			y: this.defaultCanvasSizes.height / 2,
 		});
+
+		console.log('reset Position');
 
 		// Reset Ball Speed
 		this.setBallVelocity();
@@ -565,7 +572,6 @@ export class PongGame {
 			this.ball.velocity,
 			'setBallVelocity',
 		);
-
 	}
 
 	emitScore() {
@@ -633,7 +639,6 @@ export class PongGame {
 	}
 
 	handleClearGame() {
-		
 		Composite.remove(this.engine.world, this.topPaddle);
 		Composite.remove(this.engine.world, this.bottomPaddle);
 		Composite.remove(this.engine.world, this.rightRect);
