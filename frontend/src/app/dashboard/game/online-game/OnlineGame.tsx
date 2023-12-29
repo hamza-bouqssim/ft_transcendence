@@ -61,13 +61,15 @@ const OnlineGame = ({ mapIndex }: any) => {
 	}, []);
 
 	useEffect(() => {
-		window.addEventListener("popstate", () => {
-			router.push("/dashboard/game/", { scroll: false });
-		});
 		if (opponentPlayer.opponent.username === "") {
 			router.push("/dashboard/game/", { scroll: false });
 			return;
 		}
+		const handleRedirect = () => {
+			router.push("/dashboard/game/", { scroll: false });
+		}
+		window.addEventListener("popstate", handleRedirect);
+		window.addEventListener("offline", handleRedirect);
 		const updateScoreListener = (playersScore: any) => {
 			setScore({
 				...score,
@@ -76,7 +78,11 @@ const OnlineGame = ({ mapIndex }: any) => {
 			});
 		};
 		gameSocket.on("updateScore", updateScoreListener);
-		return () => void gameSocket.off("updateScore");
+		return () =>{
+			gameSocket.off("updateScore");
+			window.removeEventListener("popstate", handleRedirect);
+			window.removeEventListener("offline", handleRedirect);
+		}
 	}, []);
 
 	useEffect(() => {
@@ -94,6 +100,7 @@ const OnlineGame = ({ mapIndex }: any) => {
 
 		const handleGameIsFinished = (payload: { status: string }) => {
 			// clearAtomData();
+			// setStartGame((prev: any) => !prev);
 			if (payload.status === "winner") WinnerPlayerPopUp(router);
 			else LoserPlayerPopUp(router);
 			// pongRef.current?.clear();

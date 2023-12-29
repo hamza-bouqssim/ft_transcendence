@@ -26,8 +26,8 @@ const BotGame = ({ mapIndex }: any) => {
 		width: number;
 		height: number;
 	}>({
-		width: 560,
-		height: 836,
+		width: 500,
+		height: 800,
 	});
 
 	const pathName = usePathname();

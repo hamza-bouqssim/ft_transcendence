@@ -16,6 +16,7 @@ export class GameService {
 			},
 			select: {
 				id: true,
+				username: true,
 				display_name: true,
 				avatar_url: true,
 			},

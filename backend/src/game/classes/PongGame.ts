@@ -40,8 +40,8 @@ export class PongGame {
 		width: number;
 		height: number;
 	} = {
-		width: 560,
-		height: 836,
+		width: 500,
+		height: 800,
 	};
 	private currentBallVelocity: {
 		x: number;
@@ -54,8 +54,8 @@ export class PongGame {
 		width: number;
 		height: number;
 	} = {
-		width: 170,
-		height: 15,
+		width: 100,
+		height: 10,
 	};
 	private lastDirection: string = 'top';
 	private movesUser1: {
@@ -76,7 +76,7 @@ export class PongGame {
 	private posBottomPaddleX = this.defaultCanvasSizes.width / 2;
 	playerOneScore: number = 0;
 	playerTwoScore: number = 0;
-	private updateBallPosition: NodeJS.Timeout;
+	private updateBallPosition: any;
 	private movePaddleInterval: NodeJS.Timeout;
 	private user1: string;
 	private user2: string;
@@ -93,6 +93,7 @@ export class PongGame {
 			gravity: {
 				x: 0,
 				y: 0,
+				scale: 0.001,
 			},
 		});
 
@@ -125,12 +126,9 @@ export class PongGame {
 		this.ball = Bodies.circle(
 			this.defaultCanvasSizes.width / 2,
 			this.defaultCanvasSizes.height / 2,
-			15,
+			10,
 			{
 				label: 'ball',
-				render: {
-					fillStyle: '#FFF',
-				},
 				frictionAir: 0,
 				friction: 0,
 				inertia: Infinity,
@@ -172,11 +170,8 @@ export class PongGame {
 			this.paddleSizes.height,
 			{
 				label: 'topPaddle',
-				render: {
-					fillStyle: '#4FD6FF',
-				},
 				isStatic: true,
-				// chamfer: { radius: 10 },
+				chamfer: { radius: 10 },
 			},
 		);
 
@@ -187,11 +182,8 @@ export class PongGame {
 			this.paddleSizes.height,
 			{
 				label: 'bottomPaddle',
-				render: {
-					fillStyle: '#FF5269',
-				},
 				isStatic: true,
-				// chamfer: { radius: 10 },
+				chamfer: { radius: 10 },
 			},
 		);
 
@@ -199,13 +191,10 @@ export class PongGame {
 		this.rightRect = Bodies.rectangle(
 			this.defaultCanvasSizes.width,
 			this.defaultCanvasSizes.height / 2,
-			20,
+			10,
 			this.defaultCanvasSizes.height,
 			{
 				label: 'rightRect',
-				render: {
-					fillStyle: '#CFF4FF',
-				},
 				isStatic: true,
 			},
 		);
@@ -213,13 +202,10 @@ export class PongGame {
 		this.leftRect = Bodies.rectangle(
 			0,
 			this.defaultCanvasSizes.height / 2,
-			20,
+			10,
 			this.defaultCanvasSizes.height,
 			{
 				label: 'leftRect',
-				render: {
-					fillStyle: '#CFF4FF',
-				},
 				isStatic: true,
 			},
 		);
@@ -228,19 +214,19 @@ export class PongGame {
 			this.defaultCanvasSizes.width / 2,
 			this.defaultCanvasSizes.height / 2,
 			this.defaultCanvasSizes.width,
-			8,
+			4,
 			{
 				isSensor: true,
-				render: {
-					fillStyle: '#CFF4FF',
-				},
 			},
 		);
 
 		this.centerCirle = Bodies.circle(
 			this.defaultCanvasSizes.width / 2,
 			this.defaultCanvasSizes.height / 2,
-			8,
+			4,
+			{
+				isSensor: true,
+			},
 		);
 
 		Composite.add(this.engine.world, [
@@ -389,7 +375,7 @@ export class PongGame {
 			if (data.key === 'd' || data.key === 'ArrowRight') movingRight = false;
 			else if (data.key === 'a' || data.key === 'ArrowLeft') movingLeft = false;
 		}
-		if (data.display_name === this.game.user1.display_name)
+		if (data.id === this.game.user1.id)
 			this.movesUser1 = {
 				movingLeft,
 				movingRight,
@@ -404,18 +390,20 @@ export class PongGame {
 
 	handlePaddleMove() {
 		this.movePaddleInterval = setInterval(() => {
+			console.log("setInterval1")
 			if (!this.game) {
-				clearInterval(this.updateBallPosition);
+				// clearInterval(this.updateBallPosition);
+				Events.off(this.engine, 'beforeUpdate', this.updateBallPosition);
 				return;
 			}
 			let stepX1 = 0;
 
 			if (this.movesUser1.movingLeft) {
-				stepX1 = this.posBottomPaddleX - 11;
+				stepX1 = this.posBottomPaddleX - 8;
 				if (stepX1 <= this.paddleSizes.width / 2)
 					stepX1 = this.paddleSizes.width / 2;
 			} else if (this.movesUser1.movingRight) {
-				stepX1 = this.posBottomPaddleX + 11;
+				stepX1 = this.posBottomPaddleX + 8;
 				if (
 					stepX1 >=
 					this.defaultCanvasSizes.width - this.paddleSizes.width / 2
@@ -433,11 +421,11 @@ export class PongGame {
 			let stepX2 = 0;
 
 			if (this.movesUser2.movingRight) {
-				stepX2 = this.posTopPaddleX - 11;
+				stepX2 = this.posTopPaddleX - 8;
 				if (stepX2 <= this.paddleSizes.width / 2)
 					stepX2 = this.paddleSizes.width / 2;
 			} else if (this.movesUser2.movingLeft) {
-				stepX2 = this.posTopPaddleX + 11;
+				stepX2 = this.posTopPaddleX + 8;
 				if (
 					stepX2 >=
 					this.defaultCanvasSizes.width - this.paddleSizes.width / 2
@@ -461,22 +449,18 @@ export class PongGame {
 					},
 					'updatePaddlePosition',
 				);
-		}, 10);
+		}, 15);
 	}
 
 	startGame() {
 		Runner.run(this.runner, this.engine);
 
 		this.updateBallPosition = setInterval(() => {
+			console.log("setInterval2")
 			if (!this.game) {
 				clearInterval(this.updateBallPosition);
 				return;
 			}
-			Body.setPosition(this.ball, {
-				x: parseFloat(this.ball.position.x.toFixed(2)),
-				y: parseFloat(this.ball.position.y.toFixed(2)),
-			});
-			console.log('position', this.ball.position);
 			this.gameGatway.emitToGame(
 				this.user1,
 				this.user2,
@@ -494,8 +478,6 @@ export class PongGame {
 			x: this.defaultCanvasSizes.width / 2,
 			y: this.defaultCanvasSizes.height / 2,
 		});
-
-		console.log('reset Position');
 
 		// Reset Ball Speed
 		this.setBallVelocity();
@@ -537,13 +519,6 @@ export class PongGame {
 			x: this.currentBallVelocity.x,
 			y: this.currentBallVelocity.y,
 		});
-
-		this.gameGatway.emitToGame(
-			this.user1,
-			this.user2,
-			this.ball.velocity,
-			'setBallVelocity',
-		);
 	}
 
 	updateBallVelocity() {
@@ -558,20 +533,19 @@ export class PongGame {
 			else this.currentBallVelocity.y += 1;
 		}
 
-		if (xVelocity === this.currentBallVelocity.x)
-			this.currentBallVelocity.x = this.ball!.velocity.x + 1;
+		if (xVelocity === this.currentBallVelocity.x) {
+			this.currentBallVelocity.x = this.ball.velocity.x + 1;
+			Body.setVelocity(this.ball, {
+				x: this.currentBallVelocity.x,
+				y: this.currentBallVelocity.y,
+			});
+			return;
+		}
 
-		Body.setVelocity(this.ball!, {
-			x: this.currentBallVelocity.x,
+		Body.setVelocity(this.ball, {
+			x: this.ball.velocity.x,
 			y: this.currentBallVelocity.y,
 		});
-
-		this.gameGatway.emitToGame(
-			this.user1,
-			this.user2,
-			this.ball.velocity,
-			'setBallVelocity',
-		);
 	}
 
 	emitScore() {
@@ -610,21 +584,16 @@ export class PongGame {
 		this.handleCollisionStart = (e): void => {
 			const pairs = e.pairs[0];
 
-			if (pairs.bodyA === this.topPaddle || pairs.bodyB === this.topPaddle) {
-				// this.sound.topPaddleSound.play();
-				this.updateBallVelocity();
-			} else if (
+			if (
+				pairs.bodyA === this.topPaddle ||
+				pairs.bodyB === this.topPaddle ||
 				pairs.bodyA === this.bottomPaddle ||
 				pairs.bodyB === this.bottomPaddle
-			) {
-				// this.sound.bottomPaddleSound.play();
+			)
 				this.updateBallVelocity();
-			}
 		};
 
 		Events.on(this.engine, 'collisionStart', this.handleCollisionStart);
-
-		// this.calcScore();
 	}
 
 	calcScore() {
@@ -660,13 +629,10 @@ export class PongGame {
 			Composite.remove(this.engine.world, this.verticalObstacle4);
 		}
 
-		// displayBodies('after');
-
-		Events.off(this.engine, 'collisionStart', this.handleCollisionStart);
-
 		// Clear Intervals:
 		clearInterval(this.movePaddleInterval);
 		clearInterval(this.updateBallPosition);
+		Events.off(this.engine, 'collisionStart', this.handleCollisionStart);
 
 		// clearTimeout Of Paddle Game Runner:
 		// clearTimeout(this.lunchGameInterval);

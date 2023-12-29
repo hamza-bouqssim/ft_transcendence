@@ -8,8 +8,8 @@ import { useGameSocket } from "../../../../providers/game-socket-provider";
 import { useAtom } from "jotai";
 import { OpponentData } from "../../utils/data";
 
-// const sleep = async (ms: number) =>
-// 	new Promise((resolve) => setTimeout(resolve, ms));
+const sleep = async (ms: number) =>
+	new Promise((resolve) => setTimeout(resolve, ms));
 
 const MatchMaking = () => {
 	const searchParams = useSearchParams();
@@ -29,7 +29,6 @@ const MatchMaking = () => {
 	const [opponentPlayer, setOpponentPlayer] = useAtom(OpponentData);
 
 	useEffect(() => {
-		
 
 		const handleRedirectUser = (payload: any) => {
 			if (Userdata?.display_name === payload.display_name)
@@ -43,6 +42,7 @@ const MatchMaking = () => {
 				opponent: payload.opponent,
 				isRotate: payload.rotate,
 			}));
+			sleep(3000);
 			router.push(`./match-making/${mapIndex}/${payload.idGame}`, {
 				scroll: false,
 			});

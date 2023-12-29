@@ -10,19 +10,19 @@ const About = () => {
 	];
 	const mappedImages = images.map((el, i) => {
 		return (
-			<div key={i}>
-				<Image
-					className="w-16 cursor-pointer transition duration-300 ease-linear hover:scale-125 lg:w-20 2xl:w-24"
-					src={el}
-					width={100}
-					height={100}
-					alt={el.substring(8)}
-				/>
-				<h3 className="text-center text-xs lg:text-sm 2xl:text-xl">
-					{el.substring(8, el.lastIndexOf("."))}
-				</h3>
-			</div>
-		);
+		<div key={i}>
+			<Image
+			className="w-16 pointer-events-none cursor-pointer transition duration-300 ease-linear hover:scale-125 lg:w-20 2xl:w-24"
+			src={el}
+			width={100}
+			height={100}
+			alt={el.substring(8)}
+			/>
+			<h3 className="text-center text-xs lg:text-sm 2xl:text-xl">
+			{el.substring(8, el.lastIndexOf("."))}
+			</h3>
+		</div>
+    );
 	});
 	return (
 		<section

@@ -13,21 +13,21 @@ import { GameService } from '../game.service';
 import { PrismaService } from 'prisma/prisma.service';
 import { AuthenticatedSocket } from 'src/utils/interfaces';
 import { PongGame } from '../classes/PongGame';
-import  { Vector } from 'matter-js';
+import { Vector } from 'matter-js';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { UserService } from 'src/user/user.service';
 
 type User = {
 	id: string;
+	username: string;
 	display_name: string;
 	avatar_url: string;
 };
 
-
 export type KeyEventPayload = {
 	state: string;
 	key: string;
-	display_name: string;
+	id: string;
 };
 
 type JoinPayload = {
@@ -96,17 +96,14 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		return new Promise((resolve) => setTimeout(resolve, ms));
 	}
 	async handleConnection(socket: AuthenticatedSocket) {
-		
 		const userId = socket.user.sub;
-        const userdb = await this.prisma.user.findUnique({
-            where:{
-                id:userId
-            }
-        })
-        if (!socket.user || !userdb)
-            return;
-        if(socket.user && userdb)
-		{
+		const userdb = await this.prisma.user.findUnique({
+			where: {
+				id: userId,
+			},
+		});
+		if (!socket.user || !userdb) return;
+		if (socket.user && userdb) {
 			await this.prisma.user.update({
 				where: { id: socket.user.sub },
 				data: { status: 'ingame' },
@@ -118,7 +115,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	async startGame(invite: any) {
 		if (!invite) return;
 		const idGame = invite.user1.id;
-		invite.state = 'panding'
+		invite.state = 'panding';
 		this.emitToUser2InGame(
 			invite.user2.id,
 			{ opponent: invite.user1, rotate: true, idGame },
@@ -150,13 +147,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			if (game) {
 				const GameId = game.user1.id;
 				if (!this.mapPong[GameId])
-					this.mapPong[GameId] = new PongGame(this,game);
+					this.mapPong[GameId] = new PongGame(this, game);
 				if (!game.socket1 || socket.id === game.socket1) {
 					if (this.mapPong[GameId]) {
 						this.mapPong[GameId].playerOneScore = 0;
 						this.mapPong[GameId].playerTwoScore = 7;
 					} else {
-					
 					}
 					this.endGame(game);
 				} else if (!game.socket2 || socket.id === game.socket2) {
@@ -164,7 +160,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 						this.mapPong[GameId].playerOneScore = 7;
 						this.mapPong[GameId].playerTwoScore = 0;
 					} else {
-						
 					}
 					this.endGame(game);
 				}
@@ -174,21 +169,20 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	@OnEvent('game.invite')
 	async handleInvitegame(data: any) {
-	
 		this.eventEmitter.emit('chat.newRequestToPlay', data);
-		
 	}
 
 	@OnEvent('game.accept')
 	async handleaccceptgame(data: any) {
-	
 		const user1 = {
 			id: data.req_play.Sender.id,
+			username: data.req_play.Sender.username,
 			display_name: data.req_play.Sender.display_name,
 			avatar_url: data.req_play.Sender.avatar_url,
 		};
 		const user2 = {
 			id: data.req_play.recipient.id,
+			username: data.req_play.recipient.username,
 			display_name: data.req_play.recipient.display_name,
 			avatar_url: data.req_play.recipient.avatar_url,
 		};
@@ -202,7 +196,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			user1,
 			launch: false,
 		});
-	
+
 		this.eventEmitter.emit('chat.AcceptPLayNotification', data);
 	}
 
@@ -212,8 +206,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		const game = this.getQueueGame(client.user.sub);
 		const wait = this.getQueueWaiting(client.user.sub);
 		// const invite = this.getQueueInvite(client.user.sub);
-		if(+data.indexMap < 0 || +data.indexMap > 2)
-			return
+		if (+data.indexMap < 0 || +data.indexMap > 2) return;
 		const user = await this.gameservice.findUserById(client.user.sub);
 		if (wait || (game && game.status !== 'invite')) {
 			client.emit('redirectUser', {
@@ -251,8 +244,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	// emit to user a message in an event---------------------------------------
 	emitToGame(user1: string, user2: string, payload: Emit, event: string) {
-		this.server.to(`@${user1}`).emit(event, payload);
-		this.server.to(`@${user2}`).emit(event, payload);
+		this.server.to(`@${user1}`).to(`@${user2}`).emit(event, payload);
 	}
 
 	emitToUser1InGame(userId: string, payload: Emit, event: string) {
@@ -350,7 +342,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			const score1 = this.mapPong[game.user1.id].playerOneScore;
 			const score2 = this.mapPong[game.user1.id].playerTwoScore;
 			// delete this.mapPong[game.user1.id];
-		
+
 			this.mapPong[game.user1.id].handleClearGame();
 			delete this.mapPong[game.user1.id];
 			this.queueGame = this.queueGame.filter((game) => game.user1.id != user1);
@@ -394,7 +386,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	) {
 		const game = this.getQueueGame(socket.user.sub);
 		if (!game) return;
-
-		this.mapPong[game.user1.id].handleKeyDown(data);
+		const tmp = {id:socket.user.sub,...data}
+		this.mapPong[game.user1.id].handleKeyDown(tmp);
 	}
 }

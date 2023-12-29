@@ -130,7 +130,14 @@ const Header = () => {
               >
                 Team
               </a>
-              <a href="#featues" className="link-style">
+              <a
+                className="link-style"
+                onClick={() => {
+                  document
+                    .getElementById("features")
+                    ?.scrollIntoView({ block: "center" });
+                }}
+              >
                 Features
               </a>
               {!user ? (
