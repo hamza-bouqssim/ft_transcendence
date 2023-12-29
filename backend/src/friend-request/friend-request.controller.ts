@@ -41,31 +41,63 @@ export class FriendRequestController {
 
       
     @Post('accept-request')
-    async acceptRequest(@Body() request: {requestId: string}, @Req() req)
+    async acceptRequest(@Body() request: {requestId: string}, @Req() req, @Res() res)
     {
+      try{
         const user = req.user;
-        return this.friendshipService.acceptFriendRequest(request.requestId, user); 
+        const returnValue = await this.friendshipService.acceptFriendRequest(request.requestId, user); 
+        return res.status(200).json({success: true, response: returnValue});
+
+      }catch(error : any){
+        return res.status(401).json({ success: false, message: error.message || 'An unexpected error occurred' });
+
+      }
+       
     }
     @Post('accept_request_play')
-    async acceptRequestToPlay(@Body() request: {requestId: string}, @Req() req){
-      const user = req.user;
+    async acceptRequestToPlay(@Body() request: {requestId: string}, @Req() req, @Res() res){
+      try{
+        const user = req.user;
+        const returnValue = await this.friendshipService.acceptRequestToPlay(request.requestId, user);
+        return res.status(200).json({success: true, response: returnValue});
 
-      return this.friendshipService.acceptRequestToPlay(request.requestId, user);
+      }catch(error : any){
+        return res.status(401).json({ success: false, message: error.message || 'An unexpected error occurred' });
+      }
+      
 
     }
 
 
     @Post('refuse-request')
-    async refuseRequest(@Body() request: {requestId : string}, @Req() req)
+    async refuseRequest(@Body() request: {requestId : string}, @Req() req, @Res() res)
     {
+      try{
         const user = req.user;
-        return this.friendshipService.refuseFriendRequest(request.requestId, user); 
+        const returnValue = this.friendshipService.refuseFriendRequest(request.requestId, user);
+        return res.status(200).json({success: true, response: returnValue});
+
+      }catch(error : any){
+        return res.status(401).json({ success: false, message: error.message || 'An unexpected error occurred' });
+
+
+      }
+         
     }
 
     @Post('refuse-request-play')
-    async refuseRequestPlay(@Body() request: {requestId : string}, @Req() req){
-      const user = req.user;
-      return this.friendshipService.refusePLayRequest(request.requestId, user); 
+    async refuseRequestPlay(@Body() request: {requestId : string}, @Req() req, @Res() res){
+      try{
+        const user = req.user;
+        const returnValue = this.friendshipService.refusePLayRequest(request.requestId, user); 
+        return res.status(200).json({success: true, response: returnValue});
+
+      }catch(error : any){
+
+        return res.status(401).json({ success: false, message: error.message || 'An unexpected error occurred' });
+
+      }
+      
 
     }
     @Post('remove-friendship')
@@ -110,7 +142,6 @@ export class FriendRequestController {
         
     
 
-    // count notification
 
     @Get('notification_count')
     async count_notification(@Req() req){

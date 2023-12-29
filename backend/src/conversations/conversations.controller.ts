@@ -44,18 +44,26 @@ async  findConversation(@Req() req: any, @Res() res){
     
 }
 
+@Get('vue_conversation')
+async show_conversation(@Body() request: {chat_id : string}    ){
+            
+    const conversation_Show = await this.conversationService.conversation_show(request.chat_id);
+    return conversation_Show;
+  
+
+}
+
 @Post('/findConversationUser')
 @UseGuards(AuthGuard("jwt"))
-async findConversationUser(@Body() request: {display_name : string, message : string}, @Req() req: Request){
-   // try{
+async findConversationUser(@Body() request: {display_name : string, message : string}, @Req() req: Request, @Res() res){
+   try{
         const user = req.user
         const find = await this.conversationService.findConversationUsers(user, request.display_name, request.message);
-        return find;
-        //return res.status(200).json({ success: true, response: find });
+        return res.status(200).json({ success: true, response: find });
 
-    // }catch(error){
-    //     return res.status(401).json({ success: false, message: error.message || 'An unexpected error occurred' });
-    // }
+    }catch(error : any){
+        return res.status(401).json({ success: false, message: error.message || 'An unexpected error occurred' });
+    }
    
 }
 // @Get(':id')

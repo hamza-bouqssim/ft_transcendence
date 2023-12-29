@@ -269,6 +269,9 @@ export class FriendRequestService {
 				'You are not authorized to accept this friend request',
 				HttpStatus.BAD_REQUEST,
 			);
+		if (req.status !== 'PENDING') {
+			throw new HttpException('There is no request to accept it',HttpStatus.BAD_REQUEST);
+		}
 
 		await this.prisma.friend.update({
 			where: { id: requestId },
@@ -412,6 +415,33 @@ export class FriendRequestService {
 				],
 			},
 		});
+		if(friendship)
+		{
+			const notification = await this.prisma.notificationGlobal.findFirst({
+				where: {
+					OR: [
+						{
+							AND: [
+								{ Sender_id: senderId, recipient_id: recipientId },
+								{ type: { in: ['requestFriend', 'playRequest'] } },
+							],
+						},
+						{
+							AND: [
+								{ Sender_id: recipientId, recipient_id: senderId },
+								{ type: { in: ['requestFriend', 'playRequest'] } },
+							],
+						},
+					],
+				},
+			});
+			
+			if (notification) {
+				await this.prisma.notificationGlobal.delete({
+					where: { id: notification.id },
+				});
+			}
+		}
 
 		if (friendshipPlay) {
 			await this.prisma.requestPlay.delete({

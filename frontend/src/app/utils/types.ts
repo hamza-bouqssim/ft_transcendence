@@ -27,6 +27,7 @@ export type User = {
     display_name : string;
     avatar_url : string;
     status : string;
+    createdAt : Date;
 }
 export type chat = {
     id : string;
@@ -65,6 +66,7 @@ export type ConversationTypes = {
 	updatedAt: Date;
 	members: Member[];
 	messageRome: lastMessage[];
+    vue : boolean;
 };
 export type lastMessage = {
 	id: string;

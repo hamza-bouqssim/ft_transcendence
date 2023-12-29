@@ -215,6 +215,14 @@ const ChatComponnent = () => {
 			ToastError("Failed to delete the conversation. Please try again.");
 		}
 	};
+
+	socket.on('onMessage', (messages : messageTypes)=>{
+		dispatch(fetchConversationThunk());
+  			if (channel && channel.id) {
+				dispatch(fetchMessagesThunk(channel.id));
+  			}
+
+	})
 	return (
 		<>
 			{show && <CreateConversationModal setShow={setShow} />}
@@ -235,12 +243,11 @@ const ChatComponnent = () => {
 
 					<div className="p-2">
 						{conversations && conversations.map((elem: ConversationTypes) => {
-							const unreadCount = messagesUnread[elem.id] || 0;
+							const unreadCount = messagesUnread[elem.id] || 0; 
 
 							function handleClick() {
 								updateChannel(elem);
 								dispatch(fetchMessagesThunk(elem.id));
-								markConversationAsRead(elem.id);
 							}
 
 							function handleClickUser() 
@@ -256,9 +263,11 @@ const ChatComponnent = () => {
 
 							return (
 								<div
-									key={elem.id}
-									className={`flex cursor-pointer items-start justify-between rounded-lg px-2 py-3 hover:bg-[#F2F3FD]`}
-								>
+										key={elem.id}
+										className={`flex cursor-pointer items-start justify-between rounded-lg px-2 py-3 hover:bg-[#F2F3FD] ${
+											(elem.vue === true && elem.sender.id !== Userdata?.id) ? 'bg-[--pink-color]' : ''
+										}`}
+                >
 									{/* User Information Section */}
 									<div
 										onClick={handleClick}
@@ -278,11 +287,11 @@ const ChatComponnent = () => {
 										</div>
 										
 										<div className="ml-4">
-											<span className="ConversationName">
+											<span className="ConversationName font-['Whitney_Semibold']">
 												{" "}
 												{getDisplayUser(elem)?.display_name}
 											</span>
-											<span className="h-5 overflow-hidden text-sm font-light text-gray-400">
+											<span className="h-5 overflow-hidden text-sm font-light text-gray-400 font-['Whitney_Semibold']">
 												{getDisplayLastMessage(elem)}
 											</span>
 										</div>
@@ -323,8 +332,8 @@ const ChatComponnent = () => {
 										)}
 									</div>
 
-									<div className="text-black">
-										{new Date(elem.createdAt).toLocaleTimeString()}
+									<div className="text-gray-600 font-['Whitney_Semibold']">
+									{new Date(elem.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
 									</div>
 								</div>
 							);

@@ -56,6 +56,8 @@ model User {
   StateGame                   StateGame?
   MatchHistory1               Match_History[]    @relation("playerOne")
   MatchHistory2               Match_History[]    @relation("playerTow")
+  createdAt DateTime @default(now())
+
 
 }
 

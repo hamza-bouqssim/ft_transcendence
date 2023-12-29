@@ -45,7 +45,7 @@ const SendRequest  = () => {
     useEffect(() => {
       
 
-      dispatch(fetchGetRequestThunk())
+      dispatch(fetchGetRequestThunk());
     }, [dispatch]);
  
    

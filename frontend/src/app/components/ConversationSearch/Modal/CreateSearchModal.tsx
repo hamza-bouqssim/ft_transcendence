@@ -74,7 +74,7 @@ type props = {
         const handleKeyDown = (e : KeyboardEvent) => e.key === 'Escape' && setShow(false);
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    },[])
+    },[setShow])
 
 
     const handleOverlayClick = (e : React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -102,7 +102,7 @@ type props = {
         <div className="flex justify-center p-4 px-3 py-10">
             <div className="w-full max-w-md">
                 <div className="bg-white shadow-md rounded-lg px-3 py-2 mb-4">
-                    <div className="block text-gray-700 text-lg font-semibold py-7 px-2 items-center">
+                    <div className="block text-gray-700 text-lg font-semibold py-7 px-2 items-center font-['Whitney_Semibold']">
                         Searching
                     </div>
                     <div className="flex items-center bg-gray-200 rounded-md">
@@ -122,7 +122,7 @@ type props = {
                     {searchResults.map((elem) => (
                         <div key={elem.id} className="flex justify-start cursor-pointer text-gray-700 hover:text-blue-400 hover:bg-blue-100 rounded-md px-2 py-2 my-2">
                             <span className="bg-gray-400 h-2 w-2 m-2 rounded-full"></span>
-                        <div className="flex-grow font-medium px-2">
+                        <div className="flex-grow font-medium px-2 font-['Whitney_Semibold']">
                             {isUsersTypes(elem) ? (
                                     <Link href={`/dashboard/${elem.id}`}>{elem.display_name}</Link>
                                 ) : isGroupChannel(elem) ? (

@@ -124,16 +124,17 @@ const MessageContainer = () => {
         <MessageContainerStyle>
           {messages &&
             messages.map((m: messageTypes) => (
-                <div className={`flex w-full mt-2 space-x-3 max-w-xs ${Userdata?.id === m.sender.id ? 'self-end' : 'self-start'} overflow-y-auto`} key={m.id}>                <Image
+                <div className={`flex w-full mt-2 space-x-3 max-w-xs ${Userdata?.id === m.sender.id ? 'self-end' : 'self-start'} overflow-y-auto`} key={m.id}> 
+                {!(Userdata?.id === m.sender.id) && <Image
                   src={m.sender?.avatar_url}
                   className="h-10 w-10 rounded-[50%] bg-black"
                   alt="Description of the image"
                   width={60}
                   height={60}
-                />
+                />}
 
                 <div className={`flex-1`}>
-                  <div className="flex gap-4	" key={m.id}>
+                  {!(Userdata?.id === m.sender.id) && <div className="flex gap-4	" key={m.id}>
                     <span
                       className="senderName  font-['Whitney_Semibold']"
                       style={{
@@ -142,10 +143,8 @@ const MessageContainer = () => {
                     >
                       {m.sender.display_name}
                     </span>
-                    {/* <span className="text-sm text-gray-800	 font-['Whitney_Semibold']">
-                      {formatRelative(new Date(m.createdAt), new Date())}
-                    </span> */}
-                  </div >
+                  
+                  </div >}
 
                   <div
                     className={`relative ml-3 text-sm  py-2 px-4 shadow rounded-xl bg-[#5B8CD3] font-['Whitney_Semibold'] ${
@@ -154,13 +153,12 @@ const MessageContainer = () => {
                   >
                     {breakContentIntoLines(m.content, 30).map((line, index) => (
                         <div key={index}>{line}</div> ))} 
-                            <span className="text-sm  font-['Whitney_Semibold absolute bottom-2 right-3 text-gray-200"> {new Date(m.createdAt).toLocaleTimeString()}</span>
+                            <span className="text-sm  font-['Whitney_Semibold absolute bottom-2 right-3 text-gray-600"> 	{new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}</span>
 
                   </div>
                            
                   </div>
               
-                    {/* {formatRelative(new Date(m.createdAt), new Date())} */}
 
 
                

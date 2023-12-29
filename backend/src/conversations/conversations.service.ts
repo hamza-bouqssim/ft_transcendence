@@ -250,6 +250,7 @@ async createMessags(user : any, params: CreateMessageParams) {
           deletedBy: {
             disconnect: [{ id: chat.recipient.id }, { id: chat.sender.id }],
           },
+          vue: true,
         },
         include :{
           deletedBy : true,
@@ -309,7 +310,7 @@ async findConversationUsers(user : any, _display_name : string, message : string
   });
   const isSenderBlocked = await this.checkIfBlocked(user.id, findRecipient.id);
 
-      const isRecipientBlocked = await this.checkIfBlocked(findRecipient.id, user.id);
+  const isRecipientBlocked = await this.checkIfBlocked(findRecipient.id, user.id);
                   
       if (isSenderBlocked || isRecipientBlocked) {
             throw new Error("Interaction not allowed. Users are blocked.");
@@ -344,7 +345,6 @@ async findConversationUsers(user : any, _display_name : string, message : string
   this.eventEmitter.emit('createConversationMessage.created', {
     chat
   });
-  console.log("chat here-->", chat);
   return chat;
 }
 
@@ -454,6 +454,27 @@ async deleteConversation(conversationId: string, userId : string) {
   });
 
   return { message: 'Delete conversation successfully' };
+}
+
+async conversation_show(chat_id : string){
+
+  const conversation = await this.prisma.chatParticipents.findUnique({
+    where : {
+      id : chat_id
+    }
+
+  });
+  if (conversation) {
+     await this.prisma.chatParticipents.update({
+      where: { id: chat_id },
+      data: {
+        vue: true,
+      },
+    });
+  
+
+  }
+
 }
   
 

@@ -118,9 +118,11 @@ const TopRightBar = () => {
 							icon={faBell}
 							className="left-0 cursor-pointer rounded-[50%] bg-[#ffffff38] p-3 hover:bg-[--pink-color] min-[1750px]:h-6 min-[1750px]:w-6"
 						/>
-						<span className="absolute right-8 top-[-5px] rounded-2xl bg-[--pink-color] px-2 font-['Whitney_Bold']">
-							{count}
-						</span>
+						{count > 0 && (
+							<span className="absolute right-8 top-[-5px] rounded-2xl bg-[--pink-color] px-2 font-['Whitney_Bold']">
+								{count}
+							</span>
+)}
 					</div>
 					{notfication && (
 						<div ref={menuRef}>
