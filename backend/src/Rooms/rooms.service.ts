@@ -227,7 +227,6 @@ export class RoomsService {
           Status: true,
         },
       });
-      
       let members;
       
       if (userRole?.Status === "Owner" || userRole?.Status === "Admin") {
@@ -640,9 +639,14 @@ export class RoomsService {
   }
 
 
- async findRoom(id: string) {
+ async findRoom(id: string, val :string) {
+  if(!val)
+    return null;
   const allRooms = await this.prisma.chatRoom.findMany({
     where: {
+      name: {
+        contains: val,
+      },
       Privacy: {
         in: ['Public', 'Protected'],
       },
@@ -661,6 +665,17 @@ export class RoomsService {
           ],
         },
       },
+    },
+    select: {
+      id: true,
+      name: true,
+      Privacy: true,
+      picture: true,
+      members:{
+        select: {
+          user: true,
+        },
+      }
     },
   });
 

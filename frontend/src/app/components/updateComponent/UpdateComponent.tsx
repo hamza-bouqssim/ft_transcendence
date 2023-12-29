@@ -36,7 +36,7 @@ const UpdateComponent:FC<UpdateComponentProps> = (
 	return (
 		<div className=" no-scrollbar relative h-[calc(100%-90px)]  overflow-auto">
 			{error && <div>{error}</div>}
-			{/* <div className="mt-7 flex items-center justify-center ">
+			<div className="mt-7 flex items-center justify-center ">
 				<div className="mx-auto flex w-auto  items-center justify-center rounded-full bg-[#F2F3FD] p-4">
 					<Image
 						className="h-20 w-20 rounded-full  bg-cover"
@@ -75,8 +75,8 @@ const UpdateComponent:FC<UpdateComponentProps> = (
 					</div>
 				</div>
 			</div>
-			<hr className="mx-auto  my-10 w-1/2" /> */}
-			{/* <div className="mx-auto my-8 flex w-[90%] items-center justify-between text-black ">
+			<hr className="mx-auto  my-10 w-1/2" />
+			<div className="mx-auto my-8 flex w-[90%] items-center justify-between text-black ">
 				<label>
 					<input
 						type="radio"
@@ -135,8 +135,8 @@ const UpdateComponent:FC<UpdateComponentProps> = (
 					/>
 					Protected
 				</label>
-			</div> */}
-			{/* {olddata?.Privacy === "Protected" && (
+			</div>
+			{olddata?.Privacy === "Protected" && (
 				<div className="mx-auto flex w-[80%] items-center justify-center">
 					<input
 						onChange={(e) => {
@@ -161,7 +161,7 @@ const UpdateComponent:FC<UpdateComponentProps> = (
 						change
 					</button>
 				</div>
-			)} */}
+			)}
 
 			<div className="no-scrollbar mt-5   w-full overflow-auto  rounded-xl    text-black">
 				<RestFriend></RestFriend>

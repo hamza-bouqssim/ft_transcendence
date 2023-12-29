@@ -36,8 +36,8 @@ const CreatGroups: React.FC<CreateGroupsProps> = ({
 	const [idUserAdd, setIdUserAdd] = useState<string[]>([]);
 	const { rooms, status, error } = useSelector((state: any) => state.room);
 	const handleCreateGroup = () => {
-		if (groupPrivacy === "Protected" && !groupPassword) {
-			toast.error("Password are required for a Protected group.");
+		if (groupPrivacy === "Protected" && (!groupPassword  || groupPassword.length < 8 )) {
+			toast.error("Password are required for a Protected group. 8 character min");
 			return;
 		}
 		if (!groupName) {

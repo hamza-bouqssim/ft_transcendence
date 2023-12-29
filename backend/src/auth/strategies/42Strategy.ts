@@ -11,7 +11,7 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy)
         super({
             clientID: 'u-s4t2ud-262f8659d886410e3d6357f8530b81ad03e112f0c09b567eb0dd7db031482227', //this SHIT is hard coded, go put you SHIT in ENV file !!!!!!!!!!!!!!!!!!!!!!
             clientSecret: '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',
-            callbackURL: 'http://localhost:8000/auth/42/redirect'
+            callbackURL: 'http://10.13.10.3:8000/auth/42/redirect'
         });
     }
     async validate(accessToken: string, refreshToken: string, profile: any){

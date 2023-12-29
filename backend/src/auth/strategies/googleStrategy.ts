@@ -22,7 +22,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
 			clientID:
 				'733824333433-o5h97tg504iukbekbfg6bgntrcqlomfd.apps.googleusercontent.com', //this SHIT is hard coded, go put you SHIT in ENV file !!!!!!!!!!!!!!!!!!!!!!
 			clientSecret: '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', //this SHIT is hard coded, go put your SHIT in ENV file !!!!!!!!!!!!!!!!!!!!!!
-			callbackURL: 'http://localhost:8000/auth/google/redirect',
+			callbackURL: 'http://10.13.10.3:8000/auth/google/redirect',
 			scope: ['profile', 'email'],
 		});
 	}

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { getAllRoomsApi, createRoomsApi, updateRoomsApi, deleteRoomsApi } from '../utils/api';
+import { getAllRoomsApi, createRoomsApi, updateRoomsApi, deleteRoomsApi, joinRoomApi } from '../utils/api';
 import { ConversationTypes } from '../utils/types';
 
 
@@ -10,6 +10,12 @@ interface createRoom {
   password: string | null;
   picture: string | null;
   idUserAdd: string[]; 
+}
+
+interface join {
+	id :string;
+    Privacy :string;
+    password :string;
 }
 
 
@@ -73,8 +79,18 @@ export const updateRooms = createAsyncThunk('rooms/updateRooms', async (data: Co
     }
   }
 });
-
-
+export const joinToRoom = createAsyncThunk('rooms/joinRoom', async (data: join ,{rejectWithValue}) => {
+	try {
+	  const response = await joinRoomApi(data);    
+	  return response.data.data;
+	} catch (error : any) {
+	  if (error.response && error.response.data) {
+		return rejectWithValue(error.response.data);
+	  } else {
+		return rejectWithValue('Failed to join rooms');
+	  }
+	}
+  });
 
 const roomSlice = createSlice({
   name: 'room',

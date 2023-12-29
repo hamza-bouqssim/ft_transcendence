@@ -12,6 +12,7 @@ import { InfoRoom } from "../InfoRoom/InfoRoom";
 import {useContext,useEffect} from 'react'
 import MessageContainerRoom from "./MessageContainerRoom";
 import { socketContext } from "../../utils/context/socketContext";
+import { useDispatch, useSelector } from 'react-redux';
 
 
 const MessagePanel = () => {
@@ -20,7 +21,8 @@ const MessagePanel = () => {
     const pathname = usePathname()
     const { updateChannel, channel } = useContext(socketContext);
     const [olddata, setOldData] = useState<ConversationTypes | null>(null);
-    
+    const { rooms} = useSelector((state:any) => state.room);
+
     useEffect(() => {
       
 
@@ -31,7 +33,11 @@ const MessagePanel = () => {
      
     return (
         <div className="p-2 md:p-6   h-full flex items-center w-full justify-between"> 
-                <div className="md:w-[60%] h-full w-full"> 
+               <div className={`${
+                rooms && rooms.some((room: ConversationTypes) => room.id === channel?.id)
+                    ? "md:w-[60%]"
+                    : "md:w-[100%]"
+                } h-full w-full`}>
                     <MessagePanelHeader 
                         setUpdateRome={setUpdateRome}
                         updateRome={updateRome}  
@@ -52,9 +58,16 @@ const MessagePanel = () => {
                         ></UpdateComponent>
                     }
                 </div>
-            <div className="hidden md:block md:w-[40%]  pl-4  h-full ">
-                <InfoRoom></InfoRoom>
-            </div>
+                { rooms && rooms.some((room :ConversationTypes) => room.id===channel?.id )  ?
+                    <div className="hidden md:block md:w-[40%]  pl-4  h-full ">
+                    
+                    <InfoRoom></InfoRoom> 
+
+                    </div>:
+                    null 
+                }
+
+                
 
         </div>
     )

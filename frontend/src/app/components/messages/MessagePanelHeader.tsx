@@ -48,6 +48,8 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 	const socket = useContext(socketContext).socket;
 	const { updateChannel, channel } = useContext(socketContext);
 	const { Userdata } = useContext(socketContext);
+	const { rooms} = useSelector((state:any) => state.room);
+
 	const goBack = () => {
 		updateChannel(null);
 	};
@@ -135,8 +137,11 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 
 
 	return (
-		
-		<div className="flex items-center justify-between rounded-full  bg-[#F2F3FD] p-5  text-black">
+		<>
+		{
+			rooms && rooms.some((room :ConversationTypes) => room.id===channel?.id )  ? (
+
+			<div className="flex items-center justify-between rounded-full  bg-[#F2F3FD] p-5  text-black">
 			<div className="flex items-center">
 				<FaArrowLeft
 					onClick={goBack}
@@ -230,6 +235,11 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 				)
 			) : null}
 		</div>
+
+			) : null 
+		}
+		</>
+		
 	);
 };
 

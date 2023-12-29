@@ -117,7 +117,7 @@ export class PongGame {
 		this.gameGatway.emitToUser1InGame(this.user1, {}, 'launchGame');
 		this.gameGatway.emitToUser2InGame(this.user2, {}, 'launchGame');
 		this.handlePaddleMove();
-		this.startGame();
+		// this.startGame();
 	}
 
 	handleDefaultGameMap() {
@@ -255,7 +255,7 @@ export class PongGame {
 			// topRect,
 		]);
 
-		this.setBallVelocity();
+		// this.setBallVelocity();
 	}
 
 	handleGameCircleObstacles() {

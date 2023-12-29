@@ -129,7 +129,7 @@ export const InfoGroups = () => {
             <div className=" absolute z-0 mx-auto left-0 right-0 bottom-0">
               {  members?.some((member:Members) => member.Status !== "Ban" && member.user_id === Userdata?.id) &&
                 <button onClick={()=>{setValide(true)}}  className=" flex items-center justify-center rounded-full py-2 px-4 bg-[--pink-color] hover:drop-shadow-md mx-auto mb-3 text-white  ">
-                  <h1>Quitte Rome</h1> 
+                  <h1>Quitte Room</h1> 
                     <HiOutlineLogout size={26}  className="ml-2"></HiOutlineLogout>
                   </button>  
               }
