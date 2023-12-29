@@ -1,21 +1,22 @@
 "use client";
 
-import CoversationSideBar from "@/app/components/CoversationSideBar/ConversationSideBar";
+import CoversationSideBar from "../../components/CoversationSideBar/ConversationSideBar";
 import { useContext, useEffect, useState , PropsWithChildren} from "react";
-import MessagePanel from "@/app/components/messages/MessagePanel";
-import {socketContext } from "@/app/utils/context/socketContext";
+import MessagePanel from "../../components/messages/MessagePanel";
+import {socketContext } from "../../utils/context/socketContext";
 import { useDispatch } from "react-redux"
-import { AppDispatch } from "@/app/store"
-import { fetchGetRequestThunk, fetchNumberPending } from "@/app/store/requestSlice";
-import { fetchGetAllFriendsThunk } from "@/app/store/friendsSlice";
-import { fetchBlockedUsers, fetchBlocksThunk } from "@/app/store/blockSlice";
-import { fetchUsersThunk } from "@/app/store/usersSlice";
-import { fetchConversationThunk } from "@/app/store/conversationSlice";
-import { fetchMessagesThunk } from "@/app/store/messageSlice";
-import { ConversationTypes, messageTypes } from "@/app/utils/types";
-import { fetchCountNotification, fetchNotificationThunk } from "@/app/store/notificationSlice";
+import { AppDispatch } from "../../store"
+import { fetchGetRequestThunk, fetchNumberPending } from "../../store/requestSlice";
+import { fetchGetAllFriendsThunk } from "../../store/friendsSlice";
+import { fetchBlockedUsers, fetchBlocksThunk } from "../../store/blockSlice";
+import { fetchUsersThunk } from "../../store/usersSlice";
+import { fetchConversationThunk } from "../../store/conversationSlice";
+import { fetchMessagesThunk } from "../../store/messageSlice";
+import { ConversationTypes, messageTypes } from "../../utils/types";
+import { fetchCountNotification, fetchNotificationThunk } from "../../store/notificationSlice";
 import { useRouter } from "next/navigation";
-import { fetchGetRequestsThunk } from "@/app/store/requestsSlice";
+import { fetchGetRequestsThunk } from "../../store/requestsSlice";
+import AuthCheck from "@/app/utils/AuthCheck";
 
 const ConversationChannelPagechat = () => { 
   const { updateChannel, channel } = useContext(socketContext);
@@ -35,7 +36,10 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchNumberPending());
       dispatch(fetchNotificationThunk());
       dispatch(fetchCountNotification());
-      dispatch(fetchGetRequestsThunk())
+      dispatch(fetchGetRequestsThunk());
+      dispatch(fetchBlocksThunk());
+		  dispatch(fetchBlockedUsers());
+		  dispatch(fetchUsersThunk());
 
 
 
@@ -45,7 +49,12 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchNumberPending());
       dispatch(fetchCountNotification());
       dispatch(fetchNotificationThunk());
-      dispatch(fetchGetRequestsThunk())
+      dispatch(fetchGetRequestsThunk());
+
+      dispatch(fetchBlocksThunk());
+		  dispatch(fetchBlockedUsers());
+		  dispatch(fetchUsersThunk());
+		  dispatch(fetchGetAllFriendsThunk());
 
 
 
@@ -65,6 +74,10 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchNotificationThunk());
       dispatch(fetchCountNotification());
       dispatch(fetchGetRequestsThunk());
+      dispatch(fetchBlocksThunk());
+		  dispatch(fetchBlockedUsers());
+		  dispatch(fetchUsersThunk());
+		  dispatch(fetchGetAllFriendsThunk());
 
 
     })
@@ -73,10 +86,17 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchCountNotification());
     })
     socket.on('blockNotification', (data : any) =>{
+      console.log("provider here");
       dispatch(fetchBlocksThunk());
       dispatch(fetchGetAllFriendsThunk());
       dispatch(fetchGetRequestsThunk());
       dispatch(fetchBlockedUsers());
+
+		  dispatch(fetchUsersThunk());
+
+    
+      if(data)
+        dispatch(fetchMessagesThunk(data.id));
 
 
       if (channel && channel.id) {
@@ -89,6 +109,9 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchGetAllFriendsThunk());
       dispatch(fetchGetRequestsThunk());
       dispatch(fetchBlockedUsers());
+		  dispatch(fetchUsersThunk());
+      if(data)
+        dispatch(fetchMessagesThunk(data.id));
 
 
       
@@ -119,10 +142,29 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchGetAllFriendsThunk());
     })
 
-		socket.on('createConversation', (data : any)=>{
+    socket.on('createConversation', (data : any)=>{
       dispatch(fetchConversationThunk());
 
+      if( channel?.id === data.conversation.id)
+      {
+          dispatch(fetchMessagesThunk(data.conversation.id));
+
+      }
+      
+
+
     });
+
+    socket.on('createConversationMessage', (data : any)=>{
+      dispatch(fetchConversationThunk());
+      if( channel?.id === data.chat.id)
+      {
+          dispatch(fetchMessagesThunk(data.chat.id));
+
+      }
+      
+
+    })
     socket.on('deleteFriendship', (data : any)=>{
       dispatch(fetchGetAllFriendsThunk());
     })
@@ -143,6 +185,7 @@ const ConversationChannelPagechat = () => {
       }
 
 		})
+    
       return () => {
         socket.off('AcceptNotification');
         socket.off('newFriendRequest');
@@ -158,6 +201,7 @@ const ConversationChannelPagechat = () => {
         socket.off('Ingame');
         socket.off('IngameOffline');
         socket.off('newRequestToPlay');
+        socket.off('createConversationMessage');
         // socket.off('AcceptPLayNotification');
         socket.off('RefusePLayNotification');
         socket.off('deleteNOtification')
@@ -167,6 +211,8 @@ const ConversationChannelPagechat = () => {
 		
 	  }, [socket, dispatch, channel?.id, channel, updateChannel]);
     return ( 
+      <AuthCheck>
+        
         <div className=" flex h-screen  xl:container xl:mx-auto">  
           <div className={`h-full  xl:p-10 xl"pl-5 xl:pr-2 ${!channel ? 'block w-full xl:w-[35%]  ' : 'hidden xl:block  xl:w-[35%] '}`}>
             <CoversationSideBar />
@@ -177,9 +223,10 @@ const ConversationChannelPagechat = () => {
             </div>
           :
           <div className="xl:my-10 xl:mr-10  w-full xl:ml-2 xl:w-[65%]   xl:mt-32 hidden xl:flex items-center justify-center">Invite friend to new chat room</div>
-          }
+        }
           </div>
 
+        </AuthCheck>
     );
 }
  

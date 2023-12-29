@@ -1,9 +1,6 @@
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronDown, faBell } from "@fortawesome/free-solid-svg-icons";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { deleteCookie } from "cookies-next";
+import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { MenuButton } from "../Buttons";
 
 type Change = {

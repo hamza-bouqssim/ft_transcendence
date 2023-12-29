@@ -1,12 +1,12 @@
-import { InputContainer, InputField, InputLabel, TextField } from "@/app/utils/styles"
+import { InputContainer, InputField, InputLabel, TextField } from "../../utils/styles"
 import styles  from "./index.module.css"
-import { Button } from "@/app/utils/styles"
+import { Button } from "../../utils/styles"
 import { useDispatch } from "react-redux"
-import { addConversation, createConversationThunk } from "@/app/store/conversationSlice"
+import { addConversation, createConversationThunk } from "../../store/conversationSlice"
 import { useForm } from "react-hook-form"
-import { CreateConversationParams, createUserParams } from "@/app/utils/types"
-import { AppDispatch } from "@/app/store"
-import { createConversation } from "@/app/utils/api"
+import { CreateConversationParams, createUserParams } from "../../utils/types"
+import { AppDispatch } from "../../store"
+import { createConversation } from "../../utils/api"
 import { Dispatch, FC } from "react"
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';

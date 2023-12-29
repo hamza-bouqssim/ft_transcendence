@@ -1,13 +1,27 @@
-import { socketContext } from '@/app/utils/context/socketContext';
+import { AppDispatch } from '@/app/store';
+import { socketContext } from '../../utils/context/socketContext';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchUsersThunk } from '@/app/store/usersSlice';
+import { User } from '@/app/utils/types';
+import { IngameStyling, OflineStyling, OnlineStyling } from '@/app/utils/styles';
 
 export const InfoChat = () => {
 
   const { updateChannel,channel} = useContext(socketContext);
   const {Userdata} = useContext(socketContext);
-  const pathname = usePathname()
+  const pathname = usePathname();
+  const dispatch = useDispatch<AppDispatch>();
+
+  const { users, Userstatus, Usererror } = useSelector(
+		(state: any) => state.users,
+	);
+
+  useEffect(() => {
+		dispatch(fetchUsersThunk());
+	}, [dispatch]);
 
 
 
@@ -22,32 +36,42 @@ export const InfoChat = () => {
     }
       return user;
   }
+  const checkTheStatus = () =>{
+		let test: User | undefined;
 
+		if (channel?.recipient.id === Userdata?.id) {
+			test = channel?.sender;
+		} else 
+			test = channel?.recipient;
+		const user = users.find((user: User) => user.id === test?.id);
+		if(user)
+			return user && user?.status;
+		else
+			return ""
+	}
 
   return (
  
 										<div className=" flex flex-col items-center justify-center gap-3 overflow-hidden rounded-[20px] p-5 ">
+											<div className='flex'>
+                          <Image
+                            src={fetchDataUser()?.avatar_url as string}
+                            className="w-[70px] rounded-full"
+                            alt=""
+                            width={120}
+                            height={120}
+                            priority={true}
+                          />
+                          {checkTheStatus() === 'online' ? (<OnlineStyling/>) :  checkTheStatus() === 'offline' ? (<OflineStyling/>) :( <IngameStyling/>)}
+                      </div>
 											
-											<Image
-												src={fetchDataUser()?.avatar_url as string}
-												className="h-auto w-auto rounded-full"
-												alt=""
-												width={120}
-												height={120}
-												priority={true}
-											/>
                       <span className="text-[25px] text-[--purple-color]">
                       {fetchDataUser()?.display_name}
 												</span>
                         <span className="text-[25px] text-[--purple-color]">
                         @{fetchDataUser()?.username}
 												</span>
-                        {/* <h2 className="text-[20px] text-gray-800">
-												  Member PingPong depuis{" "}
-												  <span className="text-[25px] text-[--purple-color]">
-                            {fetchDataUser()?.display_name}
-												  </span>
-											  </h2> */}
+                       
 										
 										</div>
   )

@@ -1,25 +1,28 @@
 "use client";
 import {
 	AvatarStyle,
+	IngameStyling,
 	MessageItemAvatar,
 	MessagePannelHeaderStyle,
-} from "@/app/utils/styles";
+	OflineStyling,
+	OnlineStyling,
+} from "../../utils/styles";
 import { IoMdSettings } from "react-icons/io";
 import { usePathname, useRouter } from "next/navigation";
 import { IoClose } from "react-icons/io5";
 import { FC, useState } from "react";
 import { FaArrowLeft } from "react-icons/fa6";
 import { useContext, useEffect } from "react";
-import { socketContext } from "@/app/utils/context/socketContext";
+import { socketContext } from "../../utils/context/socketContext";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllMembers } from "@/app/store/memberSlice";
+import { getAllMembers } from "../../store/memberSlice";
 import { HiOutlineLogout } from "react-icons/hi";
 import Image from "next/image";
-import { User, Members, ConversationTypes } from "@/app/utils/types";
-import { updateRooms } from "@/app/store/roomsSlice";
+import { User, Members, ConversationTypes } from "../../utils/types";
+import { updateRooms } from "../../store/roomsSlice";
 import { ToastContainer, toast } from "react-toastify";
-import { AppDispatch } from "@/app/store";
-import { fetchUsersThunk } from "@/app/store/usersSlice";
+import { AppDispatch } from "../../store";
+import { fetchUsersThunk } from "../../store/usersSlice";
 
 interface MessagePanelHeaderProps {
 	setUpdateRome: (value: boolean) => void;
@@ -45,10 +48,20 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 	const socket = useContext(socketContext).socket;
 	const { updateChannel, channel } = useContext(socketContext);
 	const { Userdata } = useContext(socketContext);
+	const { rooms} = useSelector((state:any) => state.room);
+
 	const goBack = () => {
 		updateChannel(null);
 	};
+	const { users, Userstatus, Usererror } = useSelector(
+		(state: any) => state.users,
+	);
 
+	useEffect(() => {
+		dispatch(fetchUsersThunk());
+	}, [dispatch]);
+
+	
 	useEffect(() => {
 		
 		
@@ -86,9 +99,24 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 
 		if (channel?.recipient.id === Userdata?.id) {
 			test = channel?.sender;
-		} else test = channel?.recipient;
+		} else 
+			test = channel?.recipient;
+		
 		return test;
 	};
+	const checkTheStatus = () =>{
+		let test: User | undefined;
+
+		if (channel?.recipient.id === Userdata?.id) {
+			test = channel?.sender;
+		} else 
+			test = channel?.recipient;
+		const user = users.find((user: User) => user.id === test?.id);
+		if(user)
+			return user && user?.status;
+		else
+			return ""
+	}
 
 	const handleUpdate = () => {
     if(olddata)
@@ -106,16 +134,14 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
       });
     }
 	};
-	const { users, Userstatus, Usererror } = useSelector(
-		(state: any) => state.users,
-	);
 
-	useEffect(() => {
-		dispatch(fetchUsersThunk());
-	}, [dispatch]);
+
 	return (
-		
-		<div className="flex items-center justify-between rounded-full  bg-[#F2F3FD] p-5  text-black">
+		<>
+		{
+			rooms && rooms.some((room :ConversationTypes) => room.id===channel?.id )  ? (
+
+			<div className="flex items-center justify-between rounded-full  bg-[#F2F3FD] p-5  text-black">
 			<div className="flex items-center">
 				<FaArrowLeft
 					onClick={goBack}
@@ -132,13 +158,16 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 					/>
 				)}
 				{!channel?.picture && InfoRecipient()?.avatar_url && (
-					<Image
+					<div className="flex">
+						<Image
 						src={InfoRecipient()?.avatar_url as string}
 						className="w-[50px] rounded-full"
 						alt=""
 						width={30}
 						height={30}
-					/>
+						/>
+						{checkTheStatus() === 'online' ? (<OnlineStyling/>) :  checkTheStatus() === 'offline' ? (<OflineStyling/>) :( <IngameStyling/>)}
+					</div>					
 				)}
 				{channel?.name && (
 					<div>
@@ -206,6 +235,11 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 				)
 			) : null}
 		</div>
+
+			) : null 
+		}
+		</>
+		
 	);
 };
 

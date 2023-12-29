@@ -1,9 +1,9 @@
-import { AppDispatch } from "@/app/store";
+import { AppDispatch } from "../../store";
 import {
 	createConversationThunk,
 	fetchConversationUserThunk,
-} from "@/app/store/conversationSlice";
-import { getAllFriends } from "@/app/utils/api";
+} from "../../store/conversationSlice";
+import { getAllFriends } from "../../utils/api";
 import {
 	Conversation,
 	ConversationSideBarContainer,
@@ -11,8 +11,8 @@ import {
 	IngameStyling,
 	OflineStyling,
 	OnlineStyling,
-} from "@/app/utils/styles";
-import { CreateConversationParams, FriendsTypes } from "@/app/utils/types";
+} from "../../utils/styles";
+import { CreateConversationParams, FriendsTypes } from "../../utils/types";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -21,17 +21,17 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import RightBarUsers from "../RightBarUsers";
 import Image from "next/image";
-import { fetchBlockFriendThunk } from "@/app/store/blockSlice";
+import { fetchBlockFriendThunk } from "../../store/blockSlice";
 import {
 	fetchGetAllFriendsThunk,
 	fetchRemoveFriendship,
-} from "@/app/store/friendsSlice";
+} from "../../store/friendsSlice";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { socketContext } from "@/app/utils/context/socketContext";
-import { fetchMessagesThunk } from "@/app/store/messageSlice";
-import { fetchSendRequestPLay } from "@/app/store/requestSlice";
-import { fetchUsersThunk } from "@/app/store/usersSlice";
+import { socketContext } from "../../utils/context/socketContext";
+import { fetchMessagesThunk } from "../../store/messageSlice";
+import { fetchSendRequestPLay } from "../../store/requestSlice";
+import { fetchUsersThunk } from "../../store/usersSlice";
 
 const ListFriends = () => {
 	const ToastError = (message: any) => {

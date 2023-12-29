@@ -1,4 +1,3 @@
-import { Howl } from "howler";
 import { getCurrentSizes } from "../data";
 import {
 	Bodies,
@@ -94,21 +93,7 @@ class PongGame {
 	private render: Render;
 	playerScore: number = 0;
 	botScore: number = 0;
-	private sound: {
-		topPaddleSound: Howl;
-		bottomPaddleSound: Howl;
-		goal: Howl;
-	} = {
-		topPaddleSound: new Howl({
-			src: ["/assets/sounds/leftPaddle.mp3"],
-		}),
-		bottomPaddleSound: new Howl({
-			src: ["/assets/sounds/rightPaddle.mp3"],
-		}),
-		goal: new Howl({
-			src: ["/assets/sounds/winSound.mp3"],
-		}),
-	};
+	
 
 	constructor(
 		private parentDiv: HTMLDivElement,
@@ -173,14 +158,14 @@ class PongGame {
 		this.movePaddle();
 
 		//Run Game
-		if (!this.socket) this.startGame();
+		this.startGame();
 	}
 
 	defaultGameMap = (): void => {
 		// Create Ball:
 		this.ball = Bodies.circle(
 			this.divWidth / 2,
-			this.divHeight / 2,
+			this.divHeight / 2 ,
 			this.map(15, 0, this.defaultCanvasSizes.width, 0, this.divWidth),
 			{
 				label: "ball",
@@ -468,9 +453,7 @@ class PongGame {
 		};
 
 		this.socket.on("setBallVelocity", this.handleSetVelocity);
-		setTimeout(() => {
-			this.socket.on("updateBallPosition", this.handleSetPosition);
-		}, 3000);
+		this.socket.on("updateBallPosition", this.handleSetPosition);
 
 		// this.socket.on("updateBallVelocity", (data: any) => {
 		// 	Body.setVelocity(this.ball!, {
@@ -689,6 +672,7 @@ class PongGame {
 			x: this.currentBallVelocity.x,
 			y: this.currentBallVelocity.y,
 		});
+
 	};
 
 	moveBotPaddle = (): void => {
@@ -738,13 +722,13 @@ class PongGame {
 			const pairs = e.pairs[0];
 
 			if (pairs.bodyA === this.topPaddle || pairs.bodyB === this.topPaddle) {
-				this.sound.topPaddleSound.play();
+				// this.sound.topPaddleSound.play();
 				this.updateBallVelocity();
 			} else if (
 				pairs.bodyA === this.bottomPaddle ||
 				pairs.bodyB === this.bottomPaddle
 			) {
-				this.sound.bottomPaddleSound.play();
+				// this.sound.bottomPaddleSound.play();
 				this.updateBallVelocity();
 			}
 		};
@@ -775,7 +759,7 @@ class PongGame {
 					this.playerScore++;
 					this.lastDirection = "top";
 				}
-				this.sound.goal.play();
+				// this.sound.goal.play();
 				this.resetToDefaultPosition();
 			}
 		};
@@ -784,6 +768,7 @@ class PongGame {
 	};
 
 	clear = (): void => {
+		
 		Composite.remove(engine.world, this.topPaddle!);
 		Composite.remove(engine.world, this.bottomPaddle!);
 		Composite.remove(engine.world, this.rightRect!);

@@ -57,7 +57,7 @@ export const fetchUsersThunk = createAsyncThunk('users/fetchUsersThunk', async (
     const response = await tableFriends();
     return response;
   })
-  export const fetchUserInfo = createAsyncThunk('user/data', async (id_user: string) =>{
+  export const fetchUserInfo = createAsyncThunk('user/data', async (id_user: string | string[]) =>{
     const response = await dataUser(id_user);
     return response;
   })

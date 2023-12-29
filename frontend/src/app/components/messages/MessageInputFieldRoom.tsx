@@ -1,15 +1,15 @@
 "use client"
-import { MessageInputFieldContainer, MessageInput, BtnStyling } from "@/app/utils/styles"
+import { MessageInputFieldContainer, MessageInput, BtnStyling } from "../../utils/styles"
 import { Dispatch, SetStateAction, FC } from "react";
 import { LuSendHorizonal } from "react-icons/lu";
 import { CiImageOn } from "react-icons/ci";
-import { socketContext } from "@/app/utils/context/socketContext";
+import { socketContext } from "../../utils/context/socketContext";
 import {useContext, useEffect,useState}  from "react"
-import { BloqueList, MessageType, User, messageTypes } from "@/app/utils/types";
+import { BloqueList, ConversationTypes, MessageType, User, messageTypes } from "../../utils/types";
 import {useRouter,usePathname} from 'next/navigation'
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchBlockedUsers, fetchBlocksThunk } from "@/app/store/blockSlice";
-import { AppDispatch } from "@/app/store";
+import { fetchBlockedUsers, fetchBlocksThunk } from "../../store/blockSlice";
+import { AppDispatch } from "../../store";
 
 interface Members {
 	id: string;
@@ -52,21 +52,15 @@ const MessageInputFieldRoom: FC<props> = ({setMessage, Message}) => {
     const {Userdata} = useContext(socketContext)
     const dispatch = useDispatch<AppDispatch>();
     const { members, status, error } = useSelector((state:any) => state.member);
+    const { rooms} = useSelector((state:any) => state.room);
     const { blocked} = useSelector((state:any) => state.friendsBlock);
     useEffect(() => {
       dispatch(fetchBlockedUsers())
     }, [dispatch]);
     useEffect(() => {
       const handleOnMessage = (message: any) => {
-        const isBlocked = blocked.some(
-          (elem: BloqueListRoom) =>
-            elem.userOne.id === message.senderId || elem.userTwo.id === message.senderId
-        );
-      
-      
-        if (!isBlocked || message.senderId === Userdata?.id) {
           setMessage((prevMessages: messageTypes[]) => [...prevMessages, message]);
-        }
+
       };
       
       socket.on('messageRome', handleOnMessage);
@@ -74,8 +68,7 @@ const MessageInputFieldRoom: FC<props> = ({setMessage, Message}) => {
           socket.off('messageRome', handleOnMessage);
       };
     }, [channel?.id, socket]);
-
-  
+    
     const sendMessage = async () => {
         if(!content)
             return
@@ -89,9 +82,13 @@ const MessageInputFieldRoom: FC<props> = ({setMessage, Message}) => {
       }
     }
 
+
     return (
       <>
-      { members.some((member : Members) => member.user_id === Userdata?.id && member.Status !== "Mut")?
+      {
+        rooms && rooms.some((room :ConversationTypes) => room.id===channel?.id ) 
+        ?
+        (members.some((member : Members) => member.user_id === Userdata?.id && member.Status !== "Mut")?
         <div className="flex items-center justify-between ">
          
             <CiImageOn className="text-[#5B8CD3] mr-5 " size={40}/>
@@ -111,8 +108,10 @@ const MessageInputFieldRoom: FC<props> = ({setMessage, Message}) => {
         </div> 
         : <div className="flex items-center justify-between ">
           <h1 className="text-[#5B8CD3]  mx-auto">You can block this discussion to no longer receive messages</h1>
-        </div>
-        }
+        </div>) 
+        :
+        null       
+      }
       </>
     )
 }

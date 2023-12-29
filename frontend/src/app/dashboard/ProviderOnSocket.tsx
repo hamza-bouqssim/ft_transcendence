@@ -11,6 +11,9 @@ import { fetchBlockedUsers, fetchBlocksThunk } from '../store/blockSlice';
 import { fetchMessagesThunk } from '../store/messageSlice';
 import { useSetAtom } from 'jotai';
 import { OpponentData } from './game/utils/data';
+import { fetchUsersThunk } from '../store/usersSlice';
+import { fetchConversationThunk } from '../store/conversationSlice';
+import { ConstructionOutlined } from '@mui/icons-material';
 
 
 const ProviderOnSocket = () => {
@@ -32,8 +35,10 @@ const ProviderOnSocket = () => {
           dispatch(fetchCountNotification());
           dispatch(fetchNumberPending());
           dispatch(fetchNotificationThunk());
-          dispatch(fetchCountNotification());
-          dispatch(fetchGetRequestsThunk())
+          dispatch(fetchGetRequestsThunk());
+          dispatch(fetchBlocksThunk());
+          dispatch(fetchBlockedUsers());
+          dispatch(fetchUsersThunk());
 
         });
         socket.on("AcceptPLayNotification", (payload: any) => {
@@ -53,16 +58,22 @@ const ProviderOnSocket = () => {
           dispatch(fetchNumberPending());
           dispatch(fetchCountNotification());
           dispatch(fetchNotificationThunk());
-          dispatch(fetchGetRequestsThunk())
+          dispatch(fetchGetRequestsThunk());
+          dispatch(fetchBlocksThunk());
+		      dispatch(fetchBlockedUsers());
+		      dispatch(fetchUsersThunk());
+		      dispatch(fetchGetAllFriendsThunk());
 
     
     
          });
          socket.on('blockNotification', (data : any) =>{
+          console.log("chat here-->");
           dispatch(fetchBlocksThunk());
+          dispatch(fetchBlockedUsers());
           dispatch(fetchGetAllFriendsThunk());
           dispatch(fetchGetRequestsThunk());
-          dispatch(fetchBlockedUsers());
+          
 
     
     
@@ -72,10 +83,14 @@ const ProviderOnSocket = () => {
           
         })
         socket.on('debloqueNotification', (data : any)=>{
+          console.log("chat here-->");
+
           dispatch(fetchBlocksThunk());
           dispatch(fetchGetAllFriendsThunk());
           dispatch(fetchGetRequestsThunk());
           dispatch(fetchBlockedUsers());
+          dispatch(fetchUsersThunk());
+
 
           if(channel != null)
           {
@@ -96,7 +111,11 @@ const ProviderOnSocket = () => {
           dispatch(fetchNumberPending());
           dispatch(fetchNotificationThunk());
           dispatch(fetchCountNotification());
-          dispatch(fetchGetRequestsThunk())
+          dispatch(fetchGetRequestsThunk());
+          dispatch(fetchBlocksThunk());
+          dispatch(fetchBlockedUsers());
+          dispatch(fetchUsersThunk());
+          dispatch(fetchGetAllFriendsThunk());
 
     
         })
@@ -106,6 +125,30 @@ const ProviderOnSocket = () => {
         })
         socket.on('deleteFriendship', (data : any)=>{
           dispatch(fetchGetAllFriendsThunk());
+        })
+        socket.on('createConversation', (data : any)=>{
+          dispatch(fetchConversationThunk());
+
+
+          if( channel?.id === data.conversation.id)
+          {
+              dispatch(fetchMessagesThunk(data.conversation.id));
+    
+          }
+          
+    
+    
+        });
+
+        socket.on('createConversationMessage', (data : any)=>{
+          dispatch(fetchConversationThunk());
+          if( channel?.id === data.chat.id)
+          {
+              dispatch(fetchMessagesThunk(data.chat.id));
+    
+          }
+          
+
         })
        
           return () => {
@@ -119,11 +162,14 @@ const ProviderOnSocket = () => {
             socket.off('RefusePLayNotification');
             socket.off('deleteNOtification');
             socket.off('deleteFriendship');
+            socket.off('createConversationMessage');
+            socket.off('createConversation');
+
     
     
           };
             
-          }, [socket]);
+          }, [socket, dispatch, channel?.id, channel, updateChannel]);
         
   return (
     <div>

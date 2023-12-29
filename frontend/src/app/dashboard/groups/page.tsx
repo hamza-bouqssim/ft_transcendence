@@ -1,22 +1,23 @@
 "use client"
 import { ToastContainer, toast } from 'react-toastify';
-import CoversationSideBar from "@/app/components/CoversationSideBar/ConversationSideBar";
-import { ConversationChannelStyle, Page} from "@/app/utils/styles";
+import CoversationSideBar from "../../components/CoversationSideBar/ConversationSideBar";
+import { ConversationChannelStyle, Page} from "../../utils/styles";
 import { useContext, useEffect, useState , PropsWithChildren} from "react";
-import { ConversationTypes, User, messageEventPayload, messageTypes } from "@/app/utils/types";
-import { getAuthUser, getConversation, getConversationMessage } from "@/app/utils/api";
+import { ConversationTypes, User, messageEventPayload, messageTypes } from "../../utils/types";
+import { getAuthUser, getConversation, getConversationMessage } from "../../utils/api";
 import { useParams } from "next/navigation";
-import MessagePanel from "@/app/components/messages/MessagePanel";
-import TopRightBar from "@/app/components/TopRightBar";
-import SideBar from "@/app/components/SideBar";
-import { socket, socketContext } from "@/app/utils/context/socketContext";
+import MessagePanel from "../../components/messages/MessagePanel";
+import TopRightBar from "../../components/TopRightBar";
+import SideBar from "../../components/SideBar";
+import { socket, socketContext } from "../../utils/context/socketContext";
 import { Socket } from "socket.io-client";
-import { AppDispatch, RootState, store } from "@/app/store";
+import { AppDispatch, RootState, store } from "../../store";
 import {Provider as ReduxProvider, useDispatch, useSelector} from 'react-redux'
-import { fetchMessagesThunk } from "@/app/store/messageSlice";
-import { fetchConversationThunk } from "@/app/store/conversationSlice";
-import { getAllRooms } from "@/app/store/roomsSlice";
-import { getAllMembers } from "@/app/store/memberSlice";
+import { fetchMessagesThunk } from "../../store/messageSlice";
+import { fetchConversationThunk } from "../../store/conversationSlice";
+import { getAllRooms } from "../../store/roomsSlice";
+import { getAllMembers } from "../../store/memberSlice";
+import AuthCheck from '@/app/utils/AuthCheck';
 
 
 const ConversationChannelPage = () => {
@@ -53,7 +54,7 @@ const ConversationChannelPage = () => {
 
 	},[socket,Userdata])
     return ( 
-      <>
+      <AuthCheck>
             <div className=" flex h-screen  xl:container xl:mx-auto">
               <div className={`h-full  xl:p-10 xl"pl-5 xl:pr-2 ${!channel ? 'block w-full xl:w-[35%]  ' : 'hidden xl:block  xl:w-[35%] '}`}>
                 <CoversationSideBar />
@@ -67,7 +68,7 @@ const ConversationChannelPage = () => {
               }
               </div>
               
-              </>
+              </AuthCheck>
 
      );
 }

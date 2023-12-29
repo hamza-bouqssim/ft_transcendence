@@ -1,17 +1,17 @@
-import { OverlayStyle, OverlayStyleSearching, SearchResultStyling } from "@/app/utils/styles"
+import { OverlayStyle, OverlayStyleSearching, SearchResultStyling } from "../../../utils/styles"
 import { CreateConversationForm } from "../../forms/CreateConversationForm"
 import { Dispatch, FC, createRef, useContext, useEffect, useState } from "react"
 import { MdClose } from "react-icons/md"
-import { createConversation } from "@/app/utils/api"
+import { createConversation } from "../../../utils/api"
 import { CreateSearchForm } from "../../forms/CreateSearchForm"
 import { ModalContainer, ModalContentBody, ModalHeader } from "../../modals"
 import { ModalContainerSearching, ModalContentBodySearching, ModalHeaderSearching } from "."
-import { ConversationTypes, CreateConversationParams,  UsersTypes } from "@/app/utils/types"
+import { ConversationTypes, CreateConversationParams,  UsersTypes } from "../../../utils/types"
 import { useAppDispatch } from "@/redux_toolkit/hooks"
 import { useDispatch } from "react-redux"
 import { useForm } from "react-hook-form"
 import Link from "next/link"
-import { socketContext } from "@/app/utils/context/socketContext"
+import { socketContext } from "../../../utils/context/socketContext"
 import { useRouter } from "next/navigation"
 
 
@@ -46,7 +46,7 @@ type props = {
         // Define a function to fetch search results
         const fetchSearchResults = async () => {
             try {
-                const response = await fetch(`http://localhost:8000/user/search`, {
+                const response = await fetch(`http://10.13.10.3:8000/user/search`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",

@@ -1,5 +1,5 @@
 "use client";
-import SignInForm from "@/app/components/SignInForm";
+import SignInForm from "../components/SignInForm";
 import PingPong from "../components/PingPong";
 import { GoogleSignInButton, IntraSignInButton } from "../components/Buttons";
 import Link from "next/link";
@@ -15,10 +15,10 @@ const SignIn = () => {
 						</div>
 					</div>
 					<div className="flex cursor-pointer items-center justify-center gap-4">
-						<Link href="http://localhost:8000/auth/google/login">
+						<Link href="http://10.13.10.3:8000/auth/google/login">
 							<GoogleSignInButton />
 						</Link>
-						<Link href="http://localhost:8000/auth/42/login">
+						<Link href="http://10.13.10.3:8000/auth/42/login">
 							<IntraSignInButton />
 						</Link>
 					</div>

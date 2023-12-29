@@ -43,7 +43,6 @@
     "eventemitter2": "^6.4.9",
     "express-session": "^1.17.3",
     "faker": "^5.5.3",
-    "howler": "^2.2.4",
     "install": "^0.13.0",
     "ioredis": "^5.3.2",
     "matter-js": "^0.19.0",

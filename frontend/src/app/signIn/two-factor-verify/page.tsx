@@ -1,5 +1,5 @@
 "use client";
-import { Qrcodeform } from "@/app/components/Qrcodefom";
+import { Qrcodeform } from "../../components/Qrcodefom";
 
 const TwoFactorVerify = () => {
 	return (
