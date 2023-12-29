@@ -142,7 +142,6 @@ export class FriendRequestController {
         
     
 
-    // count notification
 
     @Get('notification_count')
     async count_notification(@Req() req){

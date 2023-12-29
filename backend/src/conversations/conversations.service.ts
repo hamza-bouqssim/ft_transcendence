@@ -250,6 +250,7 @@ async createMessags(user : any, params: CreateMessageParams) {
           deletedBy: {
             disconnect: [{ id: chat.recipient.id }, { id: chat.sender.id }],
           },
+          vue: true,
         },
         include :{
           deletedBy : true,
@@ -453,6 +454,27 @@ async deleteConversation(conversationId: string, userId : string) {
   });
 
   return { message: 'Delete conversation successfully' };
+}
+
+async conversation_show(chat_id : string){
+
+  const conversation = await this.prisma.chatParticipents.findUnique({
+    where : {
+      id : chat_id
+    }
+
+  });
+  if (conversation) {
+     await this.prisma.chatParticipents.update({
+      where: { id: chat_id },
+      data: {
+        vue: true,
+      },
+    });
+  
+
+  }
+
 }
   
 

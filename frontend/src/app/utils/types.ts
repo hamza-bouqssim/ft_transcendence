@@ -66,6 +66,7 @@ export type ConversationTypes = {
 	updatedAt: Date;
 	members: Member[];
 	messageRome: lastMessage[];
+    vue : boolean;
 };
 export type lastMessage = {
 	id: string;
