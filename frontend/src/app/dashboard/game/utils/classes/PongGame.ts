@@ -48,7 +48,7 @@ class PongGame {
   private lastDirection: string = "bottom";
   private moveInterval: NodeJS.Timeout | undefined;
   // private lunchGameInterval: any;
-  private updatePositionInterval: NodeJS.Timeout | undefined;
+  // private updatePositionInterval: NodeJS.Timeout | undefined;
   private handleKeyDown = (e: KeyboardEvent): void => {};
   private handleKeyUp = (e: KeyboardEvent): void => {};
   private handleMovePaddle = (e: any): void => {};
@@ -787,7 +787,7 @@ class PongGame {
     // Remove Listeners:
     document.removeEventListener("keydown", this.handleKeyDown);
     document.removeEventListener("keyup", this.handleKeyUp);
-	clearInterval(this.moveInterval);
+    clearInterval(this.moveInterval);
 
     // Close Socket!
     if (this.socket) {

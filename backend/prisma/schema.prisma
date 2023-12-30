@@ -55,7 +55,7 @@ model User {
   messageRome  MessageRome[]
   StateGame                   StateGame?
   MatchHistory1               Match_History[]    @relation("playerOne")
-  MatchHistory2               Match_History[]    @relation("playerTow")
+  MatchHistory2               Match_History[]    @relation("playerTwo")
 
 }
 
@@ -202,7 +202,7 @@ model Match_History {
   totalMatch Int    @default(0)
   createdAt  DateTime @default(now())
   playerone  User     @relation("playerOne", fields: [playerOne], references: [id])
-  playertwo  User     @relation("playerTow", fields: [playerTwo], references: [id])
+  playertwo  User     @relation("playerTwo", fields: [playerTwo], references: [id])
   duration   String   @default("00:00:00")
 }
 
@@ -215,6 +215,5 @@ model StateGame {
   rating     Int    @default(1200)
   user       User   @relation(fields: [user_id], references: [id])
 }
-
 
 

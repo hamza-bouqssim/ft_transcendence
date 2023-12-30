@@ -1,6 +1,9 @@
 /* eslint-disable prettier/prettier */
+import { tr } from '@faker-js/faker';
 import { Injectable } from '@nestjs/common';
+import { error } from 'console';
 import { promises } from 'dns';
+import { stat } from 'fs/promises';
 import { PrismaService } from 'prisma/prisma.service';
 
 
@@ -10,18 +13,25 @@ export class GameService {
 	constructor(private readonly prisma: PrismaService) {}
 
 	async findUserById(id: string) {
-		const user = await this.prisma.user.findUnique({
-			where: {
-				id: id,
-			},
-			select: {
-				id: true,
-				username: true,
-				display_name: true,
-				avatar_url: true,
-			},
-		});
-		return user;
+		try{
+
+			const user = await this.prisma.user.findUnique({
+				where: {
+					id: id,
+				},
+				select: {
+					id: true,
+					username: true,
+					display_name: true,
+					avatar_url: true,
+				},
+			});
+			return user;
+		}
+		catch(error){
+			// throw the error to the gateway
+			return ;
+		}
 	}
 
 	// level and rating
@@ -48,72 +58,91 @@ export class GameService {
 		userId: string,
 		rating: number,
 	) {
-		const level = this.level(win);
-		const state = await this.prisma.stateGame.update({
-			where: {
-				user_id: userId,
-			},
-			data: {
-				win,
-				lose,
-				level: level,
-				rating: rating,
-			},
-		});
-		return state;
+		try{
+
+			const level = this.level(win);
+			const state = await this.prisma.stateGame.update({
+				where: {
+					user_id: userId,
+				},
+				data: {
+					win,
+					lose,
+					level: level,
+					rating: rating,
+				},
+			});
+			return state;
+		}
+		catch(error){
+
+		}
 	}
 
 	async createStateGame(userId: string) {
 		// const state = 
-		await this.prisma.stateGame.create({
-			data: {
-				user: { connect: { id: userId } },
-			},
-		});
-		await this.prisma.user.update({
-			where:{
-				id:userId
-			},
-			data:{
-				first_time:false
-			}
-		})
-	}
+		try{
+
+			await this.prisma.stateGame.create({
+				data: {
+					user: { connect: { id: userId } },
+				},
+			});
+			await this.prisma.user.update({
+				where:{
+					id:userId
+				},
+				data:{
+					first_time:false
+				}
+			})
+		}catch(err){}
+		}
 
 	async deleteStateGame(userId: string) {
-		const deleteState = await this.prisma.stateGame.delete({
-			where: {
-				user_id: userId,
-			},
-		});
-		return deleteState;
+		try{
+
+			const deleteState = await this.prisma.stateGame.delete({
+				where: {
+					user_id: userId,
+				},
+			});
+			return deleteState;
+		}
+		catch(error){
+
+		}
 	}
 
 	async getStateGame(userId: string) {
-		const state = await this.prisma.stateGame.findUnique({
-			where: {
-				user_id: userId,
-			},
-		});
-		return state;
+		try{
+
+			const state = await this.prisma.stateGame.findUnique({
+				where: {
+					user_id: userId,
+				},
+			});
+			return state;
+		}
+		catch(err){}
 	}
 
 	//history
-	async createTwoMatchHistory(
+	async setGameData(
 		userIdOne: string,
 		userIdTwo: string,
 		resultOne: number,
 		resultTwo: number,
 		date: number,
 	) {
-		try {
-			const endDate = new Date();
+		try{
+
 			const duration = this.convertDuration(date);
 			const state = await this.getStateGame(userIdOne);
 			const state2 = await this.getStateGame(userIdTwo);
 			const result1 = resultOne > resultTwo ? 1 : 0;
 			const result2 = resultTwo > resultOne ? 1 : 0;
-
+			
 			const rating = this.rating(state.rating, state2.rating, result1);
 			const rating2 = this.rating(state2.rating, state.rating, result2);
 			await this.updateStateGame(
@@ -121,23 +150,23 @@ export class GameService {
 				state.lose + result2,
 				userIdOne,
 				rating,
-			);
-			await this.updateStateGame(
-				state2.win + result2,
-				state2.lose + result1,
-				userIdTwo,
-				rating2,
-			);
-			const history = await this.createMatchHistory(
-				userIdOne,
-				userIdTwo,
-				resultOne,
-				resultTwo,
-				duration,
-			);
-			return history;
-		} catch (error) {
+				);
+				await this.updateStateGame(
+					state2.win + result2,
+					state2.lose + result1,
+					userIdTwo,
+					rating2,
+					);
+					const history = await this.createMatchHistory(
+						userIdOne,
+						userIdTwo,
+						resultOne,
+						resultTwo,
+						duration,
+						);
+						return history;
 		}
+		catch(err){}
 	}
 
 	async createMatchHistory(
@@ -147,41 +176,34 @@ export class GameService {
 		resultTwo: number,
 		duration: string,
 	) {
-		const totalMatch = await this.totalMatch(userIdOne, userIdTwo) + 1;
-		const match = await this.prisma.match_History.create({
-			data: {
-				playerOne: userIdOne,
-				playerTwo: userIdTwo,
-				resultOne: resultOne,
-				resultTwo: resultTwo,
-				totalMatch,
-				duration,
-			},
-		});
-		return match;
+		try{
+
+			const totalMatch = await this.totalMatch(userIdOne, userIdTwo) + 1;
+			const match = await this.prisma.match_History.create({
+				data: {
+					playerOne: userIdOne,
+					playerTwo: userIdTwo,
+					resultOne: resultOne,
+					resultTwo: resultTwo,
+					totalMatch,
+					duration,
+				},
+			});
+			return match;
+		}catch(error){
+		}
 	}
 
-	async deleteMatchHistory(playerId: string) {
-		await this.deleteStateGame(playerId);
-		const deleteMatch = await this.prisma.match_History.deleteMany({
-			where: {
-				OR: [{ playerOne: playerId }, { playerTwo: playerId }],
-			},
-		});
-		return deleteMatch;
-	}
-
-	// async getMatchHistory(userId: string) {
-	// 	const matchHistory = await this.prisma.match_History.findMany({
+	// async deleteMatchHistory(playerId: string) {
+	// 	await this.deleteStateGame(playerId);
+	// 	const deleteMatch = await this.prisma.match_History.deleteMany({
 	// 		where: {
-	// 			playerOne: userId,
-	// 		},
-	// 		orderBy: {
-	// 			createdAt: 'desc',
+	// 			OR: [{ playerOne: playerId }, { playerTwo: playerId }],
 	// 		},
 	// 	});
-	// 	return matchHistory;
+	// 	return deleteMatch;
 	// }
+
 
 	// endpoints of hamza
 	async getResult(userId: string) {
@@ -215,30 +237,7 @@ export class GameService {
 		});
 		return rating;
 	}
-
-	// async getRanking(userId: string) {
-	// 	const rate = await this.prisma.stateGame.findUnique({
-	// 		where: {
-	// 			user_id: userId,
-	// 		},
-	// 		select: {
-	// 			rating: true,
-	// 			user: {
-	// 				select: {
-	// 					username: true,
-	// 					avatar_url: true,
-	// 				},
-	// 			},
-	// 		},
-	// 	});
-	// 	const modifiedRanking = {
-	// 		rank: rate.rating,
-	// 		username: rate.user.username,
-	// 		picture: rate.user.avatar_url,
-	// 	};
-	// 	return modifiedRanking;
-	// }
-
+//////////
 	async history_matches(userId: string){
 		const history = await this.prisma.match_History.findMany({
 			where: {
@@ -289,7 +288,7 @@ export class GameService {
 		const minutes = Math.floor((date % 3600000) / 60000);
 		const seconds = Math.floor(((date % 3600000) % 60000) / 1000);
 
-		let duration;
+		let duration: string;
 		duration = (hours < 10 ? '0' + hours : hours) + ':';
 		duration += (minutes < 10 ? '0' + minutes : minutes) + ':';
 		duration += seconds < 10 ? '0' + seconds : seconds;

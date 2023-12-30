@@ -1,6 +1,19 @@
 import { atom } from "jotai";
 import { createContext } from "react";
-import { Socket } from "socket.io-client";
+import { Flip, toast } from "react-toastify";
+
+export const ToastInfo = () => {
+	toast.info("Use (→) Or (d) To Move Right && (←) Or (a) To Move Left. You Have The Bottom Paddle", {
+		position: toast.POSITION.TOP_CENTER,
+		autoClose: 6000,
+		hideProgressBar: false,
+		closeOnClick: true,
+		pauseOnHover: true,
+		draggable: true,
+		theme: "dark",
+		transition: Flip
+	});
+};
 
 export const OpponentData = atom<{
 	opponent: {
@@ -24,7 +37,7 @@ export const getCurrentSizes = (
 	currentWidth: number,
 	currentHeight: number,
 ): [number, number] => {
-	const aspectRatio: number = 560 / 836;
+	const aspectRatio: number = 500 / 800;
 	let newWidth: number;
 	let newHeight: number;
 

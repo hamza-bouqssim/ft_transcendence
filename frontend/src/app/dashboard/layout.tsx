@@ -105,8 +105,7 @@ export default function RootLayout({
 	// }, [pathName]);
 
 	return (
-		<html lang="en">
-			<body>
+		<div lang="en">
 			<AuthCheck>
 				<div
 					className={`flex h-screen w-full text-white`}
@@ -129,7 +128,6 @@ export default function RootLayout({
 					</AppWithProviders>
 				</div>
 			</AuthCheck>
-			</body>
-		</html>
+		</div>
 	);
 }
