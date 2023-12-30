@@ -369,11 +369,11 @@ export class PongGame {
 		let movingRight: boolean;
 
 		if (data.state === 'keydown') {
-			if (data.key === 'd' || data.key === 'ArrowRight') movingRight = true;
-			else if (data.key === 'a' || data.key === 'ArrowLeft') movingLeft = true;
+			if (data.key === 'ArrowRight') movingRight = true;
+			else if (data.key === 'ArrowLeft') movingLeft = true;
 		} else {
-			if (data.key === 'd' || data.key === 'ArrowRight') movingRight = false;
-			else if (data.key === 'a' || data.key === 'ArrowLeft') movingLeft = false;
+			if (data.key === 'ArrowRight') movingRight = false;
+			else if (data.key === 'ArrowLeft') movingLeft = false;
 		}
 		if (data.id === this.game.user1.id)
 			this.movesUser1 = {

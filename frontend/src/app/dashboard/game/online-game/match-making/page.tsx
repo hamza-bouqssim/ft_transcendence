@@ -36,13 +36,13 @@ const MatchMaking = () => {
 		};
 		gameSocket.on("redirectUser", handleRedirectUser);
 
-		const handleKnowOpponent = (payload: any) => {
+		const handleKnowOpponent = async (payload: any) => {
 			setOpponentPlayer((prevData) => ({
 				...prevData,
 				opponent: payload.opponent,
 				isRotate: payload.rotate,
 			}));
-			sleep(3000);
+			await sleep(3000);
 			router.push(`./match-making/${mapIndex}/${payload.idGame}`, {
 				scroll: false,
 			});

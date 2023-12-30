@@ -37,8 +37,7 @@
     "swiper": "^11.0.5",
     "tailwind-merge": "^2.2.0",
     "tailwindcss-animate": "^1.0.7",
-    "three": "^0.153.0",
-    "howler": "^2.2.4"
+    "three": "^0.153.0"
   },
   "devDependencies": {
     "@types/matter-js": "^0.19.0",
@@ -48,7 +47,6 @@
     "@types/three": "^0.160.0",
     "autoprefixer": "^10.0.1",
     "eslint": "^8",
-    "@types/howler": "^2.2.9",
     "eslint-config-next": "14.0.4",
     "postcss": "^8",
     "tailwindcss": "^3.3.0",

@@ -1,19 +1,5 @@
 import { atom } from "jotai";
 import { createContext } from "react";
-import { Flip, toast } from "react-toastify";
-
-export const ToastInfo = () => {
-	toast.info("Use (→) Or (d) To Move Right && (←) Or (a) To Move Left. You Have The Bottom Paddle", {
-		position: toast.POSITION.TOP_CENTER,
-		autoClose: 6000,
-		hideProgressBar: false,
-		closeOnClick: true,
-		pauseOnHover: true,
-		draggable: true,
-		theme: "dark",
-		transition: Flip
-	});
-};
 
 export const OpponentData = atom<{
 	opponent: {

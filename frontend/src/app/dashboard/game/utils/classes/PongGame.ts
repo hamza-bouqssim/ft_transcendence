@@ -488,12 +488,12 @@ class PongGame {
   movePaddle = (): void => {
     if (this.socket) {
       document.addEventListener("keydown", (e) => {
-        if (e.key === "d" || e.key === "ArrowRight")
+        if (e.key === "ArrowRight")
           this.socket.emit("keyevent", {
             key: e.key,
             state: "keydown",
           });
-        else if (e.key === "a" || e.key === "ArrowLeft")
+        else if (e.key === "ArrowLeft")
           this.socket.emit("keyevent", {
             key: e.key,
             state: "keydown",
@@ -501,12 +501,12 @@ class PongGame {
       });
 
       document.addEventListener("keyup", (e) => {
-        if (e.key === "d" || e.key === "ArrowRight")
+        if (e.key === "ArrowRight")
           this.socket.emit("keyevent", {
             key: e.key,
             state: "keyup",
           });
-        else if (e.key === "a" || e.key === "ArrowLeft")
+        else if (e.key === "ArrowLeft")
           this.socket.emit("keyevent", {
             key: e.key,
             state: "keyup",
@@ -539,13 +539,13 @@ class PongGame {
       let movingLeft: boolean = false;
 
       this.handleKeyDown = (e: KeyboardEvent): void => {
-        if (e.key === "d" || e.key === "ArrowRight") movingRight = true;
-        else if (e.key === "a" || e.key === "ArrowLeft") movingLeft = true;
+        if (e.key === "ArrowRight") movingRight = true;
+        else if (e.key === "ArrowLeft") movingLeft = true;
       };
 
       this.handleKeyUp = (e: KeyboardEvent): void => {
-        if (e.key === "d" || e.key === "ArrowRight") movingRight = false;
-        else if (e.key === "a" || e.key === "ArrowLeft") movingLeft = false;
+        if (e.key === "ArrowRight") movingRight = false;
+        else if (e.key === "ArrowLeft") movingLeft = false;
       };
 
       document.addEventListener("keydown", this.handleKeyDown);
@@ -729,7 +729,6 @@ class PongGame {
           this.playerScore++;
           this.lastDirection = "top";
         }
-        // this.sound.goal.play();
         this.resetToDefaultPosition();
       }
     };
