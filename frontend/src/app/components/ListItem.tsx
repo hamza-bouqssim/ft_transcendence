@@ -4,6 +4,7 @@ type ListItemParams = {
 	icon: any;
 	spanText: string;
 	additionalStyle: string;
+	iconColor: string;
 };
 
 const ListItem = (props: ListItemParams) => {
@@ -13,7 +14,7 @@ const ListItem = (props: ListItemParams) => {
 		>
 			<FontAwesomeIcon
 				icon={props.icon}
-				className={`h-8 w-8 min-[1750px]:h-11 min-[1750px]:w-11 ${
+				className={`h-8 w-8 min-[1750px]:h-11 min-[1750px]:w-11  ${props.iconColor} ${
 					props.spanText === "LogOut" ? "rotate-180" : ""
 				}`}
 			/>
