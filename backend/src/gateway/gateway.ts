@@ -66,7 +66,9 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
     //  room
 
     @SubscribeMessage('joinToRoom')
-    handleJoinRome(client: Socket, roomId: RoomId){
+    handleJoinRome(client: AuthenticatedSocket, roomId: RoomId){
+        this.roomsService.cleanNotification(client.user.sub, roomId.id);
+        client.join(roomId.id.toString());
          client.join(roomId.id.toString());
     }
     
@@ -307,7 +309,10 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
     @SubscribeMessage("message.create")
     async handleMessageCreateEvent(socket : AuthenticatedSocket,payload : any){
         const messages = await this.conversationService.createMessags(socket.user, payload);
-        this.server.to(messages.participents.recipient.id).to(messages.participents.sender.id).to(messages.participentsId.toString()).emit('onMessage', messages, socket.user);
+        this.server.to(messages.participentsId.toString()).emit('onMessage', messages, socket.user);
+        const number = await this.conversationService.getNottificatiofromchat( messages.participents.recipientId, messages.participentsId)
+        this.server.to(messages.participents.recipientId.toString()).emit('updateNotification', {RoomId:messages.participentsId, number : number});
+        
         // this.userService.notificationMessage( messages.participentsId, messages.participents.recipientId);
         
     }

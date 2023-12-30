@@ -95,7 +95,18 @@ export const joinToRoom = createAsyncThunk('rooms/joinRoom', async (data: join ,
 const roomSlice = createSlice({
   name: 'room',
   initialState,
-  reducers: {},
+  reducers: {
+	updateRoomMessage: (state, action) => {
+		const { roomId, updatedMessage } = action.payload;
+		const room = state.rooms.find((room) => room.id === roomId);
+		if (room) {
+		  room.messageRome[0] = {
+			...room.messageRome[0],
+			...updatedMessage,
+		  };
+		}
+	  },
+  },
   extraReducers: (builder:any) => {
     builder
 			.addCase(getAllRooms.pending, (state: any) => {
@@ -134,6 +145,7 @@ const roomSlice = createSlice({
 				(state: any, action: PayloadAction<ConversationTypes>) => {
 					state.status.update = "succeeded";
 					const updateData = action.payload;
+					console.log( action.payload)
 					const index = state.rooms.findIndex(
 						(room: ConversationTypes) => room.id === updateData.id,
 					);
@@ -147,5 +159,5 @@ const roomSlice = createSlice({
 			});
   },
 });
-
+export const { updateRoomMessage } = roomSlice.actions
 export default roomSlice.reducer;

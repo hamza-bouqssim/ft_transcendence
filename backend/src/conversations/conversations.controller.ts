@@ -109,5 +109,23 @@ async getUnreadMessages(@Body() request: {conversationId : string}) {
      
   }
 
+  @Post('/getNottificatiofromchat')
+  @UseGuards(AuthGuard("jwt"))
+
+  async getNottificatiofromchat(@Body() request : {roomId:string} , @Res() res, @Req() req)
+  {
+
+    try{
+        const {id} = req.user;
+         const notificationNumber = await this.conversationService.getNottificatiofromchat(id, request.roomId);
+         console.log(notificationNumber)
+        return res.status(200).json({ success: true, response: notificationNumber });
+    }catch(error : any){
+        return res.status(401).json({ success: false, message: error.message || 'An unexpected error occurred' });
+    }
+  }
+
+
+
 
 }

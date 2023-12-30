@@ -57,6 +57,7 @@ model User {
   MatchHistory1               Match_History[]    @relation("playerOne")
   MatchHistory2               Match_History[]    @relation("playerTow")
   createdAt DateTime @default(now())
+  UserNotifmessage notificationMessage[]
 
 
 }
@@ -155,6 +156,7 @@ model ChatRoom {
   updatedAt DateTime @updatedAt
   members   Member[]
   messageRome  MessageRome[]
+  NotifRoom notificationRoom[]
 
 }
 
@@ -216,6 +218,15 @@ model StateGame {
   level      Float  @default(0.00)
   rating     Int    @default(1200)
   user       User   @relation(fields: [user_id], references: [id])
+}
+
+
+model notificationMessage {
+  id String @id @default(uuid())
+  userId String
+  user User @relation(fields : [userId], references: [id])
+  roomId String
+  number Int   @default(0)
 }
 
 

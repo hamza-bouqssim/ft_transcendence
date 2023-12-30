@@ -476,7 +476,17 @@ async conversation_show(chat_id : string){
   }
 
 }
-  
+
+async getNottificatiofromchat(userId : string, roomId:string){
+  const notificationNumber = await this.prisma.notificationMessage.findFirst({
+    where: { 
+      userId: userId ,
+      roomId:roomId
+    },
+  });
+  console.log(notificationNumber)
+  return notificationNumber.number;
+}
 
 }
 

@@ -126,7 +126,19 @@ export class RoomsService {
           include:{
             user:true
           }
-        }
+        },
+        messageRome:{
+          select: {
+            id: true,
+            content: true,
+            createdAt: true,
+          },
+          take: 1, 
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
+        
       }
     });
     return chatRoom;
@@ -203,6 +215,18 @@ export class RoomsService {
           select: {
             user_id:true,
             Status:true
+          },
+          
+        },
+        messageRome:{
+          select: {
+            id: true,
+            content: true,
+            createdAt: true,
+          },
+          take: 1, 
+          orderBy: {
+            createdAt: 'desc',
           },
         },
       },

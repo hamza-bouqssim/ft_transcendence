@@ -10,7 +10,7 @@ import {useRouter,usePathname} from 'next/navigation'
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchBlockedUsers, fetchBlocksThunk } from "../../store/blockSlice";
 import { AppDispatch } from "../../store";
-
+import { updateRoomMessage } from '../../store/roomsSlice';
 interface Members {
 	id: string;
 	user_id: string;
@@ -59,6 +59,7 @@ const MessageInputFieldRoom: FC<props> = ({setMessage, Message}) => {
     }, [dispatch]);
     useEffect(() => {
       const handleOnMessage = (message: any) => {
+          dispatch(updateRoomMessage({ roomId: channel?.id, updatedMessage: { content: message.content, createdAt: new Date() } }));
           setMessage((prevMessages: messageTypes[]) => [...prevMessages, message]);
 
       };
