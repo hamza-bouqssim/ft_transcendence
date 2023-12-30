@@ -48,6 +48,17 @@ const Form = ({ img }: FormProps) => {
 			setSuccess(false);
 			return;
 		}
+		if (/\d/.test(_username)) {
+			setUsernameMessage("Username cannot contain numbers");
+			setUSuccess(false);
+			return;
+		}
+		
+		if (/\d/.test(_display_name)) {
+			setDisplayNameMessage("Display_name cannot contain numbers");
+			setDSuccess(false);
+			return;
+		}
 
 		try {
 			await changeDisplayedName(_display_name).then((displayNameResponse) => {
@@ -61,6 +72,7 @@ const Form = ({ img }: FormProps) => {
 				setDisplayNameMessage(displayNameResponse.data.message);
 				setDSuccess(displayNameResponse.data.success);
 			});
+
 			await changeUserName(_username).then((res) => {
 				if(res.data.success)
 				{
@@ -70,6 +82,7 @@ const Form = ({ img }: FormProps) => {
 				setUsernameMessage(res.data.message);
 				setUSuccess(res.data.success);
 			  });
+
 			await changePhoto(Userdata.avatar_url);
 			if (success)
 				setUserdata((prevUserData: any) => ({
@@ -95,7 +108,6 @@ const Form = ({ img }: FormProps) => {
 	const _disable = async () => {
 		await disable2Fa()
 			.then((res) => {
-				// setIsVerified(res.data.success);
 				setUserdata({ ...Userdata, tfa_enabled: false });
 			})
 			.catch((e) => {

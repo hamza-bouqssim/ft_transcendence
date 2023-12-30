@@ -454,12 +454,6 @@ export class UserService {
             },
           });
       
-          await this.prisma.session.deleteMany({
-            where: {
-              data: userId,
-            },
-          });
-      
           await this.prisma.match_History.deleteMany({
             where: {
               OR: [
@@ -483,13 +477,6 @@ export class UserService {
           console.error('Error deleting user account:', error);
           throw new Error('Failed to delete user account');
         }
-      }
-      
-      
-      
-
-      
-      
-      
+      }    
 }
 
