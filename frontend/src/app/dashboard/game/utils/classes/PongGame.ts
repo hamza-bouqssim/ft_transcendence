@@ -54,7 +54,6 @@ class PongGame {
   private handleMovePaddle = (e: any): void => {};
   private handleCollisionStart = (e: any): void => {};
   private handleBeforeUpdate = (): void => {};
-  private handleSetVelocity = (data: any) => {};
   private handleSetPosition = (data: any) => {};
   private defaultCanvasSizes: {
     width: number;
@@ -460,14 +459,17 @@ class PongGame {
     // Random Value Between A Range
     // Math.floor(Math.random() * (max - min + 1)) + min;
     let randomValue: number;
-
-    // if (this.chosenMapIndex === 1) randomValue = Math.random() < 0.5 ? -5 : 5;
     randomValue = Math.random() < 0.5 ? -5 : 5;
-
     const yVelocity = this.lastDirection == "top" ? -5 : 5;
 
     this.currentBallVelocity = {
-      x: this.map(5, 0, this.defaultCanvasSizes.width, 0, this.divWidth),
+      x: this.map(
+        randomValue,
+        0,
+        this.defaultCanvasSizes.width,
+        0,
+        this.divWidth
+      ),
       y: this.map(
         yVelocity,
         0,
@@ -476,13 +478,6 @@ class PongGame {
         this.divHeight
       ),
     };
-
-    // if (this.currentBallVelocity.y < 1) {
-    // 	this.currentBallVelocity = {
-    // 		x: this.map(10, 0, this.defaultCanvasSizes.width, 0, this.divWidth),
-    // 		y: this.map(10, 0, this.defaultCanvasSizes.height, 0, this.divHeight),
-    // 	};
-    // }
 
     Body.setVelocity(this.ball!, {
       x: this.currentBallVelocity.x,
@@ -796,7 +791,6 @@ class PongGame {
 
     // Close Socket!
     if (this.socket) {
-      this.socket.off("setBallVelocity", this.handleSetVelocity);
       this.socket.off("updateBallPosition", this.handleSetPosition);
       this.socket.disconnect();
     }
