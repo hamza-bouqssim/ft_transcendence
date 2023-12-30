@@ -209,7 +209,9 @@ const ChatComponnent = () => {
 	};
 	const deleteConversation = async (conversation: ConversationTypes) => {
 		try {
+			
 			await dispatch(fetchDeleteConversation(conversation.id));
+			setOpenMenuId(null);
 			ToastSuccess("You are deleting this conversation successfully");
 		} catch (error) {
 			ToastError("Failed to delete the conversation. Please try again.");

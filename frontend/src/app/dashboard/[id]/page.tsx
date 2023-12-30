@@ -158,6 +158,8 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 			const res = await dispatch(fetchDebloqueUserThunk(params.id));
 			dispatch(fetchBlockedUsers());
 			dispatch(fetchBlocksThunk());
+			dispatch(fetchGetRequestsThunk())
+		dispatch(fetchGetAllFriendsThunk());
 			if (res.payload && typeof res.payload === 'object') {
 				const responseData = res.payload as { data?: { response?: { message?: string } } };
 				const message = responseData.data?.response?.message;
@@ -181,6 +183,8 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 			const res = await dispatch(fetchBlockFriendThunk(params.id));
 			dispatch(fetchBlockedUsers());
 			dispatch(fetchBlocksThunk());
+			dispatch(fetchGetRequestsThunk())
+			dispatch(fetchGetAllFriendsThunk());
 			if (res.payload && typeof res.payload === 'object') {
 			const responseData = res.payload as { data?: { response?: { message?: string } } };
 			const message = responseData.data?.response?.message;

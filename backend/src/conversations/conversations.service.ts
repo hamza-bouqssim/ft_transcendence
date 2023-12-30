@@ -18,13 +18,13 @@ export class ConversationsService  {
      let conversation;
       const recipient = await this.userService.findByDisplayName(display_name)
       if(!recipient)
-            throw new HttpException('User not found so cannot create Conversation' , HttpStatus.BAD_REQUEST)
+            throw new HttpException('User not found so cannot create a Conversation' , HttpStatus.BAD_REQUEST)
       const isSenderBlocked = await this.checkIfBlocked(user.id, recipient.id);
 
       const isRecipientBlocked = await this.checkIfBlocked(recipient.id, user.id);
                         
       if (isSenderBlocked || isRecipientBlocked) {
-            throw new Error("Interaction not allowed. Users are blocked.");
+            throw new HttpException('"Interaction not allowed. Users are blocked."' , HttpStatus.BAD_REQUEST)
       }
       const Participent = await this.findParticipent(display_name, user);
       if(!Participent)
@@ -67,12 +67,11 @@ export class ConversationsService  {
         conversation
       });
 
-      return {message : 'Conversation create succefully', conversation}
+      return {message : 'Conversation create succefully....', conversation}
 
   }
 
   async checkIfBlocked(userId : string, blockedUserId : string) {
-    // Perform a database query to check if the user is blocked by the other user
     const blockListEntry = await this.prisma.blockList.findFirst({
       where: {
         userOneId: userId,
@@ -80,34 +79,10 @@ export class ConversationsService  {
       },
     });
   
-    // Return true if blocked, false otherwise
     return !!blockListEntry;
   }
 
-  async create_conversations(user : User, display_name : string){
-    let conversation;
-      const recipient = await this.userService.findByDisplayName(display_name)
-      if(!recipient)
-            throw new HttpException('User not found so cannot create Conversation' , HttpStatus.BAD_REQUEST)
-      const isSenderBlocked = await this.checkIfBlocked(user.id, recipient.id);
 
-      const isRecipientBlocked = await this.checkIfBlocked(recipient.id, user.id);
-                  
-      if (isSenderBlocked || isRecipientBlocked) {
-            throw new Error("Interaction not allowed. Users are blocked.");
-      }
-      const Participent = await this.findParticipent(display_name, user);
-      if(!Participent)
-      {
-         conversation = await this.CreateParticipent(display_name, user);
-
-      }else{
-        throw new HttpException('This conversation alrighdy exist' , HttpStatus.BAD_REQUEST)
-
-      }
-      return conversation;
-
-  }
 
     async findConversationById(id : string)
     {
@@ -291,6 +266,14 @@ async createMessags(user : any, params: CreateMessageParams) {
 
 async findConversationUsers(user : any, _display_name : string, message : string)
 {
+  const findRecipient = await this.prisma.user.findFirst({
+    where : {
+      display_name : _display_name,
+    }
+  });
+  if(!findRecipient)
+    throw new HttpException('There is no user with this name!!' , HttpStatus.BAD_REQUEST);
+
   const chat = await this.prisma.chatParticipents.findFirst({
     where: {
       OR: [
@@ -303,18 +286,17 @@ async findConversationUsers(user : any, _display_name : string, message : string
       recipient: true,
     },
   });
-  const findRecipient = await this.prisma.user.findFirst({
-    where : {
-      display_name : _display_name,
-    }
-  });
+  if(!chat)
+    throw new HttpException('There is no conversation between this two users!!' , HttpStatus.BAD_REQUEST)
+
+
   const isSenderBlocked = await this.checkIfBlocked(user.id, findRecipient.id);
 
   const isRecipientBlocked = await this.checkIfBlocked(findRecipient.id, user.id);
                   
-      if (isSenderBlocked || isRecipientBlocked) {
-            throw new Error("Interaction not allowed. Users are blocked.");
-      }
+    if (isSenderBlocked || isRecipientBlocked) {
+      throw new HttpException('"Interaction not allowed. Users are blocked."' , HttpStatus.BAD_REQUEST)
+    }
   const messageCreate= await this.prisma.message.create({
     data: {
       content : message,
@@ -358,7 +340,7 @@ async getMessageByConversationId(conversationId : string){
           participents: {
             include: {
               sender: true,
-              recipient: true, // Include recipient information
+              recipient: true,
             },
           },
         },
@@ -409,18 +391,26 @@ async markConversationAsRead(conversationId: string) {
 }
 
 
-async findUnreadMessages(conversationId: string) {
-  const unreadMessageCount = await this.prisma.message.count({
-    where: {
-      participentsId:conversationId,
-      vue: false,
-    },
-  });
-  return unreadMessageCount;
-}
+
+
 
 async deleteConversation(conversationId: string, userId : string) {
+  const chatParticipent = await this.prisma.chatParticipents.findUnique({
+    where: {
+      id: conversationId,
+      OR: [
+        { senderId: userId },
+        { recipientId: userId },
+      ],
+    },
+    include: { sender: true, recipient: true, deletedBy: true, messages: true },
+  });
+
   
+  if(!chatParticipent )
+    throw new HttpException('Conversation not found.....', HttpStatus.BAD_REQUEST)
+
+
   await this.prisma.chatParticipents.update({
     where: { id: conversationId },
     data: {
@@ -429,10 +419,7 @@ async deleteConversation(conversationId: string, userId : string) {
       },
     },
   });
-  const chatParticipent = await this.prisma.chatParticipents.findUnique({
-    where: { id: conversationId },
-    include: { sender: true, recipient : true, deletedBy: true, messages: true },
-  });
+  
 
   if (Array.isArray(chatParticipent.deletedBy) && chatParticipent.deletedBy.length === 2) {
     for (const message of chatParticipent.messages) {
@@ -456,26 +443,7 @@ async deleteConversation(conversationId: string, userId : string) {
   return { message: 'Delete conversation successfully' };
 }
 
-async conversation_show(chat_id : string){
 
-  const conversation = await this.prisma.chatParticipents.findUnique({
-    where : {
-      id : chat_id
-    }
-
-  });
-  if (conversation) {
-     await this.prisma.chatParticipents.update({
-      where: { id: chat_id },
-      data: {
-        vue: true,
-      },
-    });
-  
-
-  }
-
-}
   
 
 }
