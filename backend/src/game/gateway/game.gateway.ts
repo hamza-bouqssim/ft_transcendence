@@ -203,6 +203,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		const wait = this.getQueueWaiting(client.user.sub);
 		if (typeof data.indexMap === "string" || +data.indexMap < 0 || +data.indexMap > 2) return;
 		const user = await this.gameservice.findUserById(client.user.sub);
+		if(!user)
+			return;
 		if (wait || (game && game.status !== 'invite')) {
 			client.emit('redirectUser', {
 				display_name: user.display_name,

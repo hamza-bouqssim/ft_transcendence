@@ -54,7 +54,7 @@ export class GameController {
 
 	@Get('ranking')
 	@UseGuards(AuthGuard('jwt'))
-	async getAllRanking(@Res() res) {
+	async getAllRanking(@Res() res : any) {
 		try {
 			const rating = await this.gameService.getRanks();
 			const modifiedRank = rating.map((entry, index) => ({

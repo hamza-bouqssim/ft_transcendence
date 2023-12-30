@@ -190,8 +190,7 @@ export class GameService {
 				},
 			});
 			return match;
-		}catch(error){
-		}
+		}catch(error){}
 	}
 
 	// async deleteMatchHistory(playerId: string) {
