@@ -15,10 +15,10 @@ const SignIn = () => {
             </div>
           </div>
           <div className="flex cursor-pointer items-center justify-center gap-4">
-            <Link href="http://10.11.6.4:8000/auth/google/login">
+            <Link href="http://localhost:8000/auth/google/login">
               <GoogleSignInButton />
             </Link>
-            <Link href="http://10.11.6.4:8000/auth/42/login">
+            <Link href="http://localhost:8000/auth/42/login">
               <IntraSignInButton />
             </Link>
           </div>

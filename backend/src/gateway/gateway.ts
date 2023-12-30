@@ -20,7 +20,7 @@ import { UserService } from 'src/user/user.service';
 
 @WebSocketGateway({
 	cors: {
-		origin: ['http://10.11.6.4:3000'],
+		origin: ['http://localhost:3000'],
 		credentials: true,
 	},
 	namespace: '/chat',
@@ -170,13 +170,11 @@ export class WebSocketChatGateway
 			},
 		});
 		member?.members.map((member) => {
-			this.server
-				.to(member.user_id)
-				.emit('updateMember', {
-					roomId: RoomId,
-					idUserleave: id,
-					types: types,
-				});
+			this.server.to(member.user_id).emit('updateMember', {
+				roomId: RoomId,
+				idUserleave: id,
+				types: types,
+			});
 		});
 	}
 

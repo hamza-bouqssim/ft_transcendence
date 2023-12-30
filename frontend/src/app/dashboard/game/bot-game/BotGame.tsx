@@ -62,7 +62,7 @@ const BotGame = ({ mapIndex }: any) => {
 	useEffect(() => {
 		
 
-		let timerInterval: NodeJS.Timeout;
+		// let timerInterval: NodeJS.Timeout;
 		let scoreInterval: NodeJS.Timeout;
 
 		// Swal.fire({
@@ -91,6 +91,7 @@ const BotGame = ({ mapIndex }: any) => {
 		// 		clearInterval(timerInterval);
 		// 	},
 		// }).then(() => {
+			console.log("useEffect!");
 		setStartGame((prev: any) => !prev);
 		pongRef.current = new PongGame(parentCanvasRef.current!, mapIndex);
 

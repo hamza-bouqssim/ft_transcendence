@@ -12,7 +12,7 @@ import {
 } from "./types";
 
 const API = axios.create({
-  baseURL: "http://10.11.6.4:8000/",
+  baseURL: "http://localhost:8000/",
   withCredentials: true,
 });
 
@@ -33,158 +33,158 @@ interface join {
 const config: AxiosRequestConfig = { withCredentials: true };
 
 export const postRegisterUser = async (data: createUserParams) =>
-  axios.post(`http://10.11.6.4:8000/auth/signup`, data, config);
+  axios.post(`http://localhost:8000/auth/signup`, data, config);
 
 export const postLoginUser = async (data: UserCredentialsParams) =>
-  axios.post(`http://10.11.6.4:8000/auth/signin`, data, config);
+  axios.post(`http://localhost:8000/auth/signin`, data, config);
 
 export const getAuthUser = () =>
-  axios.get<User>(`http://10.11.6.4:8000/user/info`, config);
+  axios.get<User>(`http://localhost:8000/user/info`, config);
 
 export const getConversation = () =>
-  axios.get(`http://10.11.6.4:8000/chat/findconversation`, config);
+  axios.get(`http://localhost:8000/chat/findconversation`, config);
 
 export const createConversation = async (
   display_name: string,
   message: string
 ) =>
   axios.post(
-    `http://10.11.6.4:8000/chat/conversation`,
+    `http://localhost:8000/chat/conversation`,
     { display_name: display_name, message: message },
     config
   );
 export const getConversationMessage = (id: string) =>
-  axios.get(`http://10.11.6.4:8000/chat/messages/${id}`, config);
+  axios.get(`http://localhost:8000/chat/messages/${id}`, config);
 export const markConversationAsRead = (id: string) =>
-  axios.get(`http://10.11.6.4:8000/chat/${id}/mark-as-read`, config);
+  axios.get(`http://localhost:8000/chat/${id}/mark-as-read`, config);
 export const loginGoogle = () =>
-  axios.get(`http://10.11.6.4:8000/auth/google/login`, config);
+  axios.get(`http://localhost:8000/auth/google/login`, config);
 
 export const getlogout = () =>
-  axios.get(`http://10.11.6.4:8000/auth/logout`, config);
+  axios.get(`http://localhost:8000/auth/logout`, config);
 
 export const postNewMessage = async (data: CreateMessageParams) =>
-  axios.post(`http://10.11.6.4:8000/chat/create_messages`, data, config);
+  axios.post(`http://localhost:8000/chat/create_messages`, data, config);
 
 // get all friends
 
 export const getAllFriends = () =>
-  axios.get(`http://10.11.6.4:8000/user/my-friends`, config);
+  axios.get(`http://localhost:8000/user/my-friends`, config);
 
 export const getRequest = () => {
-  const response = API.get(`http://10.11.6.4:8000/user/pending-requests`);
+  const response = API.get(`http://localhost:8000/user/pending-requests`);
   return response;
 };
 
 export const getNotification = () =>
-  axios.get(`http://10.11.6.4:8000/user/notification`, config);
+  axios.get(`http://localhost:8000/user/notification`, config);
 export const getBloques = () =>
-  axios.get(`http://10.11.6.4:8000/user/blocked-friends`, config);
+  axios.get(`http://localhost:8000/user/blocked-friends`, config);
 
 export const DebloqueUser = async (id: string) =>
   axios.post(
-    `http://10.11.6.4:8000/friend-request/unblock-friend`,
+    `http://localhost:8000/friend-request/unblock-friend`,
     { friendIdToUnblock: id },
     config
   );
 
 export const bloqueFriend = async (id: string) =>
   axios.post(
-    `http://10.11.6.4:8000/friend-request/block-friend`,
+    `http://localhost:8000/friend-request/block-friend`,
     { friendIdToBlock: id },
     config
   );
 
 export const SendRequest = async (display_name: string) =>
   await axios.post(
-    `http://10.11.6.4:8000/friend-request/send-request`,
+    `http://localhost:8000/friend-request/send-request`,
     { display_name: display_name },
     config
   );
 
 export const sendRequestPlay = async (display_name: string) =>
   await axios.post(
-    `http://10.11.6.4:8000/friend-request/send-request-play`,
+    `http://localhost:8000/friend-request/send-request-play`,
     { display_name: display_name },
     config
   );
 export const acceptRequestToPlay = async (requestId: string) =>
   await axios.post(
-    `http://10.11.6.4:8000/friend-request/accept_request_play`,
+    `http://localhost:8000/friend-request/accept_request_play`,
     { requestId: requestId },
     config
   );
 export const refusePLayRequest = async (requestId: string) =>
   await axios.post(
-    `http://10.11.6.4:8000/friend-request/refuse-request-play`,
+    `http://localhost:8000/friend-request/refuse-request-play`,
     { requestId: requestId },
     config
   );
 export const pending_request_play = () =>
-  axios.get(`http://10.11.6.4:8000/user/pending-request-play`, config);
+  axios.get(`http://localhost:8000/user/pending-request-play`, config);
 
 export const getAllUsers = async () =>
-  axios.get(`http://10.11.6.4:8000/user/All-users`, config);
+  axios.get(`http://localhost:8000/user/All-users`, config);
 
 //count number of the notification
 
 export const getNumberNotification = async () =>
-  axios.get(`http://10.11.6.4:8000/friend-request/notification_count`, config);
+  axios.get(`http://localhost:8000/friend-request/notification_count`, config);
 export const getNumberPending = async () =>
-  axios.get(`http://10.11.6.4:8000/user/count-pending`, config);
+  axios.get(`http://localhost:8000/user/count-pending`, config);
 
 export const AcceptRequest = async (id: string) =>
   axios.post(
-    `http://10.11.6.4:8000/friend-request/accept-request`,
+    `http://localhost:8000/friend-request/accept-request`,
     { requestId: id },
     config
   );
 
 export const refuseRequest = async (id: string) =>
   axios.post(
-    `http://10.11.6.4:8000/friend-request/refuse-request`,
+    `http://localhost:8000/friend-request/refuse-request`,
     { requestId: id },
     config
   );
 
 export const deleteNotification = async (idNotif: string) =>
   axios.post(
-    `http://10.11.6.4:8000/friend-request/delete-notification`,
+    `http://localhost:8000/friend-request/delete-notification`,
     { idNotif: idNotif },
     config
   );
 
 export const changeDisplayedName = async (DisplayName: string) =>
   axios.post(
-    `http://10.11.6.4:8000/user/changedisplayname`,
+    `http://localhost:8000/user/changedisplayname`,
     { newDisplayName: DisplayName },
     config
   );
 
 export const changeUserName = async (UserName: string) =>
   axios.post(
-    `http://10.11.6.4:8000/user/changeusername`,
+    `http://localhost:8000/user/changeusername`,
     { newUserName: UserName },
     config
   );
 
 export const dataUser = async (id_user: string | string[]) =>
   axios.post(
-    `http://10.11.6.4:8000/user/get_user`,
+    `http://localhost:8000/user/get_user`,
     { id_user: id_user },
     config
   );
 
 export const getUnreadMessages = async (conversationId: string) =>
   axios.post(
-    `http://10.11.6.4:8000/chat/unread-messages`,
+    `http://localhost:8000/chat/unread-messages`,
     { conversationId: conversationId },
     config
   );
 
 export const removeFriendship = async (display_name: string) =>
   axios.post(
-    `http://10.11.6.4:8000/friend-request/remove-friendship`,
+    `http://localhost:8000/friend-request/remove-friendship`,
     { display_name: display_name },
     config
   );
@@ -192,7 +192,7 @@ export const removeFriendship = async (display_name: string) =>
 
 export const deleteConversation = async (conversationId: string) =>
   axios.post(
-    `http://10.11.6.4:8000/chat/delete-conversation`,
+    `http://localhost:8000/chat/delete-conversation`,
     { conversationId: conversationId },
     config
   );
@@ -204,36 +204,36 @@ export const changeAvatar = async (avatarFormData: FormData) => {
   };
 
   return axios.post(
-    `http://10.11.6.4:8000/user/changeAvatar`,
+    `http://localhost:8000/user/changeAvatar`,
     avatarFormData,
     config
   );
 };
 export const searchingBar = async (name: string) =>
   axios.post(
-    `http://10.11.6.4:8000/friend-request/search`,
+    `http://localhost:8000/friend-request/search`,
     { name: name },
     config
   );
 export const getAllRequests = async () =>
-  axios.get(`http://10.11.6.4:8000/user/all-pending-request`, config);
+  axios.get(`http://localhost:8000/user/all-pending-request`, config);
 
 export const findConversationUsers = async (
   display_name: string,
   message: string
 ) =>
   axios.post(
-    `http://10.11.6.4:8000/chat/findConversationUser`,
+    `http://localhost:8000/chat/findConversationUser`,
     { display_name: display_name, message: message },
     config
   );
 // tabel friends
 
 export const blockedUsers = async () =>
-  axios.get(`http://10.11.6.4:8000/friend-request/blocked`, config);
+  axios.get(`http://localhost:8000/friend-request/blocked`, config);
 
 export const tableFriends = async () =>
-  axios.get(`http://10.11.6.4:8000/user/table-friends`, config);
+  axios.get(`http://localhost:8000/user/table-friends`, config);
 
 export const createRoomsApi = (data: createRoom) => {
   const response = API.post("/rooms/createRooms", { data });

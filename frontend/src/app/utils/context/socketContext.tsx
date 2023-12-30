@@ -12,7 +12,7 @@ type SocketContextValue = {
   setUserdata: Dispatch<SetStateAction<User | null>>;
 };
 
-export const socket = io("http://10.11.6.4:8000/chat", {
+export const socket = io("http://localhost:8000/chat", {
   withCredentials: true,
 });
 export const socketContext = createContext<SocketContextValue>({

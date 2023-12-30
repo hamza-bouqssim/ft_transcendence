@@ -147,7 +147,7 @@ const Header = () => {
                 </Link>
               ) : (
                 <Link
-                  href={"http://10.11.6.4:8000/auth/logout"}
+                  href={"http://localhost:8000/auth/logout"}
                   onClick={logoutFunction}
                   className="btn-style"
                 >
@@ -178,7 +178,14 @@ const Header = () => {
               </a>
             </div>
             <div className="animate-bounce text-3xl transition duration-300 ease-in-out hover:cursor-pointer hover:text-[var(--pink-color)] 2xl:text-4xl">
-              <FontAwesomeIcon icon={faCircleArrowDown} />
+              <FontAwesomeIcon
+                icon={faCircleArrowDown}
+                onClick={() => {
+                  document
+                    .getElementById("about")
+                    ?.scrollIntoView({ block: "center" });
+                }}
+              />
             </div>
           </div>
         </div>
