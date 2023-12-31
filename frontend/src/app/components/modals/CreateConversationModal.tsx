@@ -42,21 +42,22 @@ const CreateConversationModal: FC<props> = ({ setShow }) => {
         const {register, handleSubmit, formState: { errors }} = useForm<CreateConversationParams>();
         const dispatch = useDispatch<AppDispatch>();
         const onSubmit = async  (data : CreateConversationParams) => {
+			
 
-            const res = await dispatch(createConversationThunk(data));
-              if (res.payload && typeof res.payload === 'object') {
-                const message = res.payload.response?.message;
-                if (message) {
-                    ToastSuccess(message);
-
-                }else {
-                  const responseData = res.payload as {message?: string};
-                  const message = responseData.message;
-                  if(message)
-                    ToastError(message);
-                }
-            }
-       
+			dispatch(createConversationThunk(data))
+			.then((response: any) => {
+				console.log("response-->", response);
+				console.log("response here->", response.payload.success);
+				if (!response.payload.success) {
+					toast.error(response.payload.message);
+				} else {
+					toast.success("Create conversation Successfully! 🎉");
+				}
+			})
+			.catch((error: any) => {
+				toast.error(error);
+			});
+           
 
         }
 

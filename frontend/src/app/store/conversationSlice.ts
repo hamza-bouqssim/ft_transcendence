@@ -22,17 +22,14 @@ export const createConversationThunk = createAsyncThunk(
   async (params: CreateConversationParams, { rejectWithValue }) => {
     try {
       const response = await createConversation(params.display_name ?? '', params.message);
-
-      if (!response.data.success) {
-        throw new Error(response.data.error);
-      }
+      // if (!response.data.success) {
+      //   throw new Error(response.data.error);
+      // }
+      console.log("resposne create-->", response.data);
       return response.data;
     } catch (err: any) {
-      if (err.response && err.response.data) {
-        return rejectWithValue(err.response.data); // Return the entire error object
-      } else {
         throw new Error("create conversation failed with an unknown error");
-      }
+      
     }
   }
 );

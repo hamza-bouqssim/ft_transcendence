@@ -82,6 +82,7 @@ const ChatComponnent = () => {
 		(state: any) => state.users,
 	);
 
+
   useEffect(() => {
 		dispatch(fetchUsersThunk());
 	}, [dispatch]);
@@ -209,20 +210,22 @@ const ChatComponnent = () => {
 	};
 	const deleteConversation = async (conversation: ConversationTypes) => {
 		try {
+			
 			await dispatch(fetchDeleteConversation(conversation.id));
+			setOpenMenuId(null);
 			ToastSuccess("You are deleting this conversation successfully");
 		} catch (error) {
 			ToastError("Failed to delete the conversation. Please try again.");
 		}
 	};
 
-	socket.on('onMessage', (messages : messageTypes)=>{
-		dispatch(fetchConversationThunk());
-  			if (channel && channel.id) {
-				dispatch(fetchMessagesThunk(channel.id));
-  			}
+	// socket.on('onMessage', (messages : messageTypes)=>{
+	// 	dispatch(fetchConversationThunk());
+  	// 		if (channel && channel.id) {
+	// 			dispatch(fetchMessagesThunk(channel.id));
+  	// 		}
 
-	})
+	// })
 	return (
 		<>
 			{show && <CreateConversationModal setShow={setShow} />}

@@ -13,21 +13,19 @@ constructor(private  conversationService : ConversationsService , private eventE
 {}
 
 
+    @Post('/conversation')
+    @UseGuards(AuthGuard("jwt"))
+    async CreateConversations(@Body() request: {display_name : string, message : string}, @Req() req, @Res() res){
+        try {
+            const user =req.user;
+            const returnValue = await this.conversationService.createConversations(user,  request.display_name, request.message);
+            return res.status(200).json({ success: true, response: returnValue });
+        } catch (err) {
+            // return res.status(401).json({ success: false, message: err.message || 'An unexpected error occurred' });
+            return res.send({success: false, message: err.message});
+        }
 
-@Post('/conversation')
-@UseGuards(AuthGuard("jwt"))
- async CreateConversations(@Body() request: {display_name : string, message : string}, @Req() req, @Res() res){
-    try {
-        const user =req.user
-        
-        const returnValue = await this.conversationService.createConversations(user,  request.display_name, request.message);
-        return res.status(200).json({ success: true, response: returnValue });
-    } catch (err) {
-        return res.status(401).json({ success: false, message: err.message || 'An unexpected error occurred' });
     }
-
-}
-
 
 
 @Get('/findconversation')
@@ -35,23 +33,14 @@ constructor(private  conversationService : ConversationsService , private eventE
 async  findConversation(@Req() req: any, @Res() res){
     try{
         const user = req.user
-    const find = await this.conversationService.find(user);
-    return res.status(200).json({data : find});
-
+        const find = await this.conversationService.find(user);
+        return res.status(200).json({data : find});
     }catch(error){
         return res.status(401).json(error.response);
     }
     
 }
 
-@Get('vue_conversation')
-async show_conversation(@Body() request: {chat_id : string}    ){
-            
-    const conversation_Show = await this.conversationService.conversation_show(request.chat_id);
-    return conversation_Show;
-  
-
-}
 
 @Post('/findConversationUser')
 @UseGuards(AuthGuard("jwt"))
@@ -66,48 +55,31 @@ async findConversationUser(@Body() request: {display_name : string, message : st
     }
    
 }
-// @Get(':id')
-// async getconversationById(@Param('id') id: string){
-//     const conversation = await this.conversationService.findConversationById(id);
-//     return conversation;
-// }
-
 
 @Get('/messages/:conversationId')
 @UseGuards(AuthGuard("jwt"))
 
-async getMessagesFromConversation(@Param('conversationId') conversationId : string){
-    const getMessages = await this.conversationService.getMessageByConversationId(conversationId);
-   return getMessages;
+async getMessagesFromConversation(@Param('conversationId') conversationId : string, @Res() res){
+    try{
+        const getMessages = await this.conversationService.getMessageByConversationId(conversationId);
+        return res.status(200).json({ success: true, response: getMessages });
+
+    }catch(error : any){
+        return res.status(401).json({ success: false, message: error.message || 'An unexpected error occurred' });
+    }
+    
 }
-
-@Get('/:id/mark-as-read')
-@UseGuards(AuthGuard("jwt"))
-
-async markConversationAsRead(@Param('id') id: string) {
-  await this.conversationService.markConversationAsRead(id);
-}
-
-@Post('/unread-messages')
-@UseGuards(AuthGuard("jwt"))
-
-async getUnreadMessages(@Body() request: {conversationId : string}) {
-  const unreadMessages = await this.conversationService.findUnreadMessages(request.conversationId);
-  return unreadMessages;
-}
-
-// delete conversation
 
 @Post('/delete-conversation')
 @UseGuards(AuthGuard("jwt"))
-
-  async deleteConversation(@Body() request: {conversationId : string}, @Req() req: Request) {
-    const user = req.user
-
-      const deleteConversation = await this.conversationService.deleteConversation(request.conversationId, user.id);
-      return deleteConversation;
-     
+  async deleteConversation(@Body() request: {conversationId : string}, @Req() req: Request, @Res() res) {
+    try{
+        const user = req.user
+        const deleteConversation = await this.conversationService.deleteConversation(request.conversationId, user.id);
+        return res.status(200).json({ success: true, response: deleteConversation });
+    }catch(error : any){
+             return res.status(401).json({ success: false, message: error.message || 'An unexpected error occurred' });
+    }  
   }
-
 
 }

@@ -84,7 +84,6 @@ export const fetchAcceptFriendRequestThunk = createAsyncThunk("request/accept",a
 			throw new Error(response.data.error);
 		}
 		return response.data; // Assuming the structure of your fulfilled payload
-		console.log("response.data here-->", response.data);
 	} catch (err: any) {
 		if (err.response && err.response.data) {
 			return rejectWithValue(err.response.data); // Return the entire error object

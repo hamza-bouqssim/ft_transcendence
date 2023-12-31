@@ -1,11 +1,8 @@
 import {MessageContainerStyle, MessageItemAvatar, MessageItemContainer, MessageItemContent, MessageItemDetails, MessageItemHeader} from "../../utils/styles"
 import { ConversationTypes, User, messageTypes } from "../../utils/types";
 import { FC, useEffect, useState,useContext ,useRef, useCallback} from "react";
-import {formatRelative} from 'date-fns'
-import { getAuthUser, getConversationMessageRoom } from "../../utils/api";
-import MessageInputField from "./MessageInputFieldRoom";
+import {  getConversationMessageRoom } from "../../utils/api";
 import {socketContext } from "../../utils/context/socketContext";
-import {getConversationMessage} from '../../utils/api'
 import Image from  'next/image'
 import {usePathname} from 'next/navigation'
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,6 +11,7 @@ import { HiMiniUserGroup } from "react-icons/hi2";
 import { AppDispatch } from "@/app/store";
 import { joinToRoom,getAllRooms } from "@/app/store/roomsSlice";
 import { toast } from "react-toastify";
+import MessageInputFieldRoom from "./MessageInputFieldRoom";
 
 
 
@@ -136,7 +134,7 @@ const MessageContainerRoom = () => {
                       ))}
                       <div ref={scrollRef}></div>
                       </div>
-                      <MessageInputField Message={Message} setMessage={setMessage}/>
+                      <MessageInputFieldRoom Message={Message} setMessage={setMessage}/>
                   </>):
                   <div className="w-full flex flex-col items-center justify-center h-[80%]">
                       <Image src={channel?.picture as string} alt="" className=' rounded-full' width={200} height={200}/>

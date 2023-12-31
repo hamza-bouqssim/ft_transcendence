@@ -44,7 +44,7 @@ export class RoomsController {
       );
       return res.status(201).json({data: chatRoom });
     } catch (error) {
-      return res.status(500).json(error.response);
+     return res.send({success: false, message: "Sir za!!!!!"});
     }
   }
 

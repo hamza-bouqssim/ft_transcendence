@@ -145,6 +145,8 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 			const res = await dispatch(fetchDebloqueUserThunk(params.id));
 			dispatch(fetchBlockedUsers());
 			dispatch(fetchBlocksThunk());
+			dispatch(fetchGetRequestsThunk())
+		dispatch(fetchGetAllFriendsThunk());
 			if (res.payload && typeof res.payload === 'object') {
 				const responseData = res.payload as { data?: { response?: { message?: string } } };
 				const message = responseData.data?.response?.message;
@@ -169,6 +171,8 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 			const res = await dispatch(fetchBlockFriendThunk(params.id));
 			dispatch(fetchBlockedUsers());
 			dispatch(fetchBlocksThunk());
+			dispatch(fetchGetRequestsThunk())
+			dispatch(fetchGetAllFriendsThunk());
 			if (res.payload && typeof res.payload === 'object') {
 			const responseData = res.payload as { data?: { response?: { message?: string } } };
 			const message = responseData.data?.response?.message;
@@ -200,11 +204,11 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 		  );
 		  const isFriend = friends.some((friend : any) => friend.id === params.id);
 	  
-		  if (isPendingRequest) {
+		  if (isPendingRequest && Userdata?.id !== params.id ) {
 			setButtonType('pendingRequest');
-		  } else if (isRespondToRequest) {
+		  } else if (isRespondToRequest && Userdata?.id !== params.id) {
 			setButtonType('respondToRequest');
-		  } else if (isFriend) {
+		  } else if (isFriend && Userdata?.id !== params.id) {
 			setButtonType('friends');
 		  } else {
 			setButtonType('sendRequest');
@@ -303,13 +307,13 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 		  };
 
 		  //USEEFFECT TO DISABLE OUTSIDE CLICK
-		  const refOne = useRef(null);
+		  const refOne = useRef<HTMLDivElement | null>(null);
 		  useEffect(() => {
 			document.addEventListener("click", handleClickOutside, true);
 		  }, [])
 		  // FUNCTION TO HANDLE THE OUTSIDE CLICK
 
-		  const handleClickOutside = (e) => {
+		  const handleClickOutside = (e:any) => {
 			
 				if(!refOne.current?.contains(e.target))
 					setShowMessageBlock(false);

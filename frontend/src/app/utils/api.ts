@@ -119,8 +119,15 @@ export const blockedUsers = async () => axios.get(`http://10.13.10.3:8000/friend
 export const tableFriends = async () => axios.get(`http://10.13.10.3:8000/user/table-friends`, config);
 
 export const createRoomsApi = (data:createRoom) =>{
-    const response = API.post("/rooms/createRooms",{data})
-    return response;  
+
+     API.post("/rooms/createRooms",{data}).then((res)=>{
+        console.log(res)
+        return res;  
+     }).catch((err)=>{
+      console.log(err)
+     })
+
+   
 }
 
   

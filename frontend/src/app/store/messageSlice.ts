@@ -24,7 +24,7 @@ const initialState: MessagesState = {
 
 export const fetchMessagesThunk = createAsyncThunk('messages/fetch', async (id : string) => {
     const response = await getConversationMessage(id);
-    return response.data;
+    return response.data.response;
   })
 
 export const messagesSlice = createSlice({
