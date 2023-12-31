@@ -76,11 +76,7 @@ export const SignButton = (props: any) => {
 export const MenuButton = (props: any) => {
 	return (
     <Link
-      href={
-        props.value === "Settings"
-          ? "/dashboard/settings"
-          : "/dashboard/"
-      }
+      href={props.value === "Settings" ? "/dashboard/settings" : "/dashboard"}
       className={`h-[35px] w-[225px] ${props.background} ${
         props.value === "Logout" ? "text-white" : "text-black"
       } flex items-center justify-center rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`}

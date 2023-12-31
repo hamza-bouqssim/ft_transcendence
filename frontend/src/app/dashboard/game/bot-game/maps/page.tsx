@@ -27,6 +27,7 @@ const ChooseMapBot = () => {
 					width={500}
 					height={500}
 					alt=""
+          priority
 				/>
 			</SwiperSlide>
 		),
