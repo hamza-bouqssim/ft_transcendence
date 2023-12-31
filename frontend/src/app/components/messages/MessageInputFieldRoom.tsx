@@ -10,7 +10,8 @@ import {useRouter,usePathname} from 'next/navigation'
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchBlockedUsers, fetchBlocksThunk } from "../../store/blockSlice";
 import { AppDispatch } from "../../store";
-
+import { updateRoomMessage } from '../../store/roomsSlice';
+import React from "react";
 interface Members {
 	id: string;
 	user_id: string;
@@ -57,12 +58,25 @@ const MessageInputFieldRoom: FC<props> = ({setMessage, Message}) => {
     useEffect(() => {
       dispatch(fetchBlockedUsers())
     }, [dispatch]);
+    
     useEffect(() => {
       const handleOnMessage = (message: any) => {
+        // console.log("message-->", message.senderId);
+        // const isSenderBlocked = blocked.some(
+        //   (blockedUser: any) => 
+        //     blockedUser.userOne.id === message.sender.id || blockedUser.userTwo.id === message.sender.id
+        // );
+        // console.log("is bloque-->", isSenderBlocked);
+    
+        // If the sender is blocked, don't update the room message and exit the function
+        // if (isSenderBlocked) {
+        //   console.log('Sender is blocked. Message not updated.');
+        //   return;
+        // } sochern
+          dispatch(updateRoomMessage({ roomId: channel?.id, updatedMessage: { content: message.content, createdAt: new Date() } }));
           setMessage((prevMessages: messageTypes[]) => [...prevMessages, message]);
 
       };
-      
       socket.on('messageRome', handleOnMessage);
       return () => {
           socket.off('messageRome', handleOnMessage);

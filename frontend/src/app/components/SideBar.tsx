@@ -10,12 +10,16 @@ import ListItem from "./ListItem";
 import Link from "next/link";
 import LogOut from "./LogOut";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
+import { useSelector } from "react-redux";
+import { socketContext } from "../utils/context/socketContext";
 
 const SideBar = () => {
 	const pathName = usePathname();
+	const {isMessage} = useContext(socketContext)
+	
 	const items = [
 		{
 			href: "/dashboard",
@@ -33,6 +37,7 @@ const SideBar = () => {
 				pathName.endsWith("/chat") || pathName.endsWith("/groups")
 					? "bg-[--pink-color] animate-wiggle"
 					: "",
+			notification: isMessage,
 		},
 		{
 			href: "/dashboard/game",
@@ -53,7 +58,9 @@ const SideBar = () => {
 	];
 
 	const [isLoggedOut, setIsLoggedOut] = useState<boolean>(false);
-
+	const {notificationChat} = useSelector((state:any) => state.NotificationChat);
+	const {notificationRoom} = useSelector((state:any) => state.NotificationChat);
+	
 	const messageBox = (): boolean => {
 		const MySwal = withReactContent(Swal);
 
@@ -74,18 +81,25 @@ const SideBar = () => {
 		return false;
 	};
 
+
 	return (
 		<aside
 			className={`fixed bottom-0 left-0 right-0 z-20 flex justify-between bg-gradient-to-b from-[#2E2F54] via-[#3B5282] to-[#2E2F54]  text-white duration-300 ease-in-out md:relative md:h-full md:flex-col md:items-center`}
 		>
 			<ul className="flex h-full w-full justify-between font-bold md:w-auto md:flex-col md:justify-start">
 				{items.map((el: any, index: number) => (
-					<Link href={el.href} key={index}>
+					<Link href={el.href} key={index}  className="relative">
 						<ListItem
 							icon={el.icon}
 							spanText={el.icon}
 							additionalStyle={el.condition}
 						/>
+						{el?.notification && !pathName.includes("/chat")  &&   !pathName.includes("/groups") && 
+						<div className="w-3 h-3 absolute bg-[--pink-color]  rounded-full right-10 top-10  ">
+
+						</div>
+						}
+						
 					</Link>
 				))}
 

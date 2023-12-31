@@ -13,6 +13,7 @@ import {useContext,useEffect} from 'react'
 import MessageContainerRoom from "./MessageContainerRoom";
 import { socketContext } from "../../utils/context/socketContext";
 import { useDispatch, useSelector } from 'react-redux';
+import React from "react";
 
 
 const MessagePanel = () => {
@@ -24,8 +25,6 @@ const MessagePanel = () => {
     const { rooms} = useSelector((state:any) => state.room);
 
     useEffect(() => {
-      
-
         if (channel) {
             setOldData(channel);
         }
@@ -66,9 +65,6 @@ const MessagePanel = () => {
                    </div>
                     
                 }
-
-                
-
         </div>
     )
 }

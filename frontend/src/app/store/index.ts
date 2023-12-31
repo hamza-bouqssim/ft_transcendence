@@ -11,7 +11,7 @@ import memberReducer from './memberSlice';
 import UsersAuthReducer from './AuthSlice';
 import messagesUnreadReducer from './UnreadMessages';
 import requestsReducer from './requestsSlice';
-
+import NotificationChatReducer from './NotificationChatSlice';
 
 export const store = configureStore({
   reducer: {
@@ -27,6 +27,7 @@ export const store = configureStore({
     member:memberReducer,
     UsersAuth : UsersAuthReducer,
     messagesUnread : messagesUnreadReducer,
+    NotificationChat:NotificationChatReducer,
 
   },
   middleware: (getDefaultMiddleware) =>

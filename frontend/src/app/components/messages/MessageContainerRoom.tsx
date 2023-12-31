@@ -12,6 +12,7 @@ import { AppDispatch } from "@/app/store";
 import { joinToRoom,getAllRooms } from "@/app/store/roomsSlice";
 import { toast } from "react-toastify";
 import MessageInputFieldRoom from "./MessageInputFieldRoom";
+import { cleanNotification } from "@/app/store/NotificationChatSlice";
 
 
 
@@ -27,6 +28,9 @@ const MessageContainerRoom = () => {
     const { rooms, status, error } = useSelector((state: any) => state.room);
     const [password,satPassword] = useState<string>("")
     const dispatch = useDispatch<AppDispatch>();
+    const menuRef = useRef<HTMLDivElement>(null);
+    const [valide,setValide] =useState(false)
+
     const joinRoom = useCallback(
         (id: string) => {
           if (oldId) socket.emit("leaveToRoom", { id: oldId });
@@ -35,25 +39,31 @@ const MessageContainerRoom = () => {
         },
         [oldId, socket, setOldId]
       );
-      useEffect(() => {
-      
-
-    if(channel){
-        const id = channel.id;
-          getConversationMessageRoom(id)
-            .then((data: any) => {
-              joinRoom(id);
-              setMessage(data.data.data);
-            })
-            .catch((err: any) => console.log(err));
-      }
+    useEffect(() => {
+      if(channel){
+          const id = channel.id;
+            getConversationMessageRoom(id)
+              .then((data: any) => {
+                joinRoom(id);
+                dispatch(cleanNotification({roomId:id}))
+                setMessage(data.data.data);
+              })
+              .catch((err: any) => console.log(err));
+        }
     }, [channel?.id]);
+
+    useEffect(() => {
+      if (channel?.id) {
+        socket.emit("cleanNotification", channel.id);
+          return () => {
+          socket.off("cleanNotification");
+        };
+      }
+    }, [socket,channel?.id,Message]);
   
     useEffect(()=>{
       scrollRef.current?.scrollIntoView()
     },[Message])
-    const menuRef = useRef<HTMLDivElement>(null);
-    const [valide,setValide] =useState(false)
 
     const handleDocumentClick = (event:any) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -71,7 +81,7 @@ const MessageContainerRoom = () => {
             } else {
               toast.success(res.payload);
               dispatch(getAllRooms())
-                .then((res) => {
+                .then((res:any) => {
                   const foundChannel = res.payload.find((room:ConversationTypes ) => room.id === channel?.id);
                   if (foundChannel) {
                     updateChannel(foundChannel);
@@ -136,12 +146,12 @@ const MessageContainerRoom = () => {
                       <MessageInputFieldRoom Message={Message} setMessage={setMessage}/>
                   </>):
                   <div className="w-full flex flex-col items-center justify-center h-[80%]">
-                      <Image src={channel?.picture as string} alt="" className=' rounded-full' width={200} height={200}/>
+                      <Image src={channel?.picture as string} alt="" className=' h-[170px] w-[170px] rounded-full' width={200} height={200}/>
                       <p className='text-[20px] font-blod mt-3 text-center text-black "'>{channel?.name}</p>
                       <p className='text-[15px]  text-center text-gray-400 "'>{channel?.Privacy}</p>
                       <div className="flex items-center justify-center">
-                        <Image src={channel?.members[0].user.avatar_url as string} alt="" className=' rounded-full' width={20} height={20}/>
-                        <Image src={channel?.members[0].user.avatar_url as string} alt="" className=' ml-[-10px] outline outline-2  outline-white  rounded-full' width={20} height={20}/>
+                        <Image src={channel?.members[0]?.user?.avatar_url as string} alt="" className=' rounded-full' width={20} height={20}/>
+                        <Image src={channel?.members[0]?.user?.avatar_url as string} alt="" className=' ml-[-10px] outline outline-2  outline-white  rounded-full' width={20} height={20}/>
                         <p className='text-[15px] ml-2 text-center text-gray-400 "'>{channel?.members.length} + Member in this Room</p>
                       </div>
                       <button  onClick={()=>{setValide(true)}} className=" flex items-center  mt-8 justify-center rounded-full py-2 px-4 bg-[--pink-color] hover:drop-shadow-md mx-auto mb-3 text-white  ">
@@ -160,12 +170,12 @@ const MessageContainerRoom = () => {
         </div>
         <div ref={menuRef} className="fixed left-0 right-0 bottom-0 p-5  z-50 drop-shadow-md top-0 bg-[#ffff] w-[500px] rounded-2xl h-[450px] m-auto">
           <div className="relative h-full flex flex-col items-center justify-center ">
-            <Image src={channel?.picture as string} alt="" className=' rounded-full' width={150} height={150}/>
+            <Image src={channel?.picture as string} alt="" className=' h-[170px] w-[170px]  rounded-full' width={150} height={150}/>
             <p className='text-[20px] font-blod mt-3 text-center text-black "'>{channel?.name}</p>
             <p className='text-[15px]  text-center text-gray-400 "'>{channel?.Privacy}</p>
             <div className="flex items-center justify-center ">
-              <Image src={channel?.members[0].user.avatar_url as string} alt="" className=' rounded-full' width={20} height={20}/>
-              <Image src={channel?.members[0].user.avatar_url as string} alt="" className=' ml-[-10px] outline outline-2  outline-white  rounded-full' width={20} height={20}/>
+              <Image src={channel?.members[0]?.user?.avatar_url as string} alt="" className=' rounded-full' width={20} height={20}/>
+              <Image src={channel?.members[0]?.user?.avatar_url as string} alt="" className=' ml-[-10px] outline outline-2  outline-white  rounded-full' width={20} height={20}/>
               <p className='text-[15px] ml-2 text-center text-gray-400 "'>{channel?.members.length} + Member in this Room</p>
             </div>
             { channel?.Privacy  === "Protected" && 

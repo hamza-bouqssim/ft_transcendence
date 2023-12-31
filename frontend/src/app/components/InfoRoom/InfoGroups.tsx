@@ -82,8 +82,8 @@ export const InfoGroups = () => {
 
   return (
     <>
-      <div className="p-1  h-full  ">
-          <div className=" p-2 h-full  relative overflow-auto  rounded-xl  text-black  bg-[#E0E3FF] no-scrollbar">
+      <div className="p-1  h-full w-full ">
+          <div className=" p-2 h-full relative overflow-auto  rounded-xl  text-black  bg-[#E0E3FF] no-scrollbar">
             <div className="">
               <p>Joined Pong Since</p>
               <p>2023-07-12</p>

@@ -97,6 +97,7 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 
 	const InfoRecipient = () => {
 		let test: User | undefined;
+
 		if (channel?.recipient.id === Userdata?.id) {
 			test = channel?.sender;
 		} else 
@@ -154,7 +155,7 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 				{channel?.picture && (
 					<Image
 						src={channel.picture}
-						className="w-[50px] rounded-full"
+						className=" h-[60px] w-[60px] rounded-full"
 						alt=""
 						width={30}
 						height={30}
@@ -164,7 +165,7 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 					<div className="flex">
 						<Image
 						src={InfoRecipient()?.avatar_url as string}
-						className="w-[50px] rounded-full"
+						className="w-[50px]  rounded-full"
 						alt=""
 						width={30}
 						height={30}

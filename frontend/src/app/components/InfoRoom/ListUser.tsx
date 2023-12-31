@@ -42,7 +42,10 @@ const ListUser: React.FC<Props> = ({member}) => {
   const menuRef = useRef<HTMLDivElement>(null);
   const dispatch =useDispatch<AppDispatch>();
   const optionRef = useRef<HTMLDivElement>(null);
-  
+  const [muteDuration, setMuteDuration] = useState<string>("5");
+
+
+
   const handleDocumentClick = (event:any) => {
     if (menuRef.current && !menuRef.current.contains(event.target)) {
       setValide(null);
@@ -78,8 +81,8 @@ const ListUser: React.FC<Props> = ({member}) => {
       {
         dispatch(banMembers({
           userId:member?.user.id ,
-          id:channel?.id
-        })).then((res)=>{
+          id:channel?.id,
+        })).then((res:any)=>{
           dispatch(getAllMembers(channel.id))
            setValide(null)
         })
@@ -91,8 +94,9 @@ const ListUser: React.FC<Props> = ({member}) => {
       {
         dispatch(mutMembers({
           userId:member?.user.id,
-          id:channel?.id
-        })).then((res)=>{
+          id:channel?.id,
+          muteDuration:muteDuration
+        })).then((res:any)=>{
           dispatch(getAllMembers(channel.id))
           setValide(null)
         })
@@ -105,7 +109,7 @@ const ListUser: React.FC<Props> = ({member}) => {
         dispatch(kickMembers({
           userId:member?.user.id,
           id:channel?.id
-        })).then((res)=>{
+        })).then((res:any)=>{
           dispatch(getAllMembers(channel.id))
           setValide(null)
 
@@ -119,7 +123,7 @@ const ListUser: React.FC<Props> = ({member}) => {
         dispatch(makeMember({
           userId:member?.user.id,
           id:channel?.id
-        })).then((res)=>{
+        })).then((res:any)=>{
           dispatch(getAllMembers(channel.id))
           setValide(null)
         })
@@ -132,7 +136,7 @@ const ListUser: React.FC<Props> = ({member}) => {
         dispatch(makeAdminMember({
           userId:member?.user.id,
           id:channel?.id
-        })).then((res)=>{
+        })).then((res:any)=>{
           dispatch(getAllMembers(channel.id))
           setValide(null)
         })
@@ -142,6 +146,11 @@ const ListUser: React.FC<Props> = ({member}) => {
 
 
   }
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setMuteDuration(event.target.value);
+  };
+  
+  
 
 
   return (
@@ -206,6 +215,11 @@ const ListUser: React.FC<Props> = ({member}) => {
                             <>
                               <p className="text-[17px] pt-5 pl-5 text-black">Mut {member?.user.username} {channel?.name}</p>
                               <p className="mt-2 text-black pl-5">Some Mut related message</p>
+        
+                              <div className='w-full flex flex-col mt-10 items-center justify-center'>
+                                <p className=" text-black">Deree in sec</p>
+                                 <input  value={muteDuration} onChange={(event)=>{setMuteDuration(event.target.value)}} type="number"   className="  rounded-full bg-[#D9D9D9] bg-opacity-20   p-3 text-black  focus:outline-none mx-auto  text-lg w-[50%]"></input>
+                              </div>
                             </>
                           ) : valide === "Ban" ? (
                             <>

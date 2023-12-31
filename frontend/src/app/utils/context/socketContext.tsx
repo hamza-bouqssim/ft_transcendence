@@ -12,9 +12,11 @@ type SocketContextValue = {
 	setOldId: Dispatch<SetStateAction<any>>;
 	Userdata: User | null;
 	setUserdata: Dispatch<SetStateAction<User | null>>;
+  isMessage : boolean;
+  setIsMessage: Dispatch<SetStateAction<boolean>>
 };
 
-export const socket = io("http://10.13.10.3:8000/chat", {
+export const socket = io("http://10.13.10.5:8000/chat", {
      withCredentials: true,
 });
 export const socketContext = createContext<SocketContextValue>({
@@ -25,4 +27,6 @@ export const socketContext = createContext<SocketContextValue>({
   setOldId: () => {}, // Provide a default function if needed
   Userdata: null,
   setUserdata: () => {}, // Provide a default function if needed
+  isMessage : false,
+  setIsMessage : () => {}
 });

@@ -82,7 +82,19 @@ export class DeleteChatRoom{
 
 }
 
+export class muteData{
+    @IsNotEmpty()
+    @IsString()
+    muteDuration:string
 
+    @IsNotEmpty()
+    @IsString()
+    id:string;
+
+    @IsNotEmpty()
+    @IsString()
+    userId:string;
+}
 
 
 export class getAllRooms{

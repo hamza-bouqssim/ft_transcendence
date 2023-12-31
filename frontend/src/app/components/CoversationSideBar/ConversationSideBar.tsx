@@ -23,6 +23,8 @@ import { fetchNumberPending } from "../../store/requestSlice"
 import { FiSearch } from "react-icons/fi";
 import { IoChatbubbleOutline } from "react-icons/io5";
 import { SerachGroup } from "../SeachGroup/SerachGroup"
+import { getNotificationRoom } from "@/app/store/NotificationChatSlice";
+import React from "react";
 
 const CoversationSideBar = () => {
 	const [newRooms , setNewRooms]  = useState<boolean>(false)
@@ -34,8 +36,11 @@ const CoversationSideBar = () => {
 	const [show, setShow] = useState<any>(false);
 	const dispatch = useDispatch<AppDispatch>();
 	const { request, status, error, countRequest  } = useSelector((state:any) => state.request);
+	const {notificationChat} = useSelector((state:any) => state.NotificationChat);
+	const {notificationRoom} = useSelector((state:any) => state.NotificationChat);
 	useEffect(()=>{
 		dispatch(fetchNumberPending());
+		dispatch(getNotificationRoom());
 	},[dispatch]);
     return (
 		<div className="w-full h-full relative p-2  xl:rounded-[20px] pt-4 bg-white">
@@ -46,15 +51,21 @@ const CoversationSideBar = () => {
 						updateChannel(null)
 					}
 				}
-					className={`${(pathname.includes('chat')) ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-1/2 font-['Whitney_Semibold']`}>Chats
+					className={`${(pathname.includes('chat')) ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-1/2 font-['Whitney_Semibold'] flex items-center  justify-center `}>
+						Chats
+						{notificationChat.reduce((accumulator, currentValue) => accumulator + currentValue.number, 0) !== 0 && 
+						<div className="bg-[#fc7785] w-2 h-2  ml-[2px] mb-2 rounded-full"></div>}
 				</button>
+			
 				<button 
 					onClick={() =>{
 						router.push("/dashboard/groups")
 						updateChannel(null)
-					}
-				}
-					className={`${(pathname.includes('groups')) ? 'bg-[#5B8CD3]' : ''} rounded-full p-4 w-1/2 font-['Whitney_Semibold']`}>Group
+					}}
+					className={`${(pathname.includes('groups')) ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-1/2 font-['Whitney_Semibold'] flex items-center  justify-center `}>
+					Groups
+					{notificationRoom.reduce((accumulator, currentValue) => accumulator + currentValue.number, 0) !== 0 && 
+					<div className="bg-[#fc7785] w-2 h-2  ml-[2px] mb-2 rounded-full"></div>}
 				</button>
 			</div>
 			<hr className="bg-[#DFDFDF] w-1/2 mx-auto mt-5"/>
@@ -121,10 +132,6 @@ const CoversationSideBar = () => {
 				</div> 
 				: <CreatGroups setNewRooms={setNewRooms} ></CreatGroups> )
 			}
-
-
-
-
 			{!newRooms 
 				&&  pathname.includes('chat')  && !show
 				&& <ChatComponnent />

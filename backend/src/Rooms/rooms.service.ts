@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Injectable,HttpStatus,HttpException } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
-import { RoomId,Member,JoinRooms ,DeleteChatRoom,UpdateChatRoom,CreateChatRoom,getAllRooms ,CreateMessageRoom} from "src/Rooms/dto/rooms.dto";
+import { RoomId,Member,JoinRooms ,DeleteChatRoom,UpdateChatRoom,CreateChatRoom,getAllRooms ,CreateMessageRoom, muteData} from "src/Rooms/dto/rooms.dto";
 import * as bcrypt from 'bcrypt';
 
 
@@ -126,8 +126,34 @@ export class RoomsService {
           include:{
             user:true
           }
-        }
+        },
+        messageRome:{
+          select: {
+            id: true,
+            content: true,
+            createdAt: true,
+          },
+          take: 1, 
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
+        
       }
+    });
+    await this.prisma.notificationMessage.createMany({
+      data: [
+        {
+          userId: id, // Assuming id is a string
+          roomId: chatRoom.id,
+          number: 0,
+        },
+        ...data.idUserAdd.map((userId) => ({
+          userId: userId, // Assuming userId is a string
+          roomId: chatRoom.id,
+          number: 1,
+        })),
+      ],
     });
     return chatRoom;
   }
@@ -203,6 +229,18 @@ export class RoomsService {
           select: {
             user_id:true,
             Status:true
+          },
+          
+        },
+        messageRome:{
+          select: {
+            id: true,
+            content: true,
+            createdAt: true,
+          },
+          take: 1, 
+          orderBy: {
+            createdAt: 'desc',
           },
         },
       },
@@ -304,8 +342,9 @@ export class RoomsService {
   
   
   
-  async mutMember(id: string, memberUpdate: Member)
+  async mutMember(id: string, memberUpdate: muteData)
   {
+
     const userRole = await this.prisma.member.findFirst({
       where: {
         user_id: id,
@@ -504,6 +543,17 @@ export class RoomsService {
     });
   
     if (remainingMembers === 0) {
+      const existingNotification = await this.prisma.notificationMessage.findFirst({
+        where: {
+          roomId: roomId.id,
+          userId: iduser,
+        },
+      });
+      await this.prisma.notificationMessage.delete({
+        where: {
+          id: existingNotification.id,
+        },
+      });
       await this.prisma.messageRome.deleteMany({
         where: { chatRoomId: roomId.id },
       });
@@ -600,9 +650,11 @@ export class RoomsService {
 
 
     if (isMember) {
-      if (isMember.Status !== 'kick') {
-        throw new HttpException('User is already a member of the room', HttpStatus.CONFLICT);
-      } else {
+       if (isMember.Status === 'Ban') 
+          throw new HttpException('User is Ban of the room', HttpStatus.CONFLICT);
+        else if (isMember.Status !== 'kick') 
+          throw new HttpException('User is already a member of the room', HttpStatus.CONFLICT);
+         else {
         if (joinRooms.Privacy === 'Protected' && !(await bcrypt.compare(joinRooms.password, isRoom.password))) {
           throw new HttpException('Incorrect password for the protected room', HttpStatus.UNAUTHORIZED);
         }
@@ -839,7 +891,7 @@ export class RoomsService {
             }
         }
       }
-      return 'Notification messages updated successfully.';
+      return chatRoom;
   }
 
   async cleanNotification(userId:string,roomId:string)
@@ -852,7 +904,7 @@ export class RoomsService {
     });
     if(!existingNotification)
       return
-    const cleanNotification = await this.prisma.notificationMessage.update({
+    await this.prisma.notificationMessage.update({
       where: {
         id: existingNotification.id,
       },
@@ -881,5 +933,16 @@ export class RoomsService {
     });
     return 'Notification messages deleted successfully.';
 
+  }
+  async getNotification(userId:string)
+  {
+    const existingNotification = await this.prisma.notificationMessage.findMany({
+      where: {
+        userId: userId,
+      },
+    });
+
+    return existingNotification
+   
   }
 }
