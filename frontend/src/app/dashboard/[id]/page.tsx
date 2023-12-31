@@ -125,16 +125,16 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 							message: data.message,
 				}
 				));
-				
+				if(!res.payload.success){
+					ToastError(`${res.payload.message}`);
+				}
 				if(res.payload.response)
 				{
-					
 					router.push("/dashboard/chat");
 					const elem = res.payload.response;
 					updateChannel(elem); 
 
 				}
-				
 
 			}catch(err : any){
 				ToastError(`Interaction not allowed. Users are blocked`);
@@ -362,7 +362,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 				display_name: truncatedDisplayName,
 			};
 		};
-		  return (
+		return (
 			<AuthCheck>
 				<div className="container">
 					<div className="row">

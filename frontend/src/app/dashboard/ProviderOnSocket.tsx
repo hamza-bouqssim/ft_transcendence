@@ -83,7 +83,7 @@ const ProviderOnSocket = () => {
     
     
           if(data?.id === channel?.id)
-              dispatch(fetchMessagesThunk(data.id));
+              dispatch(fetchMessagesThunk(data?.id));
           
         })
         socket.on('debloqueNotification', (data : any)=>{
@@ -100,7 +100,7 @@ const ProviderOnSocket = () => {
 
 
           if(data?.id === channel?.id)
-            dispatch(fetchMessagesThunk(data.id));
+            dispatch(fetchMessagesThunk(data?.id));
     
         })
         socket.on('newRequestToPlay', (data : any)=>{
@@ -135,9 +135,9 @@ const ProviderOnSocket = () => {
           dispatch(fetchConversationThunk());
 
 
-          if( channel?.id === data.conversation.id)
+          if( channel?.id === data?.conversation.id)
           {
-              dispatch(fetchMessagesThunk(data.conversation.id));
+              dispatch(fetchMessagesThunk(data?.conversation.id));
     
           }
           
@@ -147,9 +147,9 @@ const ProviderOnSocket = () => {
 
         socket.on('createConversationMessage', (data : any)=>{
           dispatch(fetchConversationThunk());
-          if( channel?.id === data.chat.id)
+          if( channel?.id === data?.chat.id)
           {
-              dispatch(fetchMessagesThunk(data.chat.id));
+              dispatch(fetchMessagesThunk(data?.chat.id));
     
           }
           

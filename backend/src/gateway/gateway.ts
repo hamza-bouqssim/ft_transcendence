@@ -14,7 +14,7 @@ import { UserService } from 'src/user/user.service';
 
 @WebSocketGateway({
     cors:{
-        origin:['http://localhost:3000'],
+        origin:['http://10.11.6.4:3000'],
         credentials : true,
     },
     namespace: '/chat',

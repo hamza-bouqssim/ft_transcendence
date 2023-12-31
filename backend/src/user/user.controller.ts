@@ -133,13 +133,11 @@ export class UserController {
 	@Get('pending-requests')
 	@UseGuards(AuthGuard('jwt'))
 	async pendingRequests(@Req() req, @Res() res) {
-		try {
+	
 			const user = req.user;
 			const request = await this.userService.pendingRequests(user.id);
 			return res.status(200).json({ success: true, data: request });
-		} catch (error) {
-			return res.status(500).json({ message: error });
-		}
+		
 	}
 
 	@Get('all-pending-request')
@@ -152,6 +150,26 @@ export class UserController {
 	async countPendingRequests(@Req() req) {
 		const user = req.user;
 		return this.userService.CountPendingRequests(user.id);
+	}
+
+	@Get('table-friends')
+	@UseGuards(AuthGuard('jwt'))
+	async allFriend(@Req() req) {
+		const user = req.user;
+		return await this.userService.allFriendsRequest(user.id);
+	}
+
+	@Post('table_friends_id')
+	@UseGuards(AuthGuard('jwt'))
+	async allFriendsId(@Body() request: { id_user: string }, @Res() res) {
+		try{
+			const test =  await this.userService.allFriendsId(request.id_user);
+			return res.status(200).json({ success: true, data: test });
+
+		}catch(error){
+			res.send({ success: true, message: error.message });
+
+		}
 	}
 
 	@Get('pending-request-play')

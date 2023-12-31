@@ -96,8 +96,8 @@ const ConversationChannelPagechat = () => {
 		  dispatch(fetchUsersThunk());
 
     
-      if(data.id === channel?.id)
-        dispatch(fetchMessagesThunk(data.id));
+      if(data?.id === channel?.id)
+        dispatch(fetchMessagesThunk(data?.id));
 
 
     
@@ -111,8 +111,8 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchNotificationThunk());
       dispatch(fetchCountNotification());
 		  dispatch(fetchUsersThunk());
-      if(data.id === channel?.id)
-        dispatch(fetchMessagesThunk(data.id));
+      if(data?.id === channel?.id)
+        dispatch(fetchMessagesThunk(data?.id));
 
 
  
@@ -142,9 +142,9 @@ const ConversationChannelPagechat = () => {
     socket.on('createConversation', (data : any)=>{
       dispatch(fetchConversationThunk());
 
-      if( channel?.id === data.conversation.id)
+      if( channel?.id === data?.conversation.id)
       {
-          dispatch(fetchMessagesThunk(data.conversation.id));
+          dispatch(fetchMessagesThunk(data?.conversation.id));
 
       }
       
@@ -154,9 +154,9 @@ const ConversationChannelPagechat = () => {
 
     socket.on('createConversationMessage', (data : any)=>{
       dispatch(fetchConversationThunk());
-      if( channel?.id === data.chat.id)
+      if( channel?.id === data?.chat.id)
       {
-          dispatch(fetchMessagesThunk(data.chat.id));
+          dispatch(fetchMessagesThunk(data?.chat.id));
 
       }
       
@@ -166,19 +166,19 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchGetAllFriendsThunk());
     })
     socket.on('deleteConversation', (data : ConversationTypes)=>{
-      if(data.id === channel?.id)
+      if(data?.id === channel?.id)
       {
         updateChannel(null);
       }
 			dispatch(fetchConversationThunk());
-      if (channel && channel.id) {
-        dispatch(fetchMessagesThunk(channel.id));
+      if (channel && channel?.id) {
+        dispatch(fetchMessagesThunk(channel?.id));
       }
 		  })
     socket.on('onMessage', (messages : messageTypes)=>{
 			dispatch(fetchConversationThunk());
-      if (channel && channel.id) {
-        dispatch(fetchMessagesThunk(channel.id));
+      if (channel && channel?.id) {
+        dispatch(fetchMessagesThunk(channel?.id));
       }
 
 		})
