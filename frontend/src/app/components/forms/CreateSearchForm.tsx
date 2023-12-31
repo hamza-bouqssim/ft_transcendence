@@ -1,15 +1,27 @@
-import { InputContainer, InputContainerSearching, InputField, InputLabel, SearchResultStyling, TextField } from "../../utils/styles"
-import "./styles.css"
-import { Button } from "../../utils/styles"
-import { useDispatch } from "react-redux"
-import { addConversation, createConversationThunk } from "../../store/conversationSlice"
-import { useForm } from "react-hook-form"
-import { CreateConversationParams, UsersTypes, createUserParams } from "../../utils/types"
-import { AppDispatch } from "../../store"
-import { createConversation } from "../../utils/api"
-import { Dispatch, FC, useEffect, useState } from "react"
-
-
+import {
+  InputContainer,
+  InputContainerSearching,
+  InputField,
+  InputLabel,
+  SearchResultStyling,
+  TextField,
+} from "../../utils/styles";
+import "./styles.css";
+import { Button } from "../../utils/styles";
+import { useDispatch } from "react-redux";
+import {
+  addConversation,
+  createConversationThunk,
+} from "../../store/conversationSlice";
+import { useForm } from "react-hook-form";
+import {
+  CreateConversationParams,
+  UsersTypes,
+  createUserParams,
+} from "../../utils/types";
+import { AppDispatch } from "../../store";
+import { createConversation } from "../../utils/api";
+import { Dispatch, FC, useEffect, useState } from "react";
 
 export const CreateSearchForm = () => {
   const {
@@ -28,7 +40,7 @@ export const CreateSearchForm = () => {
     // Define a function to fetch search results
     const fetchSearchResults = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/user/search`, {
+        const response = await fetch(`http://10.11.6.2:8000/user/search`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
