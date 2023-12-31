@@ -60,9 +60,16 @@ const SignInForm = forwardRef((props: any, ref: any) => {
 
 	const onSubmit = async (data: UserCredentialsParams) => {
 		try {
-			await postLoginUser(data).then((res) => {
+			 await postLoginUser(data).then((res) => {
+				console.log("res here-->", res);
+				if(!res.data.success && !res.data.signed)
+				{
+					ToastError(`${res.data.message}`);
+				}
 				if (res.data.success) {
 					router.push("/dashboard/settings");
+					ToastSuccess(`${res.data.message}`);
+
 				}
 				else if (res.data.valid){
 					router.push("/signIn/verify-two-factor");
@@ -71,7 +78,6 @@ const SignInForm = forwardRef((props: any, ref: any) => {
 					router.push("/dashboard");
 				}
 			});
-			ToastSuccess(`You are signIn succefully`);
 		} catch (err: any) {
 			if (err.response) {
 				const errorMessage = err.response.data.message;

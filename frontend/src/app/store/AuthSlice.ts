@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import {  changeAvatar, changeDisplayedName, changeUserName, dataUser, getAllUsers, getAuthUser, getConversationMessage, tableFriends} from '../utils/api';
-import { ConversationMessage, UsersTypes, messageTypes } from '../utils/types';
-import axios from 'axios';
+import { getAuthUser} from '../utils/api';
+import { UsersTypes } from '../utils/types';
 
 export interface UsersAuthState {
   UsersAuth : UsersTypes[];

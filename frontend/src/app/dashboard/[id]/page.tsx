@@ -1,6 +1,6 @@
 "use client";
 
-import { SendRequest, getMatchHistory, getStates, getUserInfos} from '../../utils/api';
+import {  getMatchHistory, getStates, getUserInfos} from '../../utils/api';
 import { useState, useEffect, useContext } from 'react';
 import Boxes from '../../components/Boxes';
 import HistoryMatches from '../../components/HistoryMatches';
@@ -15,16 +15,15 @@ import { fetchAcceptFriendRequestThunk, fetchGetRequestThunk, fetchRequestThunk 
 import AchievementsList from '../../components/AchievementsList';
 import { HistoryMatchesType, ResultsType, UserInfoType } from '../Imports';
 import { fetchUsersThunk } from '../../store/usersSlice';
-import { BloqueList, CreateConversationParams, User } from '../../utils/types';
+import { BloqueList, CreateConversationParams, FriendsTypes, User } from '../../utils/types';
 import { fetchGetAllFriendsThunk } from '../../store/friendsSlice';
 import { socketContext } from '../../utils/context/socketContext';
 import { fetchGetRequestsThunk } from '../../store/requestsSlice';
 import { createConversationThunk, fetchConversationUserThunk } from '../../store/conversationSlice';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
-import { userInfo } from 'os';
 import AuthCheck from '@/app/utils/AuthCheck';
-import { PlaylistAddOutlined } from '@mui/icons-material';
+import { UserInfo } from 'os';
 
 const Dashboard = ({ params }: { params: { id: string } }) => {
 	
@@ -126,16 +125,16 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 							message: data.message,
 				}
 				));
-				
+				if(!res.payload.success){
+					ToastError(`${res.payload.message}`);
+				}
 				if(res.payload.response)
 				{
-					
 					router.push("/dashboard/chat");
 					const elem = res.payload.response;
 					updateChannel(elem); 
 
 				}
-				
 
 			}catch(err : any){
 				ToastError(`Interaction not allowed. Users are blocked`);
@@ -158,7 +157,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 			dispatch(fetchBlockedUsers());
 			dispatch(fetchBlocksThunk());
 			dispatch(fetchGetRequestsThunk())
-		dispatch(fetchGetAllFriendsThunk());
+			dispatch(fetchGetAllFriendsThunk());
 			if (res.payload && typeof res.payload === 'object') {
 				if(!res.payload.success)
 				{
@@ -217,7 +216,6 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 		
 
 		useEffect(() => {
-		  // Your conditions
 		  const isPendingRequest = requests.some(
 			(request : any) => request.user_id === Userdata?.id && request.friend_id === params.id
 		  );
@@ -276,7 +274,6 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 			fetchGameStates();
 		}, [params.id]);
 
-		//send request 
 		const { users, Userstatus, Usererror } = useSelector(
 			(state: any) => state.users,
 		);
@@ -361,8 +358,23 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 		  }
 
 	  
+		  const getDisplayUser = (user : UserInfoType | undefined) => {
+			let truncatedDisplayName;
+			if(user){
+				truncatedDisplayName =
+				user.display_name.length > 10
+					? `${user.display_name.substring(0, 10)}...`
+					: user.display_name;
 
-		  return (
+			}
+			
+	
+			return {
+				...user,
+				display_name: truncatedDisplayName,
+			};
+		};
+		return (
 			<AuthCheck>
 				<div className="container">
 					<div className="row">
@@ -433,7 +445,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 												<h2 className="text-[20px] text-gray-800">
 													Send Message to{" "}
 													<span className="text-[25px] text-[--purple-color]">
-														{userinfo?.display_name}
+														{getDisplayUser(userinfo).display_name}
 													</span>
 												</h2>
 												<Image

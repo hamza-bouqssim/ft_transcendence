@@ -1,16 +1,13 @@
 import { AppDispatch } from "../../store";
 import { fetchAcceptFriendRequestThunk, fetchGetRequestThunk, fetchREfuseFriendRquestThunk } from "../../store/requestSlice";
-import { getRequest } from "../../utils/api";
 import { Conversation, ConversationSideBarContainer, ConversationSideBarItem } from "../../utils/styles";
-import { AcceptRequestParams, RequestTypes, UsersTypes } from "../../utils/types";
-import { faCheck, faChevronDown, faTimesCircle, faXmark } from "@fortawesome/free-solid-svg-icons";
+import {  RequestTypes, UsersTypes } from "../../utils/types";
+import { faCheck,  faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useContext, useEffect, useState } from "react";
+import {  useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import RightBarUsers from "../RightBarUsers";
 import Image from "next/image";
-import { socket, socketContext } from "../../utils/context/socketContext";
-import { ToastContainer, toast } from 'react-toastify';
+import {  toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 
@@ -79,6 +76,18 @@ const SendRequest  = () => {
           ToastError(`Error refusing friend request, ${error}`);
         }
       }
+      const getDisplayUser = (friend : UsersTypes) => {
+		
+        const truncatedDisplayName =
+          friend.display_name.length > 10
+            ? `${friend.display_name.substring(0, 10)}...`
+            : friend.display_name;
+    
+        return {
+          ...friend,
+          display_name: truncatedDisplayName,
+        };
+      };
       return (
 
         <Conversation>
@@ -89,7 +98,7 @@ const SendRequest  = () => {
 							<ConversationSideBarItem key={elem.id}>
                 <Image src={elem.user.avatar_url} className="h-14 w-14 rounded-[50%] bg-black " alt="Description of the image" width={60}   height={60} />
 								<div>
-					 				<span  className="ConversationName">{elem.user.display_name}</span>
+					 				<span  className="ConversationName">{getDisplayUser(elem.user).display_name}</span>
 					 			</div>
                 <div className=" absolute right-5 p-4 ">
                     <FontAwesomeIcon icon={faCheck}  className="text-black  transform cursor-pointer text-2xl duration-500 ease-in-out hover:text-[--pink-color] lg:text-3xl" onClick={() => handleClickAcceptRequest(elem.id)}/>

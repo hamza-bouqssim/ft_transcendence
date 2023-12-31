@@ -39,7 +39,6 @@ type props = {
 
 const CreateSearchModal: FC<props> = ({ setShow }) => {
   const ref = createRef<HTMLDivElement>();
-  // const [show, setShow] = useState<any>(false);
   const { updateChannel, channel } = useContext(socketContext);
 
   const {
@@ -50,7 +49,6 @@ const CreateSearchModal: FC<props> = ({ setShow }) => {
   const dispatch = useDispatch < useAppDispatch();
 
   const onSubmit = async (data: CreateConversationParams) => {};
-
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<UsersTypes[]>([]);
   const router = useRouter();
@@ -60,7 +58,7 @@ const CreateSearchModal: FC<props> = ({ setShow }) => {
     // Define a function to fetch search results
     const fetchSearchResults = async () => {
       try {
-        const response = await fetch(`http://10.11.6.2:8000/user/search`, {
+        const response = await fetch(`http://localhost:8000/user/search`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -101,13 +99,6 @@ const CreateSearchModal: FC<props> = ({ setShow }) => {
 
     updateChannel(elem);
   };
-  // function isUsersTypes(elem: ConversationTypes | UsersTypes): elem is UsersTypes {
-  // 		return (elem as UsersTypes).display_name !== undefined;
-  // 	}
-
-  //   function isGroupChannel(elem: ConversationTypes | UsersTypes): elem is ConversationTypes {
-  //     return (elem as ConversationTypes).name !== undefined;
-  //   }
 
   return (
     <div className="w-full max-w-screen-xl mx-auto px-6">

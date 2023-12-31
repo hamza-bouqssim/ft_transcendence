@@ -1,9 +1,6 @@
-import { getAllMembers } from '../../store/memberSlice';
 import { socketContext } from '../../utils/context/socketContext';
-import React ,{useContext,useEffect} from 'react'
+import React ,{useContext} from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { MdOutlineMoreVert } from "react-icons/md";
-import Image from 'next/image';
 import ListUser from './ListUser';
 
 interface Member {

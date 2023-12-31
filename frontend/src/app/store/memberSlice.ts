@@ -137,20 +137,7 @@ const membersSlice = createSlice({
         state.status = 'failed';
         state.error = action.payload;
       })
-      // .addCase(banMembers.pending, (state: any) => {
-      //   state.status = 'loading';
-      // })
-      // .addCase(banMembers.fulfilled, (state: any, action: PayloadAction<Member[]>) => {
-      //   state.status = 'succeeded';
-      //   state.members = state.members.map((member) => ({
-      //     ...member,
-      //     Status: member.user_id === action.payload ? 'Ban' : member.Status,
-      //   }));
-      // })
-      // .addCase(banMembers.rejected, (state: any, action: PayloadAction<string>) => {
-      //   state.status = 'failed';
-      //   state.error = action.payload;
-      // })
+     
       
   },
 });

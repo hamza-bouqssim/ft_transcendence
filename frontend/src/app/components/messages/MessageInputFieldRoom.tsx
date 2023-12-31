@@ -1,12 +1,11 @@
 "use client"
-import { MessageInputFieldContainer, MessageInput, BtnStyling } from "../../utils/styles"
-import { Dispatch, SetStateAction, FC } from "react";
+import { Dispatch,  FC } from "react";
 import { LuSendHorizonal } from "react-icons/lu";
 import { CiImageOn } from "react-icons/ci";
 import { socketContext } from "../../utils/context/socketContext";
 import {useContext, useEffect,useState}  from "react"
-import { BloqueList, ConversationTypes, MessageType, User, messageTypes } from "../../utils/types";
-import {useRouter,usePathname} from 'next/navigation'
+import {  ConversationTypes, MessageType, User, messageTypes } from "../../utils/types";
+import {usePathname} from 'next/navigation'
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchBlockedUsers, fetchBlocksThunk } from "../../store/blockSlice";
 import { AppDispatch } from "../../store";
@@ -106,7 +105,7 @@ const MessageInputFieldRoom: FC<props> = ({setMessage, Message}) => {
         (members.some((member : Members) => member.user_id === Userdata?.id && member.Status !== "Mut")?
         <div className="flex items-center justify-between ">
          
-            <CiImageOn className="text-[#5B8CD3] mr-5 " size={40}/>
+            {/* <CiImageOn className="text-[#5B8CD3] mr-5 " size={40}/> */}
             <div  className="w-full  flex items-center bg-[#F2F3FD]  rounded-full justify-between">
                 <input 
                 onKeyDown={handleEnter}

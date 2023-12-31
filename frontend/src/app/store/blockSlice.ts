@@ -1,6 +1,6 @@
-import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import {  createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { DebloqueUser, blockedUsers, bloqueFriend, getAllFriends, getBloques } from '../utils/api';
-import { BloqueList, BloquesTypes, FriendsTypes } from '../utils/types';
+import { BloqueList, BloquesTypes } from '../utils/types';
 
 
 interface BlockState {
@@ -26,7 +26,7 @@ const initialState: BlockState = {
 
     }catch(err : any){
       if (err.response && err.response.data) {
-        return rejectWithValue(err.response.data); // Return the entire error object
+        return rejectWithValue(err.response.data); 
       } else {
         throw new Error("create conversation failed with an unknown error");
       }
@@ -100,7 +100,6 @@ const BlockSlice = createSlice({
       })
       .addCase(fetchBlockFriendThunk.fulfilled, (state : any, action : any) => {
         state.status = 'success';
-        // state.friendsBlock = action.payload;
       })
       .addCase(fetchBlockFriendThunk.rejected, (state: any, action : any) => {;
         state.status = 'failed';
@@ -112,7 +111,6 @@ const BlockSlice = createSlice({
       })
       .addCase(fetchDebloqueUserThunk.fulfilled, (state : any, action : any) => {
         state.status = 'success';
-        // state.friendsBlock = action.payload;
       })
       .addCase(fetchDebloqueUserThunk.rejected, (state: any, action : any) => {;
         state.status = 'failed';

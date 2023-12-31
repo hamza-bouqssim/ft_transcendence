@@ -1,35 +1,27 @@
 import { AppDispatch } from "../../store";
-import {
-	createConversationThunk,
-	fetchConversationUserThunk,
-} from "../../store/conversationSlice";
 import { getAllFriends } from "../../utils/api";
 import {
-	Conversation,
 	ConversationSideBarContainer,
 	ConversationSideBarItem,
 	IngameStyling,
 	OflineStyling,
 	OnlineStyling,
 } from "../../utils/styles";
-import { CreateConversationParams, FriendsTypes } from "../../utils/types";
+import {  FriendsTypes } from "../../utils/types";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { MenuButton, MenuButton2 } from "../Buttons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronDown, faEllipsis } from "@fortawesome/free-solid-svg-icons";
-import RightBarUsers from "../RightBarUsers";
+import {  faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
 import { fetchBlockFriendThunk } from "../../store/blockSlice";
 import {
 	fetchGetAllFriendsThunk,
 	fetchRemoveFriendship,
 } from "../../store/friendsSlice";
-import { ToastContainer, toast } from "react-toastify";
+import {  toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { socketContext } from "../../utils/context/socketContext";
-import { fetchMessagesThunk } from "../../store/messageSlice";
 import { fetchSendRequestPLay } from "../../store/requestSlice";
 import { fetchUsersThunk } from "../../store/usersSlice";
 
@@ -74,6 +66,8 @@ const ListFriends = () => {
 	const { users, Userstatus, Usererror } = useSelector(
 		(state: any) => state.users,
 	);
+	const { Userdata} = useContext(socketContext);
+
 
 	useEffect(() => {
 		
@@ -112,6 +106,19 @@ const ListFriends = () => {
 			ToastError("Failed to block this friend. Please try again.");
 		}
 	};
+	const getDisplayUser = (friend : FriendsTypes) => {
+		
+		const truncatedDisplayName =
+			friend.display_name.length > 10
+				? `${friend.display_name.substring(0, 10)}...`
+				: friend.display_name;
+
+		return {
+			...friend,
+			display_name: truncatedDisplayName,
+		};
+	};
+
 
 	return (
 		<div className="mt-[10px]">
@@ -125,7 +132,7 @@ const ListFriends = () => {
 									return "green"; // Online status color
 								case "offline":
 									return "red"; // Offline status color
-								case "inGame":
+								case "ingame":
 									return "blue"; // In-game status color
 								default:
 									return "black"; // Default color or any other status
@@ -180,13 +187,13 @@ const ListFriends = () => {
 									<OnlineStyling />
 								) : getStatusColor() === "red" ? (
 									<OflineStyling />
-								) : (
+								) : getStatusColor() === "blue" ?(
 									<IngameStyling />
-								)}
+								) : <></>}
 							</div>
 
 							<div>
-								<span className="ConversationName">{elem.display_name}</span>
+								<span className="ConversationName">{getDisplayUser(elem).display_name}</span>
 							</div>
 
 							<div className="absolute right-5 p-4">

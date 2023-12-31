@@ -1,11 +1,9 @@
 import React, { useContext, useState, useEffect } from "react";
-import InviteField from "./InviteField";
-import { faCheck, faPlus } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import RankedFriends from "./RankedFriends";
 import Image from "next/image";
 import { socketContext } from "../utils/context/socketContext";
-import { getRanking, getUserInfos } from "../utils/api";
+import { getRanking } from "../utils/api";
 import { PlayerType, UserInfoType } from "../dashboard/Imports";
 
 

@@ -38,11 +38,8 @@ const ConversationChannelPage = () => {
 		})
     socket.on("updateMember",(payload:any) =>{
 			dispatch(getAllMembers(payload.roomId))
-      // if(Userdata?.id === payload.idUserleave)
-      // {  
-      //   socket.emit("leaveToRoom", {id: payload.roomId});
+    
         dispatch(getAllRooms());
-      // }
 		})
     return () => {
       socket.off("notification");
@@ -63,7 +60,7 @@ const ConversationChannelPage = () => {
                     <MessagePanel></MessagePanel> 
                 </div>
 :
-<div className="xl:my-10 xl:mr-10  w-full xl:ml-2 xl:w-[65%]   xl:mt-32 hidden xl:flex items-center justify-center">Invite friend to new channel room</div>
+<div className="xl:my-10 xl:mr-10  w-full xl:ml-2 xl:w-[65%]   xl:mt-32 hidden xl:flex items-center justify-center">Invite  a friend to  a new channel room</div>
               }
               </div>
               

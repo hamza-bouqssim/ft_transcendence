@@ -1,4 +1,3 @@
-// AchievementsList.jsx
 
 import React, { Dispatch, FC } from 'react';
 import Image from 'next/image';

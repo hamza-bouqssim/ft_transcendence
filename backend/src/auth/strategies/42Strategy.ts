@@ -1,8 +1,9 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { PassportStrategy } from '@nestjs/passport';
-import { AuthService } from '../auth.service';
-import { Strategy } from 'passport-42';
-import { AuthDto } from '../dto/auth.dto';
+/* eslint-disable prettier/prettier */
+import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { PassportStrategy } from "@nestjs/passport";
+import { AuthService } from "../auth.service";
+import { Strategy } from "passport-42";
+import { AuthDto } from "../dto/auth.dto";
 
 @Injectable()
 export class FortyTwoStrategy extends PassportStrategy(Strategy) {

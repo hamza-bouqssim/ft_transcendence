@@ -1,9 +1,9 @@
 "use client"
-import { socket, socketContext } from '@/app/utils/context/socketContext'
+import {  socketContext } from '@/app/utils/context/socketContext'
 import React, {useState,useEffect, useContext} from 'react'
 import Image from 'next/image';
 import { ConversationTypes } from '@/app/utils/types';
-import { useDispatch, useSelector } from "react-redux";
+import {  useSelector } from "react-redux";
 import { ListSearch } from './ListSearch';
 
 export const SerachGroup = () => {

@@ -12,13 +12,12 @@ export interface MessagesState {
 
 const initialState: MessagesState = {
   messages: [],
-  isSenderBlocked: false, // Initialize isBlocked to false
+  isSenderBlocked: false, 
   isRecipientBlocked : false,
   status : 'idle',
   error: null,
 };
 
-//fetch unread messages-->
 
 
 

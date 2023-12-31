@@ -1,5 +1,4 @@
 import { useState, useContext, useEffect } from "react";
-import PopUp from "./popUp";
 import { socketContext } from "../utils/context/socketContext";
 import { Qrcodeform } from "./Qrcodefom";
 import {

@@ -1,9 +1,6 @@
 "use client";
 import {
-	AvatarStyle,
 	IngameStyling,
-	MessageItemAvatar,
-	MessagePannelHeaderStyle,
 	OflineStyling,
 	OnlineStyling,
 } from "../../utils/styles";
@@ -93,7 +90,6 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 		if(channel?.id)
 			dispatch(getAllMembers(channel?.id));
 	}, [dispatch, channel]);
-	// Image src
 
 	const InfoRecipient = () => {
 		let test: User | undefined;
@@ -122,17 +118,24 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 	const handleUpdate = () => {
     if(olddata)
     {
-      dispatch(updateRooms(olddata)).then((res:any) => {
-        if (res.error) {
-          toast.error(res.payload);
-        }
-		else
+		console.log("ppriiiiiiiiiiiivat ===>",!olddata.password?.trim().length)
+		if(olddata.Privacy==="Protected" && !olddata.password?.trim().length  )
 		{
-			updateChannel(res.payload)
-			toast.success("Update Room Successfully! 🎉");
+			toast.error('ineed Password for this room');
+			return;
 		}
-			
-      });
+		   
+		dispatch(updateRooms(olddata)).then((res:any) => {
+			if (res.error) {
+			toast.error(res.payload);
+			}
+			else
+			{
+				updateChannel(res.payload)
+				toast.success("Update Room Successfully! 🎉");
+			}
+				
+		});
     }
 	};
 
@@ -170,7 +173,7 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 						width={30}
 						height={30}
 						/>
-						{checkTheStatus() === 'online' ? (<OnlineStyling/>) :  checkTheStatus() === 'offline' ? (<OflineStyling/>) :( <IngameStyling/>)}
+						{checkTheStatus() === 'online' ? (<OnlineStyling/>) :  checkTheStatus() === 'ingame' ? <IngameStyling/> :  checkTheStatus() === 'offline' ?  ( <OflineStyling/>) : <></>}
 					</div>					
 				)}
 				{channel?.name && (
@@ -211,7 +214,8 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 						>
 							close
 						</button>
-						{channel !== olddata && 
+						
+						{(channel?.name !== olddata?.name  ||  channel?.Privacy !== olddata?.Privacy || olddata?.password) &&  
 							<button
 								onClick={handleUpdate}
 								className={`${

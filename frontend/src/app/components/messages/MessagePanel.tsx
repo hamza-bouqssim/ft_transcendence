@@ -21,7 +21,7 @@ const MessagePanel = () => {
     const [updateRome,setUpdateRome] = useState<boolean>(false)
     const pathname = usePathname()
     const { updateChannel, channel } = useContext(socketContext);
-    const [olddata, setOldData] = useState<ConversationTypes | null>(null);
+    const [olddata, setOldData] = useState<ConversationTypes | null>(null) ;
     const { rooms} = useSelector((state:any) => state.room);
 
     useEffect(() => {
