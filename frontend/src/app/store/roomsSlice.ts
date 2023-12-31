@@ -96,7 +96,7 @@ const roomSlice = createSlice({
   name: 'room',
   initialState,
   reducers: {
-	updateRoomMessage: (state, action) => {
+	updateRoomMessage: (state: { rooms: any[]; }, action: { payload: { roomId: any; updatedMessage: any; }; }) => {
 		const { roomId, updatedMessage } = action.payload;
 		const room = state.rooms.find((room) => room.id === roomId);
 		if (room) {

@@ -14,6 +14,8 @@ import { OpponentData } from './game/utils/data';
 import { fetchUsersThunk } from '../store/usersSlice';
 import { fetchConversationThunk } from '../store/conversationSlice';
 import { ConstructionOutlined } from '@mui/icons-material';
+import { cleanNotification, getNotificationRoom } from '../store/NotificationChatSlice';
+import { getAllRooms, updateRoomMessage } from '../store/roomsSlice';
 
 
 const ProviderOnSocket = () => {
@@ -156,6 +158,15 @@ const ProviderOnSocket = () => {
           
 
         })
+        socket.on('setNotification',(payload:any) =>{
+          console.log('setNotification',payload)
+          if(payload.id !== channel?.id)
+          {
+            dispatch(getNotificationRoom());
+            dispatch(updateRoomMessage(({ roomId: payload.id , updatedMessage: { content: payload.content, createdAt: new Date() } })))
+          }
+          
+        })
        
           return () => {
             socket.off('AcceptNotification');
@@ -170,6 +181,7 @@ const ProviderOnSocket = () => {
             socket.off('deleteFriendship');
             socket.off('createConversationMessage');
             socket.off('createConversation');
+            socket.off('setNotification');
 
     
     

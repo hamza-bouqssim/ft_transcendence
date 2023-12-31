@@ -14,7 +14,7 @@ import { UserService } from 'src/user/user.service';
 
 @WebSocketGateway({
     cors:{
-        origin:['http://10.13.10.3:3000'],
+        origin:['http://10.13.10.5:3000'],
         credentials : true,
     },
     namespace: '/chat',
@@ -67,9 +67,7 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
 
     @SubscribeMessage('joinToRoom')
     handleJoinRome(client: AuthenticatedSocket, roomId: RoomId){
-        this.roomsService.cleanNotification(client.user.sub, roomId.id);
         client.join(roomId.id.toString());
-         client.join(roomId.id.toString());
     }
     
     @SubscribeMessage('leaveToRoom')
@@ -80,9 +78,13 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
  
     @SubscribeMessage('messageRome')
     async handleMessage(client: AuthenticatedSocket, createMessageRoom: CreateMessageRoom){
-        console.log(createMessageRoom)
         const messageRome = await this.roomsService.createMessage(createMessageRoom,client.user.sub);
-        this.roomsService.notificationRoomUpdate(messageRome.senderId,messageRome.chatRoomId)
+        console.log(messageRome)
+        const chatroom  = await this.roomsService.notificationRoomUpdate(messageRome.senderId,messageRome.chatRoomId)
+        chatroom.members.map(member=>{
+            if(member.id !== messageRome.senderId)
+                this.server.to(member.user_id.toString()).emit ('setNotification',{id:chatroom.id,content:messageRome.content});
+        })
         this.server.to(createMessageRoom.chatRoomId.toString()).emit ('messageRome', messageRome);
     }
     @SubscribeMessage('Typing')
@@ -100,6 +102,12 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         const resualt = await this.roomsService.findRoom(client.user.sub,val)
         this.server.to(client.user.sub.toString()).emit ('resualtRoom', {resualt:resualt});
     }
+
+    @SubscribeMessage('cleanNotification')
+    async cleanNotification (client: AuthenticatedSocket, roomId:string) {
+        await this.roomsService.cleanNotification(client.user.sub,roomId)
+        this.server.to(client.user.sub.toString()).emit ('setNotification',{id:roomId});
+    }
     
     @OnEvent("order.created")
     async onNotificationCreate(data:any) {
@@ -107,17 +115,10 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         data.members.map((member) => {
             if(member.Status !== "Owner")
             {
-                this.roomsService.notificationRoom(data.id,member.user_id,1)
                 const message = `${userAdmin.user.display_name } Join you to ${data.name}`;
                 this.server.to(member.user_id).emit('notification', message);
-                // const type = "Join";
-                // const requestId = data.members.id;
-                // this.userService.createNotification( userAdmin.user,member.user_id, message, type, requestId);
             }
-            else
-            {
-                this.roomsService.notificationRoom(data.id,member.user_id,0)
-            }             
+       
         })
     }
     @OnEvent("order.update")
@@ -153,12 +154,6 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
             this.server.to(member.user_id).emit('updateMember', {roomId:RoomId,idUserleave:id,types:types});         
         })
     }
-
-
-
-
-
-
 
 
     //####################################################################################################################################

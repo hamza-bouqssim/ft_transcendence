@@ -50,7 +50,6 @@ export type Member = {
       
 } 
 
-
 export type ConversationTypes = {
 	id: string;
 	picture: string;
@@ -66,7 +65,6 @@ export type ConversationTypes = {
 	updatedAt: Date;
 	members: Member[];
 	messageRome: lastMessage[];
-    number:number
 };
 
 export type lastMessage = {

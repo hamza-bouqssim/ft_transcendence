@@ -9,6 +9,7 @@ import Image from "next/image";
 import { AppDispatch } from "../../store";
 import ListRome from "./ListRome";
 import { ConversationTypes } from "../../utils/types";
+import React from "react";
 
 
 
@@ -19,18 +20,21 @@ const GroupsManagement = () => {
   const [sortedConversations, setSortedConversations] = useState<ConversationTypes[]>([]);
   const { rooms, status, error } = useSelector((state: any) => state.room);
   const { updateChannel, channel } = useContext(socketContext);
+  const {notificationRoom} = useSelector((state:any) => state.NotificationChat);
+  const {notificationChat} = useSelector((state:any) => state.NotificationChat);
+  const {isMessage,setIsMessage} = useContext(socketContext)
+  const {socket} = useContext(socketContext)
 
-   
-
-
-
+	// useEffect(() => {
+  //   const totalChatNotifications = notificationChat.reduce((acc, val) => acc + val.number, 0);
+  //   const totalRoomNotifications = notificationRoom.reduce((acc, val) => acc + val.number, 0);
+  //   setIsMessage(totalChatNotifications + totalRoomNotifications > 0);
+  // }, [notificationRoom, notificationChat]);
   useEffect(() => {
-    
     dispatch(getAllRooms())
   }, [dispatch]);
 
   useEffect(() => {
-    // Sorting the rooms array and setting it to the state variable
     const sortedConversations = [...rooms].sort((a, b) => {
       const aDate = (a.messageRome.length > 0 && a.messageRome[0].createdAt) || a.updatedAt || a.createdAt  || new Date(0);
       const bDate =(b.messageRome.length > 0 && b.messageRome[0].createdAt) || b.updatedAt || b.createdAt ||  new Date(0);
@@ -38,9 +42,9 @@ const GroupsManagement = () => {
     });
 
     setSortedConversations(sortedConversations);
-  }, [rooms]);
+  }, [rooms,notificationRoom]);
 
-  console.log(sortedConversations)
+  // console.log(sortedConversations)
 
   if (status.get == "loading" || status.get == "idle") {
     return (

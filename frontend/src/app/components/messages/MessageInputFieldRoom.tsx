@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchBlockedUsers, fetchBlocksThunk } from "../../store/blockSlice";
 import { AppDispatch } from "../../store";
 import { updateRoomMessage } from '../../store/roomsSlice';
+import React from "react";
 interface Members {
 	id: string;
 	user_id: string;
@@ -54,16 +55,17 @@ const MessageInputFieldRoom: FC<props> = ({setMessage, Message}) => {
     const { members, status, error } = useSelector((state:any) => state.member);
     const { rooms} = useSelector((state:any) => state.room);
     const { blocked} = useSelector((state:any) => state.friendsBlock);
+
     useEffect(() => {
       dispatch(fetchBlockedUsers())
     }, [dispatch]);
+    
     useEffect(() => {
       const handleOnMessage = (message: any) => {
           dispatch(updateRoomMessage({ roomId: channel?.id, updatedMessage: { content: message.content, createdAt: new Date() } }));
           setMessage((prevMessages: messageTypes[]) => [...prevMessages, message]);
 
       };
-      
       socket.on('messageRome', handleOnMessage);
       return () => {
           socket.off('messageRome', handleOnMessage);

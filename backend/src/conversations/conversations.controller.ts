@@ -19,7 +19,6 @@ constructor(private  conversationService : ConversationsService , private eventE
  async CreateConversations(@Body() request: {display_name : string, message : string}, @Req() req, @Res() res){
     try {
         const user =req.user
-        
         const returnValue = await this.conversationService.createConversations(user,  request.display_name, request.message);
         return res.status(200).json({ success: true, response: returnValue });
     } catch (err) {

@@ -141,6 +141,20 @@ export class RoomsService {
         
       }
     });
+    await this.prisma.notificationMessage.createMany({
+      data: [
+        {
+          userId: id, // Assuming id is a string
+          roomId: chatRoom.id,
+          number: 0,
+        },
+        ...data.idUserAdd.map((userId) => ({
+          userId: userId, // Assuming userId is a string
+          roomId: chatRoom.id,
+          number: 1,
+        })),
+      ],
+    });
     return chatRoom;
   }
 
@@ -528,6 +542,17 @@ export class RoomsService {
     });
   
     if (remainingMembers === 0) {
+      const existingNotification = await this.prisma.notificationMessage.findFirst({
+        where: {
+          roomId: roomId.id,
+          userId: iduser,
+        },
+      });
+      await this.prisma.notificationMessage.delete({
+        where: {
+          id: existingNotification.id,
+        },
+      });
       await this.prisma.messageRome.deleteMany({
         where: { chatRoomId: roomId.id },
       });
@@ -863,11 +888,12 @@ export class RoomsService {
             }
         }
       }
-      return 'Notification messages updated successfully.';
+      return chatRoom;
   }
 
   async cleanNotification(userId:string,roomId:string)
   {
+    console.log(roomId)
     const existingNotification = await this.prisma.notificationMessage.findFirst({
       where: {
         roomId: roomId,
@@ -876,7 +902,7 @@ export class RoomsService {
     });
     if(!existingNotification)
       return
-    const cleanNotification = await this.prisma.notificationMessage.update({
+    await this.prisma.notificationMessage.update({
       where: {
         id: existingNotification.id,
       },
@@ -905,5 +931,17 @@ export class RoomsService {
     });
     return 'Notification messages deleted successfully.';
 
+  }
+  async getNotification(userId:string)
+  {
+    const existingNotification = await this.prisma.notificationMessage.findMany({
+      where: {
+        userId: userId,
+      },
+    });
+    console.log(existingNotification)
+
+    return existingNotification
+   
   }
 }

@@ -139,8 +139,9 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 	return (
 		<>
 		{
-			rooms && rooms.some((room :ConversationTypes) => room.id===channel?.id )  ? (
-
+			 rooms && rooms.some((room :ConversationTypes) => room.id===channel?.id ) && !pathname.includes("/groups")  ? (
+				null
+			) :
 			<div className="flex items-center justify-between rounded-full  bg-[#F2F3FD] p-5  text-black">
 			<div className="flex items-center">
 				<FaArrowLeft
@@ -151,7 +152,7 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 				{channel?.picture && (
 					<Image
 						src={channel.picture}
-						className="w-[50px] rounded-full"
+						className=" h-[60px] w-[60px] rounded-full"
 						alt=""
 						width={30}
 						height={30}
@@ -161,7 +162,7 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 					<div className="flex">
 						<Image
 						src={InfoRecipient()?.avatar_url as string}
-						className="w-[50px] rounded-full"
+						className="w-[50px]  rounded-full"
 						alt=""
 						width={30}
 						height={30}
@@ -235,8 +236,6 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 				)
 			) : null}
 		</div>
-
-			) : null 
 		}
 		</>
 		

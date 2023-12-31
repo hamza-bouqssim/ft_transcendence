@@ -252,6 +252,19 @@ export class RoomsController {
 
   }
 
+  @Get("/getNotification")
+  @UseGuards(AuthGuard("jwt"))
+  async getNotification(@Res() res: any,@Req() req,)
+  {
+    try {
+      const {id}=req.user
+      const response = await this.roomsService.getNotification(id);
+      return res.status(200).json({data: response });
+    } catch (error) {
+      return res.status(500).json(error.response);
+    }
+
+  }
   
 
 }

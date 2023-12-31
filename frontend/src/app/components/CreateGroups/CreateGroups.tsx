@@ -10,7 +10,7 @@ import { MemberUser } from "../cardMemberUser/MemberUser";
 import { FriendsTypes } from "../../utils/types";
 import Image from "next/image";
 import { AppDispatch } from "../../store";
-
+import axios from "axios";
 interface CreateGroupsProps {
 	setNewRooms: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -28,6 +28,7 @@ const CreatGroups: React.FC<CreateGroupsProps> = ({
 }: CreateGroupsProps) => {
 	const dispatch = useDispatch<AppDispatch>();
 	const [groupName, setGroupName] = useState<string>("");
+	const [_image, setImage] = useState<string>("");
 	const [groupPrivacy, setGroupPrivacy] = useState<string>("Public");
 	const [groupPassword, setGroupPassword] = useState<string>("");
 	const [grouImage, setGroupImage] = useState<string>("");
@@ -35,6 +36,7 @@ const CreatGroups: React.FC<CreateGroupsProps> = ({
 	const { updateChannel, channel } = useContext(socketContext);
 	const [idUserAdd, setIdUserAdd] = useState<string[]>([]);
 	const { rooms, status, error } = useSelector((state: any) => state.room);
+	const newAPI = axios.create();
 	const handleCreateGroup = () => {
 		if (groupPrivacy === "Protected" && (!groupPassword  || groupPassword.length < 8 )) {
 			toast.error("Password are required for a Protected group. 8 character min");
@@ -53,7 +55,7 @@ const CreatGroups: React.FC<CreateGroupsProps> = ({
 			name: groupName,
 			Privacy: groupPrivacy,
 			password: groupPassword,
-			picture: null,
+			picture: _image,
 			idUserAdd: idUserAdd,
 		};
 
@@ -70,6 +72,24 @@ const CreatGroups: React.FC<CreateGroupsProps> = ({
 				toast.success(error);
 			});
 	};
+	const handleFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
+		try {
+			const file = event.target.files?.[0];
+			if (!file) return;
+			const formData = new FormData();
+			formData.append("file", file);
+			formData.append("upload_preset", "ibahlawn");
+			formData.append("cloud_name", "dnbhh3qxj"); 
+
+			const res = await newAPI.post(
+				"https://api.cloudinary.com/v1_1/dnbhh3qxj/image/upload",
+				formData,
+			);
+
+			setImage(res.data.secure_url);
+		} catch (err) {
+		}
+	};
 	return (
 		<div className="no-scrollbar h-[calc(100%-150px)]  overflow-auto  p-2 pt-4 ">
 			{errorin && (
@@ -81,12 +101,14 @@ const CreatGroups: React.FC<CreateGroupsProps> = ({
 				className="mt-5 flex items-center justify-center"
 				htmlFor="imagroupe"
 			>
-				<Image src="" alt="" width={30} height={30} />
-				<div className="rounded-full bg-[#EFEFEF] p-10">
+				
+				{!_image ? <div className="rounded-full bg-[#EFEFEF]  p-10">
 					<BiImageAdd size={30} className="text-[#949494]"></BiImageAdd>
-				</div>
+				</div>  : <Image src={_image} alt="" className="rounded-full bg-containe h-[120px] w-[120px] " width={100} height={100} />
+				}
+				
 			</label>
-			<input type="file" id="imagroupe" className="hidden" />
+			<input type="file" id="imagroupe" className="hidden"  onChange={handleFile}/>
 			<div className="flex items-center justify-center">
 				<input
 					value={groupName}
