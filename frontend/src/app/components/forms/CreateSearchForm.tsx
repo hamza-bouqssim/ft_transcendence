@@ -25,7 +25,7 @@ export const CreateSearchForm = () => {
             
             const fetchSearchResults = async () => {
                 try {
-                    const response = await fetch(`http://10.11.6.4:8000/user/search`, {
+                    const response = await fetch(`http://localhost:8000/user/search`, {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",

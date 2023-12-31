@@ -136,7 +136,7 @@ const Header = () => {
 									Sign In
 								</Link>
 							) : (
-								<Link href={"http://10.11.6.4:8000/auth/logout"} onClick={logoutFunction} className="btn-style">Sign Out</Link>
+								<Link href={"http://localhost:8000/auth/logout"} onClick={logoutFunction} className="btn-style">Sign Out</Link>
 							)}
 						</nav>
 					</div>
