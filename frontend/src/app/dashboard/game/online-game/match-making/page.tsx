@@ -1,11 +1,11 @@
 "use client";
 import PlayerCard from "../../../../components/PlayerCard";
-import { useEffect, useContext } from "react";
+import { useEffect, useContext, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { socketContext } from "../../../../utils/context/socketContext";
 import { useSearchParams } from "next/navigation";
 import { useGameSocket } from "../../../../providers/game-socket-provider";
-import { useAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { OpponentData } from "../../utils/data";
 
 const sleep = async (ms: number) =>
@@ -16,6 +16,18 @@ const MatchMaking = () => {
 	const mapIndex: string | null = searchParams.get("mapIndex");
 	const router = useRouter();
 	const gameSocket = useGameSocket();
+	const setClearAtom = useSetAtom(OpponentData);
+	const clearAtomData = () => {
+		setClearAtom(() => ({
+			opponent: {
+				username: "",
+				display_name: "",
+				avatar_url: "/assets/unknown.png",
+			},
+			isRotate: false,
+			mapIndex: -1,
+		}));
+	};
 
 	const checkQueryValue = (): boolean => {
 		if (mapIndex) {
@@ -25,17 +37,20 @@ const MatchMaking = () => {
 		return false;
 	};
 
+	const redirect = useRef<boolean>(false);
+
 	const { Userdata } = useContext<any>(socketContext);
 	const [opponentPlayer, setOpponentPlayer] = useAtom(OpponentData);
 
 	useEffect(() => {
 
 		const handleRedirectUser = (payload: any) => {
+			redirect.current = true;
 			if (Userdata?.display_name === payload.display_name)
 				router.push("/dashboard", { scroll: false });
 		};
 		gameSocket.on("redirectUser", handleRedirectUser);
-
+		
 		const handleKnowOpponent = async (payload: any) => {
 			setOpponentPlayer((prevData) => ({
 				...prevData,
@@ -43,9 +58,13 @@ const MatchMaking = () => {
 				isRotate: payload.rotate,
 			}));
 			await sleep(3000);
-			router.push(`./match-making/${mapIndex}/${payload.idGame}`, {
-				scroll: false,
-			});
+			if(!redirect.current && gameSocket.connected){
+				router.push(`./match-making/${mapIndex}/${payload.idGame}`, {
+					scroll: false,
+				});
+			}
+			else
+				clearAtomData();
 		};
 		gameSocket.emit("startGame", {
 			indexMap: opponentPlayer.mapIndex,

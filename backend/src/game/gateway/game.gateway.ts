@@ -143,21 +143,32 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			const game = this.getQueueGame(userId);
 			if (game) {
 				const GameId = game.user1.id;
-				if (!this.mapPong[GameId])
-					this.mapPong[GameId] = new PongGame(this, game);
 				if (!game.socket1 || socket.id === game.socket1) {
-					if (this.mapPong[GameId]) {
-						this.mapPong[GameId].playerOneScore = 0;
-						this.mapPong[GameId].playerTwoScore = 7;
-					} else {
+					if (!this.mapPong[GameId]){
+						// this.mapPong[GameId] = new PongGame(this, game);
+						this.emitToUser2InGame(game.user2.id, { display_name: game.user2.display_name,}, 'redirectUser');
+						this.queueGame = this.queueGame.filter((game) => game.user1.id != GameId);
+						this.queueWaiting = this.queueWaiting.filter((queue) => queue.user.id !== GameId);
+						console.log("..game",this.queueGame,"queue",this.queueWaiting)
+						return;
 					}
+					this.mapPong[GameId].playerOneScore = 0;
+					this.mapPong[GameId].playerTwoScore = 7;
+					// console.log("test 1",this.mapPong[GameId].playerOneScore,this.mapPong[GameId].playerTwoScore)
 					this.endGame(game);
 				} else if (!game.socket2 || socket.id === game.socket2) {
-					if (this.mapPong[GameId]) {
-						this.mapPong[GameId].playerOneScore = 7;
-						this.mapPong[GameId].playerTwoScore = 0;
-					} else {
+					console.log("test 2")
+					// console.log("test 2",this.mapPong[GameId].playerOneScore,this.mapPong[GameId].playerTwoScore)
+					if (!this.mapPong[GameId]){
+						// this.mapPong[GameId] = new PongGame(this, game);
+						this.emitToUser2InGame(game.user1.id, { display_name: game.user1.display_name,}, 'redirectUser');
+						this.queueGame = this.queueGame.filter((game) => game.user1.id != GameId);
+						this.queueWaiting = this.queueWaiting.filter((queue) => queue.user.id !== game.user2.id);
+						console.log("..game",this.queueGame,"queue",this.queueWaiting)
+						return;
 					}
+					this.mapPong[GameId].playerOneScore = 7;
+					this.mapPong[GameId].playerTwoScore = 0;
 					this.endGame(game);
 				}
 			}
@@ -204,13 +215,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		if (typeof data.indexMap === "string" || +data.indexMap < 0 || +data.indexMap > 2) return;
 		const user = await this.gameservice.findUserById(client.user.sub);
 		if(!user)
-			return;
+		return;
+		console.log("test redirect",user.display_name)
 		if (wait || (game && game.status !== 'invite')) {
 			client.emit('redirectUser', {
 				display_name: user.display_name,
 			});
 			return;
 		}
+		console.log("test redirect1",user.display_name)
 		if (game && game.status === 'invite') {
 			if (game.user1.id === client.user.sub && game.socket1 === null) {
 				client.join(`@${client.user.sub}`);
@@ -317,11 +330,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		);
 	}
 	async endGame(game: GameQ) {
-		if (this.mapPong[game.user1.id]) {
 			const user1 = game.user1.id;
 			const user2 = game.user2.id;
 			const endDate = new Date();
 			const duration = endDate.getTime() - game.duration.getTime();
+			// Clear Game
 			if (
 				this.mapPong[game.user1.id].playerOneScore >
 				this.mapPong[game.user1.id].playerTwoScore
@@ -332,15 +345,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				this.emitToUser2InGame(user2, { status: 'winner' }, 'gameIsFinished');
 				this.emitToUser1InGame(user1, { status: 'loser' }, 'gameIsFinished');
 			}
-			// Clear Game
-
+			
 			const score1 = this.mapPong[game.user1.id].playerOneScore;
 			const score2 = this.mapPong[game.user1.id].playerTwoScore;
 			// delete this.mapPong[game.user1.id];
-
+			
 			this.mapPong[game.user1.id].handleClearGame();
 			delete this.mapPong[game.user1.id];
 			this.queueGame = this.queueGame.filter((game) => game.user1.id != user1);
+
 			await this.gameservice.setGameData(
 				user1,
 				user2,
@@ -348,11 +361,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				score2,
 				duration,
 			);
-		} else {
-			this.queueGame = this.queueGame.filter(
-				(game) => game.user1.id != game.user1.id,
-			);
-		}
 	}
 	// End Queue---------------------------------------
 	@SubscribeMessage('launchGameRequest')

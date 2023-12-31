@@ -68,6 +68,7 @@ const OnlineGame = ({ mapIndex }: any) => {
 		const handleRedirect = () => {
 			router.push("/dashboard/game/", { scroll: false });
 		}
+		gameSocket.on("redirectUser", handleRedirect);
 		window.addEventListener("popstate", handleRedirect);
 		window.addEventListener("offline", handleRedirect);
 		const updateScoreListener = (playersScore: any) => {
@@ -82,6 +83,7 @@ const OnlineGame = ({ mapIndex }: any) => {
 			gameSocket.off("updateScore");
 			window.removeEventListener("popstate", handleRedirect);
 			window.removeEventListener("offline", handleRedirect);
+			gameSocket.off("redirectUser", handleRedirect);
 		}
 	}, []);
 

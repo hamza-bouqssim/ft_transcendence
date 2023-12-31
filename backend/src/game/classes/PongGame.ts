@@ -390,7 +390,6 @@ export class PongGame {
 
 	handlePaddleMove() {
 		this.movePaddleInterval = setInterval(() => {
-			console.log("setInterval1")
 			if (!this.game) {
 				// clearInterval(this.updateBallPosition);
 				Events.off(this.engine, 'beforeUpdate', this.updateBallPosition);
@@ -456,7 +455,6 @@ export class PongGame {
 		Runner.run(this.runner, this.engine);
 
 		this.updateBallPosition = setInterval(() => {
-			console.log("setInterval2")
 			if (!this.game) {
 				clearInterval(this.updateBallPosition);
 				return;

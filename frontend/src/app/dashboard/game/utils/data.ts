@@ -19,6 +19,7 @@ export const OpponentData = atom<{
 	mapIndex: -1,
 });
 
+
 export const getCurrentSizes = (
 	currentWidth: number,
 	currentHeight: number,
