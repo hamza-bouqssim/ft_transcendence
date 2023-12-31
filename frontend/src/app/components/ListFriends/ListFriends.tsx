@@ -125,7 +125,7 @@ const ListFriends = () => {
 									return "green"; // Online status color
 								case "offline":
 									return "red"; // Offline status color
-								case "inGame":
+								case "ingame":
 									return "blue"; // In-game status color
 								default:
 									return "black"; // Default color or any other status
@@ -180,9 +180,9 @@ const ListFriends = () => {
 									<OnlineStyling />
 								) : getStatusColor() === "red" ? (
 									<OflineStyling />
-								) : (
+								) : getStatusColor() === "blue" ?(
 									<IngameStyling />
-								)}
+								) : <></>}
 							</div>
 
 							<div>
