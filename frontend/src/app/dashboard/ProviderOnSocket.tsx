@@ -14,6 +14,8 @@ import { OpponentData } from './game/utils/data';
 import { fetchUsersThunk } from '../store/usersSlice';
 import { fetchConversationThunk } from '../store/conversationSlice';
 import { ConstructionOutlined } from '@mui/icons-material';
+import { cleanNotification, getNotificationRoom } from '../store/NotificationChatSlice';
+import { getAllRooms, updateRoomMessage } from '../store/roomsSlice';
 
 
 const ProviderOnSocket = () => {
@@ -71,31 +73,35 @@ const ProviderOnSocket = () => {
           console.log("chat here-->");
           dispatch(fetchBlocksThunk());
           dispatch(fetchBlockedUsers());
+          dispatch(fetchNotificationThunk());
+          dispatch(fetchCountNotification());
           dispatch(fetchGetAllFriendsThunk());
-          dispatch(fetchGetRequestsThunk());
+          dispatch(fetchGetRequestThunk());
+          dispatch(fetchNumberPending());
+
           
 
     
     
-          if (channel && channel.id) {
-            dispatch(fetchMessagesThunk(channel.id));
-          }
+          if(data?.id === channel?.id)
+              dispatch(fetchMessagesThunk(data.id));
           
         })
         socket.on('debloqueNotification', (data : any)=>{
-          console.log("chat here-->");
-
+        
           dispatch(fetchBlocksThunk());
           dispatch(fetchGetAllFriendsThunk());
-          dispatch(fetchGetRequestsThunk());
+          dispatch(fetchGetRequestThunk());
+          dispatch(fetchNotificationThunk());
+          dispatch(fetchCountNotification());
           dispatch(fetchBlockedUsers());
           dispatch(fetchUsersThunk());
+          dispatch(fetchNumberPending());
 
 
-          if(channel != null)
-          {
-            dispatch(fetchMessagesThunk(channel.id));
-          }
+
+          if(data?.id === channel?.id)
+            dispatch(fetchMessagesThunk(data.id));
     
         })
         socket.on('newRequestToPlay', (data : any)=>{
@@ -150,6 +156,14 @@ const ProviderOnSocket = () => {
           
 
         })
+        socket.on('setNotification',(payload:any) =>{
+          if(payload.id !== channel?.id)
+          {
+            dispatch(getNotificationRoom());
+            dispatch(updateRoomMessage(({ roomId: payload.id , updatedMessage: { content: payload.content, createdAt: new Date() } })))
+          }
+          
+        })
        
           return () => {
             socket.off('AcceptNotification');
@@ -164,6 +178,7 @@ const ProviderOnSocket = () => {
             socket.off('deleteFriendship');
             socket.off('createConversationMessage');
             socket.off('createConversation');
+            socket.off('setNotification');
 
     
     

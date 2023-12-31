@@ -1,7 +1,7 @@
 "use client";
 
 import { SendRequest, getMatchHistory, getStates, getUserInfos} from '../../utils/api';
-import { useState, useEffect, useContext, useRef } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import Boxes from '../../components/Boxes';
 import HistoryMatches from '../../components/HistoryMatches';
 import Image from 'next/image';
@@ -24,6 +24,7 @@ import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { userInfo } from 'os';
 import AuthCheck from '@/app/utils/AuthCheck';
+import { PlaylistAddOutlined } from '@mui/icons-material';
 
 const Dashboard = ({ params }: { params: { id: string } }) => {
 	
@@ -44,7 +45,6 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 	const {register, handleSubmit, formState: { errors }} = useForm<CreateConversationParams>();
 	const [buttonType, setButtonType] = useState('');
 		const [IsBloqued, setIsBloqued] = useState(false);
-
 
 	const ToastError = (message: any) => {
 		toast.error(message, {
@@ -119,19 +119,31 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 	  }catch(err : any){
 		const userIdToFind = params.id;
 		const foundUser = users.find((user : User) => user.id === userIdToFind);
-	
-			const res = await dispatch(fetchConversationUserThunk(
-			{
-					display_name : userinfo?.display_name,
-					message: data.message,
+			try{
+				const res = await dispatch(fetchConversationUserThunk(
+				{
+							display_name : userinfo?.display_name,
+							message: data.message,
+				}
+				));
+				
+				if(res.payload.response)
+				{
+					
+					router.push("/dashboard/chat");
+					const elem = res.payload.response;
+					updateChannel(elem); 
+
+				}
+				
+
+			}catch(err : any){
+				ToastError(`Interaction not allowed. Users are blocked`);
+
 			}
-			 ));
-				 router.push("/dashboard/chat")
-				 const elem = res.payload;
-				updateChannel(elem);		 
+			
 	  }
 	}
-
 	useEffect(() => {
 		dispatch(fetchBlocksThunk());
 		dispatch(fetchBlockedUsers());
@@ -145,7 +157,14 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 			const res = await dispatch(fetchDebloqueUserThunk(params.id));
 			dispatch(fetchBlockedUsers());
 			dispatch(fetchBlocksThunk());
+			dispatch(fetchGetRequestsThunk())
+		dispatch(fetchGetAllFriendsThunk());
 			if (res.payload && typeof res.payload === 'object') {
+				if(!res.payload.success)
+				{
+					ToastError(`${res.payload.message}`);
+
+				}
 				const responseData = res.payload as { data?: { response?: { message?: string } } };
 				const message = responseData.data?.response?.message;
 				if (message) {
@@ -169,13 +188,20 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 			const res = await dispatch(fetchBlockFriendThunk(params.id));
 			dispatch(fetchBlockedUsers());
 			dispatch(fetchBlocksThunk());
-			if (res.payload && typeof res.payload === 'object') {
+			dispatch(fetchGetRequestsThunk())
+			dispatch(fetchGetAllFriendsThunk());
+			
+			if (res.payload  && typeof res.payload === 'object') {
+				if(!res.payload.success)
+				{
+					ToastError(`${res.payload.message}`);
+
+				}
 			const responseData = res.payload as { data?: { response?: { message?: string } } };
 			const message = responseData.data?.response?.message;
 			if (message) {
 				ToastSuccess(message);
 			
-				
 			} else {
 				const responseData = res.payload as {message?: string};
 				const message = responseData.message;
@@ -200,11 +226,11 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 		  );
 		  const isFriend = friends.some((friend : any) => friend.id === params.id);
 	  
-		  if (isPendingRequest) {
+		  if (isPendingRequest && Userdata?.id !== params.id ) {
 			setButtonType('pendingRequest');
-		  } else if (isRespondToRequest) {
+		  } else if (isRespondToRequest && Userdata?.id !== params.id) {
 			setButtonType('respondToRequest');
-		  } else if (isFriend) {
+		  } else if (isFriend && Userdata?.id !== params.id) {
 			setButtonType('friends');
 		  } else {
 			setButtonType('sendRequest');
@@ -264,20 +290,26 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 		  
 			if (foundUser) {
 		  
-			 
-				const resultAction = await dispatch(fetchRequestThunk({
-				  display_name: foundUser.display_name,
-				}));
-		  
-				// Access the result of the thun action
-				if (fetchRequestThunk.fulfilled.match(resultAction)) {
-				  const SuccessMessage = resultAction.payload.response.message;
-				  dispatch(fetchGetRequestsThunk())
+			 try{
+				const response = await dispatch(fetchRequestThunk({
+					display_name: foundUser.display_name,
+				  }));
+			
+			
+				dispatch(fetchGetRequestsThunk());
 
-				  ToastSuccess(`${SuccessMessage}`);
-				} else {
-				  ToastError(`Error:.... `);
+				if (response.payload && response.payload.message) {
+					const errorMessage = response.payload.message;
+					ToastError(`Error: ${errorMessage}`);
+				  } else {
+					ToastSuccess("Friend request sent successfully");
+					
+				  }
+				} catch (err: any) {
+				  ToastError(`Error: ${err.message || 'An unexpected error occurred'}!`);
+	  
 				}
+				
 			
 			}
 		  };
@@ -287,18 +319,31 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 				(request: any) =>
 				  request.user_id === params.id && request.friend_id === Userdata?.id
 			  );
-			  if(matchingRequest){
-				try {
-			 
-					await dispatch(fetchAcceptFriendRequestThunk(matchingRequest.id));
-					ToastSuccess("You are accepting the request !");
-		  
-				  } catch (error) {
-					ToastError(`Error accepting friend request: ${error}`);
-		  
-				  }
+			  try{
+				if(matchingRequest){
+					dispatch(fetchGetRequestsThunk());
+					dispatch(fetchGetAllFriendsThunk());
 
-			  }		
+						const res = await dispatch(fetchAcceptFriendRequestThunk(matchingRequest.id));
+						const payloadData = res.payload.response as {  message: string  };
+						if(!res.payload.success){
+							ToastError(`there is no request to accept it `)
+						}
+						else{
+
+							ToastSuccess(`${payloadData.message}`);
+
+						}
+					 
+	
+				  }else {
+					ToastError(`there is no request to accept it `)
+				  }		
+
+			  }catch(err : any){
+
+			  }
+			  
 			
 		  };
 
@@ -317,166 +362,168 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 
 	  
 
-	return (
-		<AuthCheck>
-			<div className="container">
-				<div className="row">
-					<div className="col-1">
-						<div className="play relative rounded-[54px]">
-							<Image
-								src="/assets/hand.png"
-								className="thehand absolute  -right-[9px] -top-[41px] w-[490px] animate-bounce rounded-r-full"
-								alt=""
-								width="500"
-								height="500"
-								priority={true}
-							/>
-							<div className="align-center absolute bottom-5 left-10 flex items-center justify-center gap-4">
-							{!IsBloqued
-								 ? 
-								<>
-								{requests.some((request: any) => request.user_id === Userdata?.id && request.friend_id === params.id) ? (
-									<button className="h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover] hover:duration-300 hover:bg-[--purple-hover]">
-										Pending Request
-									</button>
-							) :requests.some((request: any) => request.user_id === params.id && request.friend_id === Userdata?.id)? (
-									<button onClick={() => handleClickAcceptRequest()} className="h-12 rounded-2xl bg-[--green-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover] hover:duration-300">
-										Respond to Request
-									</button>
-							) :friends.some((friend: any) => friend.id === params.id) ? (
-									<button className="h-12 rounded-2xl bg-[--pink-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover] hover:duration-300" disabled>
-										Friends
-									</button>
-								) : (
-									<button className="h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover] hover:duration-300" onClick={() => sendRequest_handle()}> 
-										Send Request
-									</button>
-								)}
-								<button onKeyPress={handleEnter}
-									className="hover:duration- h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover]"
-									onClick={() => setShowMessageBlock(true)}
-								>
-									Send Message
-								</button>
-								</>
-							: null}
-							
-
-								{friendsBlock.some((friend: any) => friend.id === params.id) ? (
-									<button
-										className="hover:duration-175 h-12 rounded-2xl bg-[--pink-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--pink-hover]"
-										onClick={() => handleUnblockButtonClick()}
+		  return (
+			<AuthCheck>
+				<div className="container">
+					<div className="row">
+						<div className="col-1">
+							<div className="play relative rounded-[54px]">
+								<Image
+									src="/assets/hand.png"
+									className="thehand absolute  -right-[9px] -top-[41px] w-[490px] animate-bounce rounded-r-full"
+									alt=""
+									width="500"
+									height="500"
+									priority={true}
+								/>
+								<div className="align-center absolute bottom-5 left-10 flex items-center justify-center gap-4">
+								{!IsBloqued
+									 ? 
+									<>
+									{
+									buttonType === 'pendingRequest' ? (
+										<button className="h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover] hover:duration-300">
+											Pending Request
+										</button>
+									) : buttonType === 'respondToRequest' ? (
+											<button onClick={() => handleClickAcceptRequest()} className="h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover] hover:duration-300">
+												Respond to Request
+											</button>
+									) : buttonType === 'friends' ? (
+										<button className="h-12 rounded-2xl bg-[--pink-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--gray-hover] hover:duration-300 hover:bg-[--pink-hover]" disabled>
+											Friends
+										</button>
+									) : (
+										<button className="h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover] hover:duration-300" onClick={() => sendRequest_handle()}> 
+											Send Request
+										</button>
+									)}
+									{ Userdata?.id !== params.id &&
+									<button onKeyPress={handleEnter}
+										className="hover:duration- h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover]"
+										onClick={() => setShowMessageBlock(true)}
 									>
-										Unblock
-									</button>
-								) : (
-									
-									<button
-										className="hover:duration-175 h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover]"
-										onClick={() => handleBlockButtonClick()}
-									>
-										Block
-									</button>
+										Send Message
+									</button>}
+									</>
+								: null}
+								
+	
+									{friendsBlock.some((friend: any) => friend.id === params.id) ? (
+										<button
+											className="hover:duration-175 h-12 rounded-2xl bg-[--pink-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--pink-hover]"
+											onClick={() => handleUnblockButtonClick()}
+										>
+											Unblock
+										</button>
+									) : (
+										
+										<button
+											className="hover:duration-175 h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover]"
+											onClick={() => handleBlockButtonClick()}
+										>
+											Block
+										</button>
+									)}
+								</div>
+								{showMessageBlock && (
+									<>
+										<div className="fixed bottom-0 left-0 right-0 top-0 z-10  h-full w-full rounded-[60px] bg-[#00000095] p-10 opacity-100 backdrop-blur-md">
+											<div className="absolute bottom-0 left-0 right-0 top-0 z-30 m-auto flex h-[280px] w-[380px] flex-col items-center justify-center gap-3 overflow-hidden rounded-[20px] bg-white px-5 shadow-xl">
+												<h2 className="text-[20px] text-gray-800">
+													Send Message to{" "}
+													<span className="text-[25px] text-[--purple-color]">
+														{userinfo?.display_name}
+													</span>
+												</h2>
+												<Image
+													src={userinfo?.avatar_url || ""}
+													className="h-auto w-auto rounded-full"
+													alt=""
+													width={120}
+													height={120}
+													priority={true}
+												/>
+												<input
+													 {...register('message', {required: 'message is required'})}
+													type="text"
+													className="w-full rounded-xl border-2 border-[--purple-color]  p-4 text-black outline-[--purple-color]"
+													placeholder="Send Message"
+													onKeyPress={handleEnter}
+												/>
+											</div>
+										</div>
+									</>
 								)}
 							</div>
-							{showMessageBlock && (
-								<>
-									<div className="fixed bottom-0 left-0 right-0 top-0 z-10  h-full w-full rounded-[60px] bg-[#00000095] p-10 opacity-100 backdrop-blur-md">
-										<div className="absolute bottom-0 left-0 right-0 top-0 z-30 m-auto flex h-[280px] w-[380px] flex-col items-center justify-center gap-3 overflow-hidden rounded-[20px] bg-white px-5 shadow-xl" ref={refOne}>
-											<h2 className="text-[20px] text-gray-800">
-												Send Message to{" "}
-												<span className="text-[25px] text-[--purple-color]">
-													{userinfo?.display_name}
-												</span>
-											</h2>
-											<Image
-												src={userinfo?.avatar_url || ""}
-												className="h-auto w-auto rounded-full"
-												alt=""
-												width={120}
-												height={120}
-												priority={true}
-											/>
-											<input
-												 {...register('message', {required: 'message is required'})}
-												type="text"
-												className="w-full rounded-xl border-2 border-[--purple-color]  p-4 text-black outline-[--purple-color]"
-												placeholder="Send Message"
-												onKeyPress={handleEnter}
-											/>
+	
+							{!blocked.some((elem: BloqueList) =>((elem.userOne.id === Userdata?.id && elem.userTwo.id === params.id) ||(elem.userOne.id === params.id && elem.userTwo.id === Userdata?.id))
+							)? (
+								<div>
+									<div className="boxes">
+										<Boxes title="WINS" value={results?.win} color="#6A67F3" />
+										<Boxes title="LEVEL" value={results?.level} color="#498CDA" />
+										<Boxes title="LOSSES" value={results?.lose} color="#FC7785" />
+									</div>
+									<h1 className="mt-[20px]">History</h1>
+									<div className="history-header mt-[20px] flex h-[40px] w-full justify-between rounded-[40px] bg-[#79a9f28d] px-1 py-1 shadow-lg ">
+										<div className="w-[23%] text-center ">
+											<h1>Players</h1>
+										</div>
+	
+										<div className="w-[23%] text-center ">
+											<h1>Duration</h1>
+										</div>
+	
+										<div className="w-[23%] text-center ">
+											<h1>Date</h1>
+										</div>
+	
+										<div className="w-[23%] text-center ">
+											<h1>Total Matches</h1>
 										</div>
 									</div>
-								</>
-							)}
+									<div className="his scrollbar-hide  h-[120px] overflow-y-auto">
+										{history_match.map((_history: HistoryMatchesType, index) => (
+											<HistoryMatches
+												key={index}
+												playerOne={_history.playerOne}
+												resultOne={_history.resultOne}
+												resultTwo={_history.resultTwo}
+												playerTwo={_history.playerTwo}
+												duration={_history.duration}
+												date={_history.date}
+												totalMatch={_history.totalMatch}
+											/>
+										))}
+									</div>
+								</div>
+							) : null}
 						</div>
-
-						{!blocked.some((elem: BloqueList) =>((elem.userOne.id === Userdata?.id && elem.userTwo.id === params.id) ||(elem.userOne.id === params.id && elem.userTwo.id === Userdata?.id))
-						)? (
-							<div>
-								<div className="boxes">
-									<Boxes title="WINS" value={results?.win} color="#6A67F3" />
-									<Boxes title="RANK" value={results?.level} color="#498CDA" />
-									<Boxes title="LOSSES" value={results?.lose} color="#FC7785" />
-								</div>
-								<h1 className="mt-[20px]">History</h1>
-								<div className="history-header mt-[20px] flex h-[40px] w-full justify-between rounded-[40px] bg-[#79a9f28d] px-1 py-1 shadow-lg ">
-									<div className="w-[23%] text-center ">
-										<h1>Players</h1>
-									</div>
-
-									<div className="w-[23%] text-center ">
-										<h1>Duration</h1>
-									</div>
-
-									<div className="w-[23%] text-center ">
-										<h1>Date</h1>
-									</div>
-
-									<div className="w-[23%] text-center ">
-										<h1>Total Matches</h1>
-									</div>
-								</div>
-								<div className="his scrollbar-hide  h-[120px] overflow-y-auto">
-									{history_match.map((_history: HistoryMatchesType, index) => (
-										<HistoryMatches
-											key={index}
-											playerOne={_history.playerOne}
-											resultOne={_history.resultOne}
-											resultTwo={_history.resultTwo}
-											playerTwo={_history.playerTwo}
-											duration={_history.duration}
-											date={_history.date}
-											totalMatch={_history.totalMatch}
-										/>
-									))}
-								</div>
+	
+						<div className="col-2">
+							<div className="rank-container overflow-hidden p-2">
+								<RankingUserSwitch
+									userId={params.id}
+									userInfo={userinfo}
+									_switch={!blocked.some((elem: BloqueList) =>((elem.userOne.id === Userdata?.id && elem.userTwo.id === params.id) ||(elem.userOne.id === params.id && elem.userTwo.id === Userdata?.id))
+										)}
+								/>
 							</div>
-						) : null}
-					</div>
-
-					<div className="col-2">
-						<div className="rank-container overflow-hidden p-2">
-							<RankingUserSwitch
-								userId={params.id}
-								userInfo={userinfo}
-								_switch={!blocked.some((elem: BloqueList) =>((elem.userOne.id === Userdata?.id && elem.userTwo.id === params.id) ||(elem.userOne.id === params.id && elem.userTwo.id === Userdata?.id))
-									)}
-							/>
+	
+							{!blocked.some((elem: BloqueList) =>((elem.userOne.id === Userdata?.id && elem.userTwo.id === params.id) ||(elem.userOne.id === params.id && elem.userTwo.id === Userdata?.id))
+							)? (
+								<div className="achievements-container">
+									<div className="achievements">
+										<h1>Achievements</h1>
+										<AchievementsList results={results} />
+									</div>
+								</div>
+							) : null}
 						</div>
-
-						{!blocked.some((elem: BloqueList) =>((elem.userOne.id === Userdata?.id && elem.userTwo.id === params.id) ||(elem.userOne.id === params.id && elem.userTwo.id === Userdata?.id))
-						)? (
-							<div className="achievements-container">
-								<div className="achievements">
-									<h1>Achievements</h1>
-									<AchievementsList results={results} />
-								</div>
-							</div>
-						) : null}
 					</div>
 				</div>
-			</div>
-		</AuthCheck>
-	);
-};
-export default Dashboard;
+			</AuthCheck>
+		);
+	};
+	export default Dashboard;

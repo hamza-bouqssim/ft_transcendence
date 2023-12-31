@@ -2,7 +2,11 @@
 import {
 	BadRequestException,
 	ConflictException,
+	HttpException,
+	HttpStatus,
 	Injectable,
+	InternalServerErrorException,
+	NotFoundException,
 	UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
@@ -51,7 +55,8 @@ export class AuthService {
 		});
 
 		if (existingUser) {
-			throw new ConflictException('Email or display_name is already taken.');
+			throw new HttpException('Email or display_name is already taken.', HttpStatus.BAD_REQUEST);
+
 		}
 		const salt = await bcrypt.genSalt(10);
 		const hashedPass = await bcrypt.hash(dto.password_hashed, salt);
@@ -62,9 +67,8 @@ export class AuthService {
 			!dto.password_hashed ||
 			!dto.display_name
 		) {
-			throw new BadRequestException(
-				'You missed entering a required fields !!!',
-			);
+			throw new HttpException('You missed entering a required fields !!!', HttpStatus.BAD_REQUEST);
+
 		}
 		const createNewUser = await this.prisma.user.create({
 			data: {
@@ -97,25 +101,68 @@ export class AuthService {
 		return res.send({ msg: 'Logged out Succesfully !' });
 	}
 
-	async validateUser(dto: AuthDto) {
-		const user = await this.prisma.user.findUnique({
-			where: { email: dto.email },
-		});
-		if (user) return user;
+	// async validateUser(dto: AuthDto) {
+	// 	const user = await this.prisma.user.findUnique({
+	// 		where: { email: dto.email },
+	// 	});
+	// 	if (user) return user;
 
-		const createNewUser = await this.prisma.user.create({
+	// 	const createNewUser = await this.prisma.user.create({
+	// 		data: {
+	// 			username: dto.username,
+	// 			email: dto.email,
+	// 			password: '',
+	// 			display_name: dto.display_name,
+	// 			avatar_url: dto.avatar_url,
+	// 			two_factor_auth: '',
+	// 			two_factor_secret_key: '',
+	// 		},
+	// 	});
+	// 	return createNewUser;
+	// }
+
+	async validateUser(dto: AuthDto) {
+		try {
+		  const user = await this.prisma.user.findUnique({
+			where: { email: dto.email },
+		  });
+	  
+		  if (user) {
+			return user;
+		  }
+	  
+		  const createNewUser = await this.prisma.user.create({
 			data: {
-				username: dto.username,
-				email: dto.email,
-				password: '',
-				display_name: dto.display_name,
-				avatar_url: dto.avatar_url,
-				two_factor_auth: '',
-				two_factor_secret_key: '',
+			  username: dto.username,
+			  email: dto.email,
+			  password: '',
+			  display_name: dto.display_name,
+			  avatar_url: dto.avatar_url,
+			  two_factor_auth: '',
+			  two_factor_secret_key: '',
 			},
-		});
-		return createNewUser;
-	}
+		  });
+	  
+		  return createNewUser;
+		} catch (error) {
+			console.error('Error in validateUser:', error);
+		
+			// Handle specific errors based on the type of error
+			if (error.code === 'P2021') {
+			  // PrismaClientKnownRequestError: Table does not exist
+			  // Respond with a 404 Not Found or a user-friendly message
+			  throw new NotFoundException('User not found');
+			} else {
+			  // Generic error response
+			  throw new InternalServerErrorException('Internal server error');
+			}
+		  }
+	  }
+
+	// async findUser(id: string) {
+	// 	const user = await this.prisma.user.findUnique({ where: { id: id } });
+	// 	return user;
+	// }
 
 	async findUser(id: string) {
 		const user = await this.prisma.user.findUnique({ where: { id: id } });
@@ -127,8 +174,13 @@ export class AuthService {
 	async generateNickname(email: string): Promise<string> {
 		const username = email.split('@')[0];
 		const cleanedUsername = username.replace(/[^a-zA-Z0-9]/g, '');
+		
+		const randomNumber = Math.floor(Math.random() * 1000000000); 
+		const usernameWithNumber = cleanedUsername + randomNumber;
+	
 		const nickname =
-			cleanedUsername.length > 0 ? cleanedUsername : 'defaultNickname';
+			usernameWithNumber.length > 0 ? usernameWithNumber : 'defaultNickname';
+		
 		return nickname;
 	}
 }

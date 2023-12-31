@@ -22,17 +22,13 @@ export const createConversationThunk = createAsyncThunk(
   async (params: CreateConversationParams, { rejectWithValue }) => {
     try {
       const response = await createConversation(params.display_name ?? '', params.message);
-
-      if (!response.data.success) {
-        throw new Error(response.data.error);
-      }
+      // if (!response.data.success) {
+      //   throw new Error(response.data.error);
+      // }
       return response.data;
     } catch (err: any) {
-      if (err.response && err.response.data) {
-        return rejectWithValue(err.response.data); // Return the entire error object
-      } else {
         throw new Error("create conversation failed with an unknown error");
-      }
+      
     }
   }
 );
@@ -53,26 +49,26 @@ export const fetchConversationThunk = createAsyncThunk('conversations/fetch', as
 });
 
 
-export const fetchConversationUserThunk = createAsyncThunk('conversation/fetch',async(params: CreateConversationParams) =>{
-  //try{
+export const fetchConversationUserThunk = createAsyncThunk('conversation/fetch',async(params: CreateConversationParams, {rejectWithValue}) =>{
+  try{
     const response = await findConversationUsers(params.display_name ?? '' , params.message);
     return response.data;
 
-  // }catch(error : any){
-  //   if (error.response && error.response.data) {
-  //     return rejectWithValue(error.response.data);
-  //   } else {
-  //     return rejectWithValue('Failed to fetch the conversation');
-  //   }
-  // }
+  }catch(error : any){
+    if (error.response && error.response.data) {
+      return rejectWithValue(error.response.data);
+    } else {
+      return rejectWithValue('Failed to fetch the conversation');
+    }
+  }
   
 
 })
 
 
 export const fetchDeleteConversation = createAsyncThunk('deleteConversation/fetch', async(conversationId : string)=>{
-  const response = await deleteConversation(conversationId);
-  return response;
+    const response = await deleteConversation(conversationId);
+    return response.data;
 })
 export const conversationsSlice = createSlice({
   name: 'conversations',

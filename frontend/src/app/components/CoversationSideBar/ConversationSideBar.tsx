@@ -23,6 +23,8 @@ import { fetchNumberPending } from "../../store/requestSlice"
 import { FiSearch } from "react-icons/fi";
 import { IoChatbubbleOutline } from "react-icons/io5";
 import { SerachGroup } from "../SeachGroup/SerachGroup"
+import { getNotificationRoom } from "@/app/store/NotificationChatSlice";
+import React from "react";
 
 const CoversationSideBar = () => {
 	const [newRooms , setNewRooms]  = useState<boolean>(false)
@@ -34,8 +36,11 @@ const CoversationSideBar = () => {
 	const [show, setShow] = useState<any>(false);
 	const dispatch = useDispatch<AppDispatch>();
 	const { request, status, error, countRequest  } = useSelector((state:any) => state.request);
+	const {notificationChat} = useSelector((state:any) => state.NotificationChat);
+	const {notificationRoom} = useSelector((state:any) => state.NotificationChat);
 	useEffect(()=>{
 		dispatch(fetchNumberPending());
+		dispatch(getNotificationRoom());
 	},[dispatch]);
     return (
 		<div className="w-full h-full relative p-2  xl:rounded-[20px] pt-4 bg-white">
@@ -46,15 +51,21 @@ const CoversationSideBar = () => {
 						updateChannel(null)
 					}
 				}
-					className={`${(pathname.includes('chat')) ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-1/2`}>Chats
+					className={`${(pathname.includes('chat')) ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-1/2 font-['Whitney_Semibold'] flex items-center  justify-center `}>
+						Chats
+						{notificationChat.reduce((accumulator, currentValue) => accumulator + currentValue.number, 0) !== 0 && 
+						<div className="bg-[#fc7785] w-2 h-2  ml-[2px] mb-2 rounded-full"></div>}
 				</button>
+			
 				<button 
 					onClick={() =>{
 						router.push("/dashboard/groups")
 						updateChannel(null)
-					}
-				}
-					className={`${(pathname.includes('groups')) ? 'bg-[#5B8CD3]' : ''} rounded-full p-4 w-1/2`}>Group
+					}}
+					className={`${(pathname.includes('groups')) ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-1/2 font-['Whitney_Semibold'] flex items-center  justify-center `}>
+					Groups
+					{notificationRoom.reduce((accumulator, currentValue) => accumulator + currentValue.number, 0) !== 0 && 
+					<div className="bg-[#fc7785] w-2 h-2  ml-[2px] mb-2 rounded-full"></div>}
 				</button>
 			</div>
 			<hr className="bg-[#DFDFDF] w-1/2 mx-auto mt-5"/>
@@ -70,7 +81,7 @@ const CoversationSideBar = () => {
 						<path className="heroicon-ui" d="M16.32 14.9l5.39 5.4a1 1 0 0 1-1.42 1.4l-5.38-5.38a8 8 0 1 1 1.41-1.41zM10 16a6 6 0 1 0 0-12 6 6 0 0 0 0 12z" />
                     </svg>
                 </div>
-                <div className="w-[80%] rounded-md bg-gray-200 text-gray-700 leading-tight focus:outline-none py-2 px-2" id="search" onClick={() => {setShow(!show)}}>Search teams or members</div>
+                <div className="w-[80%] rounded-md bg-gray-200 text-gray-700 leading-tight focus:outline-none py-2 px-2 font-['Whitney_Semibold']" id="search" onClick={() => {setShow(!show)}}>Search teams or members</div>
             </div>}
             
         	</div>}
@@ -79,24 +90,27 @@ const CoversationSideBar = () => {
  				
  				<button 
  					onClick={()=>{setSelectUsers("online")}}
- 					className={`${(selectUsers ==='online') ? 'border-[#5B8CD3] border-b-4' : ''} p-3  px-6`}>Online
+ 					className={`${(selectUsers ==='online') ? 'border-[#5B8CD3] border-b-4' : ''} p-3  px-6 font-['Whitney_Semibold']`}>Online
  				</button>
  				<button
- 					onClick={()=>{setSelectUsers("allFriends")}} className={`${(selectUsers ==='allFriends') ? 'border-[#5B8CD3] border-b-4' : ''} p-3  px-6 `}>Friends
+ 					onClick={()=>{setSelectUsers("allFriends")}} className={`${(selectUsers ==='allFriends') ? 'border-[#5B8CD3] border-b-4' : ''} p-3  px-6 font-['Whitney_Semibold'] `}>Friends
  				</button>
 				<div className="relative ">
 					<button
-						onClick={()=>{setSelectUsers("EnAttent")}} className={`${(selectUsers ==='EnAttent') ? 'border-[#5B8CD3] border-b-4' : ''} p-3  px-6`}>Pending
+						onClick={()=>{setSelectUsers("EnAttent")}} className={`${(selectUsers ==='EnAttent') ? 'border-[#5B8CD3] border-b-4' : ''} p-3  px-6 font-['Whitney_Semibold']`}>Pending
 					</button>
-					<span className="absolute -right-[2px] -top[8px]  rounded-full text-white bg-[--pink-color] px-2 font-['Whitney_Bold']">
-						{countRequest}				
-					</span>
+				
+					{countRequest > 0 && (
+						<span className="absolute -right-[2px] -top[8px]  rounded-full text-white bg-[--pink-color] px-2 font-['Whitney_Bold']">
+							{countRequest}
+						</span>
+)}
 				</div>
  				<button
- 					onClick={()=>{setSelectUsers("Bloques")}} className={`${(selectUsers ==='Bloques') ? 'border-[#5B8CD3] border-b-4' : ''} p-3  px-6 `}>Bloques
+ 					onClick={()=>{setSelectUsers("Bloques")}} className={`${(selectUsers ==='Bloques') ? 'border-[#5B8CD3] border-b-4' : ''} p-3  px-6 font-['Whitney_Semibold'] `}>Bloques
  				</button>
 				 <button
- 					onClick={()=>{setSelectUsers("Add")}} className={`${(selectUsers ==='Add') ? 'border-[#5B8CD3] border-b-4' : ''} p-3  px-6 `}> Add
+ 					onClick={()=>{setSelectUsers("Add")}} className={`${(selectUsers ==='Add') ? 'border-[#5B8CD3] border-b-4' : ''} p-3  px-6  font-['Whitney_Semibold']`}> Add
  				</button>
  			</div>}
 			
@@ -111,17 +125,13 @@ const CoversationSideBar = () => {
 				&& (pathname.includes('chat')
 				? <div className="text-black">
 					<div className="absolute right-5  bottom-5 flex items-center">
-						<button onClick={()=>{setNewRooms(false)}} className="text-[#5B8CD3] mr-4">Cancel</button>
+						<button onClick={()=>{setNewRooms(false)}} className="text-[#5B8CD3] mr-4 font-['Whitney_Semibold']">Cancel</button>
 						<button onClick={()=>{setNewRooms(false)}} className=" bg-[#5B8CD3] p-4 rounded-full "><FaCheck />
 						</button>
 					</div>
 				</div> 
 				: <CreatGroups setNewRooms={setNewRooms} ></CreatGroups> )
 			}
-
-
-
-
 			{!newRooms 
 				&&  pathname.includes('chat')  && !show
 				&& <ChatComponnent />

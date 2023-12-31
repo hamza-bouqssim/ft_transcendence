@@ -54,22 +54,23 @@ export const getAllRooms = createAsyncThunk('rooms/getAllRooms', async (_,{rejec
 });
 
 export const createRooms = createAsyncThunk('rooms/createRooms', async (data: createRoom,{rejectWithValue}) => {
-  try
-  {
-    const response = await createRoomsApi(data);
-    return response.data.data;
-  } catch (error : any) {
-    if (error.response && error.response.data) {
-      return rejectWithValue(error.response.data);
-    } else {
-      return rejectWithValue('Failed to create rooms');
-    }
-  }
-});
+	try
+	{
+	  const response = await createRoomsApi(data);
+	  return response.data.data;
+	} catch (error : any) {
+	  if (error.response && error.response.data) {
+		return rejectWithValue(error.response.data);
+	  } else {
+		return rejectWithValue('Failed to create rooms');
+	  }
+	}
+  });
+  
 
 export const updateRooms = createAsyncThunk('rooms/updateRooms', async (data: ConversationTypes | null,{rejectWithValue}) => {
   try {
-    const response = await updateRoomsApi(data);    
+    const response = await updateRoomsApi(data); 
     return response.data.data;
   } catch (error : any) {
     if (error.response && error.response.data) {
@@ -95,7 +96,18 @@ export const joinToRoom = createAsyncThunk('rooms/joinRoom', async (data: join ,
 const roomSlice = createSlice({
   name: 'room',
   initialState,
-  reducers: {},
+  reducers: {
+	updateRoomMessage: (state: { rooms: any[]; }, action: { payload: { roomId: any; updatedMessage: any; }; }) => {
+		const { roomId, updatedMessage } = action.payload;
+		const room = state.rooms.find((room) => room.id === roomId);
+		if (room) {
+		  room.messageRome[0] = {
+			...room.messageRome[0],
+			...updatedMessage,
+		  };
+		}
+	  },
+  },
   extraReducers: (builder:any) => {
     builder
 			.addCase(getAllRooms.pending, (state: any) => {
@@ -147,5 +159,5 @@ const roomSlice = createSlice({
 			});
   },
 });
-
+export const { updateRoomMessage } = roomSlice.actions
 export default roomSlice.reducer;

@@ -18,13 +18,17 @@ export class ConversationsService  {
      let conversation;
       const recipient = await this.userService.findByDisplayName(display_name)
       if(!recipient)
-            throw new HttpException('User not found so cannot create Conversation' , HttpStatus.BAD_REQUEST)
+            throw new HttpException('User not found so cannot create a Conversation' , HttpStatus.BAD_REQUEST)
       const isSenderBlocked = await this.checkIfBlocked(user.id, recipient.id);
 
       const isRecipientBlocked = await this.checkIfBlocked(recipient.id, user.id);
                         
       if (isSenderBlocked || isRecipientBlocked) {
-            throw new Error("Interaction not allowed. Users are blocked.");
+            throw new HttpException('"Interaction not allowed. Users are blocked."' , HttpStatus.BAD_REQUEST)
+      }
+      if(user.display_name === display_name)
+      {
+        throw new HttpException('You cant create a conversation with your self ......' , HttpStatus.BAD_REQUEST)
       }
       const Participent = await this.findParticipent(display_name, user);
       if(!Participent)
@@ -56,7 +60,6 @@ export class ConversationsService  {
         },
       });
     
-      // Update the conversation with the last message
       await this.prisma.chatParticipents.update({
         where: { id: conversation.id },
         data: {
@@ -67,12 +70,11 @@ export class ConversationsService  {
         conversation
       });
 
-      return {message : 'Conversation create succefully', conversation}
+      return {message : 'Conversation create succefully....', conversation}
 
   }
 
   async checkIfBlocked(userId : string, blockedUserId : string) {
-    // Perform a database query to check if the user is blocked by the other user
     const blockListEntry = await this.prisma.blockList.findFirst({
       where: {
         userOneId: userId,
@@ -80,34 +82,10 @@ export class ConversationsService  {
       },
     });
   
-    // Return true if blocked, false otherwise
     return !!blockListEntry;
   }
 
-  async create_conversations(user : User, display_name : string){
-    let conversation;
-      const recipient = await this.userService.findByDisplayName(display_name)
-      if(!recipient)
-            throw new HttpException('User not found so cannot create Conversation' , HttpStatus.BAD_REQUEST)
-      const isSenderBlocked = await this.checkIfBlocked(user.id, recipient.id);
 
-      const isRecipientBlocked = await this.checkIfBlocked(recipient.id, user.id);
-                  
-      if (isSenderBlocked || isRecipientBlocked) {
-            throw new Error("Interaction not allowed. Users are blocked.");
-      }
-      const Participent = await this.findParticipent(display_name, user);
-      if(!Participent)
-      {
-         conversation = await this.CreateParticipent(display_name, user);
-
-      }else{
-        throw new HttpException('This conversation alrighdy exist' , HttpStatus.BAD_REQUEST)
-
-      }
-      return conversation;
-
-  }
 
     async findConversationById(id : string)
     {
@@ -131,7 +109,6 @@ export class ConversationsService  {
 
     async findParticipent(_display_name : string, user : any)
     {
-        // const chatroom = this.prisma.chatRoom.findUnique()
         const chat = await this.prisma.chatParticipents.findFirst({
           where: {
             OR: [
@@ -195,8 +172,10 @@ export class ConversationsService  {
           },
         },
       });
-        
-    
+      if(!chatParticipents)
+        throw new HttpException('This conversation not found...!' , HttpStatus.BAD_REQUEST)
+
+
       return chatParticipents;
     }
 
@@ -250,6 +229,7 @@ async createMessags(user : any, params: CreateMessageParams) {
           deletedBy: {
             disconnect: [{ id: chat.recipient.id }, { id: chat.sender.id }],
           },
+          vue: true,
         },
         include :{
           deletedBy : true,
@@ -290,6 +270,14 @@ async createMessags(user : any, params: CreateMessageParams) {
 
 async findConversationUsers(user : any, _display_name : string, message : string)
 {
+  const findRecipient = await this.prisma.user.findFirst({
+    where : {
+      display_name : _display_name,
+    }
+  });
+  if(!findRecipient)
+    throw new HttpException('There is no user with this name!!' , HttpStatus.BAD_REQUEST);
+
   const chat = await this.prisma.chatParticipents.findFirst({
     where: {
       OR: [
@@ -302,18 +290,17 @@ async findConversationUsers(user : any, _display_name : string, message : string
       recipient: true,
     },
   });
-  const findRecipient = await this.prisma.user.findFirst({
-    where : {
-      display_name : _display_name,
-    }
-  });
+  if(!chat)
+    throw new HttpException('There is no conversation between this two users!!' , HttpStatus.BAD_REQUEST)
+
+
   const isSenderBlocked = await this.checkIfBlocked(user.id, findRecipient.id);
 
-      const isRecipientBlocked = await this.checkIfBlocked(findRecipient.id, user.id);
+  const isRecipientBlocked = await this.checkIfBlocked(findRecipient.id, user.id);
                   
-      if (isSenderBlocked || isRecipientBlocked) {
-            throw new Error("Interaction not allowed. Users are blocked.");
-      }
+    if (isSenderBlocked || isRecipientBlocked) {
+      throw new HttpException('"Interaction not allowed. Users are blocked."' , HttpStatus.BAD_REQUEST)
+    }
   const messageCreate= await this.prisma.message.create({
     data: {
       content : message,
@@ -335,12 +322,15 @@ async findConversationUsers(user : any, _display_name : string, message : string
     },
   });
 
+
   await this.prisma.chatParticipents.update({
     where: { id: chat.id },
     data: {
       lastMessageId: messageCreate.id,
     },
   });
+
+
   this.eventEmitter.emit('createConversationMessage.created', {
     chat
   });
@@ -358,7 +348,7 @@ async getMessageByConversationId(conversationId : string){
           participents: {
             include: {
               sender: true,
-              recipient: true, // Include recipient information
+              recipient: true,
             },
           },
         },
@@ -370,57 +360,40 @@ async getMessageByConversationId(conversationId : string){
       sender: true,
     },
   });
-  if (!chatParticipents) {
-    return [];
+  if (!chatParticipents) 
+  {
+    throw new HttpException('Conversation not found.....', HttpStatus.BAD_REQUEST)
   }
   const isSenderBlocked = await this.userService.isBlockedByUser(chatParticipents.sender.id, chatParticipents.recipient.id);
   const isRecipientBlocked = await this.userService.isBlockedByUser(chatParticipents.recipient.id, chatParticipents.sender.id);
 
   return { messages: chatParticipents.messages, isSenderBlocked, isRecipientBlocked};
+
 }
 
 
-async markConversationAsRead(conversationId: string) {
-  const conversation = await this.prisma.chatParticipents.findUnique({
-    where : {
-      id : conversationId
-    }
-
-  });
-  if (!conversation) {
-    throw new HttpException('Conversation not found', HttpStatus.BAD_REQUEST)
-
-  }
-
-  // Update the vue property for messages in this conversation
 
 
- 
-  await this.prisma.message.updateMany({
-    where: {
-      participentsId: conversationId,
-      // Add additional conditions if necessary
-    },
-    data: {
-      vue: true,
-    },
-  });
-  
-}
-
-
-async findUnreadMessages(conversationId: string) {
-  const unreadMessageCount = await this.prisma.message.count({
-    where: {
-      participentsId:conversationId,
-      vue: false,
-    },
-  });
-  return unreadMessageCount;
-}
 
 async deleteConversation(conversationId: string, userId : string) {
+  const chatParticipent = await this.prisma.chatParticipents.findUnique({
+    where: {
+      id: conversationId,
+      OR: [
+        { senderId: userId },
+        { recipientId: userId },
+      ],
+    },
+    include: { sender: true, recipient: true, deletedBy: true, messages: true },
+  });
+
   
+  if(!chatParticipent )
+    throw new HttpException('Conversation not found.....', HttpStatus.BAD_REQUEST)
+
+
+
+
   await this.prisma.chatParticipents.update({
     where: { id: conversationId },
     data: {
@@ -428,14 +401,20 @@ async deleteConversation(conversationId: string, userId : string) {
         connect: { id: userId },
       },
     },
+   
   });
-  const chatParticipent = await this.prisma.chatParticipents.findUnique({
-    where: { id: conversationId },
-    include: { sender: true, recipient : true, deletedBy: true, messages: true },
+  const updatedChatParticipent = await this.prisma.chatParticipents.findUnique({
+    where: {
+      id: conversationId,
+    },
+    include: {
+      deletedBy: true,
+      messages: true,
+    },
   });
 
-  if (Array.isArray(chatParticipent.deletedBy) && chatParticipent.deletedBy.length === 2) {
-    for (const message of chatParticipent.messages) {
+  if (Array.isArray(updatedChatParticipent.deletedBy) &&updatedChatParticipent.deletedBy.length === 2) {
+    for (const message of updatedChatParticipent.messages) {
       await this.prisma.message.delete({
         where: {
           id: message.id,
@@ -455,6 +434,8 @@ async deleteConversation(conversationId: string, userId : string) {
 
   return { message: 'Delete conversation successfully' };
 }
+
+
   
 
 }

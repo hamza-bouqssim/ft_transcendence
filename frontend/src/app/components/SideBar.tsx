@@ -10,12 +10,16 @@ import ListItem from "./ListItem";
 import Link from "next/link";
 import LogOut from "./LogOut";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
+import { useSelector } from "react-redux";
+import { socketContext } from "../utils/context/socketContext";
 
 const SideBar = () => {
 	const pathName = usePathname();
+	const {isMessage} = useContext(socketContext)
+	
 	const items = [
 		{
 			href: "/dashboard",
@@ -33,6 +37,7 @@ const SideBar = () => {
 				pathName.endsWith("/chat") || pathName.endsWith("/groups")
 					? "text-[--pink-color] animate-pulse"
 					: "",
+			notification: isMessage,
 		},
 		{
 			href: "/dashboard/game",
@@ -53,7 +58,9 @@ const SideBar = () => {
 	];
 
 	const [isLoggedOut, setIsLoggedOut] = useState<boolean>(false);
-
+	const {notificationChat} = useSelector((state:any) => state.NotificationChat);
+	const {notificationRoom} = useSelector((state:any) => state.NotificationChat);
+	
 	const messageBox = (): boolean => {
 		const MySwal = withReactContent(Swal);
 
@@ -73,6 +80,7 @@ const SideBar = () => {
 		});
 		return false;
 	};
+
 
 	return (
     <aside

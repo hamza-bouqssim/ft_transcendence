@@ -27,6 +27,7 @@ export type User = {
     display_name : string;
     avatar_url : string;
     status : string;
+    createdAt : Date;
 }
 export type chat = {
     id : string;
@@ -49,7 +50,6 @@ export type Member = {
       
 } 
 
-
 export type ConversationTypes = {
 	id: string;
 	picture: string;
@@ -66,12 +66,12 @@ export type ConversationTypes = {
 	members: Member[];
 	messageRome: lastMessage[];
 };
+
 export type lastMessage = {
 	id: string;
 	content: string;
 	createdAt: Date;
 };
-
 
 export type AcceptRequestParams ={
     idRequest : string;

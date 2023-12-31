@@ -1,27 +1,15 @@
-import {
-  InputContainer,
-  InputContainerSearching,
-  InputField,
-  InputLabel,
-  SearchResultStyling,
-  TextField,
-} from "../../utils/styles";
-import "./styles.css";
-import { Button } from "../../utils/styles";
-import { useDispatch } from "react-redux";
-import {
-  addConversation,
-  createConversationThunk,
-} from "../../store/conversationSlice";
-import { useForm } from "react-hook-form";
-import {
-  CreateConversationParams,
-  UsersTypes,
-  createUserParams,
-} from "../../utils/types";
-import { AppDispatch } from "../../store";
-import { createConversation } from "../../utils/api";
-import { Dispatch, FC, useEffect, useState } from "react";
+import { InputContainer, InputContainerSearching, InputField, InputLabel, SearchResultStyling, TextField } from "../../utils/styles"
+import "./styles.css"
+import { Button } from "../../utils/styles"
+import { useDispatch } from "react-redux"
+import { addConversation, createConversationThunk } from "../../store/conversationSlice"
+import { useForm } from "react-hook-form"
+import { CreateConversationParams, UsersTypes, createUserParams } from "../../utils/types"
+import { AppDispatch } from "../../store"
+import { createConversation } from "../../utils/api"
+import { Dispatch, FC, useEffect, useState } from "react"
+
+
 
 export const CreateSearchForm = () => {
   const {

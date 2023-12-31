@@ -67,7 +67,7 @@ const OnlineFriends = () => {
 	const { users, Userstatus, Usererror } = useSelector(
 		(state: any) => state.users,
 	);
-	console.log("users in online -->", users);
+	
 	const { friends, status, error } = useSelector((state: any) => state.friends);
 	useEffect(() => {
 
@@ -132,6 +132,7 @@ const OnlineFriends = () => {
 								const response = await dispatch(
 									fetchSendRequestPLay(display_name),
 								);
+
 								if (response.payload && response.payload.message) {
 									const errorMessage = response.payload.message;
 									ToastError(`Error: ${errorMessage}`);

@@ -13,6 +13,7 @@ import {useContext,useEffect} from 'react'
 import MessageContainerRoom from "./MessageContainerRoom";
 import { socketContext } from "../../utils/context/socketContext";
 import { useDispatch, useSelector } from 'react-redux';
+import React from "react";
 
 
 const MessagePanel = () => {
@@ -24,8 +25,6 @@ const MessagePanel = () => {
     const { rooms} = useSelector((state:any) => state.room);
 
     useEffect(() => {
-      
-
         if (channel) {
             setOldData(channel);
         }
@@ -58,17 +57,14 @@ const MessagePanel = () => {
                         ></UpdateComponent>
                     }
                 </div>
-                { rooms && rooms.some((room :ConversationTypes) => room.id===channel?.id )  ?
-                    <div className="hidden md:block md:w-[40%]  pl-4  h-full ">
+                { rooms && rooms.some((room :ConversationTypes) => room.id===channel?.id )  &&  !pathname.includes("/groups") ?
+                    null : <div className="hidden md:block md:w-[40%]  pl-4  h-full ">
                     
-                    <InfoRoom></InfoRoom> 
+                   <InfoRoom></InfoRoom> 
 
-                    </div>:
-                    null 
+                   </div>
+                    
                 }
-
-                
-
         </div>
     )
 }

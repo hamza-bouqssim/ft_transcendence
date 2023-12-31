@@ -38,6 +38,7 @@ function AppWithProviders({ children }: PropsWithChildren & Props) {
 	const [channel, setChannel] = useState<ConversationTypes | null>(null); // Initial value
 	const [oldId, setOldId] = useState<string>("");
 	const [Userdata, setUserdata] = useState<User | null>(null);
+	const [isMessage, setIsMessage] = useState<boolean>(false);
 	const updateChannel = (newAddress: ConversationTypes | null) => {
 		setChannel(newAddress);
 	};
@@ -52,6 +53,8 @@ function AppWithProviders({ children }: PropsWithChildren & Props) {
 					setOldId,
 					Userdata,
 					setUserdata,
+					isMessage,
+					setIsMessage
 				}}
 			>
 				{children}

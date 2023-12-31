@@ -32,7 +32,9 @@ export class AuthController {
 		@Req() req: Request,
 		@Res() res: Response,
 	) {
-		const user = await this.authService.signIn(dto);
+		try{
+			const user = await this.authService.signIn(dto);
+
 		const payload = { sub: user.id, email: user.email };
 
 		if (user.first_time) {
@@ -51,11 +53,25 @@ export class AuthController {
 		const token = this.jwtService.sign(payload);
 		res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
 		return res.send({ signed: true, message: 'Signed Successfully' });
-	}
 
+		}catch(error )
+		{
+			return res.send({success: false, message: error.message});
+			
+		}
+		
+	}
+	
 	@Post('signup')
-	signUp(@Body() dto: LocalAuthDto) {
-		return this.authService.signUp(dto);
+	async signUp(@Body() dto: LocalAuthDto, @Res() res) {
+		try{
+			const  test = await this.authService.signUp(dto);
+			return res.status(200).json({ success: true, response: test });
+
+
+		}catch(error){
+			return res.send({success: false, message: error.message});
+		}
 	}
 
 	@Get('google/login')
@@ -65,6 +81,7 @@ export class AuthController {
 	@Get('google/redirect')
 	@UseGuards(AuthGuard('google'))
 	googleRedirect(@Res() res: Response, @Req() req) {
+
 		const user = req.user;
 		const payload = { sub: user.id, email: user.email };
 

@@ -20,8 +20,9 @@ export class FriendRequestController {
               const user = req.user;
               const returnvalue = await this.friendshipService.sendRequest(user.display_name, request.display_name);
               return res.status(200).json({ success: true, response: returnvalue });
-          } catch (err) {
-              return res.status(401).json({ success: false, message: err.message || 'An unexpected error occurred' });
+          } catch (error) {
+              return res.send({success: false, message: error.message});
+
           }
       }
                 
@@ -34,45 +35,84 @@ export class FriendRequestController {
           return res.status(200).json({success: true, response: returnValue});
 
         }catch(err){
-          return res.status(401).json({ success: false, message: err.message || 'An unexpected error occurred' });
+          return res.send({success: false, message: err.message});
+
         }
 
       }
 
       
     @Post('accept-request')
-    async acceptRequest(@Body() request: {requestId: string}, @Req() req)
+    async acceptRequest(@Body() request: {requestId: string}, @Req() req, @Res() res)
     {
+      try{
         const user = req.user;
-        return this.friendshipService.acceptFriendRequest(request.requestId, user); 
+        const returnValue = await this.friendshipService.acceptFriendRequest(request.requestId, user); 
+        return res.status(200).json({success: true, response: returnValue});
+
+      }catch(error : any){
+        // return res.status(401).json({ success: false, message: error.message || 'An unexpected error occurred' });
+        return res.send({success: false, message: error.message});
+
+
+      }
+       
     }
     @Post('accept_request_play')
-    async acceptRequestToPlay(@Body() request: {requestId: string}, @Req() req){
-      const user = req.user;
+    async acceptRequestToPlay(@Body() request: {requestId: string}, @Req() req, @Res() res){
+      try{
+        const user = req.user;
+        const returnValue = await this.friendshipService.acceptRequestToPlay(request.requestId, user);
+        return res.status(200).json({success: true, response: returnValue});
 
-      return this.friendshipService.acceptRequestToPlay(request.requestId, user);
+      }catch(error : any){
+        return res.send({success: false, message: error.message});
 
+      }
+      
     }
 
 
     @Post('refuse-request')
-    async refuseRequest(@Body() request: {requestId : string}, @Req() req)
+    async refuseRequest(@Body() request: {requestId : string}, @Req() req, @Res() res)
     {
+      try{
         const user = req.user;
-        return this.friendshipService.refuseFriendRequest(request.requestId, user); 
+        const returnValue = this.friendshipService.refuseFriendRequest(request.requestId, user);
+        return res.status(200).json({success: true, response: returnValue});
+
+      }catch(error : any){
+        return res.send({success: false, message: error.message});
+
+
+
+      }
+         
     }
 
     @Post('refuse-request-play')
-    async refuseRequestPlay(@Body() request: {requestId : string}, @Req() req){
-      const user = req.user;
-      return this.friendshipService.refusePLayRequest(request.requestId, user); 
+    async refuseRequestPlay(@Body() request: {requestId : string}, @Req() req, @Res() res){
+      try{
+        const user = req.user;
+        const returnValue = this.friendshipService.refusePLayRequest(request.requestId, user); 
+        return res.status(200).json({success: true, response: returnValue});
+
+      }catch(error : any){
+        return res.send({success: false, message: error.message});
+      }
+      
 
     }
     @Post('remove-friendship')
-    async remove_friendship(@Body() request: {display_name : string}, @Req() req){
-      const user = req.user;
-      return this.friendshipService.remove_friends(user.display_name, request.display_name);
+    async remove_friendship(@Body() request: {display_name : string}, @Req() req, @Res() res){
+      try{
+        const user = req.user;
+        return this.friendshipService.remove_friends(user.display_name, request.display_name);
 
+      }catch(error : any){
+        return res.send({success: false, message: error.message});
+
+      }
     }
     
 
@@ -85,8 +125,7 @@ export class FriendRequestController {
         return res.status(200).json({ success: true, response: returnvalue });
 
       }catch (err) {
-        return res.status(401
-          ).json({ success: false, message: err.message || 'An unexpected error occurred' });
+        return res.send({success: false, message: err.message});
       }
 
 
@@ -103,14 +142,14 @@ export class FriendRequestController {
 
       }catch(err)
       {
-        return res.status(401).json({ success: false, message: err.message || 'An unexpected error occurred' });
+        return res.send({success: false, message: err.message});
+
       }
 
       }
         
     
 
-    // count notification
 
     @Get('notification_count')
     async count_notification(@Req() req){
@@ -120,10 +159,14 @@ export class FriendRequestController {
     }
 
     @Post("delete-notification")
-    async deleteNotification(@Body() request: {idNotif : string}){
-      const result = await this.friendshipService.DeleteNotification(request.idNotif);
-      return result;
-      
+    async deleteNotification(@Body() request: {idNotif : string}, @Res() res){
+      try{
+        const result = await this.friendshipService.DeleteNotification(request.idNotif);
+        return res.status(200).json({ success: true, response: result });
+      }catch(error : any){
+        return res.send({success: false, message: error.message});
+
+      }
 
     }
     @Get("blocked")

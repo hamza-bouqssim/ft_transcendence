@@ -56,9 +56,14 @@ const SignUpForm = forwardRef((_props: any, ref: any) => {
 
 	const onSubmit = async (data: createUserParams) => {
 		try {
-			await postRegisterUser(data);
-			ToastSuccess(`Welcome ${data.username}`);
-			router.push("/signIn", { scroll: false });
+			const res = await postRegisterUser(data);
+			if(!res.data.success)
+				ToastError(`${res.data.message}`);
+			else{
+				ToastSuccess(`Welcome ${data.username}`);
+				router.push("/signIn", { scroll: false });
+			}
+			
 		} catch (err: any) {
 			if (err.response) {
 				const errorMessage = err.response.data.message;

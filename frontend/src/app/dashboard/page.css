@@ -183,6 +183,16 @@
 	margin: 0 auto;
 }
 
+.my:hover {
+	transition: ease-in 0.3s;
+	transform: scale(1.1);
+	cursor: pointer;
+}
+
+.my::selection {
+	background: none;
+}
+
 @keyframes bounce {
 	0%,
 	20%,
