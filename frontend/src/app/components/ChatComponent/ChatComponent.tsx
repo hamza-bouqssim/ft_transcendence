@@ -88,7 +88,7 @@ const ChatComponnent = () => {
 					<div className="p-2">
 						{conversations && conversations.map((elem: ConversationTypes) => (
 
-							<ListChat elem={elem}></ListChat>
+							<ListChat key={elem.id} elem={elem}></ListChat>
 
 						))}
 					</div>

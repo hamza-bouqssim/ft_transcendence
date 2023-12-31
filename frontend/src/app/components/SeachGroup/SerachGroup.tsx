@@ -39,7 +39,7 @@ export const SerachGroup = () => {
         {room ? (
             room.length > 0 ? (
               room.map((data: ConversationTypes) => (
-                <ListSearch data={data}></ListSearch>
+                <ListSearch key={data.id} data={data}></ListSearch>
               ))
             ) : (
               <p className='text-[14px] mt-3 text-center text-gray-400 "'>No room with this name: {groupName}</p>
