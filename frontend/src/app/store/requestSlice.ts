@@ -63,9 +63,7 @@ export const fetchRequestThunk = createAsyncThunk(
 	async (data: CreateRequestParams, { rejectWithValue }) => {
 		try {
 			const response = await SendRequest(data.display_name);
-			if (!response.data.success) {
-				throw new Error(response.data.error);
-			}
+			
 			return response.data; // Assuming the structure of your fulfilled payload
 		} catch (err: any) {
 			if (err.response && err.response.data) {
@@ -80,9 +78,7 @@ export const fetchRequestThunk = createAsyncThunk(
 export const fetchAcceptFriendRequestThunk = createAsyncThunk("request/accept",async (id: string, { rejectWithValue }) => {
 	try{
 		const response = await AcceptRequest(id);
-		if (!response.data.success) {
-			throw new Error(response.data.error);
-		}
+	
 		return response.data; // Assuming the structure of your fulfilled payload
 	} catch (err: any) {
 		if (err.response && err.response.data) {
@@ -118,9 +114,7 @@ export const fetchSendRequestPLay = createAsyncThunk(
 		try {
 			const response = await sendRequestPlay(display_name);
 
-			if (!response.data.success) {
-				throw new Error(response.data.error);
-			}
+			
 			return response.data;
 		} catch (err: any) {
 			if (err.response && err.response.data) {

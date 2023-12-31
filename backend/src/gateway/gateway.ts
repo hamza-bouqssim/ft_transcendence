@@ -78,7 +78,6 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
  
     @SubscribeMessage('messageRome')
     async handleMessage(client: AuthenticatedSocket, createMessageRoom: CreateMessageRoom){
-        console.log(createMessageRoom)
         const messageRome = await this.roomsService.createMessage(createMessageRoom,client.user.sub);
         this.roomsService.notificationRoomUpdate(messageRome.senderId,messageRome.chatRoomId)
         this.server.to(createMessageRoom.chatRoomId.toString()).emit ('messageRome', messageRome);

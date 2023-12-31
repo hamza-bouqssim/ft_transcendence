@@ -21,10 +21,8 @@ const initialState: BlockState = {
   export const fetchBlockFriendThunk = createAsyncThunk('request/block',async(id : string ,{rejectWithValue}) => {
     try{
       const response = await bloqueFriend(id);
-      if(!response.data.success){
-        throw new Error(response.data.error)
-      }
-      return response;
+    
+      return response.data;
 
     }catch(err : any){
       if (err.response && err.response.data) {
@@ -61,10 +59,8 @@ const initialState: BlockState = {
   export const fetchDebloqueUserThunk = createAsyncThunk('Debloque/fetch', async(id : string ,{rejectWithValue})=>{
     try{
       const response = await DebloqueUser(id);
-      if(!response.data.success){
-        throw new Error(response.data.error)
-      }
-      return response;
+    
+      return response.data;
 
     }catch(err : any){
       if (err.response && err.response.data) {

@@ -139,8 +139,11 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 	return (
 		<>
 		{
-			rooms && rooms.some((room :ConversationTypes) => room.id===channel?.id )  ? (
+			rooms && rooms.some((room :ConversationTypes) => room.id===channel?.id ) &&  !pathname.includes("/groups")  ? 
+				
+				null
 
+			:  
 			<div className="flex items-center justify-between rounded-full  bg-[#F2F3FD] p-5  text-black">
 			<div className="flex items-center">
 				<FaArrowLeft
@@ -235,8 +238,6 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 				)
 			) : null}
 		</div>
-
-			) : null 
 		}
 		</>
 		

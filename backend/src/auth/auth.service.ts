@@ -2,6 +2,8 @@
 import {
 	BadRequestException,
 	ConflictException,
+	HttpException,
+	HttpStatus,
 	Injectable,
 	UnauthorizedException,
 } from '@nestjs/common';
@@ -51,7 +53,8 @@ export class AuthService {
 		});
 
 		if (existingUser) {
-			throw new ConflictException('Email or display_name is already taken.');
+			throw new HttpException('Email or display_name is already taken.', HttpStatus.BAD_REQUEST);
+
 		}
 		const salt = await bcrypt.genSalt(10);
 		const hashedPass = await bcrypt.hash(dto.password_hashed, salt);
@@ -62,9 +65,8 @@ export class AuthService {
 			!dto.password_hashed ||
 			!dto.display_name
 		) {
-			throw new BadRequestException(
-				'You missed entering a required fields !!!',
-			);
+			throw new HttpException('You missed entering a required fields !!!', HttpStatus.BAD_REQUEST);
+
 		}
 		const createNewUser = await this.prisma.user.create({
 			data: {
@@ -127,8 +129,13 @@ export class AuthService {
 	async generateNickname(email: string): Promise<string> {
 		const username = email.split('@')[0];
 		const cleanedUsername = username.replace(/[^a-zA-Z0-9]/g, '');
+		
+		const randomNumber = Math.floor(Math.random() * 1000000000); 
+		const usernameWithNumber = cleanedUsername + randomNumber;
+	
 		const nickname =
-			cleanedUsername.length > 0 ? cleanedUsername : 'defaultNickname';
+			usernameWithNumber.length > 0 ? usernameWithNumber : 'defaultNickname';
+		
 		return nickname;
 	}
 }

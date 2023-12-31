@@ -20,8 +20,9 @@ export class FriendRequestController {
               const user = req.user;
               const returnvalue = await this.friendshipService.sendRequest(user.display_name, request.display_name);
               return res.status(200).json({ success: true, response: returnvalue });
-          } catch (err) {
-              return res.status(401).json({ success: false, message: err.message || 'An unexpected error occurred' });
+          } catch (error) {
+              return res.send({success: false, message: error.message});
+
           }
       }
                 
@@ -34,7 +35,8 @@ export class FriendRequestController {
           return res.status(200).json({success: true, response: returnValue});
 
         }catch(err){
-          return res.status(401).json({ success: false, message: err.message || 'An unexpected error occurred' });
+          return res.send({success: false, message: err.message});
+
         }
 
       }
@@ -49,7 +51,9 @@ export class FriendRequestController {
         return res.status(200).json({success: true, response: returnValue});
 
       }catch(error : any){
-        return res.status(401).json({ success: false, message: error.message || 'An unexpected error occurred' });
+        // return res.status(401).json({ success: false, message: error.message || 'An unexpected error occurred' });
+        return res.send({success: false, message: error.message});
+
 
       }
        
@@ -62,10 +66,10 @@ export class FriendRequestController {
         return res.status(200).json({success: true, response: returnValue});
 
       }catch(error : any){
-        return res.status(401).json({ success: false, message: error.message || 'An unexpected error occurred' });
+        return res.send({success: false, message: error.message});
+
       }
       
-
     }
 
 
@@ -78,7 +82,8 @@ export class FriendRequestController {
         return res.status(200).json({success: true, response: returnValue});
 
       }catch(error : any){
-        return res.status(401).json({ success: false, message: error.message || 'An unexpected error occurred' });
+        return res.send({success: false, message: error.message});
+
 
 
       }
@@ -93,9 +98,7 @@ export class FriendRequestController {
         return res.status(200).json({success: true, response: returnValue});
 
       }catch(error : any){
-
-        return res.status(401).json({ success: false, message: error.message || 'An unexpected error occurred' });
-
+        return res.send({success: false, message: error.message});
       }
       
 
@@ -107,11 +110,9 @@ export class FriendRequestController {
         return this.friendshipService.remove_friends(user.display_name, request.display_name);
 
       }catch(error : any){
-        return res.status(401).json({ success: false, message: error.message || 'An unexpected error occurred' });
+        return res.send({success: false, message: error.message});
 
       }
-      
-
     }
     
 
@@ -124,8 +125,7 @@ export class FriendRequestController {
         return res.status(200).json({ success: true, response: returnvalue });
 
       }catch (err) {
-        return res.status(401
-          ).json({ success: false, message: err.message || 'An unexpected error occurred' });
+        return res.send({success: false, message: err.message});
       }
 
 
@@ -142,7 +142,8 @@ export class FriendRequestController {
 
       }catch(err)
       {
-        return res.status(401).json({ success: false, message: err.message || 'An unexpected error occurred' });
+        return res.send({success: false, message: err.message});
+
       }
 
       }
@@ -162,10 +163,8 @@ export class FriendRequestController {
       try{
         const result = await this.friendshipService.DeleteNotification(request.idNotif);
         return res.status(200).json({ success: true, response: result });
-
-
       }catch(error : any){
-        return res.status(401).json({ success: false, message: error.message || 'An unexpected error occurred' });
+        return res.send({success: false, message: error.message});
 
       }
 

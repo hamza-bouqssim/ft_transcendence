@@ -361,7 +361,7 @@ async getMessageByConversationId(conversationId : string){
   });
   if (!chatParticipents) 
   {
-    return [];
+    throw new HttpException('Conversation not found.....', HttpStatus.BAD_REQUEST)
   }
   const isSenderBlocked = await this.userService.isBlockedByUser(chatParticipents.sender.id, chatParticipents.recipient.id);
   const isRecipientBlocked = await this.userService.isBlockedByUser(chatParticipents.recipient.id, chatParticipents.sender.id);

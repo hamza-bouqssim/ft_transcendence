@@ -87,7 +87,7 @@ const MessageInputFieldRoom: FC<props> = ({setMessage, Message}) => {
     return (
       <>
       {
-        rooms && rooms.some((room :ConversationTypes) => room.id===channel?.id ) 
+        rooms && rooms.some((room :ConversationTypes) => room.id===channel?.id )
         ?
         (members.some((member : Members) => member.user_id === Userdata?.id && member.Status !== "Mut")?
         <div className="flex items-center justify-between ">

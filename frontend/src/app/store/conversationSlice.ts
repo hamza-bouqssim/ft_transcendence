@@ -25,7 +25,6 @@ export const createConversationThunk = createAsyncThunk(
       // if (!response.data.success) {
       //   throw new Error(response.data.error);
       // }
-      console.log("resposne create-->", response.data);
       return response.data;
     } catch (err: any) {
         throw new Error("create conversation failed with an unknown error");
@@ -68,8 +67,8 @@ export const fetchConversationUserThunk = createAsyncThunk('conversation/fetch',
 
 
 export const fetchDeleteConversation = createAsyncThunk('deleteConversation/fetch', async(conversationId : string)=>{
-  const response = await deleteConversation(conversationId);
-  return response;
+    const response = await deleteConversation(conversationId);
+    return response.data;
 })
 export const conversationsSlice = createSlice({
   name: 'conversations',

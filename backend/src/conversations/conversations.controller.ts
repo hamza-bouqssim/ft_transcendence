@@ -21,7 +21,6 @@ constructor(private  conversationService : ConversationsService , private eventE
             const returnValue = await this.conversationService.createConversations(user,  request.display_name, request.message);
             return res.status(200).json({ success: true, response: returnValue });
         } catch (err) {
-            // return res.status(401).json({ success: false, message: err.message || 'An unexpected error occurred' });
             return res.send({success: false, message: err.message});
         }
 
@@ -36,7 +35,8 @@ async  findConversation(@Req() req: any, @Res() res){
         const find = await this.conversationService.find(user);
         return res.status(200).json({data : find});
     }catch(error){
-        return res.status(401).json(error.response);
+        return res.send({success: false, message: error.response});
+
     }
     
 }
@@ -51,7 +51,8 @@ async findConversationUser(@Body() request: {display_name : string, message : st
         return res.status(200).json({ success: true, response: find });
 
     }catch(error : any){
-        return res.status(401).json({ success: false, message: error.message || 'An unexpected error occurred' });
+        return res.send({success: false, message: error.message});
+
     }
    
 }
@@ -65,7 +66,8 @@ async getMessagesFromConversation(@Param('conversationId') conversationId : stri
         return res.status(200).json({ success: true, response: getMessages });
 
     }catch(error : any){
-        return res.status(401).json({ success: false, message: error.message || 'An unexpected error occurred' });
+        return res.send({success: false, message: error.message});
+
     }
     
 }
@@ -78,7 +80,8 @@ async getMessagesFromConversation(@Param('conversationId') conversationId : stri
         const deleteConversation = await this.conversationService.deleteConversation(request.conversationId, user.id);
         return res.status(200).json({ success: true, response: deleteConversation });
     }catch(error : any){
-             return res.status(401).json({ success: false, message: error.message || 'An unexpected error occurred' });
+        return res.send({success: false, message: error.message});
+
     }  
   }
 

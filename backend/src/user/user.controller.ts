@@ -3,9 +3,7 @@ import {
 	Body,
 	Controller,
 	Get,
-	Param,
 	Post,
-	Delete,
 	Req,
 	Res,
 	UseGuards,
@@ -75,7 +73,7 @@ export class UserController {
 				.status(200)
 				.json({ success: true, message: 'Updated Successfully' });
 		} catch (error) {
-			return res.status(401).json({ success: false, message: error.message });
+			return res.send({success: false, message: error.message});
 		}
 	}
 
@@ -95,7 +93,7 @@ export class UserController {
 		res.send({ success: true, message: 'avatar uploaded succesfully' });
 
 		}catch(error){
-			return res.status(401).json({ success: false, message: error.message });
+			return res.send({success: false, message: error.message});
 
 		}
 		
@@ -189,23 +187,13 @@ export class UserController {
 
 
 		}catch(error : any){
-			return res.status(401).json({ message: error });
+			return res.send({success: false, message: error.message});
 
 
 		}
 		
 	}
-	// @Get('table-friends')
-	// @UseGuards(AuthGuard('jwt'))
-	// async allFriend(@Req() req) {
-	// 	const user = req.user;
-	// 	return await this.userService.allFriendsRequest(user.id);
-	// }
-	// @Post('table_friends_id')
-	// @UseGuards(AuthGuard('jwt'))
-	// async allFriendsId(@Body() request: { id_user: string }) {
-	// 	return await this.userService.allFriendsId(request.id_user);
-	// }
+
 
 	@Post('get_user')
 	@UseGuards(AuthGuard('jwt'))
@@ -215,7 +203,7 @@ export class UserController {
 			return res.status(200).json(user);
 
 		}catch(error : any){
-			return res.status(401).json({ message: error });
+			return res.send({success: false, message: error.message});
 
 
 		}
@@ -230,16 +218,5 @@ export class UserController {
 		return notifications;
 	}
 
-	// @Delete('delete-account')
-	// @UseGuards(AuthGuard('jwt'))
-	// async delete_account(@Req() req, @Res() res) {
-	// 	try {
-	// 		const user = req.user;
-	// 		res.clearCookie('token');
-	// 		await this.userService.deleteAccount(user.id);
-	// 		return res.send({ success: true, message: 'Deleted Successfully' });
-	// 	} catch (error) {
-	// 		console.error('Error deleting user account:', error);
-	// 	}
-	// }
+	
 }

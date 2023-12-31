@@ -61,7 +61,6 @@ const MessageContainerRoom = () => {
       }
   
     };
-    console.log(channel)
 
     const handelJoinRoom = () => {
       if (channel?.id && channel?.Privacy) {
@@ -110,7 +109,7 @@ const MessageContainerRoom = () => {
         <>
             
               {
-                  rooms && rooms.some((room :ConversationTypes) => room.id===channel?.id )  ? (
+                  rooms && rooms.some((room :ConversationTypes) => room.id===channel?.id ) ? (
                     <>
                       <div className="h-[calc(100%-148px)] no-scrollbar  overflow-y-auto py-3 ">
                         { Message?.map((m:any) =>(

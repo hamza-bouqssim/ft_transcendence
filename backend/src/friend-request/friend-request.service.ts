@@ -415,6 +415,11 @@ export class FriendRequestService {
 				],
 			},
 		});
+		if (friendshipPlay) {
+			await this.prisma.requestPlay.delete({
+				where: { id: friendshipPlay.id },
+			});
+		}
 		if(friendship)
 		{
 			const notification = await this.prisma.notificationGlobal.findFirst({
@@ -423,13 +428,13 @@ export class FriendRequestService {
 						{
 							AND: [
 								{ Sender_id: senderId, recipient_id: recipientId },
-								{ type: { in: ['requestFriend', 'playRequest'] } },
+								{ type: { in: ['requestFriend', 'requestPLay'] } },
 							],
 						},
 						{
 							AND: [
 								{ Sender_id: recipientId, recipient_id: senderId },
-								{ type: { in: ['requestFriend', 'playRequest'] } },
+								{ type: { in: ['requestFriend', 'requestPLay'] } },
 							],
 						},
 					],
@@ -443,11 +448,7 @@ export class FriendRequestService {
 			}
 		}
 
-		if (friendshipPlay) {
-			await this.prisma.requestPlay.delete({
-				where: { id: friendshipPlay.id },
-			});
-		}
+		
 		await this.prisma.blockList.create({
 			data: {
 				userOneId: senderId,

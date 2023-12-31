@@ -132,6 +132,7 @@ const OnlineFriends = () => {
 								const response = await dispatch(
 									fetchSendRequestPLay(display_name),
 								);
+
 								if (response.payload && response.payload.message) {
 									const errorMessage = response.payload.message;
 									ToastError(`Error: ${errorMessage}`);

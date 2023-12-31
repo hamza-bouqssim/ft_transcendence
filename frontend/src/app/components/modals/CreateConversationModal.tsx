@@ -46,8 +46,6 @@ const CreateConversationModal: FC<props> = ({ setShow }) => {
 
 			dispatch(createConversationThunk(data))
 			.then((response: any) => {
-				console.log("response-->", response);
-				console.log("response here->", response.payload.success);
 				if (!response.payload.success) {
 					toast.error(response.payload.message);
 				} else {
