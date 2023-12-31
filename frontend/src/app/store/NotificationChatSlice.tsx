@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { getAllRoomsApi, createRoomsApi, updateRoomsApi, deleteRoomsApi, joinRoomApi, getNotificationRoomApi } from '../utils/api';
-import { ConversationTypes } from '../utils/types';
+import {  getNotificationRoomApi } from '../utils/api';
 
 
 

@@ -22,7 +22,6 @@ type props = {
 
  const CreateSearchModal:FC<props> = ({setShow}) => {
     const ref = createRef<HTMLDivElement>() ;
-    // const [show, setShow] = useState<any>(false);
     const { updateChannel, channel } = useContext(socketContext);
 
 
@@ -30,12 +29,8 @@ type props = {
     const {register, handleSubmit, formState: { errors }} = useForm<CreateConversationParams>();
     const dispatch = useDispatch<useAppDispatch();
 
-    const onSubmit = async  (data : CreateConversationParams) => {
-      
-
-
+    const onSubmit = async  (data : CreateConversationParams) => {   
     }
-
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState<UsersTypes[]>([]);
 	const router = useRouter();
@@ -89,13 +84,7 @@ type props = {
         updateChannel(elem);
 
     }
-    // function isUsersTypes(elem: ConversationTypes | UsersTypes): elem is UsersTypes {
-	// 		return (elem as UsersTypes).display_name !== undefined;
-	// 	}
-      
-    //   function isGroupChannel(elem: ConversationTypes | UsersTypes): elem is ConversationTypes {
-    //     return (elem as ConversationTypes).name !== undefined;
-    //   }
+
   
     return (
         <div className="w-full max-w-screen-xl mx-auto px-6">
@@ -127,8 +116,7 @@ type props = {
                                     <Link href={`/dashboard/${elem.id}`}>{elem.display_name}</Link>
                                
                         </div>
-                        </div>
-))}
+                        </div>))}
                         
                     </div>
                     <div className="block bg-gray-200 text-sm text-right py-2 px-3 -mx-3 -mb-2 rounded-b-lg">

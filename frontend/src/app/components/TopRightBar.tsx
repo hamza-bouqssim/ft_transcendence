@@ -105,11 +105,15 @@ const TopRightBar = () => {
 	}, []);
 
 	const getDisplayUser = (user : User | null) => {
-		
-        const truncatedDisplayName =
-          user?.display_name.length > 10
-            ? `${user?.display_name.substring(0, 10)}...`
-            : user?.display_name;
+		let truncatedDisplayName
+		if(user?.display_name)
+		{
+			truncatedDisplayName =
+			user?.display_name.length > 10
+			  ? `${user?.display_name.substring(0, 10)}...`
+			  : user?.display_name;
+			
+		}
     
         return {
           ...user,

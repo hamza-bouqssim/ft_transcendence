@@ -90,12 +90,7 @@ export const InfoChat = () => {
                 <input className='px-2 py-1'/>
               </div>
             </div>
-            {/* <div className= "w-full h-[10%] bg-[#F2F3FD] px-2 py-2 text-gray-600  font-['Whitney_Semibold']">
-              <h1>Channels participate</h1>
-              <span>{fetchDataUser()?.createdAt}</span>
-              
-              </div>
-										 */}
+          
 
         </div>
   )

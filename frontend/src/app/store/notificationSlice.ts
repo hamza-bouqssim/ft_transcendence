@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import {  changeAvatar, changeDisplayedName, changeUserName, dataUser, deleteNotification, getAllUsers, getConversationMessage, getNotification, getNumberNotification, tableFriends} from '../utils/api';
-import { ConversationMessage, NotificationTypes, UsersTypes, messageTypes } from '../utils/types';
-import axios from 'axios';
+import { deleteNotification, getNotification, getNumberNotification} from '../utils/api';
+import {  NotificationTypes } from '../utils/types';
 
 export interface NotificationState {
   notification: NotificationTypes[];

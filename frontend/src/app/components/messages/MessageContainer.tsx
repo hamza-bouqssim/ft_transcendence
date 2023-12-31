@@ -1,17 +1,14 @@
-import {MessageContainerStyle, MessageItemAvatar, MessageItemContainer, MessageItemContent, MessageItemDetails, MessageItemHeader} from "../../utils/styles"
-import { ConversationTypes, User, messageTypes } from "../../utils/types";
-import { FC, useEffect, useState,useContext, useRef } from "react";
-import {formatRelative} from 'date-fns'
-import { getAuthUser } from "../../utils/api";
+import {MessageContainerStyle} from "../../utils/styles"
+import { User, messageTypes } from "../../utils/types";
+import {  useEffect, useState,useContext, useRef } from "react";
 import MessageInputField from "./MessageInputField";
 import {socketContext } from "../../utils/context/socketContext";
-import {getConversationMessage} from '../../utils/api'
 import Image from  'next/image'
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store";
-import { MessagesState, fetchMessagesThunk } from "../../store/messageSlice";
+import {  fetchMessagesThunk } from "../../store/messageSlice";
 import { fetchDebloqueUserThunk } from "../../store/blockSlice";
-import { ToastContainer, toast } from 'react-toastify';
+import {  toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 
@@ -39,7 +36,6 @@ const MessageContainer = () => {
 		});
 	  };
     const [setLoadloadinging] = useState<boolean>(false);
-    // const [Message,setMessage] = useState<messageTypes[]>([]);
     const controller = new AbortController();
     const { channel } = useContext(socketContext);
     const { oldId,setOldId } = useContext(socketContext);

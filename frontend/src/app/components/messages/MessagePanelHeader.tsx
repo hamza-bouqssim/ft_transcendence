@@ -1,9 +1,6 @@
 "use client";
 import {
-	AvatarStyle,
 	IngameStyling,
-	MessageItemAvatar,
-	MessagePannelHeaderStyle,
 	OflineStyling,
 	OnlineStyling,
 } from "../../utils/styles";
@@ -93,7 +90,6 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 		if(channel?.id)
 			dispatch(getAllMembers(channel?.id));
 	}, [dispatch, channel]);
-	// Image src
 
 	const InfoRecipient = () => {
 		let test: User | undefined;

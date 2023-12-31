@@ -6,10 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import EdiText from "react-editext";
 import { FaCheck } from "react-icons/fa6";
 import { IoClose } from "react-icons/io5";
-import { ToastContainer, toast } from "react-toastify";
-
 import { socketContext } from "../../utils/context/socketContext";
-import { updateRooms } from "../../store/roomsSlice"; // Update with the correct path
 import { RestFriend } from "../RestFriend/RestFriend";
 import Image from "next/image";
 import { ConversationTypes } from "../../utils/types";

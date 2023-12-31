@@ -13,7 +13,6 @@ const ConversationSearch = () => {
     return (
         <div className={`search-container ${styles.searchContainer}`}>
             
-            {/* {show &&  <CreateSearchModal   setShow={setShow} />   } */}
 
             {show &&  <CreateSearchModal   setShow={setShow} />   }
             <input

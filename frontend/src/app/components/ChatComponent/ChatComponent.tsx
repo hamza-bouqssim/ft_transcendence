@@ -1,52 +1,13 @@
 "use client";
-import {
-	Conversation,
-	ConversationSideBarContainer,
-	ConversationSideBarItem,
-	IngameStyling,
-	OflineStyling,
-	OnlineStyling,
-} from "../../utils/styles";
-import {
-	ConversationTypes,
-	User,
-	UsersType,
-	UsersTypes,
-	messageTypes,
-} from "../../utils/types";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
-
-import { FC, useState, useEffect, useContext } from "react";
+import {ConversationTypes,} from "../../utils/types";
+import { useState, useEffect } from "react";
 import "./style.css";
-import {
-	getAuthUser,
-	getConversation,
-	getUnreadMessages,
-} from "../../utils/api";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../store";
-import {
-	fetchConversationThunk,
-	fetchDeleteConversation,
-} from "../../store/conversationSlice";
-import { formatRelative } from "date-fns";
+import { AppDispatch } from "../../store";
+import {fetchConversationThunk,} from "../../store/conversationSlice";
 import { IoMdAdd } from "react-icons/io";
 import CreateConversationModal from "../modals/CreateConversationModal";
-import { socketContext } from "../../utils/context/socketContext";
-import { fetchMessagesThunk } from "../../store/messageSlice";
-import { fetchAuthUser } from "../../store/AuthSlice";
-import { fetchMessagesUnreadThunk } from "../../store/UnreadMessages";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronDown, faEllipsis } from "@fortawesome/free-solid-svg-icons";
-import {
-	fetchBlockFriendThunk,
-	fetchDebloqueUserThunk,
-} from "../../store/blockSlice";
-import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { fetchUsersThunk } from "@/app/store/usersSlice";
-import { LucideScatterChart } from "lucide-react";
 import { ListChat } from "./ListChat";
 
 

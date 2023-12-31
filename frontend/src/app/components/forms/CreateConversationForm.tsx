@@ -2,7 +2,7 @@ import { InputContainer, InputField, InputLabel, TextField } from "../../utils/s
 import styles  from "./index.module.css"
 import { Button } from "../../utils/styles"
 import { useDispatch } from "react-redux"
-import { addConversation, createConversationThunk } from "../../store/conversationSlice"
+import { createConversationThunk } from "../../store/conversationSlice"
 import { useForm } from "react-hook-form"
 import { CreateConversationParams, createUserParams } from "../../utils/types"
 import { AppDispatch } from "../../store"

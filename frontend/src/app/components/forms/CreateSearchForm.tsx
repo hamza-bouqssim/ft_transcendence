@@ -1,13 +1,10 @@
-import { InputContainer, InputContainerSearching, InputField, InputLabel, SearchResultStyling, TextField } from "../../utils/styles"
+import { InputContainerSearching, InputField,  SearchResultStyling } from "../../utils/styles"
 import "./styles.css"
-import { Button } from "../../utils/styles"
 import { useDispatch } from "react-redux"
-import { addConversation, createConversationThunk } from "../../store/conversationSlice"
 import { useForm } from "react-hook-form"
-import { CreateConversationParams, UsersTypes, createUserParams } from "../../utils/types"
+import { CreateConversationParams, UsersTypes} from "../../utils/types"
 import { AppDispatch } from "../../store"
-import { createConversation } from "../../utils/api"
-import { Dispatch, FC, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 
 
 
@@ -26,7 +23,6 @@ export const CreateSearchForm = () => {
     
         useEffect(() => {
             
-            // Define a function to fetch search results
             const fetchSearchResults = async () => {
                 try {
                     const response = await fetch(`http://localhost:8000/user/search`, {
@@ -46,11 +42,9 @@ export const CreateSearchForm = () => {
                 }
             };
     
-            // Fetch search results when searchQuery changes
             if (searchQuery.trim() !== "") {
                 fetchSearchResults();
             } else {
-                // Clear search results if the searchQuery is empty
                 setSearchResults([]);
             }
     

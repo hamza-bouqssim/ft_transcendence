@@ -1,6 +1,6 @@
 "use client";
 
-import { SendRequest, getMatchHistory, getStates, getUserInfos} from '../../utils/api';
+import {  getMatchHistory, getStates, getUserInfos} from '../../utils/api';
 import { useState, useEffect, useContext } from 'react';
 import Boxes from '../../components/Boxes';
 import HistoryMatches from '../../components/HistoryMatches';
@@ -22,9 +22,7 @@ import { fetchGetRequestsThunk } from '../../store/requestsSlice';
 import { createConversationThunk, fetchConversationUserThunk } from '../../store/conversationSlice';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
-import { userInfo } from 'os';
 import AuthCheck from '@/app/utils/AuthCheck';
-import { PlaylistAddOutlined } from '@mui/icons-material';
 
 const Dashboard = ({ params }: { params: { id: string } }) => {
 	
@@ -218,7 +216,6 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 		
 
 		useEffect(() => {
-		  // Your conditions
 		  const isPendingRequest = requests.some(
 			(request : any) => request.user_id === Userdata?.id && request.friend_id === params.id
 		  );
@@ -277,7 +274,6 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 			fetchGameStates();
 		}, [params.id]);
 
-		//send request 
 		const { users, Userstatus, Usererror } = useSelector(
 			(state: any) => state.users,
 		);

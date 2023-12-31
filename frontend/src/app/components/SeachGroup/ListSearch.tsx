@@ -1,8 +1,8 @@
 import { ConversationTypes } from '@/app/utils/types';
 import Image from 'next/image';
 import { socketContext } from '@/app/utils/context/socketContext';
-import React, { useState, useEffect, useContext, FC } from 'react';
-import { useDispatch, useSelector } from "react-redux";
+import React, {  useContext, FC } from 'react';
+import {  useSelector } from "react-redux";
 
 interface ListSearchProps {
   data: ConversationTypes;

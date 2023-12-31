@@ -1,16 +1,13 @@
 import { AppDispatch } from "../../store";
 import { fetchAcceptFriendRequestThunk, fetchGetRequestThunk, fetchREfuseFriendRquestThunk } from "../../store/requestSlice";
-import { getRequest } from "../../utils/api";
 import { Conversation, ConversationSideBarContainer, ConversationSideBarItem } from "../../utils/styles";
-import { AcceptRequestParams, RequestTypes, UsersTypes } from "../../utils/types";
-import { faCheck, faChevronDown, faTimesCircle, faXmark } from "@fortawesome/free-solid-svg-icons";
+import {  RequestTypes, UsersTypes } from "../../utils/types";
+import { faCheck,  faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useContext, useEffect, useState } from "react";
+import {  useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import RightBarUsers from "../RightBarUsers";
 import Image from "next/image";
-import { socket, socketContext } from "../../utils/context/socketContext";
-import { ToastContainer, toast } from 'react-toastify';
+import {  toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 

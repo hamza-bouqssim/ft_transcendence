@@ -1,18 +1,17 @@
 import { AppDispatch } from "@/app/store";
 import { fetchBlockFriendThunk, fetchDebloqueUserThunk } from "@/app/store/blockSlice";
-import { fetchConversationThunk, fetchDeleteConversation } from "@/app/store/conversationSlice";
+import {  fetchDeleteConversation } from "@/app/store/conversationSlice";
 import { fetchMessagesThunk } from "@/app/store/messageSlice";
 import { socketContext } from "@/app/utils/context/socketContext";
-import { IngameStyling, OflineStyling, OnlineStyling } from "@/app/utils/styles";
 import { ConversationTypes, User } from "@/app/utils/types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Dispatch, FC, useContext, useEffect, useState } from "react";
+import {  FC, useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { ToastContainer, toast } from "react-toastify";
+import {  toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { faChevronDown, faEllipsis } from "@fortawesome/free-solid-svg-icons";
+import {  faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import { fetchUsersThunk } from "@/app/store/usersSlice";
 import { fetchAuthUser } from "@/app/store/AuthSlice";
 
@@ -136,7 +135,6 @@ export const ListChat:FC<props> = ({elem} ) => {
 		if (lastMessage == null) {
 			return null;
 		} else {
-			// Limit the displayed characters to 10
 			const truncatedContent =
 				lastMessage.content.length > 10
 					? `${lastMessage.content.substring(0, 10)}...`
@@ -237,7 +235,6 @@ export const ListChat:FC<props> = ({elem} ) => {
 										</div>
 									</div>
 
-									{/* Dropdown Menu Section */}
 									<div className="absolute right-5 p-4">
 										<FontAwesomeIcon
 											icon={faEllipsis}

@@ -2,10 +2,8 @@
 
 import { AppDispatch } from "../../store";
 import {
-	Conversation,
 	ConversationSideBarContainer,
 	ConversationSideBarItem,
-	HeaderOnlineUsers,
 	OflineStyling,
 	OnlineStyling,
 } from "../../utils/styles";
@@ -17,20 +15,15 @@ import { socketContext } from "../../utils/context/socketContext";
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
-import { MenuButton, MenuButton2 } from "../Buttons";
 import { fetchBlockFriendThunk } from "../../store/blockSlice";
 import { useRouter } from "next/navigation";
 import {
 	fetchGetAllFriendsThunk,
 	fetchRemoveFriendship,
 } from "../../store/friendsSlice";
-import { ToastContainer, toast } from "react-toastify";
+import {  toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import {
-	createConversationThunk,
-	fetchConversationUserThunk,
-} from "../../store/conversationSlice";
-import { fetchMessagesThunk } from "../../store/messageSlice";
+
 import { fetchSendRequestPLay } from "../../store/requestSlice";
 
 const OnlineFriends = () => {

@@ -277,16 +277,16 @@ const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 						if (user) {
 							switch (user.status) {
 								case "online":
-									return "green"; // Online status color
+									return "green";
 								case "offline":
-									return "red"; // Offline status color
+									return "red"; 
 								case "ingame":
-									return "blue"; // In-game status color
+									return "blue";
 								default:
-									return "black"; // Default color or any other status
+									return "black";
 							}
 						}
-						return "black"; // Default color if user not found
+						return "black"; 
 					};
 					
 					

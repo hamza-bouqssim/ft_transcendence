@@ -1,35 +1,27 @@
 import { AppDispatch } from "../../store";
-import {
-	createConversationThunk,
-	fetchConversationUserThunk,
-} from "../../store/conversationSlice";
 import { getAllFriends } from "../../utils/api";
 import {
-	Conversation,
 	ConversationSideBarContainer,
 	ConversationSideBarItem,
 	IngameStyling,
 	OflineStyling,
 	OnlineStyling,
 } from "../../utils/styles";
-import { CreateConversationParams, FriendsTypes } from "../../utils/types";
+import {  FriendsTypes } from "../../utils/types";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { MenuButton, MenuButton2 } from "../Buttons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronDown, faEllipsis } from "@fortawesome/free-solid-svg-icons";
-import RightBarUsers from "../RightBarUsers";
+import {  faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
 import { fetchBlockFriendThunk } from "../../store/blockSlice";
 import {
 	fetchGetAllFriendsThunk,
 	fetchRemoveFriendship,
 } from "../../store/friendsSlice";
-import { ToastContainer, toast } from "react-toastify";
+import {  toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { socketContext } from "../../utils/context/socketContext";
-import { fetchMessagesThunk } from "../../store/messageSlice";
 import { fetchSendRequestPLay } from "../../store/requestSlice";
 import { fetchUsersThunk } from "../../store/usersSlice";
 

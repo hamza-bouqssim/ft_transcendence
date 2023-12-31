@@ -21,12 +21,12 @@ export const socket = io("http://localhost:8000/chat", {
 });
 export const socketContext = createContext<SocketContextValue>({
   socket,
-  updateChannel: () => {}, // Provide a default function if needed
+  updateChannel: () => {}, 
   channel: null,
   oldId: null,
-  setOldId: () => {}, // Provide a default function if needed
+  setOldId: () => {}, 
   Userdata: null,
-  setUserdata: () => {}, // Provide a default function if needed
+  setUserdata: () => {}, 
   isMessage : false,
   setIsMessage : () => {}
 });

@@ -3,14 +3,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from '../store';
 import { fetchNotificationThunk, fetchdeleteNotification } from '../store/notificationSlice';
 import { NotificationTypes } from '../utils/types';
-import { Conversation, ConversationSideBarContainer, ConversationSideBarItem } from '../utils/styles';
 import Image from 'next/image';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck,faTimes,faXmark } from "@fortawesome/free-solid-svg-icons";
 import { fetchAcceptFriendRequestThunk, fetchAcceptRequestPlay, fetchREfuseFriendRquestThunk, fetchRefuseRequestPlay } from '../store/requestSlice';
-import { ToastContainer, toast } from 'react-toastify';
+import {  toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { request } from 'https';
 
 const NotificationComponent = () => {
     const ToastError = (message: any) => {
@@ -123,11 +121,10 @@ const NotificationComponent = () => {
                     return (
                             
                         <div className=' px-2 flex items-center gap-3 my-2 hover:bg-[#6967f36c] border border-[--pink-color] py-2 rounded-[20px]' key={elem.id}>
-                            {/* <div className='bg-yellow-200'> */}
                             <div className="relative w-16 h-16 rounded-full hover:bg-red-700 bg-gradient-to-r from-purple-400 via-blue-500 to-red-400 ">
                                     <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-14 h-14 bg-gray-200 rounded-full border-2 border-white">
                                         <Image
-                                            src={elem.image_content as string} // You need to provide a valid source for the Image component
+                                            src={elem.image_content as string} 
                                             className="h-14 w-14 rounded-[50%] bg-black"
                                             alt="Description of the image"
                                             width={60}

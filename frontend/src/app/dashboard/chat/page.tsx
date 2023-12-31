@@ -1,7 +1,7 @@
 "use client";
 
 import CoversationSideBar from "../../components/CoversationSideBar/ConversationSideBar";
-import { useContext, useEffect, useState , PropsWithChildren} from "react";
+import { useContext, useEffect} from "react";
 import MessagePanel from "../../components/messages/MessagePanel";
 import {socketContext } from "../../utils/context/socketContext";
 import { useDispatch } from "react-redux"
@@ -218,7 +218,7 @@ const ConversationChannelPagechat = () => {
                 <MessagePanel></MessagePanel> 
             </div>
           :
-          <div className="xl:my-10 xl:mr-10  w-full xl:ml-2 xl:w-[65%]   xl:mt-32 hidden xl:flex items-center justify-center">Invite friend to new chat room</div>
+          <div className="xl:my-10 xl:mr-10  w-full xl:ml-2 xl:w-[65%]   xl:mt-32 hidden xl:flex items-center justify-center">Invite a friend to a new chat room</div>
         }
           </div>
 
