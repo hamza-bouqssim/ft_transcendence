@@ -147,7 +147,7 @@ const Header = () => {
                 </Link>
               ) : (
                 <Link
-                  href={"http://10.13.10.1:8000/auth/logout"}
+                  href={"http://localhost:8000/auth/logout"}
                   onClick={logoutFunction}
                   className="btn-style"
                 >
