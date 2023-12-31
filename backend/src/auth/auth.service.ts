@@ -1,7 +1,6 @@
 /* eslint-disable prettier/prettier */
 import {
-	BadRequestException,
-	ConflictException,
+	
 	HttpException,
 	HttpStatus,
 	Injectable,
@@ -86,14 +85,7 @@ export class AuthService {
 		return createNewUser;
 	}
 
-	// signUser(userId: string)
-	// {
-	//   return this.jwtService.sign({
-	//       id: userId,
-	//       claim: "my-secret",
-
-	//   });
-	// }
+	
 
 	async signOut(req: Request, res: Response) {
 		res.clearCookie('token');
@@ -101,25 +93,7 @@ export class AuthService {
 		return res.send({ msg: 'Logged out Succesfully !' });
 	}
 
-	// async validateUser(dto: AuthDto) {
-	// 	const user = await this.prisma.user.findUnique({
-	// 		where: { email: dto.email },
-	// 	});
-	// 	if (user) return user;
-
-	// 	const createNewUser = await this.prisma.user.create({
-	// 		data: {
-	// 			username: dto.username,
-	// 			email: dto.email,
-	// 			password: '',
-	// 			display_name: dto.display_name,
-	// 			avatar_url: dto.avatar_url,
-	// 			two_factor_auth: '',
-	// 			two_factor_secret_key: '',
-	// 		},
-	// 	});
-	// 	return createNewUser;
-	// }
+	
 
 	async validateUser(dto: AuthDto) {
 		try {
@@ -147,23 +121,16 @@ export class AuthService {
 		} catch (error) {
 			console.error('Error in validateUser:', error);
 		
-			// Handle specific errors based on the type of error
 			if (error.code === 'P2021') {
-			  // PrismaClientKnownRequestError: Table does not exist
-			  // Respond with a 404 Not Found or a user-friendly message
+			
 			  throw new NotFoundException('User not found');
 			} else {
-			  // Generic error response
 			  throw new InternalServerErrorException('Internal server error');
 			}
 		  }
 	  }
 
-	// async findUser(id: string) {
-	// 	const user = await this.prisma.user.findUnique({ where: { id: id } });
-	// 	return user;
-	// }
-
+	
 	async findUser(id: string) {
 		const user = await this.prisma.user.findUnique({ where: { id: id } });
 		if(!user)
