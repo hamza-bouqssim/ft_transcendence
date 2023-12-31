@@ -105,13 +105,6 @@ model Message {
   sender         User               @relation("senderMessage", fields: [senderId], references: [id])
 }
 
-model Session {
-  id        String   @id @default(uuid())
-  sid       String   @unique
-  data      String
-  expiresAt DateTime
-}
-
 model NotificationGlobal {
   id            String   @id @default(uuid())
   Sender_id     String

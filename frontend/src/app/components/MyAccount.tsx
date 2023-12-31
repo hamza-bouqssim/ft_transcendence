@@ -23,10 +23,9 @@ const MyAccount = () => {
 			const res = await newAPI.post(
 				"https://api.cloudinary.com/v1_1/dnbhh3qxj/image/upload",
 				formData,
-			); //access the /dnbhh.../ from the env
+			);
 
 			setImage(res.data.secure_url);
-			// setUserdata({ ...Userdata, avatar_url: res.data.secure_url });
 			setUserdata((prevUserdata) => ({
 				...prevUserdata!,
 				avatar_url: res.data.secure_url,
@@ -40,7 +39,6 @@ const MyAccount = () => {
 		try {
 			await deleteAvatar().then((res) => {
 				if (res.data.success)
-					// setUserdata({...Userdata, avatar_url: "https://cdn.landesa.org/wp-content/uploads/default-user-image.png"});
 					setUserdata((prevUserdata) => ({
 						...prevUserdata!,
 						avatar_url:

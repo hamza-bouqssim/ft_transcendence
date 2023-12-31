@@ -374,11 +374,11 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 											Pending Request
 										</button>
 									) : buttonType === 'respondToRequest' ? (
-											<button onClick={() => handleClickAcceptRequest()} className="h-12 rounded-2xl bg-[--green-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--green-hover] hover:duration-300">
+											<button onClick={() => handleClickAcceptRequest()} className="h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover] hover:duration-300">
 												Respond to Request
 											</button>
 									) : buttonType === 'friends' ? (
-										<button className="h-12 rounded-2xl bg-[--pink-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--gray-hover] hover:duration-300" disabled>
+										<button className="h-12 rounded-2xl bg-[--pink-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--gray-hover] hover:duration-300 hover:bg-[--pink-hover]" disabled>
 											Friends
 										</button>
 									) : (
@@ -450,7 +450,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 								<div>
 									<div className="boxes">
 										<Boxes title="WINS" value={results?.win} color="#6A67F3" />
-										<Boxes title="RANK" value={results?.level} color="#498CDA" />
+										<Boxes title="LEVEL" value={results?.level} color="#498CDA" />
 										<Boxes title="LOSSES" value={results?.lose} color="#FC7785" />
 									</div>
 									<h1 className="mt-[20px]">History</h1>

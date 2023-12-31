@@ -189,15 +189,15 @@ const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 							{userinfo?.avatar_url && (
 								<Image
 									src={userinfo?.avatar_url}
-									className="h-[130px] w-[130px] rounded-full shadow-lg"
+									className=" pointer-events-none select-none h-[130px] w-[130px] rounded-full shadow-lg"
 									alt="Description of the image"
 									width="250"
 									height="250"
 									priority={true}
 								/>
 							)}
-							<h1>{userinfo?.username}</h1>
-							<h5>@{userinfo?.display_name}</h5>
+							<h1 className="select-none">{userinfo?.username}</h1>
+							<h5 className="select-none">@{userinfo?.display_name}</h5>
 						</>
 					) : (
 						// Render user information from Userdata
@@ -220,11 +220,11 @@ const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 			)}
 
 			{showRank && (
-				<div className=" scrollbar-hide relative  flex h-[75%] w-full items-center justify-center gap-10 overflow-auto rounded-[50px]">
+				<div className="scrollbar-hide relative  flex h-[75%] w-full items-center justify-center gap-10 overflow-auto rounded-[50px]">
 					<div className="h-[110px] w-[110px] overflow-hidden rounded-full border-4 border-solid border-amber-900 bg-gray-100">
 						<Image
 							src={players[2]?.picture || "/assets/unknown.png"}
-							className="h-[110px] w-[110px] rounded-full "
+							className=" pointer-events-none select-none h-[110px] w-[110px] rounded-full "
 							alt=""
 							width={250}
 							height={250}
@@ -234,7 +234,7 @@ const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 					<div className="absolute top-0 h-[140px] w-[140px] overflow-hidden rounded-full border-4 border-solid border-amber-500 bg-gray-100 hover:bg-black">
 						<Image
 							src={players[0]?.picture || "/assets/unknown.png"}
-							className="h-[140px] w-[140px] rounded-full "
+							className=" pointer-events-none select-none h-[140px] w-[140px] rounded-full "
 							alt=""
 							width={250}
 							height={250}
@@ -244,7 +244,7 @@ const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 					<div className="h-[110px] w-[110px] overflow-hidden rounded-full border-4 border-solid border-gray-700 bg-gray-100">
 						<Image
 							src={players[1]?.picture || "/assets/unknown.png"}
-							className="h-[110px] w-[110px] rounded-full "
+							className="pointer-events-none select-none h-[110px] w-[110px] rounded-full "
 							alt=""
 							width={250}
 							height={250}
@@ -298,7 +298,7 @@ const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 							<div className="flex">
 								<Image
 									src={elem.avatar_url}
-									className="h-14 w-14 rounded-[50%] bg-black "
+									className=" pointer-events-none select-none h-14 w-14 rounded-[50%] bg-black "
 									alt="Description of the image"
 									width={60}
 									height={60}

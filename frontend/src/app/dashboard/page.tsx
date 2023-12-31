@@ -66,7 +66,7 @@ const Dashboard = () => {
 						<div className="play relative rounded-[54px]">
 							<Image
 								src="/assets/hand.png"
-								className="thehand absolute  -right-[9px] -top-[41px] w-[490px] animate-bounce rounded-r-full"
+								className=" pointer-events-none select-none thehand absolute  -right-[9px] -top-[41px] w-[490px] animate-bounce rounded-r-full "
 								alt=""
 								width="500"
 								height="500"
@@ -81,9 +81,9 @@ const Dashboard = () => {
 							</button>
 						</div>
 						<div className="boxes">
-							<Boxes title="WINS" value={results?.win} color="#6A67F3" />
-							<Boxes title="RANK" value={results?.level} color="#498CDA" />
-							<Boxes title="LOSSES" value={results?.lose} color="#FC7785" />
+							<Boxes title="WINS" value={results.win} color="#6A67F3" />
+							<Boxes title="LEVEL" value={results.level} color="#498CDA" />
+							<Boxes title="LOSSES" value={results.lose} color="#FC7785" />
 						</div>
 						<h1 className="mt-[20px]">History</h1>
 						<div className=" history-header mt-[20px] flex h-[40px] w-full justify-between rounded-[40px] bg-[#79a9f28d] px-1 py-1 shadow-lg ">
@@ -130,8 +130,8 @@ const Dashboard = () => {
 								<div className="my-achv">
 									<div className="my">
 										<Image
-											className={`my duration-100 ease-in hover:scale-105 ${
-												results?.win < 0 ? "blur-[3px] grayscale" : "grayscale-0"
+											className={`pointer-events-none my ${
+												results.win < 0 ? "blur-[3px] grayscale" : "grayscale-0"
 											}`}
 											src="/assets/first.jpg"
 											width="200"
@@ -141,8 +141,8 @@ const Dashboard = () => {
 									</div>
 									<div className="my">
 										<Image
-											className={`my duration-100 ease-in hover:scale-105 ${
-												results?.win < 2 ? "blur-[3px] grayscale" : "grayscale-0"
+											className={`pointer-events-none my ${
+												results.win < 2 ? "blur-[3px] grayscale" : "grayscale-0"
 											}`}
 											src="/assets/second.jpg"
 											width="200"
@@ -152,8 +152,8 @@ const Dashboard = () => {
 									</div>
 									<div className="my">
 										<Image
-											className={`my duration-100 ease-in hover:scale-105 ${
-												results?.win < 4 ? "blur-[3px] grayscale" : "grayscale-0"
+											className={`pointer-events-none my ${
+												results.win < 4 ? "blur-[3px] grayscale" : "grayscale-0"
 											}`}
 											src="/assets/third.jpg"
 											width="200"
@@ -163,8 +163,8 @@ const Dashboard = () => {
 									</div>
 									<div className="my">
 										<Image
-											className={`my duration-100 ease-in hover:scale-105 ${
-												results?.win < 6 ? "blur-[3px] grayscale" : "grayscale-0"
+											className={`pointer-events-none my ${
+												results.win < 6 ? "blur-[3px] grayscale" : "grayscale-0"
 											}`}
 											src="/assets/fourth.jpg"
 											width="200"
@@ -174,8 +174,8 @@ const Dashboard = () => {
 									</div>
 									<div className="my">
 										<Image
-											className={`my duration-100 ease-in hover:scale-105 ${
-												results?.win < 8 ? "blur-[3px] grayscale" : "grayscale-0"
+											className={`pointer-events-none my ${
+												results.win < 8 ? "blur-[3px] grayscale" : "grayscale-0"
 											}`}
 											src="/assets/fifth.jpg"
 											width="200"
@@ -185,8 +185,8 @@ const Dashboard = () => {
 									</div>
 									<div className="my">
 										<Image
-											className={`my duration-100 ease-in hover:scale-105 ${
-												results?.win < 12
+											className={`pointer-events-none my ${
+												results.win < 12
 													? "blur-[3px] grayscale"
 													: "grayscale-0"
 											}`}
