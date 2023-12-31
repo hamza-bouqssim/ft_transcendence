@@ -676,7 +676,6 @@ class PongGame {
 			y: this.currentBallVelocity.y,
 		});
 
-		// console.log("After velocity update:", this.currentBallVelocity.y);
 	};
 
 	moveBotPaddle = (): void => {

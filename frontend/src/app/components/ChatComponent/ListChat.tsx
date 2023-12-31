@@ -155,9 +155,9 @@ export const ListChat:FC<props> = ({elem} ) => {
 			const res = await dispatch(fetchBlockFriendThunk(user.id));
 			if (res.payload && typeof res.payload === "object") {
 				const responseData = res.payload as {
-					data?: { response?: { message?: string } };
-				};
-				const message = responseData.data?.response?.message;
+					response?: { message?: string } | undefined;
+				  };
+				const message = responseData.response?.message;
 				if (message) {
 					ToastSuccess(message);
 				} else {
@@ -182,19 +182,7 @@ export const ListChat:FC<props> = ({elem} ) => {
 	};
     const [number , setNumber] = useState<number>(0);
     const {socket} =  useContext(socketContext)
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         if (elem?.id) {
-    //             await getNottificatiofromchat(elem.id).then((res : any)=>{
-    //                 setNumber(res.data.response);
-    //                 console.log("resss-->", res.data.response);
-    //             });
-    //         }
-    //     };
-    
-    //     fetchData();
-    // }, []);
-
+   
     useEffect(() => {
       
         socket.on("updateNotification",(payload:any)=>{

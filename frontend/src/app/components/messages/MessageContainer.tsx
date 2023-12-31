@@ -82,25 +82,28 @@ const MessageContainer = () => {
     const debloqueFromPanel  = async () =>{
     
 
-        let user : User | undefined;
-        if( channel && channel?.sender.id === Userdata?.id)
-            user = channel?.recipient;
-        else
-          user =channel?.sender;
-        if(user && user.id != Userdata?.id){
-          const id = user.id;
-          try {
-            await dispatch(fetchDebloqueUserThunk(id));
-              ToastSuccess("You have Deblocked this friend successfully");
-  
-          } catch (error) {
-            ToastError("Failed to Deblock the friend. Please try again.");
-  
-          }
+      let user : User | undefined;
+      if( channel && channel?.sender.id === Userdata?.id)
+          user = channel?.recipient;
+      else
+        user =channel?.sender;
+      if(user && user.id != Userdata?.id){
+        const id = user.id;
+        try {
+          const res = await dispatch(fetchDebloqueUserThunk(id));
+          if(!res.payload.success)
+            ToastError(`${res.payload.message}`)
+          else
+            ToastSuccess('You are debloqued this user succeffully')
+
+        } catch (error) {
+          ToastError("Failed to Deblock the friend. Please try again.");
 
         }
-        
-    }
+
+      }
+      
+  }
     const [shouldRenderUnblockButton, setShouldRenderUnblockButton] = useState(false);
     useEffect(() => {
   

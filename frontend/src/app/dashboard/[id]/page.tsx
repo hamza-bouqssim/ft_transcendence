@@ -160,7 +160,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 			dispatch(fetchBlockedUsers());
 			dispatch(fetchBlocksThunk());
 			dispatch(fetchGetRequestsThunk())
-		dispatch(fetchGetAllFriendsThunk());
+			dispatch(fetchGetAllFriendsThunk());
 			if (res.payload && typeof res.payload === 'object') {
 				if(!res.payload.success)
 				{
