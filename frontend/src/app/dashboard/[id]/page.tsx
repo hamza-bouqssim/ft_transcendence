@@ -216,11 +216,11 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 		  );
 		  const isFriend = friends.some((friend : any) => friend.id === params.id);
 	  
-		  if (isPendingRequest) {
+		  if (isPendingRequest && Userdata?.id !== params.id ) {
 			setButtonType('pendingRequest');
-		  } else if (isRespondToRequest) {
+		  } else if (isRespondToRequest && Userdata?.id !== params.id) {
 			setButtonType('respondToRequest');
-		  } else if (isFriend) {
+		  } else if (isFriend && Userdata?.id !== params.id) {
 			setButtonType('friends');
 		  } else {
 			setButtonType('sendRequest');
@@ -329,7 +329,6 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 				  }		
 
 			  }catch(err : any){
-				console.log("errr ");
 
 			  }
 			  

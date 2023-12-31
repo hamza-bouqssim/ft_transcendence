@@ -37,7 +37,7 @@ type props = {
     }
 
     const [searchQuery, setSearchQuery] = useState("");
-    const [searchResults, setSearchResults] = useState<UsersTypes[] | ConversationTypes[]>([]);
+    const [searchResults, setSearchResults] = useState<UsersTypes[]>([]);
 	const router = useRouter();
     const {Userdata} = useContext(socketContext);
 
@@ -55,7 +55,7 @@ type props = {
                 });
                 if (response.ok) {
                     const data = await response.json();
-                    setSearchResults(data);
+                    setSearchResults(data.data);
                 }
             } catch (error) {
                 console.error("Error fetching search results:", error);
@@ -89,13 +89,13 @@ type props = {
         updateChannel(elem);
 
     }
-    function isUsersTypes(elem: ConversationTypes | UsersTypes): elem is UsersTypes {
-			return (elem as UsersTypes).display_name !== undefined;
-		}
+    // function isUsersTypes(elem: ConversationTypes | UsersTypes): elem is UsersTypes {
+	// 		return (elem as UsersTypes).display_name !== undefined;
+	// 	}
       
-      function isGroupChannel(elem: ConversationTypes | UsersTypes): elem is ConversationTypes {
-        return (elem as ConversationTypes).name !== undefined;
-      }
+    //   function isGroupChannel(elem: ConversationTypes | UsersTypes): elem is ConversationTypes {
+    //     return (elem as ConversationTypes).name !== undefined;
+    //   }
   
     return (
         <div className="w-full max-w-screen-xl mx-auto px-6">
@@ -123,11 +123,9 @@ type props = {
                         <div key={elem.id} className="flex justify-start cursor-pointer text-gray-700 hover:text-blue-400 hover:bg-blue-100 rounded-md px-2 py-2 my-2">
                             <span className="bg-gray-400 h-2 w-2 m-2 rounded-full"></span>
                         <div className="flex-grow font-medium px-2 font-['Whitney_Semibold']">
-                            {isUsersTypes(elem) ? (
+                          
                                     <Link href={`/dashboard/${elem.id}`}>{elem.display_name}</Link>
-                                ) : isGroupChannel(elem) ? (
-                                    <div onClick={() => updatePage(elem)}>#{elem.name}</div>
-                                ) : null}
+                               
                         </div>
                         </div>
 ))}

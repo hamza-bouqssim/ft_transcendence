@@ -80,9 +80,8 @@ const ProviderOnSocket = () => {
 
     
     
-          if (channel && channel.id) {
-            dispatch(fetchMessagesThunk(channel.id));
-          }
+          if(data.id === channel?.id)
+              dispatch(fetchMessagesThunk(data.id));
           
         })
         socket.on('debloqueNotification', (data : any)=>{
@@ -98,10 +97,8 @@ const ProviderOnSocket = () => {
 
 
 
-          if(channel != null)
-          {
-            dispatch(fetchMessagesThunk(channel.id));
-          }
+          if(data.id === channel?.id)
+            dispatch(fetchMessagesThunk(data.id));
     
         })
         socket.on('newRequestToPlay', (data : any)=>{

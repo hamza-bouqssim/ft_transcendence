@@ -101,9 +101,16 @@ export class FriendRequestController {
 
     }
     @Post('remove-friendship')
-    async remove_friendship(@Body() request: {display_name : string}, @Req() req){
-      const user = req.user;
-      return this.friendshipService.remove_friends(user.display_name, request.display_name);
+    async remove_friendship(@Body() request: {display_name : string}, @Req() req, @Res() res){
+      try{
+        const user = req.user;
+        return this.friendshipService.remove_friends(user.display_name, request.display_name);
+
+      }catch(error : any){
+        return res.status(401).json({ success: false, message: error.message || 'An unexpected error occurred' });
+
+      }
+      
 
     }
     
@@ -151,10 +158,16 @@ export class FriendRequestController {
     }
 
     @Post("delete-notification")
-    async deleteNotification(@Body() request: {idNotif : string}){
-      const result = await this.friendshipService.DeleteNotification(request.idNotif);
-      return result;
-      
+    async deleteNotification(@Body() request: {idNotif : string}, @Res() res){
+      try{
+        const result = await this.friendshipService.DeleteNotification(request.idNotif);
+        return res.status(200).json({ success: true, response: result });
+
+
+      }catch(error : any){
+        return res.status(401).json({ success: false, message: error.message || 'An unexpected error occurred' });
+
+      }
 
     }
     @Get("blocked")

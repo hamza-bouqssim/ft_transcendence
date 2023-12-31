@@ -73,7 +73,7 @@ const MessageInputFieldRoom: FC<props> = ({setMessage, Message}) => {
       return () => {
           socket.off('messageRome', handleOnMessage);
       };
-    }, [channel?.id, socket]);
+    }, [channel?.id,socket]);
 
   
     const sendMessage = async () => {

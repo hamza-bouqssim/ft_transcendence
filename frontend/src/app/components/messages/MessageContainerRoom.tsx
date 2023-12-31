@@ -1,13 +1,10 @@
 import {MessageContainerStyle, MessageItemAvatar, MessageItemContainer, MessageItemContent, MessageItemDetails, MessageItemHeader} from "../../utils/styles"
-import { User, messageTypes } from "../../utils/types";
 import { FC, useEffect, useState,useContext ,useRef, useCallback} from "react";
-import {formatRelative} from 'date-fns'
-import { getAuthUser, getConversationMessageRoom } from "../../utils/api";
-import MessageInputField from "./MessageInputFieldRoom";
+import {  getConversationMessageRoom } from "../../utils/api";
 import {socketContext } from "../../utils/context/socketContext";
-import {getConversationMessage} from '../../utils/api'
 import Image from  'next/image'
 import {usePathname} from 'next/navigation'
+import MessageInputFieldRoom from "./MessageInputFieldRoom";
 
 
 
@@ -74,7 +71,7 @@ const MessageContainerRoom = () => {
                 ))}
                 <div ref={scrollRef}></div>
             </div>
-            <MessageInputField Message={Message} setMessage={setMessage}/>
+            <MessageInputFieldRoom Message={Message} setMessage={setMessage}/>
         </>
     )
 }

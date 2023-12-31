@@ -80,17 +80,14 @@ const MessageContainer = () => {
       return content.match(regex) || [];
     };
     const debloqueFromPanel  = async () =>{
-      if (channel) {
-        const id = channel.id;
-        dispatch(fetchMessagesThunk(id));
-      }
+    
 
         let user : User | undefined;
         if( channel && channel?.sender.id === Userdata?.id)
             user = channel?.recipient;
         else
           user =channel?.sender;
-        if(user){
+        if(user && user.id != Userdata?.id){
           const id = user.id;
           try {
             await dispatch(fetchDebloqueUserThunk(id));

@@ -26,6 +26,10 @@ export class ConversationsService  {
       if (isSenderBlocked || isRecipientBlocked) {
             throw new HttpException('"Interaction not allowed. Users are blocked."' , HttpStatus.BAD_REQUEST)
       }
+      if(user.display_name === display_name)
+      {
+        throw new HttpException('You cant create a conversation with your self ......' , HttpStatus.BAD_REQUEST)
+      }
       const Participent = await this.findParticipent(display_name, user);
       if(!Participent)
       {
@@ -56,7 +60,6 @@ export class ConversationsService  {
         },
       });
     
-      // Update the conversation with the last message
       await this.prisma.chatParticipents.update({
         where: { id: conversation.id },
         data: {
@@ -106,7 +109,6 @@ export class ConversationsService  {
 
     async findParticipent(_display_name : string, user : any)
     {
-        // const chatroom = this.prisma.chatRoom.findUnique()
         const chat = await this.prisma.chatParticipents.findFirst({
           where: {
             OR: [
@@ -170,8 +172,10 @@ export class ConversationsService  {
           },
         },
       });
-        
-    
+      if(!chatParticipents)
+        throw new HttpException('This conversation not found...!' , HttpStatus.BAD_REQUEST)
+
+
       return chatParticipents;
     }
 
@@ -318,12 +322,15 @@ async findConversationUsers(user : any, _display_name : string, message : string
     },
   });
 
+
   await this.prisma.chatParticipents.update({
     where: { id: chat.id },
     data: {
       lastMessageId: messageCreate.id,
     },
   });
+
+
   this.eventEmitter.emit('createConversationMessage.created', {
     chat
   });
@@ -352,42 +359,15 @@ async getMessageByConversationId(conversationId : string){
       sender: true,
     },
   });
-  if (!chatParticipents) {
+  if (!chatParticipents) 
+  {
     return [];
   }
   const isSenderBlocked = await this.userService.isBlockedByUser(chatParticipents.sender.id, chatParticipents.recipient.id);
   const isRecipientBlocked = await this.userService.isBlockedByUser(chatParticipents.recipient.id, chatParticipents.sender.id);
 
   return { messages: chatParticipents.messages, isSenderBlocked, isRecipientBlocked};
-}
 
-
-async markConversationAsRead(conversationId: string) {
-  const conversation = await this.prisma.chatParticipents.findUnique({
-    where : {
-      id : conversationId
-    }
-
-  });
-  if (!conversation) {
-    throw new HttpException('Conversation not found', HttpStatus.BAD_REQUEST)
-
-  }
-
-  // Update the vue property for messages in this conversation
-
-
- 
-  await this.prisma.message.updateMany({
-    where: {
-      participentsId: conversationId,
-      // Add additional conditions if necessary
-    },
-    data: {
-      vue: true,
-    },
-  });
-  
 }
 
 
@@ -411,6 +391,8 @@ async deleteConversation(conversationId: string, userId : string) {
     throw new HttpException('Conversation not found.....', HttpStatus.BAD_REQUEST)
 
 
+
+
   await this.prisma.chatParticipents.update({
     where: { id: conversationId },
     data: {
@@ -418,11 +400,20 @@ async deleteConversation(conversationId: string, userId : string) {
         connect: { id: userId },
       },
     },
+   
   });
-  
+  const updatedChatParticipent = await this.prisma.chatParticipents.findUnique({
+    where: {
+      id: conversationId,
+    },
+    include: {
+      deletedBy: true,
+      messages: true,
+    },
+  });
 
-  if (Array.isArray(chatParticipent.deletedBy) && chatParticipent.deletedBy.length === 2) {
-    for (const message of chatParticipent.messages) {
+  if (Array.isArray(updatedChatParticipent.deletedBy) &&updatedChatParticipent.deletedBy.length === 2) {
+    for (const message of updatedChatParticipent.messages) {
       await this.prisma.message.delete({
         where: {
           id: message.id,

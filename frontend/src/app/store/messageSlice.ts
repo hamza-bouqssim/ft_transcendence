@@ -24,7 +24,6 @@ const initialState: MessagesState = {
 
 export const fetchMessagesThunk = createAsyncThunk('messages/fetch', async (id : string) => {
     const response = await getConversationMessage(id);
-    console.log("response here-->", response.data.response.messages);
     return response.data.response;
   })
 
@@ -43,7 +42,7 @@ export const messagesSlice = createSlice({
       state.status = 'loading';
     }).addCase(fetchMessagesThunk.fulfilled, (state : any, action) => {
       state.status = 'success';
-      state.messages = action.payload.messages;
+      state.messages = action.payload.messages; 
       state.isSenderBlocked = action.payload.isSenderBlocked;
       state.isRecipientBlocked = action.payload.isRecipientBlocked;
     }).addCase(fetchMessagesThunk.rejected, (state : any, action) => {

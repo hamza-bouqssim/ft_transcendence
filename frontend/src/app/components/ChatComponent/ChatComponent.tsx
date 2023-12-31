@@ -82,6 +82,7 @@ const ChatComponnent = () => {
 		(state: any) => state.users,
 	);
 
+
   useEffect(() => {
 		dispatch(fetchUsersThunk());
 	}, [dispatch]);
@@ -218,13 +219,13 @@ const ChatComponnent = () => {
 		}
 	};
 
-	socket.on('onMessage', (messages : messageTypes)=>{
-		dispatch(fetchConversationThunk());
-  			if (channel && channel.id) {
-				dispatch(fetchMessagesThunk(channel.id));
-  			}
+	// socket.on('onMessage', (messages : messageTypes)=>{
+	// 	dispatch(fetchConversationThunk());
+  	// 		if (channel && channel.id) {
+	// 			dispatch(fetchMessagesThunk(channel.id));
+  	// 		}
 
-	})
+	// })
 	return (
 		<>
 			{show && <CreateConversationModal setShow={setShow} />}

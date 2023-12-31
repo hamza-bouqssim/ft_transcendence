@@ -26,7 +26,7 @@ export const fetchNotificationThunk = createAsyncThunk('notification/fetchNotifi
 
 export const fetchCountNotification = createAsyncThunk('notificationCount/fetchNotification', async (_,{rejectWithValue})=>{
   const response = await getNumberNotification();
-  return response.data
+  return response.data;
 })
 
 
