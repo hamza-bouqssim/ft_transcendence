@@ -20,9 +20,8 @@ export class ConversationsService  {
       if(!recipient)
             throw new HttpException('User not found so cannot create a Conversation' , HttpStatus.BAD_REQUEST)
       const isSenderBlocked = await this.checkIfBlocked(user.id, recipient.id);
-
       const isRecipientBlocked = await this.checkIfBlocked(recipient.id, user.id);
-                        
+                       
       if (isSenderBlocked || isRecipientBlocked) {
             throw new HttpException('"Interaction not allowed. Users are blocked."' , HttpStatus.BAD_REQUEST)
       }
@@ -180,6 +179,7 @@ export class ConversationsService  {
     }
 
 async createMessags(user : any, params: CreateMessageParams) {
+  let messageCreate;
     const chat = await this.prisma.chatParticipents.findUnique({
         where: {
           id: params.participentsId,
@@ -209,7 +209,7 @@ async createMessags(user : any, params: CreateMessageParams) {
         });
       
         if (blockListEntry) {
-          throw new HttpException('Users have blocked each other', HttpStatus.BAD_REQUEST);
+          throw new HttpException('Users is blocked each other', HttpStatus.BAD_REQUEST);
         }
       
     if((chat.senderId !== user.sub) && (chat.recipientId !== user.sub))
@@ -234,37 +234,43 @@ async createMessags(user : any, params: CreateMessageParams) {
         include :{
           deletedBy : true,
         }
-      });
-    const messageCreate = await this.prisma.message.create({
-      data: {
-        content:params.content,
-        sender: {
-          connect: { id: user.sub },
-        },
-        participents: {
-          connect: { id: chat.id }, 
-        },     
-      },
-      include: {
-        sender: true,
-        participents: {
-          include: {
-              sender: true,
-              recipient: true,
+      })
+      if(!blockListEntry )
+      {
+        messageCreate = await this.prisma.message.create({
+          data: {
+            content:params.content,
+            sender: {
+              connect: { id: user.sub },
+            },
+            participents: {
+              connect: { id: chat.id }, 
+            },     
           },
-      },
-       
-      },
-      
-    });
+          include: {
+            sender: true,
+            participents: {
+              include: {
+                  sender: true,
+                  recipient: true,
+              },
+          },
+           
+          },
+          
+        });
+        await this.prisma.chatParticipents.update({
+          where: { id: chat.id },
+          data: {
+            lastMessageId: messageCreate.id,
+          },
+        });   
+        
+      }
+   
    
 
-    await this.prisma.chatParticipents.update({
-      where: { id: chat.id },
-      data: {
-        lastMessageId: messageCreate.id,
-      },
-    });   
+    
     return messageCreate;
   }
 
@@ -278,6 +284,17 @@ async findConversationUsers(user : any, _display_name : string, message : string
   if(!findRecipient)
     throw new HttpException('There is no user with this name!!' , HttpStatus.BAD_REQUEST);
 
+    if(_display_name === user.display_name)
+    {
+      throw new HttpException('This is the same user...!!' , HttpStatus.BAD_REQUEST);
+    }
+    const isSenderBlocked = await this.checkIfBlocked(user.id, findRecipient.id);
+
+    const isRecipientBlocked = await this.checkIfBlocked(findRecipient.id, user.id);
+                    
+      if (isSenderBlocked || isRecipientBlocked) {
+        throw new HttpException('"Interaction not allowed. Users are blocked."' , HttpStatus.BAD_REQUEST)
+      }
   const chat = await this.prisma.chatParticipents.findFirst({
     where: {
       OR: [
@@ -294,13 +311,7 @@ async findConversationUsers(user : any, _display_name : string, message : string
     throw new HttpException('There is no conversation between this two users!!' , HttpStatus.BAD_REQUEST)
 
 
-  const isSenderBlocked = await this.checkIfBlocked(user.id, findRecipient.id);
-
-  const isRecipientBlocked = await this.checkIfBlocked(findRecipient.id, user.id);
-                  
-    if (isSenderBlocked || isRecipientBlocked) {
-      throw new HttpException('"Interaction not allowed. Users are blocked."' , HttpStatus.BAD_REQUEST)
-    }
+  
   const messageCreate= await this.prisma.message.create({
     data: {
       content : message,

@@ -9,7 +9,6 @@ import friendsBlockReducer from './blockSlice';
 import NotificationReducer from './notificationSlice';
 import memberReducer from './memberSlice';
 import UsersAuthReducer from './AuthSlice';
-import messagesUnreadReducer from './UnreadMessages';
 import requestsReducer from './requestsSlice';
 import NotificationChatReducer from './NotificationChatSlice';
 
@@ -26,7 +25,6 @@ export const store = configureStore({
     room: roomReducer,
     member:memberReducer,
     UsersAuth : UsersAuthReducer,
-    messagesUnread : messagesUnreadReducer,
     NotificationChat:NotificationChatReducer,
 
   },

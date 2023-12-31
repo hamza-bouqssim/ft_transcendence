@@ -15,7 +15,7 @@ import { fetchAcceptFriendRequestThunk, fetchGetRequestThunk, fetchRequestThunk 
 import AchievementsList from '../../components/AchievementsList';
 import { HistoryMatchesType, ResultsType, UserInfoType } from '../Imports';
 import { fetchUsersThunk } from '../../store/usersSlice';
-import { BloqueList, CreateConversationParams, User } from '../../utils/types';
+import { BloqueList, CreateConversationParams, FriendsTypes, User } from '../../utils/types';
 import { fetchGetAllFriendsThunk } from '../../store/friendsSlice';
 import { socketContext } from '../../utils/context/socketContext';
 import { fetchGetRequestsThunk } from '../../store/requestsSlice';
@@ -23,6 +23,7 @@ import { createConversationThunk, fetchConversationUserThunk } from '../../store
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import AuthCheck from '@/app/utils/AuthCheck';
+import { UserInfo } from 'os';
 
 const Dashboard = ({ params }: { params: { id: string } }) => {
 	
@@ -345,7 +346,22 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 		  };
 
 	  
+		  const getDisplayUser = (user : UserInfoType | undefined) => {
+			let truncatedDisplayName;
+			if(user){
+				truncatedDisplayName =
+				user.display_name.length > 10
+					? `${user.display_name.substring(0, 10)}...`
+					: user.display_name;
 
+			}
+			
+	
+			return {
+				...user,
+				display_name: truncatedDisplayName,
+			};
+		};
 		  return (
 			<AuthCheck>
 				<div className="container">
@@ -417,7 +433,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
 												<h2 className="text-[20px] text-gray-800">
 													Send Message to{" "}
 													<span className="text-[25px] text-[--purple-color]">
-														{userinfo?.display_name}
+														{getDisplayUser(userinfo).display_name}
 													</span>
 												</h2>
 												<Image
