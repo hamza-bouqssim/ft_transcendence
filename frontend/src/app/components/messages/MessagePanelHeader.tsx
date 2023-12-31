@@ -170,7 +170,7 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 						width={30}
 						height={30}
 						/>
-						{checkTheStatus() === 'online' ? (<OnlineStyling/>) :  checkTheStatus() === 'offline' ? (<OflineStyling/>) :( <IngameStyling/>)}
+						{checkTheStatus() === 'online' ? (<OnlineStyling/>) :  checkTheStatus() === 'ingame' ? <IngameStyling/> :  checkTheStatus() === 'offline' ?  ( <OflineStyling/>) : <></>}
 					</div>					
 				)}
 				{channel?.name && (

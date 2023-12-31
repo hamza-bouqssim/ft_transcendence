@@ -15,7 +15,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { faChevronDown, faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import { fetchUsersThunk } from "@/app/store/usersSlice";
 import { fetchAuthUser } from "@/app/store/AuthSlice";
-import { getNottificatiofromchat } from "@/app/utils/api";
 
 
 interface props  {
