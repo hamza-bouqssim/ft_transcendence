@@ -101,6 +101,19 @@ const OnlineFriends = () => {
 
 		return user && user.status === "online";
 	};
+	const getDisplayUser = (friend : FriendsTypes) => {
+		
+		const truncatedDisplayName =
+			friend.display_name.length > 10
+				? `${friend.display_name.substring(0, 10)}...`
+				: friend.display_name;
+
+		return {
+			...friend,
+			display_name: truncatedDisplayName,
+		};
+	};
+
 
 	const onlineFriends = friends.filter((friend: FriendsTypes) => {
 		const user = users.find((user: any) => user.id === friend.id);
@@ -157,7 +170,7 @@ const OnlineFriends = () => {
 									/>
 									{isUserOnline(elem) ? <OnlineStyling /> : <OflineStyling />}
 								</div>
-								<span className="ConversationName"> {elem.display_name}</span>
+								<span className="ConversationName"> {getDisplayUser(elem).display_name}</span>
 								<div className="absolute right-5 p-4">
 									<FontAwesomeIcon
 										icon={faEllipsis}

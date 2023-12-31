@@ -79,6 +79,18 @@ const SendRequest  = () => {
           ToastError(`Error refusing friend request, ${error}`);
         }
       }
+      const getDisplayUser = (friend : UsersTypes) => {
+		
+        const truncatedDisplayName =
+          friend.display_name.length > 10
+            ? `${friend.display_name.substring(0, 10)}...`
+            : friend.display_name;
+    
+        return {
+          ...friend,
+          display_name: truncatedDisplayName,
+        };
+      };
       return (
 
         <Conversation>
@@ -89,7 +101,7 @@ const SendRequest  = () => {
 							<ConversationSideBarItem key={elem.id}>
                 <Image src={elem.user.avatar_url} className="h-14 w-14 rounded-[50%] bg-black " alt="Description of the image" width={60}   height={60} />
 								<div>
-					 				<span  className="ConversationName">{elem.user.display_name}</span>
+					 				<span  className="ConversationName">{getDisplayUser(elem.user).display_name}</span>
 					 			</div>
                 <div className=" absolute right-5 p-4 ">
                     <FontAwesomeIcon icon={faCheck}  className="text-black  transform cursor-pointer text-2xl duration-500 ease-in-out hover:text-[--pink-color] lg:text-3xl" onClick={() => handleClickAcceptRequest(elem.id)}/>

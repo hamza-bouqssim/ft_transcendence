@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../store";
 import { fetchCountNotification } from "../store/notificationSlice";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { User } from "../utils/types";
 
 const TopRightBar = () => {
 	const dispatch = useDispatch<AppDispatch>();
@@ -103,6 +104,19 @@ const TopRightBar = () => {
 		return () => document.removeEventListener("click", handleCLickEvent);
 	}, []);
 
+	const getDisplayUser = (user : User | null) => {
+		
+        const truncatedDisplayName =
+          user?.display_name.length > 10
+            ? `${user?.display_name.substring(0, 10)}...`
+            : user?.display_name;
+    
+        return {
+          ...user,
+          display_name: truncatedDisplayName,
+        };
+      };
+
 	return (
 		<>
 			<ToastContainer />
@@ -143,7 +157,7 @@ const TopRightBar = () => {
 					)}
 					<div className="font-['Whitney_Bold'] leading-3">
 						<h6 className="text-sm min-[1750px]:text-lg">
-							{Userdata?.display_name}
+							{getDisplayUser(Userdata).display_name}
 						</h6>
 						<span className="text-xs min-[1750px]:text-sm">
 							{Userdata?.username}

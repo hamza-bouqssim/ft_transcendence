@@ -74,6 +74,8 @@ const ListFriends = () => {
 	const { users, Userstatus, Usererror } = useSelector(
 		(state: any) => state.users,
 	);
+	const { Userdata} = useContext(socketContext);
+
 
 	useEffect(() => {
 		
@@ -112,6 +114,19 @@ const ListFriends = () => {
 			ToastError("Failed to block this friend. Please try again.");
 		}
 	};
+	const getDisplayUser = (friend : FriendsTypes) => {
+		
+		const truncatedDisplayName =
+			friend.display_name.length > 10
+				? `${friend.display_name.substring(0, 10)}...`
+				: friend.display_name;
+
+		return {
+			...friend,
+			display_name: truncatedDisplayName,
+		};
+	};
+
 
 	return (
 		<div className="mt-[10px]">
@@ -186,7 +201,7 @@ const ListFriends = () => {
 							</div>
 
 							<div>
-								<span className="ConversationName">{elem.display_name}</span>
+								<span className="ConversationName">{getDisplayUser(elem).display_name}</span>
 							</div>
 
 							<div className="absolute right-5 p-4">
