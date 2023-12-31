@@ -26,6 +26,12 @@ import { SerachGroup } from "../SeachGroup/SerachGroup"
 import { getNotificationRoom } from "@/app/store/NotificationChatSlice";
 import React from "react";
 
+interface notification {
+    roomId:string;
+    number:number;
+
+}
+
 const CoversationSideBar = () => {
 	const [newRooms , setNewRooms]  = useState<boolean>(false)
 	const [search,setSearch] = useState<boolean>(false)
@@ -53,7 +59,7 @@ const CoversationSideBar = () => {
 				}
 					className={`${(pathname.includes('chat')) ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-1/2 font-['Whitney_Semibold'] flex items-center  justify-center `}>
 						Chats
-						{notificationChat.reduce((accumulator, currentValue) => accumulator + currentValue.number, 0) !== 0 && 
+						{notificationChat.reduce((accumulator :number , currentValue : notification) => accumulator + currentValue.number, 0) !== 0 && 
 						<div className="bg-[#fc7785] w-2 h-2  ml-[2px] mb-2 rounded-full"></div>}
 				</button>
 			
@@ -64,7 +70,7 @@ const CoversationSideBar = () => {
 					}}
 					className={`${(pathname.includes('groups')) ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-1/2 font-['Whitney_Semibold'] flex items-center  justify-center `}>
 					Groups
-					{notificationRoom.reduce((accumulator, currentValue) => accumulator + currentValue.number, 0) !== 0 && 
+					{notificationRoom.reduce((accumulator : number, currentValue : notification) => accumulator + currentValue.number, 0) !== 0 && 
 					<div className="bg-[#fc7785] w-2 h-2  ml-[2px] mb-2 rounded-full"></div>}
 				</button>
 			</div>

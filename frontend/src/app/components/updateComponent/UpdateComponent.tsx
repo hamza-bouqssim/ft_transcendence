@@ -10,9 +10,10 @@ import { socketContext } from "../../utils/context/socketContext";
 import { RestFriend } from "../RestFriend/RestFriend";
 import Image from "next/image";
 import { ConversationTypes } from "../../utils/types";
+import {Dispatch, SetStateAction } from "react";
 
 interface UpdateComponentProps {
-	setOldData:(value: ConversationTypes | null) => void;
+	setOldData: Dispatch<SetStateAction<ConversationTypes | null>>
 	olddata :ConversationTypes | null;
 }
 
@@ -54,13 +55,11 @@ const UpdateComponent:FC<UpdateComponentProps> = (
 							value={olddata?.name as string}
 							className="text-black"
 							onSave={(val: string) => {
-								setOldData((prevData: ConversationTypes|null) => {
-									if (prevData) {
-									  return { ...prevData, name: val };
-									} else {
-									  return null;
-									}
-								  });
+								setOldData((value: ConversationTypes | null) => {
+									return value
+										? { ...value , name: val } 
+										: null;
+								});
 							}}
 							inputProps={{
 								style: {
@@ -87,7 +86,7 @@ const UpdateComponent:FC<UpdateComponentProps> = (
 									if (prevData) {
 										return { ...prevData, Privacy: "Public" };
 									}
-									return null; // or handle the case where prevData is null
+									return null; 
 								},
 							);
 						}}
