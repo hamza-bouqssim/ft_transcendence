@@ -55,13 +55,25 @@ const MessageInputFieldRoom: FC<props> = ({setMessage, Message}) => {
     const { members, status, error } = useSelector((state:any) => state.member);
     const { rooms} = useSelector((state:any) => state.room);
     const { blocked} = useSelector((state:any) => state.friendsBlock);
-
+    console.log("blocked-->", blocked);
     useEffect(() => {
       dispatch(fetchBlockedUsers())
     }, [dispatch]);
     
     useEffect(() => {
       const handleOnMessage = (message: any) => {
+        // console.log("message-->", message.senderId);
+        // const isSenderBlocked = blocked.some(
+        //   (blockedUser: any) => 
+        //     blockedUser.userOne.id === message.sender.id || blockedUser.userTwo.id === message.sender.id
+        // );
+        // console.log("is bloque-->", isSenderBlocked);
+    
+        // If the sender is blocked, don't update the room message and exit the function
+        // if (isSenderBlocked) {
+        //   console.log('Sender is blocked. Message not updated.');
+        //   return;
+        // } sochern
           dispatch(updateRoomMessage({ roomId: channel?.id, updatedMessage: { content: message.content, createdAt: new Date() } }));
           setMessage((prevMessages: messageTypes[]) => [...prevMessages, message]);
 

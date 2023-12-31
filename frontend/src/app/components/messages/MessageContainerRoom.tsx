@@ -152,8 +152,8 @@ const MessageContainerRoom = () => {
                       <p className='text-[20px] font-blod mt-3 text-center text-black "'>{channel?.name}</p>
                       <p className='text-[15px]  text-center text-gray-400 "'>{channel?.Privacy}</p>
                       <div className="flex items-center justify-center">
-                        <Image src={channel?.members[0].user.avatar_url as string} alt="" className=' rounded-full' width={20} height={20}/>
-                        <Image src={channel?.members[0].user.avatar_url as string} alt="" className=' ml-[-10px] outline outline-2  outline-white  rounded-full' width={20} height={20}/>
+                        <Image src={channel?.members[0]?.user?.avatar_url as string} alt="" className=' rounded-full' width={20} height={20}/>
+                        <Image src={channel?.members[0]?.user?.avatar_url as string} alt="" className=' ml-[-10px] outline outline-2  outline-white  rounded-full' width={20} height={20}/>
                         <p className='text-[15px] ml-2 text-center text-gray-400 "'>{channel?.members.length} + Member in this Room</p>
                       </div>
                       <button  onClick={()=>{setValide(true)}} className=" flex items-center  mt-8 justify-center rounded-full py-2 px-4 bg-[--pink-color] hover:drop-shadow-md mx-auto mb-3 text-white  ">
@@ -176,8 +176,8 @@ const MessageContainerRoom = () => {
             <p className='text-[20px] font-blod mt-3 text-center text-black "'>{channel?.name}</p>
             <p className='text-[15px]  text-center text-gray-400 "'>{channel?.Privacy}</p>
             <div className="flex items-center justify-center ">
-              <Image src={channel?.members[0].user.avatar_url as string} alt="" className=' rounded-full' width={20} height={20}/>
-              <Image src={channel?.members[0].user.avatar_url as string} alt="" className=' ml-[-10px] outline outline-2  outline-white  rounded-full' width={20} height={20}/>
+              <Image src={channel?.members[0]?.user?.avatar_url as string} alt="" className=' rounded-full' width={20} height={20}/>
+              <Image src={channel?.members[0]?.user?.avatar_url as string} alt="" className=' ml-[-10px] outline outline-2  outline-white  rounded-full' width={20} height={20}/>
               <p className='text-[15px] ml-2 text-center text-gray-400 "'>{channel?.members.length} + Member in this Room</p>
             </div>
             { channel?.Privacy  === "Protected" && 

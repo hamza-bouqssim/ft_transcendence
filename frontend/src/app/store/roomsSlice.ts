@@ -69,7 +69,7 @@ export const createRooms = createAsyncThunk('rooms/createRooms', async (data: cr
 
 export const updateRooms = createAsyncThunk('rooms/updateRooms', async (data: ConversationTypes | null,{rejectWithValue}) => {
   try {
-    const response = await updateRoomsApi(data);    
+    const response = await updateRoomsApi(data); 
     return response.data.data;
   } catch (error : any) {
     if (error.response && error.response.data) {

@@ -38,15 +38,14 @@ const ConversationChannelPage = () => {
 		})
     socket.on("updateMember",(payload:any) =>{
 			dispatch(getAllMembers(payload.roomId))
-      if(Userdata?.id === payload.idUserleave)
-      {  
-        socket.emit("leaveToRoom", {id: payload.roomId});
+      // if(Userdata?.id === payload.idUserleave)
+      // {  
+      //   socket.emit("leaveToRoom", {id: payload.roomId});
         dispatch(getAllRooms());
-      }
+      // }
 		})
     return () => {
       socket.off("notification");
-      socket.off("delete");
       socket.off("update");
       socket.off("updateMember");
     };

@@ -210,9 +210,10 @@ export const kickMember =(id:string ,userId:string) =>
   const response = API.post("/rooms/kickMember",{id,userId})
   return response;
 }
-export const mutMember =(id:string ,userId:string) =>
+export const mutMember =(id:string ,userId:string,muteDuration:string) =>
 {
-  const response = API.post("/rooms/mutMember",{id,userId})
+  console.log(id,userId,muteDuration)
+  const response = API.post("/rooms/mutMember",{id,userId,muteDuration})
   return response;
 }
 export const banMember =(id:string ,userId:string) =>
@@ -257,7 +258,7 @@ export const getUserInfos = (id:string) => {
   return response;
 }
 
-export const addMemberToRooms = (id:string ,userId:string) =>
+export const addMemberToRoomsApi = (id:string ,userId:string) =>
 {
   const response = API.post("/rooms/addMemberToRooms",{id,userId});
   return response;

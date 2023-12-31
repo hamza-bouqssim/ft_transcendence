@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { Member, banMember, getAllMembersApi, kickMember, makeAdmin, mutMember, quitRoom } from '../utils/api';
+import { Member, addMemberToRoomsApi, banMember, getAllMembersApi, kickMember, makeAdmin, mutMember, quitRoom } from '../utils/api';
 
 interface Member {
   id: string;
@@ -22,6 +22,12 @@ interface Member {
 interface Memberdata{
   id:string,
   userId:string
+}
+
+interface Mutedata{
+  id:string,
+  userId:string,
+  muteDuration:string
 }
 
 interface MemberState {
@@ -53,14 +59,14 @@ export const quitMember = createAsyncThunk('members/quitMember', async (roomId: 
     return rejectWithValue(error.message || 'Failed to quit members');
   }
 });
-// export const addMemberToRooms = createAsyncThunk('members/addMemberToRooms', async (memberdata:Memberdata, { rejectWithValue }) => {
-//   try {
-//     const response = await addMemberToRooms(memberdata);
-//     return response.data.data;
-//   } catch (error : any) {
-//     return rejectWithValue(error.message || 'Failed to quit members');
-//   }
-// });
+export const addMemberToRooms = createAsyncThunk('members/addMemberToRooms', async (memberdata:Memberdata, { rejectWithValue }) => {
+  try {
+    const response = await addMemberToRoomsApi(memberdata.id,memberdata.userId);
+    return response.data.data;
+  } catch (error : any) {
+    return rejectWithValue(error.message || 'Failed to quit members');
+  }
+});
 export const makeAdminMember = createAsyncThunk('members/makeAdminMember', async (memberdata:Memberdata, { rejectWithValue }) => {
   try {
     const response = await makeAdmin(memberdata.id,memberdata.userId);
@@ -86,9 +92,10 @@ export const kickMembers = createAsyncThunk('members/kickMembers', async (member
     return rejectWithValue(error.message || 'Failed to quit members');
   }
 });
-export const mutMembers = createAsyncThunk('members/mutMembers', async (memberdata:Memberdata, { rejectWithValue }) => {
+export const mutMembers = createAsyncThunk('members/mutMembers', async (memberdata:Mutedata, { rejectWithValue }) => {
   try {
-    const response = await mutMember(memberdata.id,memberdata.userId);
+    console.log(memberdata)
+    const response = await mutMember(memberdata.id,memberdata.userId,memberdata.muteDuration);
     return response.data.data;
   } catch (error : any) {
     return rejectWithValue(error.message || 'Failed to quit members');

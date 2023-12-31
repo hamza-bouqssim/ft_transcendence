@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Injectable,HttpStatus,HttpException } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
-import { RoomId,Member,JoinRooms ,DeleteChatRoom,UpdateChatRoom,CreateChatRoom,getAllRooms ,CreateMessageRoom} from "src/Rooms/dto/rooms.dto";
+import { RoomId,Member,JoinRooms ,DeleteChatRoom,UpdateChatRoom,CreateChatRoom,getAllRooms ,CreateMessageRoom, muteData} from "src/Rooms/dto/rooms.dto";
 import * as bcrypt from 'bcrypt';
 
 
@@ -342,8 +342,9 @@ export class RoomsService {
   
   
   
-  async mutMember(id: string, memberUpdate: Member)
+  async mutMember(id: string, memberUpdate: muteData)
   {
+
     const userRole = await this.prisma.member.findFirst({
       where: {
         user_id: id,
@@ -649,9 +650,11 @@ export class RoomsService {
 
 
     if (isMember) {
-      if (isMember.Status !== 'kick') {
-        throw new HttpException('User is already a member of the room', HttpStatus.CONFLICT);
-      } else {
+       if (isMember.Status === 'Ban') 
+          throw new HttpException('User is Ban of the room', HttpStatus.CONFLICT);
+        else if (isMember.Status !== 'kick') 
+          throw new HttpException('User is already a member of the room', HttpStatus.CONFLICT);
+         else {
         if (joinRooms.Privacy === 'Protected' && !(await bcrypt.compare(joinRooms.password, isRoom.password))) {
           throw new HttpException('Incorrect password for the protected room', HttpStatus.UNAUTHORIZED);
         }

@@ -133,6 +133,7 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
                   }
                 }
             })
+            
             member.members.map((member) => {
                 if(member.user_id !== id)
                     this.server.to(member.user_id).emit('update', "");         

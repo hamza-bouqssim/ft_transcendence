@@ -19,32 +19,21 @@ const GroupsManagement = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [sortedConversations, setSortedConversations] = useState<ConversationTypes[]>([]);
   const { rooms, status, error } = useSelector((state: any) => state.room);
-  const { updateChannel, channel } = useContext(socketContext);
   const {notificationRoom} = useSelector((state:any) => state.NotificationChat);
-  const {notificationChat} = useSelector((state:any) => state.NotificationChat);
-  const {isMessage,setIsMessage} = useContext(socketContext)
-  const {socket} = useContext(socketContext)
-
-	// useEffect(() => {
-  //   const totalChatNotifications = notificationChat.reduce((acc, val) => acc + val.number, 0);
-  //   const totalRoomNotifications = notificationRoom.reduce((acc, val) => acc + val.number, 0);
-  //   setIsMessage(totalChatNotifications + totalRoomNotifications > 0);
-  // }, [notificationRoom, notificationChat]);
   useEffect(() => {
     dispatch(getAllRooms())
   }, [dispatch]);
 
   useEffect(() => {
     const sortedConversations = [...rooms].sort((a, b) => {
-      const aDate = (a.messageRome.length > 0 && a.messageRome[0].createdAt) || a.updatedAt || a.createdAt  || new Date(0);
-      const bDate =(b.messageRome.length > 0 && b.messageRome[0].createdAt) || b.updatedAt || b.createdAt ||  new Date(0);
+      const aDate = (a.messageRome.length > 0 && a.messageRome[0].createdAt) || a.updatedAt || a.createdAt  || new Date();
+      const bDate =(b.messageRome.length > 0 && b.messageRome[0].createdAt) || b.updatedAt || b.createdAt ||  new Date();
       return new Date(bDate).getTime() - new Date(aDate).getTime();
     });
-
+    console.log("rundring")
     setSortedConversations(sortedConversations);
-  }, [rooms,notificationRoom]);
+  }, [rooms]);
 
-  // console.log(sortedConversations)
 
   if (status.get == "loading" || status.get == "idle") {
     return (

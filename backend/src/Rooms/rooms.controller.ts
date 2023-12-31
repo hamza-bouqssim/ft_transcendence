@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Controller, Get,Body, Res,UseGuards ,Post,Req} from '@nestjs/common';
 import { RoomsService } from './rooms.service';
-import { DeleteChatRoom, RoomId,Member,JoinRooms} from './dto/rooms.dto';
+import { DeleteChatRoom, RoomId,Member,JoinRooms, muteData} from './dto/rooms.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
@@ -129,15 +129,30 @@ export class RoomsController {
   
   @Post("/mutMember")
   @UseGuards(AuthGuard("jwt"))
-  async mutMember(@Res() res: any,@Req() req , @Body() memberUpdate:Member)
+  async mutMember(@Res() res: any,@Req() req , @Body() memberUpdate:muteData)
   {
     try {
+      console.log(memberUpdate)
       const {id}=req.user
       const member = await this.roomsService.mutMember(id,memberUpdate);
       this.eventEmitter.emit(
         'order.updateMember',
         memberUpdate.id,null,null
       );
+
+      if (memberUpdate.muteDuration && parseInt(memberUpdate.muteDuration, 10) > 0) {
+        const durationInSeconds = parseInt(memberUpdate.muteDuration, 10);
+          const intervalId = setInterval(async () => {
+            await this.roomsService.Member(id,{id:memberUpdate.id,userId:memberUpdate.userId})
+            this.eventEmitter.emit(
+              'order.updateMember',
+              memberUpdate.id,null,null
+            );
+          clearInterval(intervalId);
+        }, durationInSeconds * 1000);
+      }
+  
+
       return res.status(200).json({data: member });
     } catch (error) {
       return res.status(500).json(error.response);
@@ -221,7 +236,7 @@ export class RoomsController {
   async addMemberToRooms(@Res() res: any,@Req() req , @Body() memberUpdate:Member)
   {
     try {
-      
+      console.log("members",memberUpdate)
       const {id}=req.user
       const update = await this.roomsService.addMemberToRooms(id,memberUpdate);
       this.eventEmitter.emit(

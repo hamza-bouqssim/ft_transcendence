@@ -57,19 +57,12 @@ const MessagePanel = () => {
                         ></UpdateComponent>
                     }
                 </div>
-                { rooms && rooms.some((room :ConversationTypes) => room.id===channel?.id ) && !pathname.includes("/groups")  ?
-                null 
-                    :
-                    
+                { rooms && rooms.some((room :ConversationTypes) => room.id===channel?.id )  ?
                     <div className="hidden md:block md:w-[40%]  pl-4  h-full ">
-                    
-                    <InfoRoom></InfoRoom> 
-
+                        <InfoRoom></InfoRoom> 
                     </div>
+                    : null 
                 }
-
-                
-
         </div>
     )
 }
