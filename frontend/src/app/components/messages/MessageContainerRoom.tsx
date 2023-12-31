@@ -135,7 +135,7 @@ const MessageContainerRoom = () => {
                                   }
                                   <div  className={`${Userdata?.id !== m?.senderId ? "bg-[#F2F3FD] text-[#404040] " : "bg-[#5B8CD3] "} w-fit max-w-[90%] rounded-2xl flex items-end justify-between`}>
                                       <h1 className="p-2"> {m.content}</h1>
-                                      <h1 className=" pl-5 pr-3 pb-1 text-[12px]">19.54</h1>
+                                      <h1 className=" pl-5 pr-3 pb-1 text-[12px]">{m.}</h1>
                                   </div>
                                   
                               </div>

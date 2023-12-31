@@ -633,12 +633,16 @@ export class RoomsService {
       },
         select: {
           password: true,
+          Privacy: true,
         },
     });
-
-
+    
     if (!isRoom) {
       throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
+    }
+    if(isRoom.Privacy === "Private")
+    {
+      throw new HttpException('Cannot Join To room Private', HttpStatus.NOT_FOUND);
     }
 
     const isMember = await this.prisma.member.findFirst({
