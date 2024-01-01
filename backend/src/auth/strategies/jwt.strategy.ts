@@ -20,7 +20,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     constructor(private readonly authService: AuthService) {
       super({
         jwtFromRequest: ExtractJwt.fromExtractors([extractCookie]),
-			secretOrKey: 'my-secret',
+			secretOrKey: process.env.COOKIE_SECRET,
       });
     }
     

@@ -147,7 +147,7 @@ const Header = () => {
                 </Link>
               ) : (
                 <Link
-                  href={"http://10.11.6.2:8000/auth/logout"}
+                  href={`${process.env.NEXT_PUBLIC_HOST}/auth/logout`}
                   onClick={logoutFunction}
                   className="btn-style"
                 >

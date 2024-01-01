@@ -61,7 +61,6 @@ const SignInForm = forwardRef((props: any, ref: any) => {
 	const onSubmit = async (data: UserCredentialsParams) => {
 		try {
 			 await postLoginUser(data).then((res) => {
-				console.log("res here-->", res);
 				if(!res.data.success && !res.data.signed)
 				{
 					ToastError(`${res.data.message}`);

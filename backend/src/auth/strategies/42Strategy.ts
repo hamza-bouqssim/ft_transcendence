@@ -4,16 +4,19 @@ import { PassportStrategy } from "@nestjs/passport";
 import { AuthService } from "../auth.service";
 import { Strategy } from "passport-42";
 import { AuthDto } from "../dto/auth.dto";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class FortyTwoStrategy extends PassportStrategy(Strategy) {
-	constructor(private readonly authService: AuthService) {
+	constructor(
+		configService: ConfigService,
+		private readonly authService: AuthService,
+	) {
 		super({
-			clientID:
-				'u-s4t2ud-262f8659d886410e3d6357f8530b81ad03e112f0c09b567eb0dd7db031482227', //this SHIT is hard coded, go put you SHIT in ENV file !!!!!!!!!!!!!!!!!!!!!!
-			clientSecret:
-				'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',
-			callbackURL: 'http://10.11.6.2:8000/auth/42/redirect',
+			clientID: configService.get<string>('INTRA_CLIENT_ID'),
+			clientSecret: configService.get<string>('INTRA_CLIENT_SECRET'),
+			callbackURL: configService.get<string>('INTRA_CALL_BACK_URL'),
+			scope: ['profile', 'email'],
 		});
 	}
 	async validate(accessToken: string, refreshToken: string, profile: any) {

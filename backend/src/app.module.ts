@@ -12,23 +12,29 @@ import { FriendRequestModule } from './friend-request/friend-request.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { TwoFactorAuthenticationModule } from './two-factor-authentication/two-factor-authentication.module';
 import { GameModule } from './game/game.module';
-
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AuthService } from './auth/auth.service';
 
 @Module({
 	imports: [
+		ConfigModule.forRoot({
+			isGlobal: true,
+			// envFilePath:'.env'
+		}),
 		EventEmitterModule.forRoot(),
 		AuthModule,
-    PrismaModule,
+		PrismaModule,
 		RoomsModule,
-    ConversationsModule,
-    GatewayModule,
+		ConversationsModule,
+		GatewayModule,
 		UserModule,
-    FriendRequestModule,
-	TwoFactorAuthenticationModule,
+		FriendRequestModule,
+		TwoFactorAuthenticationModule,
 		GameModule,
-		EventEmitterModule.forRoot()
+		EventEmitterModule.forRoot(),
 	],
 	controllers: [AppController],
-	providers: [AppService],
+	providers: [ConfigService, AppService],
+	// exports: [AuthService],
 })
 export class AppModule {}

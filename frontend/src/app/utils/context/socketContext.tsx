@@ -14,17 +14,17 @@ type SocketContextValue = {
   setIsMessage: Dispatch<SetStateAction<boolean>>;
 };
 
-export const socket = io("http://10.11.6.2:8000/chat", {
+export const socket = io(`${process.env.NEXT_PUBLIC_HOST}/chat`, {
   withCredentials: true,
 });
 export const socketContext = createContext<SocketContextValue>({
   socket,
-  updateChannel: () => {}, 
+  updateChannel: () => {},
   channel: null,
   oldId: null,
-  setOldId: () => {}, 
+  setOldId: () => {},
   Userdata: null,
-  setUserdata: () => {}, 
-  isMessage : false,
-  setIsMessage : () => {}
+  setUserdata: () => {},
+  isMessage: false,
+  setIsMessage: () => {},
 });

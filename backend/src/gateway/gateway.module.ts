@@ -9,7 +9,6 @@ import { GateWaySessionManager } from './gateway.session';
 import { Services } from 'src/utils/constants';
 import { ConversationsService } from 'src/conversations/conversations.service';
 import { UserService } from 'src/user/user.service';
-const COOKIE_SECRET = 'my-secret';
 
 @Module({
     imports: [],

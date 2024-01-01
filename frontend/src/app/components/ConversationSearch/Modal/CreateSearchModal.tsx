@@ -58,13 +58,16 @@ const CreateSearchModal: FC<props> = ({ setShow }) => {
     // Define a function to fetch search results
     const fetchSearchResults = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/user/search`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ name: searchQuery }),
-        });
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_HOST}/user/search`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ name: searchQuery }),
+          }
+        );
         if (response.ok) {
           const data = await response.json();
           setSearchResults(data.data);

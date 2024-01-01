@@ -20,7 +20,7 @@ import { UserService } from 'src/user/user.service';
 
 @WebSocketGateway({
 	cors: {
-		origin: ['http://10.11.6.2:3000'],
+		origin: [process.env.ROOT_FRONT],
 		credentials: true,
 	},
 	namespace: '/chat',
@@ -48,9 +48,11 @@ export class WebSocketChatGateway
 				id: userId,
 			},
 		});
+		console.log('user conncted with socket.io', userdb);
 		if (!socket.user || !userdb) {
 			return;
 		}
+
 		if (socket.user && userdb) {
 			if (!this.NsessionOfuser.has(userId)) {
 				this.NsessionOfuser.set(userId, 1);
@@ -97,12 +99,10 @@ export class WebSocketChatGateway
 		);
 		chatroom.members.map((member) => {
 			if (member.id !== messageRome.senderId)
-				this.server
-					.to(member.user_id.toString())
-					.emit('setNotification', {
-						id: chatroom.id,
-						content: messageRome.content,
-					});
+				this.server.to(member.user_id.toString()).emit('setNotification', {
+					id: chatroom.id,
+					content: messageRome.content,
+				});
 		});
 		this.server
 			.to(createMessageRoom.chatRoomId.toString())
@@ -181,13 +181,11 @@ export class WebSocketChatGateway
 			},
 		});
 		member?.members.map((member) => {
-			this.server
-				.to(member.user_id)
-				.emit('updateMember', {
-					roomId: RoomId,
-					idUserleave: id,
-					types: types,
-				});
+			this.server.to(member.user_id).emit('updateMember', {
+				roomId: RoomId,
+				idUserleave: id,
+				types: types,
+			});
 		});
 	}
 

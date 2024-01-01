@@ -12,8 +12,31 @@ import { HistoryMatchesType } from "./Imports";
 import { ResultsType } from "./Imports";
 import { useRouter } from "next/navigation";
 import AuthCheck from "../utils/AuthCheck";
+import { toast } from "react-toastify";
 
 const Dashboard = () => {
+
+	const ToastError = (message: any) => {
+    toast.error(message, {
+      position: toast.POSITION.TOP_RIGHT,
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
+  };
+
+  const ToastSuccess = (message: any) => {
+    toast.success(message, {
+      position: toast.POSITION.TOP_RIGHT,
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
+  };
 	const { Userdata } = useContext(socketContext);
 	const router = useRouter();
 
@@ -34,7 +57,7 @@ const Dashboard = () => {
 					setHistoryMatch(response.data);
 				}
 			} catch (error) {
-				console.log("Error fetching match history:", error);
+				ToastError(`Error Fetching History Matches ${error}`);
 			}
 		};
 
@@ -51,7 +74,7 @@ const Dashboard = () => {
 					setResults(response.data);
 				}
 			} catch (error) {
-				console.log("Error fetching match history:", error);
+				ToastError(`"Error fetching match history: ${error}`);
 			}
 		};
 

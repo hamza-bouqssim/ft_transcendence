@@ -97,7 +97,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
           setUserInfo(response.data);
         }
       } catch (error) {
-        console.log("Error fetching user information:", error);
+        ToastError(`Interaction not allowed. Users are blocked`);
       }
     };
 
@@ -262,7 +262,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
           setHistoryMatch(response.data);
         }
       } catch (error) {
-        console.log("Error fetching match history:", error);
+        ToastError(`Error Fetching History Matches`);
       }
     };
 
@@ -277,7 +277,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
           setResults(response.data);
         }
       } catch (error) {
-        console.log("Error fetching match history:", error);
+        ToastError(`Error Fetching History Matches`);
       }
     };
 
