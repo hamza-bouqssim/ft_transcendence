@@ -16,7 +16,7 @@ type SocketContextValue = {
   setIsMessage: Dispatch<SetStateAction<boolean>>
 };
 
-export const socket = io("http://10.13.10.5:8000/chat", {
+export const socket = io("http://localhost:8000/chat", {
      withCredentials: true,
 });
 export const socketContext = createContext<SocketContextValue>({
