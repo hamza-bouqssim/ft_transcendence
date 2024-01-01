@@ -42,6 +42,7 @@ const TopRightBar = () => {
     });
   };
   const { Userdata, setUserdata } = useContext(socketContext);
+
   useEffect(() => {
     dispatch(fetchCountNotification());
     getAuthUser()
@@ -55,16 +56,7 @@ const TopRightBar = () => {
   }, [setUserdata, dispatch]);
   const router = useRouter();
   const [notfication, setNotefication] = useState(false);
-  // const logout = () => {
-  // 	try {
-  // 		getlogout();
-  // 		deleteCookie("logged");
-  // 		router.push("/", { scroll: false });
-  // 		ToastSuccess(`Logout succefully `);
-  // 	} catch (err) {
-  // 		ToastError(`Failed to logout`);
-  // 	}
-  // };
+ 
   const menuRef = useRef<HTMLDivElement>(null);
   const subMenuRef = useRef<HTMLDivElement>(null);
   const faChevronDownRef = useRef<SVGSVGElement>(null);

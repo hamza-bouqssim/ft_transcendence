@@ -134,7 +134,8 @@ const MessageContainer = () => {
           {messages &&
             messages.map((m: messageTypes) => (
                 <div className={`flex w-full mt-2 space-x-3 max-w-xs ${Userdata?.id === m.sender.id ? 'self-end' : 'self-start'} overflow-y-auto`} key={m.id}> 
-                {!(Userdata?.id === m.sender.id) && <Image
+                {!(Userdata?.id === m.sender.id) && 
+                <Image
                   src={m.sender?.avatar_url}
                   className="h-10 w-10 rounded-[50%] bg-black"
                   alt="Description of the image"

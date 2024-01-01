@@ -4,7 +4,7 @@ import CoversationSideBar from "../../components/CoversationSideBar/Conversation
 import { ConversationChannelStyle, Page} from "../../utils/styles";
 import { useContext, useEffect, useState , PropsWithChildren} from "react";
 import { ConversationTypes, User, messageEventPayload, messageTypes } from "../../utils/types";
-import { getAuthUser, getConversation, getConversationMessage } from "../../utils/api";
+import {  getConversation, getConversationMessage } from "../../utils/api";
 import { useParams } from "next/navigation";
 import MessagePanel from "../../components/messages/MessagePanel";
 import TopRightBar from "../../components/TopRightBar";

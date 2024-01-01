@@ -149,22 +149,17 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 						this.emitToUser2InGame(game.user2.id, { display_name: game.user2.display_name,}, 'redirectUser');
 						this.queueGame = this.queueGame.filter((game) => game.user1.id != GameId);
 						this.queueWaiting = this.queueWaiting.filter((queue) => queue.user.id !== GameId);
-						console.log("..game",this.queueGame,"queue",this.queueWaiting)
 						return;
 					}
 					this.mapPong[GameId].playerOneScore = 0;
 					this.mapPong[GameId].playerTwoScore = 7;
-					// console.log("test 1",this.mapPong[GameId].playerOneScore,this.mapPong[GameId].playerTwoScore)
 					this.endGame(game);
 				} else if (!game.socket2 || socket.id === game.socket2) {
-					console.log("test 2")
-					// console.log("test 2",this.mapPong[GameId].playerOneScore,this.mapPong[GameId].playerTwoScore)
 					if (!this.mapPong[GameId]){
 						// this.mapPong[GameId] = new PongGame(this, game);
 						this.emitToUser2InGame(game.user1.id, { display_name: game.user1.display_name,}, 'redirectUser');
 						this.queueGame = this.queueGame.filter((game) => game.user1.id != GameId);
 						this.queueWaiting = this.queueWaiting.filter((queue) => queue.user.id !== game.user2.id);
-						console.log("..game",this.queueGame,"queue",this.queueWaiting)
 						return;
 					}
 					this.mapPong[GameId].playerOneScore = 7;
@@ -216,14 +211,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		const user = await this.gameservice.findUserById(client.user.sub);
 		if(!user)
 		return;
-		console.log("test redirect",user.display_name)
 		if (wait || (game && game.status !== 'invite')) {
 			client.emit('redirectUser', {
 				display_name: user.display_name,
 			});
 			return;
 		}
-		console.log("test redirect1",user.display_name)
 		if (game && game.status === 'invite') {
 			if (game.user1.id === client.user.sub && game.socket1 === null) {
 				client.join(`@${client.user.sub}`);

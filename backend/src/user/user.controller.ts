@@ -3,7 +3,9 @@ import {
 	Body,
 	Controller,
 	Get,
+	Param,
 	Post,
+	Delete,
 	Req,
 	Res,
 	UseGuards,
@@ -20,9 +22,8 @@ export class UserController {
 
 	@Get('info')
 	@UseGuards(AuthGuard('jwt'))
-	async grabMyInfos(@Req() req, @Res() res) {
-		try{
-			const user = req.user;
+	async grabMyInfos(@Req() req) {
+		const user = req.user;
 
 		return {
 			id: user.id,
@@ -33,15 +34,22 @@ export class UserController {
 			tfa_enabled: user.tfa_enabled,
 			first_time: user.first_time,
 		};
+	}
 
-		}catch(error){
-			return res.send({success: false, message: error.message});
+	@Get('finduser/:username')
+	@UseGuards(AuthGuard('jwt'))
+	findUser(@Param('username') username: string , @Res() res) {
+		try{
+			const result = this.userService.findUser(username);
+			return res.status(200).json(result);
 
+		}catch(err : any){
+			return res.status(401).json(err.response);
 
 		}
 		
+		
 	}
-
 
 	@Post('changedisplayname')
 	@UseGuards(AuthGuard('jwt'))
@@ -81,7 +89,7 @@ export class UserController {
 				.status(200)
 				.json({ success: true, message: 'Updated Successfully' });
 		} catch (error) {
-			return res.send({success: false, message: error.message});
+			return res.status(401).json({ success: false, message: error.message });
 		}
 	}
 
@@ -92,19 +100,12 @@ export class UserController {
 		@Res() res,
 		@Body() request: { avatar: string },
 	) {
-		try{
-			const user = req.user;
-			await this.prisma.user.update({
-				where: { email: user.email },
-				data: { avatar_url: request.avatar },
-			});
+		const user = req.user;
+		await this.prisma.user.update({
+			where: { email: user.email },
+			data: { avatar_url: request.avatar },
+		});
 		res.send({ success: true, message: 'avatar uploaded succesfully' });
-
-		}catch(error){
-			return res.send({success: false, message: error.message});
-
-		}
-		
 	}
 
 	@Post('deletePhoto')
@@ -141,11 +142,13 @@ export class UserController {
 	@Get('pending-requests')
 	@UseGuards(AuthGuard('jwt'))
 	async pendingRequests(@Req() req, @Res() res) {
-	
+		try {
 			const user = req.user;
 			const request = await this.userService.pendingRequests(user.id);
 			return res.status(200).json({ success: true, data: request });
-		
+		} catch (error) {
+			return res.status(500).json({ message: error });
+		}
 	}
 
 	@Get('all-pending-request')
@@ -160,26 +163,6 @@ export class UserController {
 		return this.userService.CountPendingRequests(user.id);
 	}
 
-	@Get('table-friends')
-	@UseGuards(AuthGuard('jwt'))
-	async allFriend(@Req() req) {
-		const user = req.user;
-		return await this.userService.allFriendsRequest(user.id);
-	}
-
-	@Post('table_friends_id')
-	@UseGuards(AuthGuard('jwt'))
-	async allFriendsId(@Body() request: { id_user: string }, @Res() res) {
-		try{
-			const test =  await this.userService.allFriendsId(request.id_user);
-			return res.status(200).json({ success: true, data: test });
-
-		}catch(error){
-			res.send({ success: true, message: error.message });
-
-		}
-	}
-
 	@Get('pending-request-play')
 	@UseGuards(AuthGuard('jwt'))
 	async pending_request_play(@Req() req, @Res() res) {
@@ -188,7 +171,7 @@ export class UserController {
 			const request = await this.userService.pendingPLayingRequest(user.id);
 			return res.status(200).json({ success: true, data: request });
 		} catch (err) {
-			return res.status(401).json({ message: err });
+			return res.status(500).json({ message: err });
 		}
 	}
 
@@ -206,34 +189,27 @@ export class UserController {
 		return await this.userService.allUsers(user.id);
 	}
 	@Post('search')
-	async searchUsersRooms(@Body() request: { name: string }, @Res() res) {
-		try{
-			const test = await this.userService.findByNameSearching(request.name);
-			return res.status(200).json({ success: true, data: test });
-
-
-		}catch(error : any){
-			return res.send({success: false, message: error.message});
-
-
-		}
-		
+	async searchUsersRooms(@Body() request: { name: string }) {
+		const test = this.userService.findByNameSearching(request.name);
+		return test;
 	}
-
+	@Get('table-friends')
+	@UseGuards(AuthGuard('jwt'))
+	async allFriend(@Req() req) {
+		const user = req.user;
+		return await this.userService.allFriendsRequest(user.id);
+	}
+	@Post('table_friends_id')
+	@UseGuards(AuthGuard('jwt'))
+	async allFriendsId(@Body() request: { id_user: string }) {
+		return await this.userService.allFriendsId(request.id_user);
+	}
 
 	@Post('get_user')
 	@UseGuards(AuthGuard('jwt'))
 	async getUserId(@Body() request: { id_user: string }, @Res() res) {
-		try{
-			const user = await this.userService.userInfo(request.id_user);
-			return res.status(200).json(user);
-
-		}catch(error : any){
-			return res.send({success: false, message: error.message});
-
-
-		}
-		
+		const user = await this.userService.userInfo(request.id_user);
+		res.status(200).json(user);
 	}
 
 	@Get('notification')
@@ -244,5 +220,16 @@ export class UserController {
 		return notifications;
 	}
 
-	
+	@Delete('delete-account')
+	@UseGuards(AuthGuard('jwt'))
+	async delete_account(@Req() req, @Res() res) {
+		try {
+			const user = req.user;
+			res.clearCookie('token');
+			await this.userService.deleteAccount(user.id);
+			return res.send({ success: true, message: 'Deleted Successfully' });
+		} catch (error) {
+			console.error('Error deleting user account:', error);
+		}
+	}
 }

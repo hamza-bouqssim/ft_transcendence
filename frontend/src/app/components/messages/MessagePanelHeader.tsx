@@ -188,10 +188,10 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 					<div className="flex">
 						<Image
 						src={InfoRecipient()?.avatar_url as string}
-						className="w-[50px]  rounded-full"
+						className="h-10 w-10 rounded-[50%] bg-black"
 						alt=""
-						width={30}
-						height={30}
+						width={60}
+						height={60}
 						/>
 						{checkTheStatus() === 'online' ? (<OnlineStyling/>) :  checkTheStatus() === 'ingame' ? <IngameStyling/> :  checkTheStatus() === 'offline' ?  ( <OflineStyling/>) : <></>}
 					</div>					
