@@ -21,7 +21,7 @@ export class UserController {
 	@Get('info')
 	@UseGuards(AuthGuard('jwt'))
 	async grabMyInfos(@Req() req, @Res() res) {
-		try{
+		// try{
 			const user = req.user;
 
 		return {
@@ -34,11 +34,11 @@ export class UserController {
 			first_time: user.first_time,
 		};
 
-		}catch(error){
-			return res.send({success: false, message: error.message});
+		// }catch(error){
+		// 	return res.send({success: false, message: error.message});
 
 
-		}
+		// }
 		
 	}
 

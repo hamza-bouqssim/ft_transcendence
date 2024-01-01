@@ -58,6 +58,7 @@ const MyAccount = () => {
 						width={70}
 						height={70}
 						alt="user"
+						priority
 					/>
 				</div>
 				<div className="">
