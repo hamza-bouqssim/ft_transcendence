@@ -239,20 +239,20 @@ export class UserService {
         })
     }
     async findByNameSearching(name: string) {
-        const users = await this.prisma.user.findMany({
-          where: {
-            display_name: {
-              contains: name,
-            },
+      const users = await this.prisma.user.findMany({
+        where: {
+          display_name: {
+            contains: name,
           },
-        });
-      
-        
+        },
+      });
 
-        const result = [...users];
-      
-        return result;
-      }
+
+
+      const result = [...users];
+
+      return result;
+    }
     
     async findUserById(finduserParams : findUserParams)
     {

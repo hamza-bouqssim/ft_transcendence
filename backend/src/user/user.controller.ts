@@ -166,13 +166,11 @@ export class UserController {
 	@Get('pending-request-play')
 	@UseGuards(AuthGuard('jwt'))
 	async pending_request_play(@Req() req, @Res() res) {
-		try {
+	
 			const user = req.user;
 			const request = await this.userService.pendingPLayingRequest(user.id);
 			return res.status(200).json({ success: true, data: request });
-		} catch (err) {
-			return res.status(500).json({ message: err });
-		}
+	
 	}
 
 	@Get('blocked-friends')
@@ -189,10 +187,19 @@ export class UserController {
 		return await this.userService.allUsers(user.id);
 	}
 	@Post('search')
-	async searchUsersRooms(@Body() request: { name: string }) {
-		const test = this.userService.findByNameSearching(request.name);
-		return test;
-	}
+    async searchUsersRooms(@Body() request: { name: string }, @Res() res) {
+        try{
+            const test = await this.userService.findByNameSearching(request.name);
+            return res.status(200).json({ success: true, data: test });
+
+
+        }catch(error : any){
+            return res.send({success: false, message: error.message});
+
+
+        }
+
+    }
 	@Get('table-friends')
 	@UseGuards(AuthGuard('jwt'))
 	async allFriend(@Req() req) {
@@ -201,15 +208,28 @@ export class UserController {
 	}
 	@Post('table_friends_id')
 	@UseGuards(AuthGuard('jwt'))
-	async allFriendsId(@Body() request: { id_user: string }) {
-		return await this.userService.allFriendsId(request.id_user);
+	async allFriendsId(@Body() request: { id_user: string }, @Res() res) {
+		try{
+			const users =  await this.userService.allFriendsId(request.id_user);
+			return res.status(200).json({ success: true, data: users });
+
+		}catch(error){
+			return res.send({success: false, message: error.message});
+		}
 	}
 
 	@Post('get_user')
 	@UseGuards(AuthGuard('jwt'))
 	async getUserId(@Body() request: { id_user: string }, @Res() res) {
-		const user = await this.userService.userInfo(request.id_user);
-		res.status(200).json(user);
+		try{
+			const user = await this.userService.userInfo(request.id_user);
+			res.status(200).json(user);
+
+		}catch(error){
+			return res.send({success: false, message: error.message});
+
+		}
+		
 	}
 
 	@Get('notification')

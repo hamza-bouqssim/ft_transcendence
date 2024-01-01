@@ -13,7 +13,6 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { TwoFactorAuthenticationModule } from './two-factor-authentication/two-factor-authentication.module';
 import { GameModule } from './game/game.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AuthService } from './auth/auth.service';
 
 @Module({
 	imports: [

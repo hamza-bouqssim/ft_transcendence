@@ -91,12 +91,13 @@ const Header = () => {
       <section className="flex items-center justify-between">
         <div>
           <Image
-            className="md:w-11 xl:text-lg"
+            className="w-20 md:w-32 xl:w-[100px]"
             key={0}
-            src={"/assets/42.svg"}
-            width={35}
-            height={35}
+            src={"/assets/logo.png"}
+            width={500}
+            height={500}
             alt="ping-pong"
+            priority
           />
         </div>
         <div

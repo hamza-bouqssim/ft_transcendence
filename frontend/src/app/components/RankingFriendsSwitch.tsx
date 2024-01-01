@@ -97,6 +97,7 @@ const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 					setUserInfo(response.data);
 				}
 			} catch (error) {
+				
 			}
 		};
 
