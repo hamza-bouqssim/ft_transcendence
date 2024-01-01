@@ -78,7 +78,6 @@ export class RoomsController {
     }
   }
 
-  //member mangment 
   
   @Get("/getAllFreind")
   @UseGuards(AuthGuard("jwt"))
