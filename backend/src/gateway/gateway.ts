@@ -82,7 +82,7 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         const chatroom  = await this.roomsService.notificationRoomUpdate(messageRome.senderId,messageRome.chatRoomId)
         chatroom.members.map(member=>{
             if(member.id !== messageRome.senderId)
-                this.server.to(member.user_id.toString()).emit ('setNotification',{id:chatroom.id,content:messageRome.content});
+                this.server.to(member.user_id.toString()).emit ('setNotification',{id:chatroom.id,content:messageRome.content,senderId:messageRome.senderId});
         })
         this.server.to(createMessageRoom.chatRoomId.toString()).emit ('messageRome', messageRome);
     }
@@ -105,7 +105,7 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
     @SubscribeMessage('cleanNotification')
     async cleanNotification (client: AuthenticatedSocket, roomId:string) {
         await this.roomsService.cleanNotification(client.user.sub,roomId)
-        this.server.to(client.user.sub.toString()).emit ('setNotification',{id:roomId});
+        this.server.to(client.user.sub.toString()).emit ('setNotification',{id:roomId,senderId:client.user.sub});
     }
     
     @OnEvent("order.created")

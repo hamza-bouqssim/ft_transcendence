@@ -4,7 +4,7 @@ import { LuSendHorizonal } from "react-icons/lu";
 import { CiImageOn } from "react-icons/ci";
 import { socketContext } from "../../utils/context/socketContext";
 import {useContext, useEffect,useState}  from "react"
-import {  ConversationTypes, MessageType, User, messageTypes } from "../../utils/types";
+import {  BloqueList, BloquesTypes, ConversationTypes, MessageType, User, messageTypes } from "../../utils/types";
 import {usePathname} from 'next/navigation'
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchBlockedUsers, fetchBlocksThunk } from "../../store/blockSlice";
@@ -31,8 +31,8 @@ interface Members {
 }
 
 type props = {
-    Message : any[];
-    setMessage :Dispatch<React.SetStateAction<any>>   
+    Message : messageTypes[];
+    setMessage :Dispatch<React.SetStateAction<messageTypes[]>>   
 }
 interface Member {
   user_id: string; 
@@ -53,34 +53,32 @@ const MessageInputFieldRoom: FC<props> = ({setMessage, Message}) => {
     const dispatch = useDispatch<AppDispatch>();
     const { members, status, error } = useSelector((state:any) => state.member);
     const { rooms} = useSelector((state:any) => state.room);
-    const { blocked} = useSelector((state:any) => state.friendsBlock);
+    const { blocked } = useSelector((state:any) => state.friendsBlock);
     useEffect(() => {
       dispatch(fetchBlockedUsers())
     }, [dispatch]);
-    
+
     useEffect(() => {
       const handleOnMessage = (message: any) => {
-        // console.log("message-->", message.senderId);
-        // const isSenderBlocked = blocked.some(
-        //   (blockedUser: any) => 
-        //     blockedUser.userOne.id === message.sender.id || blockedUser.userTwo.id === message.sender.id
-        // );
-        // console.log("is bloque-->", isSenderBlocked);
-    
-        // If the sender is blocked, don't update the room message and exit the function
-        // if (isSenderBlocked) {
-        //   console.log('Sender is blocked. Message not updated.');
-        //   return;
-        // } sochern
-          dispatch(updateRoomMessage({ roomId: channel?.id, updatedMessage: { content: message.content, createdAt: new Date() } }));
-          setMessage((prevMessages: messageTypes[]) => [...prevMessages, message]);
+        const isSenderBlocked = blocked.find(
+          (blockedUser:  BloqueList) => 
+           (blockedUser.userOne.id === message.senderId) || (blockedUser.userTwo.id === message.senderId)
+            
+        );
+          if(isSenderBlocked === undefined || message.senderId === Userdata?.id)
+          {
+            dispatch(updateRoomMessage({ roomId: channel?.id, updatedMessage: { content: message.content, createdAt: new Date() } }));
+            setMessage((prevMessages: messageTypes[]) => [...prevMessages, message]);
+
+          }
+          
 
       };
       socket.on('messageRome', handleOnMessage);
       return () => {
           socket.off('messageRome', handleOnMessage);
       };
-    }, [channel?.id,socket]);
+    }, [channel?.id,socket,blocked]);
 
   
     const sendMessage = async () => {

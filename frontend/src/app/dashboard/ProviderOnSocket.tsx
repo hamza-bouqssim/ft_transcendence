@@ -16,6 +16,8 @@ import { fetchConversationThunk } from '../store/conversationSlice';
 import { ConstructionOutlined } from '@mui/icons-material';
 import { cleanNotification, getNotificationRoom } from '../store/NotificationChatSlice';
 import { getAllRooms, updateRoomMessage } from '../store/roomsSlice';
+import { useSelector } from 'react-redux';
+import { BloqueList } from '../utils/types';
 
 
 const ProviderOnSocket = () => {
@@ -23,9 +25,12 @@ const ProviderOnSocket = () => {
     const route = useRouter()
     
     const socket = useContext(socketContext).socket
-
+    const { blocked } = useSelector((state:any) => state.friendsBlock);
 	const dispatch= useDispatch<AppDispatch>();
 
+  useEffect(() => {
+    dispatch(fetchBlockedUsers())
+  }, [dispatch]);
   const setMapIndex = useSetAtom(OpponentData);
 
     useEffect(() => {
@@ -156,7 +161,12 @@ const ProviderOnSocket = () => {
 
         })
         socket.on('setNotification',(payload:any) =>{
-          if(payload.id !== channel?.id)
+          const isSenderBlocked = blocked.find(
+            (blockedUser:  BloqueList) => 
+             (blockedUser.userOne.id === payload.senderId) || (blockedUser.userTwo.id === payload.senderId)
+              
+          ); 
+          if(isSenderBlocked === undefined  && payload.id !== channel?.id)
           {
             dispatch(getNotificationRoom());
             dispatch(updateRoomMessage(({ roomId: payload.id , updatedMessage: { content: payload.content, createdAt: new Date() } })))

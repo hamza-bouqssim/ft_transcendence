@@ -49,6 +49,30 @@ export const InfoChat = () => {
 		else
 			return ""
 	}
+  const getDisplayUser = () => {
+    let friend : User | undefined;
+    let truncatedDisplayName
+    if(pathname.includes("chat"))
+    {
+      if(channel?.recipientId === Userdata?.id){
+        friend = channel?.sender;
+      }else
+        friend = channel?.recipient;
+    }
+    if(friend){
+       truncatedDisplayName =
+      friend.display_name.length > 10
+        ? `${friend.display_name.substring(0, 10)}...`
+        : friend.display_name;
+
+    return {
+      ...friend,
+      display_name: truncatedDisplayName,
+    };
+
+    }
+    
+  };
 
   return (
     <div className='relative bg-[#CDCEDB] w-full h-[80%] flex flex-col gap-4 px-5 py-10 rounded-t-2xl'>
@@ -67,12 +91,10 @@ export const InfoChat = () => {
             </div>
       </div>
             
-
-
             <div className='w-full h-[30%]  flex flex-col gap-1'>
               <div className='w-full bg-[#F2F3FD] grow px-2 py-1 text-gray-600'>
-                <h2 className='font-bold font-500'> {fetchDataUser()?.display_name}</h2>
-                <span> {fetchDataUser()?.username}</span>
+                <h2 className='font-bold font-500'> {getDisplayUser()?.display_name}</h2>
+                <span> {getDisplayUser()?.username}</span>
               </div>
               <div className="w-full bg-[#F2F3FD] grow px-2 py-1 text-gray-600 font-['Whitney_Semibold']">
                   <h2>Joined Pong Since</h2>

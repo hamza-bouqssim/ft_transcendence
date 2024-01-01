@@ -18,8 +18,7 @@ import { cleanNotification } from "@/app/store/NotificationChatSlice";
 
 const MessageContainerRoom = () => {
     const scrollRef = useRef<HTMLDivElement | null>(null);
-    const [Message,setMessage] = useState<any[]>([]);
-    const [MessageRoom,setMessageRoom] = useState<any[]>([]);
+    const [Message,setMessage] = useState<messageTypes[]>([]);
     const pathname = usePathname()
     const { channel , updateChannel} = useContext(socketContext);
     const { oldId,setOldId } = useContext(socketContext);
@@ -59,11 +58,19 @@ const MessageContainerRoom = () => {
           const id = channel.id;
             getConversationMessageRoom(id)
               .then((data: any) => {
-                joinRoom(id);
-                dispatch(cleanNotification({roomId:id}))
-                setMessage(data.data.data);
+                if(data.data.success)
+                {
+                  joinRoom(id);
+                  dispatch(cleanNotification({roomId:id}))
+                  setMessage(data.data.response);
+                }
+                else{
+                  toast.error(data.data.message)
+                }
               })
-              .catch((err: any) => console.log(err));
+              .catch((err: any) =>{
+                toast.error("can not get this  conversation")
+              });
         }
     }, [channel?.id]);
 
@@ -101,7 +108,6 @@ const MessageContainerRoom = () => {
                   if (foundChannel) {
                     updateChannel(foundChannel);
                     setValide(false);
-
                   }
                 })
                 .catch((error: any) => {

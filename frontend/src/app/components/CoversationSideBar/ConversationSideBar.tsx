@@ -70,7 +70,7 @@ const CoversationSideBar = () => {
 					}}
 					className={`${(pathname.includes('groups')) ? 'bg-[#5B8CD3]' : ''} p-4 rounded-full w-1/2 font-['Whitney_Semibold'] flex items-center  justify-center `}>
 					Groups
-					{notificationRoom.reduce((accumulator : number, currentValue : notification) => accumulator + currentValue.number, 0) !== 0 && 
+					{notificationRoom && notificationRoom.reduce((accumulator : number, currentValue : notification) => accumulator + currentValue.number, 0) !== 0 && 
 					<div className="bg-[#fc7785] w-2 h-2  ml-[2px] mb-2 rounded-full"></div>}
 				</button>
 			</div>

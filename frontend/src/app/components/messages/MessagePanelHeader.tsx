@@ -118,7 +118,6 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 	const handleUpdate = () => {
     if(olddata)
     {
-		console.log("ppriiiiiiiiiiiivat ===>",!olddata.password?.trim().length)
 		if(olddata.Privacy==="Protected" && !olddata.password?.trim().length  )
 		{
 			toast.error('ineed Password for this room');
@@ -139,7 +138,28 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
     }
 	};
 
+	const getDisplayUser = () => {
+		let friend: User | undefined;
+		let truncatedDisplayName;
 
+		if (channel?.recipient.id === Userdata?.id) {
+			friend = channel?.sender;
+		} else 
+			friend = channel?.recipient;
+		if(friend){
+			 truncatedDisplayName =
+		  friend.display_name.length > 10
+			? `${friend.display_name.substring(0, 10)}...`
+			: friend.display_name;
+		}
+		
+	
+		return {
+		  ...friend,
+		  display_name: truncatedDisplayName,
+		};
+	  };
+	  
 	return (
 		<>
 		{
@@ -187,7 +207,7 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 					</div>
 				)}
 				{!channel?.name && channel?.recipient.display_name && (
-					<h1 className="ml-2">{InfoRecipient()?.display_name}</h1>
+					<h1 className="ml-2">{getDisplayUser()?.display_name}</h1>
 				)}
 			</div>
 			{pathname.includes("groups") &&

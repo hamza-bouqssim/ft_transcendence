@@ -821,8 +821,30 @@ export class RoomsService {
         },
       },
     });
-
-    return chatRoomMessages;
+    const blockListEntry = await this.prisma.blockList.findMany({
+      where: {
+        OR: [
+          {userOneId: id},
+          {userTwoId: id},
+        ],
+      },
+    });
+    const notSameUserEntries = [];
+    blockListEntry.forEach(entry => {
+      if (entry.userOneId !== id) {
+        notSameUserEntries.push(entry.userOneId);
+      }
+      if (entry.userTwoId !== id) {
+        notSameUserEntries.push(entry.userOneId);
+      }
+    });
+    const messageroom = [];
+    chatRoomMessages.map(entry => {
+      if (notSameUserEntries.find((data) => entry.senderId === data ) === undefined) {
+        messageroom.push(entry);
+      }
+    });
+    return messageroom;
   }
 
   async notificationRoom(roomId:string,userId:string,number:number)

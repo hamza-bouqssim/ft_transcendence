@@ -63,8 +63,16 @@ export const fetchConversationUserThunk = createAsyncThunk('conversation/fetch',
 
 
 export const fetchDeleteConversation = createAsyncThunk('deleteConversation/fetch', async(conversationId : string)=>{
+  try{
     const response = await deleteConversation(conversationId);
     return response.data;
+
+  }catch(err){
+
+      throw new Error("Error while deleting the conversation");
+
+  }
+   
 })
 export const conversationsSlice = createSlice({
   name: 'conversations',

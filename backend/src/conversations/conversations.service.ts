@@ -310,7 +310,18 @@ async findConversationUsers(user : any, _display_name : string, message : string
   if(!chat)
     throw new HttpException('There is no conversation between this two users!!' , HttpStatus.BAD_REQUEST)
 
-
+    await this.prisma.chatParticipents.update({
+      where: { id: chat.id },
+      data: {
+        deletedBy: {
+          disconnect: [{ id: chat.recipient.id }, { id: chat.sender.id }],
+        },
+        vue: true,
+      },
+      include :{
+        deletedBy : true,
+      }
+    })
   
   const messageCreate= await this.prisma.message.create({
     data: {
@@ -422,19 +433,23 @@ async deleteConversation(conversationId: string, userId : string) {
       messages: true,
     },
   });
-
+  const messages = updatedChatParticipent?.messages;
   if (Array.isArray(updatedChatParticipent.deletedBy) &&updatedChatParticipent.deletedBy.length === 2) {
-    for (const message of updatedChatParticipent.messages) {
-      await this.prisma.message.delete({
-        where: {
-          id: message.id,
-        },
+    if(messages && messages.length > 0){
+      for (const message of updatedChatParticipent.messages) {
+        await this.prisma.message.delete({
+          where: {
+            id: message.id,
+          },
+        });
+      }
+    
+      await this.prisma.chatParticipents.delete({
+        where: { id: conversationId },
       });
+
     }
-  
-    await this.prisma.chatParticipents.delete({
-      where: { id: conversationId },
-    });
+    
   }
   
 

@@ -15,6 +15,7 @@ export class FriendRequestController {
 
 
       @Post('send-request')
+      
       async sendRequest(@Body() request: { display_name: string }, @Req() req, @Res() res) {
           try {
               const user = req.user;

@@ -43,55 +43,51 @@ const initialState: RoomState = {
 export const getAllRooms = createAsyncThunk('rooms/getAllRooms', async (_,{rejectWithValue} ) => {
   try {
     const response = await getAllRoomsApi();
-    return response.data.data; 
+	if(response.data.success)
+		return response.data.response;
+	else
+		return rejectWithValue(response.data.message);
   } catch (error : any) {
-    if (error.response && error.response.data) {
-      return rejectWithValue(error.response.data);
-    } else {
-      return rejectWithValue('Failed to fetch rooms');
-    }
+	return rejectWithValue("Failed to create rooms");
   }
 });
 
 export const createRooms = createAsyncThunk('rooms/createRooms', async (data: createRoom,{rejectWithValue}) => {
-	try
-	{
-	  const response = await createRoomsApi(data);
-	  return response.data.data;
-	} catch (error : any) {
-	  if (error.response && error.response.data) {
-		return rejectWithValue(error.response.data);
-	  } else {
-		return rejectWithValue('Failed to create rooms');
+	
+	try {
+		const response = await createRoomsApi(data);
+		if(response.data.success)
+			return response.data.response;
+		else
+			return rejectWithValue(response.data.message);
+	  } catch (error : any) {
+		return rejectWithValue("Failed to create rooms");
 	  }
-	}
   });
   
 
 export const updateRooms = createAsyncThunk('rooms/updateRooms', async (data: ConversationTypes | null,{rejectWithValue}) => {
-  try {
-    const response = await updateRoomsApi(data); 
-    return response.data.data;
-  } catch (error : any) {
-    if (error.response && error.response.data) {
-      return rejectWithValue(error.response.data);
-    } else {
-      return rejectWithValue('Failed to create rooms');
-    }
-  }
+	try {
+		const response = await updateRoomsApi(data); 
+		if(response.data.success)
+			return response.data.response;
+		else
+			return rejectWithValue(response.data.message);
+	  } catch (error : any) {
+		return rejectWithValue('Failed to update rooms');
+	  }
 });
 export const joinToRoom = createAsyncThunk('rooms/joinRoom', async (data: join ,{rejectWithValue}) => {
 	try {
-	  const response = await joinRoomApi(data);    
-	  return response.data.data;
-	} catch (error : any) {
-	  if (error.response && error.response.data) {
-		return rejectWithValue(error.response.data);
-	  } else {
+		const response = await joinRoomApi(data);  
+		if(response.data.success)
+			return response.data.response;
+		else
+			return rejectWithValue(response.data.message);
+	  } catch (error : any) {
 		return rejectWithValue('Failed to join rooms');
 	  }
-	}
-  });
+});
 
 const roomSlice = createSlice({
   name: 'room',

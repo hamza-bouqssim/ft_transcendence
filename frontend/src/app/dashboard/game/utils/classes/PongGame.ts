@@ -641,8 +641,6 @@ class PongGame {
 
 	updateBallVelocity = (): void => {
 		// Limit Velocity Value
-		// console.log("Before velocity update:", this.currentBallVelocity.y);
-		// console.log("Before velocity update:", this.currentBallVelocity.x);
 		const xVelocity = this.currentBallVelocity.x;
 
 		if (

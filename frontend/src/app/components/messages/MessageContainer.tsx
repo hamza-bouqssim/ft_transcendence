@@ -112,6 +112,19 @@ const MessageContainer = () => {
         setShouldRenderUnblockButton(false);
       }
     }, [isSenderBlocked, isRecipientBlocked, Userdata, channel]);
+    const getDisplayUser = (friend : User) => {
+		
+      const truncatedDisplayName =
+        friend.display_name.length > 10
+          ? `${friend.display_name.substring(0, 10)}...`
+          : friend.display_name;
+  
+      return {
+        ...friend,
+        display_name: truncatedDisplayName,
+      };
+    };
+  
     return (
 
        <>
@@ -137,7 +150,7 @@ const MessageContainer = () => {
                         color: Userdata?.id === m.sender.id ? '#8982a6' : '#778ba5',
                       }}
                     >
-                      {m.sender.display_name}
+                      {getDisplayUser(m.sender).display_name}
                     </span>
                   
                   </div >}

@@ -19,7 +19,6 @@ const GroupsManagement = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [sortedConversations, setSortedConversations] = useState<ConversationTypes[]>([]);
   const { rooms, status, error } = useSelector((state: any) => state.room);
-  const {notificationRoom} = useSelector((state:any) => state.NotificationChat);
   useEffect(() => {
     dispatch(getAllRooms())
   }, [dispatch]);
@@ -48,7 +47,6 @@ const GroupsManagement = () => {
   if (status.get == 'failed') {
     return <div className="text-gray-500 mt-10 text-center ">{error} </div>;
   }
-
   return (
 		<div className="no-scrollbar  h-[calc(100%-74px)] overflow-auto pb-2 pt-5  text-black">
 			{sortedConversations &&
