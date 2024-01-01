@@ -12,19 +12,25 @@ export interface MessagesState {
 
 const initialState: MessagesState = {
   messages: [],
-  isSenderBlocked: false, // Initialize isBlocked to false
+  isSenderBlocked: false, 
   isRecipientBlocked : false,
   status : 'idle',
   error: null,
 };
 
-//fetch unread messages-->
 
 
 
 export const fetchMessagesThunk = createAsyncThunk('messages/fetch', async (id : string) => {
+  try{
     const response = await getConversationMessage(id);
     return response.data.response;
+
+  }catch(err)
+  {
+     throw new Error("Error while fetching messages");
+  }
+    
   })
 
 export const messagesSlice = createSlice({
@@ -42,9 +48,14 @@ export const messagesSlice = createSlice({
       state.status = 'loading';
     }).addCase(fetchMessagesThunk.fulfilled, (state : any, action) => {
       state.status = 'success';
-      state.messages = action.payload.messages; 
-      state.isSenderBlocked = action.payload.isSenderBlocked;
-      state.isRecipientBlocked = action.payload.isRecipientBlocked;
+      if(action.payload)
+      {
+        state.messages = action.payload.messages; 
+        state.isSenderBlocked = action.payload.isSenderBlocked;
+        state.isRecipientBlocked = action.payload.isRecipientBlocked;
+
+      }
+     
     }).addCase(fetchMessagesThunk.rejected, (state : any, action) => {
       state.status = 'failed';
       state.error = action.payload;

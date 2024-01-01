@@ -1,4 +1,5 @@
 "use client"
+import AuthCheck from "@/app/utils/AuthCheck"
 import { Qrcodeform } from "../../components/Qrcodefom"
 import { confirm, verifyCode } from "../../utils/api"
 import { faXmark } from "@fortawesome/free-solid-svg-icons"
@@ -32,6 +33,8 @@ const TwoFactorVerify = () => {
       }
 
     return (
+      <AuthCheck>
+
         <div className="absolute left-0 z-10 right-0 bottom-0 top-0 bg-[#0000005f] backdrop-blur-[0px] opacity-100">
             <div className="w-[380px] h-[600px] z-30 bg-white absolute top-0 left-0 bottom-0 right-0 m-auto  drop-shadow-xl rounded-[20px] overflow-hidden">
        <div className="h-full flex flex-col items-center  font-['Whitney_Semibold'] relative">
@@ -52,15 +55,15 @@ const TwoFactorVerify = () => {
 
             <hr className='w-full'/>
             {Loading ? (
-            <button className='w-[80%] bg-[--purple-color]  py-3 rounded-lg cursor-pointer hover:bg-[--pink-color] ease-in-out duration-300' >Loading...</button>
-
-            ) : (
-              <button className='w-[80%] bg-[--purple-color]  py-3 rounded-lg cursor-pointer hover:bg-[--pink-color] ease-in-out duration-300 text-white' onClick={_verificationCode}>Verify</button>
-
-            )}
+              <button className='w-[80%] bg-[--purple-color]  py-3 rounded-lg cursor-pointer hover:bg-[--pink-color] ease-in-out duration-300' >Loading...</button>
+              
+              ) : (
+                <button className='w-[80%] bg-[--purple-color]  py-3 rounded-lg cursor-pointer hover:bg-[--pink-color] ease-in-out duration-300 text-white' onClick={_verificationCode}>Verify</button>
+                
+                )}
           </div>
           {message != "" && (
-        <div>
+            <div>
           {/* {isVerified ? ( */}
             <p style={{ color: isVerified ? 'green' : 'red' }} className="font-bold font-['Whitney_Semibold']">{message}</p>
           {/* ) : (
@@ -73,6 +76,7 @@ const TwoFactorVerify = () => {
     </div> 
         </div>
 
+      </AuthCheck>
     )
 }
 

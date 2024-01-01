@@ -11,7 +11,7 @@ export interface requestsState {
 
 const initialState: requestsState = {
 	requests: [],
-	status: "idle", // Initial status is 'idle'
+	status: "idle", 
 	error: null,
 };
 

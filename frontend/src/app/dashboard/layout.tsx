@@ -1,10 +1,9 @@
 "use client";
 import {
 	useState,
-	createContext,
+	
 	PropsWithChildren,
-	useRef,
-	useEffect,
+
 } from "react";
 import SideBar from "../components/SideBar";
 import TopRightBar from "../components/TopRightBar";
@@ -20,17 +19,9 @@ import { ToastContainer, toast } from "react-toastify";
 import { ChangeContext } from "./game/utils/data";
 import AuthCheck from "../utils/AuthCheck";
 
-// export const SideBarContext: any = createContext<any>(null);
-// export const ChangeContext: React.Context<any> = createContext(null);
-// type Props = {
-// 	// user?: User;
-// 	// setUser : React.Dispatch<React.SetStateAction<User | undefined>>;
-// 	socket: Socket;
-// };
 
 type Props = {
-	// user?: User;
-	// setUser : React.Dispatch<React.SetStateAction<User | undefined>>;
+
 	socket: Socket;
 };
 
@@ -93,23 +84,11 @@ export default function RootLayout({
 		return validPaths.some((path) => pathName.includes(path));
 	};
 
-	// const getChildrenSize = useRef<any>(null);
-// 
-	// const [minHeight, setMinHeight] = useState<any>(966);
 
-	// useEffect(() => {
-	// 	const handleResizeWindow = () =>
-	// 		setMinHeight(getChildrenSize.current?.children[0]?.clientHeight + 170);
-	// 	if (pathName.endsWith("/dashboard")) {
-	// 		handleResizeWindow();
-	// 		window.addEventListener("resize", handleResizeWindow);
-	// 	} else setMinHeight(966);
-	// 	return () => window.removeEventListener("resize", handleResizeWindow);
-	// }, [pathName]);
 
 	return (
-		<html lang="en">
-			<body>
+		<div >
+			
 			<AuthCheck>
 				<div
 					className={`flex h-screen w-full text-white`}
@@ -132,7 +111,7 @@ export default function RootLayout({
 					</AppWithProviders>
 				</div>
 			</AuthCheck>
-			</body>
-		</html>
+			
+		</div>
 	);
 }

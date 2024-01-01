@@ -28,13 +28,17 @@ export const RestFriend = () => {
   }, [dispatch]);
 
   const handleAddUser=(friend:string) =>{
+    if(channel?.id)
+    {
     dispatch(addMemberToRooms({
-      userId:friend,
-      id:channel?.id
+        id:channel?.id,
+        userId:friend,
+
     })).then((res:any)=>{
       if(channel?.id)
         dispatch(getAllMembers(channel?.id))
     })
+  }
   }
 
   if (status =="loading") {

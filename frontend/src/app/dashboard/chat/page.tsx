@@ -1,7 +1,7 @@
 "use client";
 
 import CoversationSideBar from "../../components/CoversationSideBar/ConversationSideBar";
-import { useContext, useEffect, useState , PropsWithChildren} from "react";
+import { useContext, useEffect} from "react";
 import MessagePanel from "../../components/messages/MessagePanel";
 import {socketContext } from "../../utils/context/socketContext";
 import { useDispatch } from "react-redux"
@@ -96,8 +96,8 @@ const ConversationChannelPagechat = () => {
 		  dispatch(fetchUsersThunk());
 
     
-      if(data.id === channel?.id)
-        dispatch(fetchMessagesThunk(data.id));
+      if(data?.id === channel?.id)
+        dispatch(fetchMessagesThunk(data?.id));
 
 
     
@@ -111,8 +111,8 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchNotificationThunk());
       dispatch(fetchCountNotification());
 		  dispatch(fetchUsersThunk());
-      if(data.id === channel?.id)
-        dispatch(fetchMessagesThunk(data.id));
+      if(data?.id === channel?.id)
+        dispatch(fetchMessagesThunk(data?.id));
 
 
  
@@ -142,9 +142,9 @@ const ConversationChannelPagechat = () => {
     socket.on('createConversation', (data : any)=>{
       dispatch(fetchConversationThunk());
 
-      if( channel?.id === data.conversation.id)
+      if( channel?.id === data?.conversation.id)
       {
-          dispatch(fetchMessagesThunk(data.conversation.id));
+          dispatch(fetchMessagesThunk(data?.conversation.id));
 
       }
       
@@ -154,9 +154,9 @@ const ConversationChannelPagechat = () => {
 
     socket.on('createConversationMessage', (data : any)=>{
       dispatch(fetchConversationThunk());
-      if( channel?.id === data.chat.id)
+      if( channel?.id === data?.chat.id)
       {
-          dispatch(fetchMessagesThunk(data.chat.id));
+          dispatch(fetchMessagesThunk(data?.chat.id));
 
       }
       
@@ -166,19 +166,19 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchGetAllFriendsThunk());
     })
     socket.on('deleteConversation', (data : ConversationTypes)=>{
-      if(data.id === channel?.id)
+      if(data?.id === channel?.id)
       {
         updateChannel(null);
       }
 			dispatch(fetchConversationThunk());
-      if (channel && channel.id) {
-        dispatch(fetchMessagesThunk(channel.id));
+      if (channel && channel?.id) {
+        dispatch(fetchMessagesThunk(channel?.id));
       }
 		  })
     socket.on('onMessage', (messages : messageTypes)=>{
 			dispatch(fetchConversationThunk());
-      if (channel && channel.id) {
-        dispatch(fetchMessagesThunk(channel.id));
+      if (channel && channel?.id) {
+        dispatch(fetchMessagesThunk(channel?.id));
       }
 
 		})
@@ -218,7 +218,7 @@ const ConversationChannelPagechat = () => {
                 <MessagePanel></MessagePanel> 
             </div>
           :
-          <div className="xl:my-10 xl:mr-10  w-full xl:ml-2 xl:w-[65%]   xl:mt-32 hidden xl:flex items-center justify-center">Invite friend to new chat room</div>
+          <div className="xl:my-10 xl:mr-10  w-full xl:ml-2 xl:w-[65%]   xl:mt-32 hidden xl:flex items-center justify-center">Invite a friend to a new chat room</div>
         }
           </div>
 

@@ -1,9 +1,9 @@
 "use client"
-import { socket, socketContext } from '@/app/utils/context/socketContext'
+import {  socketContext } from '@/app/utils/context/socketContext'
 import React, {useState,useEffect, useContext} from 'react'
 import Image from 'next/image';
 import { ConversationTypes } from '@/app/utils/types';
-import { useDispatch, useSelector } from "react-redux";
+import {  useSelector } from "react-redux";
 import { ListSearch } from './ListSearch';
 
 export const SerachGroup = () => {
@@ -39,7 +39,7 @@ export const SerachGroup = () => {
         {room ? (
             room.length > 0 ? (
               room.map((data: ConversationTypes) => (
-                <ListSearch data={data}></ListSearch>
+                <ListSearch key={data.id} data={data}></ListSearch>
               ))
             ) : (
               <p className='text-[14px] mt-3 text-center text-gray-400 "'>No room with this name: {groupName}</p>

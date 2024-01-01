@@ -49,30 +49,52 @@ export const InfoChat = () => {
 		else
 			return ""
 	}
+  const getDisplayUser = () => {
+    let friend : User | undefined;
+    let truncatedDisplayName
+    if(pathname.includes("chat"))
+    {
+      if(channel?.recipientId === Userdata?.id){
+        friend = channel?.sender;
+      }else
+        friend = channel?.recipient;
+    }
+    if(friend){
+       truncatedDisplayName =
+      friend.display_name.length > 10
+        ? `${friend.display_name.substring(0, 10)}...`
+        : friend.display_name;
+
+    return {
+      ...friend,
+      display_name: truncatedDisplayName,
+    };
+
+    }
+    
+  };
 
   return (
     <div className='relative bg-[#CDCEDB] w-full h-[80%] flex flex-col gap-4 px-5 py-10 rounded-t-2xl'>
       <div className='flex'>
         <Image
               src={fetchDataUser()?.avatar_url as string}
-              className=" -top-[37px] left-[18px] w-[70px] rounded-full"
+              className=" h-20 w-20 rounded-[50%] bg-black"
               alt=""
-              width={120}
-              height={120}
+              width={70}
+              height={70}
               priority={true}
             />
             <div className='-top-[37px] '>
-              {checkTheStatus() === 'online' ? (<OnlineStyling/>) :  checkTheStatus() === 'offline' ? (<OflineStyling/>) :( <IngameStyling/>)}
+              {checkTheStatus() === 'online' ? (<OnlineStyling/>) :  checkTheStatus() === 'ingame' ? (<IngameStyling/>) : checkTheStatus() === 'offline' ? ( <OflineStyling/>) : <></>}
 
             </div>
       </div>
             
-
-
             <div className='w-full h-[30%]  flex flex-col gap-1'>
               <div className='w-full bg-[#F2F3FD] grow px-2 py-1 text-gray-600'>
-                <h2 className='font-bold font-500'> {fetchDataUser()?.display_name}</h2>
-                <span> {fetchDataUser()?.username}</span>
+                <h2 className='font-bold font-500'> {getDisplayUser()?.display_name}</h2>
+                <span> {getDisplayUser()?.username}</span>
               </div>
               <div className="w-full bg-[#F2F3FD] grow px-2 py-1 text-gray-600 font-['Whitney_Semibold']">
                   <h2>Joined Pong Since</h2>
@@ -90,12 +112,7 @@ export const InfoChat = () => {
                 <input className='px-2 py-1'/>
               </div>
             </div>
-            {/* <div className= "w-full h-[10%] bg-[#F2F3FD] px-2 py-2 text-gray-600  font-['Whitney_Semibold']">
-              <h1>Channels participate</h1>
-              <span>{fetchDataUser()?.createdAt}</span>
-              
-              </div>
-										 */}
+          
 
         </div>
   )

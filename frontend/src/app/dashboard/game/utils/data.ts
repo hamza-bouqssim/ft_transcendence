@@ -1,6 +1,5 @@
 import { atom } from "jotai";
 import { createContext } from "react";
-import { Socket } from "socket.io-client";
 
 export const OpponentData = atom<{
 	opponent: {
@@ -20,11 +19,12 @@ export const OpponentData = atom<{
 	mapIndex: -1,
 });
 
+
 export const getCurrentSizes = (
 	currentWidth: number,
 	currentHeight: number,
 ): [number, number] => {
-	const aspectRatio: number = 560 / 836;
+	const aspectRatio: number = 500 / 800;
 	let newWidth: number;
 	let newHeight: number;
 

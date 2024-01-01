@@ -15,6 +15,7 @@ export class FriendRequestController {
 
 
       @Post('send-request')
+      
       async sendRequest(@Body() request: { display_name: string }, @Req() req, @Res() res) {
           try {
               const user = req.user;
@@ -51,7 +52,6 @@ export class FriendRequestController {
         return res.status(200).json({success: true, response: returnValue});
 
       }catch(error : any){
-        // return res.status(401).json({ success: false, message: error.message || 'An unexpected error occurred' });
         return res.send({success: false, message: error.message});
 
 
@@ -146,11 +146,9 @@ export class FriendRequestController {
 
       }
 
-      }
+    }
         
     
-
-
     @Get('notification_count')
     async count_notification(@Req() req){
       const user = req.user;

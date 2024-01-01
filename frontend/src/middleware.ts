@@ -14,5 +14,5 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*'],
+  matcher: ['/dashboard/:path*',"/signIn/verify-two-factor","/signIn/verify-two-factor"],
 };  

@@ -1,13 +1,10 @@
-import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {  createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
 	AcceptRequest,
-	DebloqueUser,
+
 	SendRequest,
 	acceptRequestToPlay,
-	bloqueFriend,
-	getAllFriends,
-	getBloques,
-	getConversationMessage,
+
 	getNumberPending,
 	getRequest,
 	refusePLayRequest,
@@ -15,13 +12,11 @@ import {
 	sendRequestPlay,
 } from "../utils/api";
 import {
-	AcceptRequestParams,
-	ConversationMessage,
+	
 	CreateRequestParams,
-	FriendsTypes,
+
 	RequestTypes,
-	UsersTypes,
-	messageTypes,
+	
 } from "../utils/types";
 
 export interface requestState {
@@ -64,10 +59,10 @@ export const fetchRequestThunk = createAsyncThunk(
 		try {
 			const response = await SendRequest(data.display_name);
 			
-			return response.data; // Assuming the structure of your fulfilled payload
+			return response.data; 
 		} catch (err: any) {
 			if (err.response && err.response.data) {
-				return rejectWithValue(err.response.data); // Return the entire error object
+				return rejectWithValue(err.response.data); 
 			} else {
 				throw new Error("create conversation failed with an unknown error");
 			}
@@ -79,10 +74,10 @@ export const fetchAcceptFriendRequestThunk = createAsyncThunk("request/accept",a
 	try{
 		const response = await AcceptRequest(id);
 	
-		return response.data; // Assuming the structure of your fulfilled payload
+		return response.data;
 	} catch (err: any) {
 		if (err.response && err.response.data) {
-			return rejectWithValue(err.response.data); // Return the entire error object
+			return rejectWithValue(err.response.data); 
 		} else {
 			throw new Error("create conversation failed with an unknown error");
 		}
@@ -106,7 +101,6 @@ export const fetchNumberPending = createAsyncThunk(
 		return response.data;
 	},
 );
-/// request PLaying
 
 export const fetchSendRequestPLay = createAsyncThunk(
 	"request/send",

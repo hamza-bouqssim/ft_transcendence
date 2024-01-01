@@ -1,17 +1,14 @@
-import {MessageContainerStyle, MessageItemAvatar, MessageItemContainer, MessageItemContent, MessageItemDetails, MessageItemHeader} from "../../utils/styles"
-import { ConversationTypes, User, messageTypes } from "../../utils/types";
-import { FC, useEffect, useState,useContext, useRef } from "react";
-import {formatRelative} from 'date-fns'
-import { getAuthUser } from "../../utils/api";
+import {MessageContainerStyle} from "../../utils/styles"
+import { User, messageTypes } from "../../utils/types";
+import {  useEffect, useState,useContext, useRef } from "react";
 import MessageInputField from "./MessageInputField";
 import {socketContext } from "../../utils/context/socketContext";
-import {getConversationMessage} from '../../utils/api'
 import Image from  'next/image'
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store";
-import { MessagesState, fetchMessagesThunk } from "../../store/messageSlice";
+import {  fetchMessagesThunk } from "../../store/messageSlice";
 import { fetchDebloqueUserThunk } from "../../store/blockSlice";
-import { ToastContainer, toast } from 'react-toastify';
+import {  toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 
@@ -39,7 +36,6 @@ const MessageContainer = () => {
 		});
 	  };
     const [setLoadloadinging] = useState<boolean>(false);
-    // const [Message,setMessage] = useState<messageTypes[]>([]);
     const controller = new AbortController();
     const { channel } = useContext(socketContext);
     const { oldId,setOldId } = useContext(socketContext);
@@ -82,25 +78,28 @@ const MessageContainer = () => {
     const debloqueFromPanel  = async () =>{
     
 
-        let user : User | undefined;
-        if( channel && channel?.sender.id === Userdata?.id)
-            user = channel?.recipient;
-        else
-          user =channel?.sender;
-        if(user && user.id != Userdata?.id){
-          const id = user.id;
-          try {
-            await dispatch(fetchDebloqueUserThunk(id));
-              ToastSuccess("You have Deblocked this friend successfully");
-  
-          } catch (error) {
-            ToastError("Failed to Deblock the friend. Please try again.");
-  
-          }
+      let user : User | undefined;
+      if( channel && channel?.sender.id === Userdata?.id)
+          user = channel?.recipient;
+      else
+        user =channel?.sender;
+      if(user && user.id != Userdata?.id){
+        const id = user.id;
+        try {
+          const res = await dispatch(fetchDebloqueUserThunk(id));
+          if(!res.payload.success)
+            ToastError(`${res.payload.message}`)
+          else
+            ToastSuccess('You are debloqued this user succeffully')
+
+        } catch (error) {
+          ToastError("Failed to Deblock the friend. Please try again.");
 
         }
-        
-    }
+
+      }
+      
+  }
     const [shouldRenderUnblockButton, setShouldRenderUnblockButton] = useState(false);
     useEffect(() => {
   
@@ -113,6 +112,19 @@ const MessageContainer = () => {
         setShouldRenderUnblockButton(false);
       }
     }, [isSenderBlocked, isRecipientBlocked, Userdata, channel]);
+    const getDisplayUser = (friend : User) => {
+		
+      const truncatedDisplayName =
+        friend.display_name.length > 10
+          ? `${friend.display_name.substring(0, 10)}...`
+          : friend.display_name;
+  
+      return {
+        ...friend,
+        display_name: truncatedDisplayName,
+      };
+    };
+  
     return (
 
        <>
@@ -122,7 +134,8 @@ const MessageContainer = () => {
           {messages &&
             messages.map((m: messageTypes) => (
                 <div className={`flex w-full mt-2 space-x-3 max-w-xs ${Userdata?.id === m.sender.id ? 'self-end' : 'self-start'} overflow-y-auto`} key={m.id}> 
-                {!(Userdata?.id === m.sender.id) && <Image
+                {!(Userdata?.id === m.sender.id) && 
+                <Image
                   src={m.sender?.avatar_url}
                   className="h-10 w-10 rounded-[50%] bg-black"
                   alt="Description of the image"
@@ -138,7 +151,7 @@ const MessageContainer = () => {
                         color: Userdata?.id === m.sender.id ? '#8982a6' : '#778ba5',
                       }}
                     >
-                      {m.sender.display_name}
+                      {getDisplayUser(m.sender).display_name}
                     </span>
                   
                   </div >}

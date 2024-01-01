@@ -12,19 +12,19 @@ async function bootstrap() {
 
 	app.use(passport.initialize());
 	app.use(cookieParser());
-  const adapter = new WebSocketAdapter(app);
-  app.useWebSocketAdapter(adapter);
-  app.useGlobalPipes(new ValidationPipe());
-  const config = new DocumentBuilder()
-    .setTitle('ft_transcendence')
-    .setDescription('multiplayer pong web project V')
-    .setVersion('1.0')
-    .addTag('web')
-    .build();
-    const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup('api', app, document); 
+	const adapter = new WebSocketAdapter(app);
+	app.useWebSocketAdapter(adapter);
+	app.useGlobalPipes(new ValidationPipe());
+	const config = new DocumentBuilder()
+		.setTitle('ft_transcendence')
+		.setDescription('multiplayer pong web project V')
+		.setVersion('1.0')
+		.addTag('web')
+		.build();
+	const document = SwaggerModule.createDocument(app, config);
+	SwaggerModule.setup('api', app, document);
 
-  app.enableCors({ origin : ['http://localhost:3000'], credentials: true})
-  await app.listen(8000,'0.0.0.0');
+	app.enableCors({ origin: [process.env.ROOT_FRONT], credentials: true });
+	await app.listen(8000, '0.0.0.0');
 }
 bootstrap();

@@ -11,7 +11,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
   [
     PrismaModule,
     JwtModule.register({
-      secret: 'my-secret',
+      secret: process.env.COOKIE_SECRET,
       signOptions: { expiresIn: '6000000000s' },
     }),
     EventEmitterModule.forRoot()

@@ -1,11 +1,8 @@
-import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronDown, faBell } from "@fortawesome/free-solid-svg-icons";
-import { GoToProfileBtn, LogoutButton, MenuButton } from "./Buttons";
-import { useEffect, useState } from "react";
-import { getAuthUser, getlogout } from "../utils/api";
-import { User } from "../utils/types";
-import { useRouter } from "next/navigation";
+import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { GoToProfileBtn,  MenuButton } from "./Buttons";
+
+
 
 type Change = {
 	menu: boolean;

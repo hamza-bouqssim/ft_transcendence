@@ -2,10 +2,8 @@
 
 import { AppDispatch } from "../../store";
 import {
-	Conversation,
 	ConversationSideBarContainer,
 	ConversationSideBarItem,
-	HeaderOnlineUsers,
 	OflineStyling,
 	OnlineStyling,
 } from "../../utils/styles";
@@ -17,20 +15,15 @@ import { socketContext } from "../../utils/context/socketContext";
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
-import { MenuButton, MenuButton2 } from "../Buttons";
 import { fetchBlockFriendThunk } from "../../store/blockSlice";
 import { useRouter } from "next/navigation";
 import {
 	fetchGetAllFriendsThunk,
 	fetchRemoveFriendship,
 } from "../../store/friendsSlice";
-import { ToastContainer, toast } from "react-toastify";
+import {  toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import {
-	createConversationThunk,
-	fetchConversationUserThunk,
-} from "../../store/conversationSlice";
-import { fetchMessagesThunk } from "../../store/messageSlice";
+
 import { fetchSendRequestPLay } from "../../store/requestSlice";
 
 const OnlineFriends = () => {
@@ -101,6 +94,19 @@ const OnlineFriends = () => {
 
 		return user && user.status === "online";
 	};
+	const getDisplayUser = (friend : FriendsTypes) => {
+		
+		const truncatedDisplayName =
+			friend.display_name.length > 10
+				? `${friend.display_name.substring(0, 10)}...`
+				: friend.display_name;
+
+		return {
+			...friend,
+			display_name: truncatedDisplayName,
+		};
+	};
+
 
 	const onlineFriends = friends.filter((friend: FriendsTypes) => {
 		const user = users.find((user: any) => user.id === friend.id);
@@ -157,7 +163,7 @@ const OnlineFriends = () => {
 									/>
 									{isUserOnline(elem) ? <OnlineStyling /> : <OflineStyling />}
 								</div>
-								<span className="ConversationName"> {elem.display_name}</span>
+								<span className="ConversationName"> {getDisplayUser(elem).display_name}</span>
 								<div className="absolute right-5 p-4">
 									<FontAwesomeIcon
 										icon={faEllipsis}

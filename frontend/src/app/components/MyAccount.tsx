@@ -17,11 +17,11 @@ const MyAccount = () => {
 			if (!file) return;
 			const formData = new FormData();
 			formData.append("file", file);
-			formData.append("upload_preset", "ibahlawn"); //put this in the ENV
-			formData.append("cloud_name", "dnbhh3qxj"); //put this in the ENV
+			formData.append("upload_preset", `${process.env.NEXT_PUBLIC_CLOUD_PRESET}`);
+			formData.append("cloud_name", `${process.env.NEXT_PUBLIC_CLOUD_NAME}`);
 
 			const res = await newAPI.post(
-				"https://api.cloudinary.com/v1_1/dnbhh3qxj/image/upload",
+				`${process.env.NEXT_PUBLIC_CLOUD_ENDPOINT}`,
 				formData,
 			);
 

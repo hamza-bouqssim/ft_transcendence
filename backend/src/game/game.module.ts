@@ -28,7 +28,7 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 	imports: [
 		PrismaModule,
 		PassportModule,
-		JwtModule.register({ secret: 'my-secret' }),
+		JwtModule.register({ secret: process.env.COOKIE_SECRET }),
 	],
 })
 export class GameModule {}

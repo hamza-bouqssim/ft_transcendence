@@ -64,6 +64,18 @@ const FriendsBloque = () =>{
             return ourBloques;
 
       }
+      const getDisplayUser = (bloques : BloquesTypes) => {
+		
+        const truncatedDisplayName =
+          bloques.display_name.length > 10
+            ? `${bloques.display_name.substring(0, 10)}...`
+            : bloques.display_name;
+    
+        return {
+          ...bloques,
+          display_name: truncatedDisplayName,
+        };
+      };
       const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
       const handleMenuClick = (friendId: string) => {
@@ -80,7 +92,7 @@ const FriendsBloque = () =>{
               <Image src={elem.avatar_url} className="h-14 w-14 rounded-[50%] bg-black " alt="Description of the image" width={60}   height={60} />
 
 							
-					 				<span  className="ConversationName">{handleFunction(elem)}</span>
+					 				<span  className="ConversationName">{getDisplayUser(elem).display_name}</span>
 					 			
                  
 

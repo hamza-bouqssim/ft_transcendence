@@ -522,13 +522,7 @@ export const  MessageItemContent = styled.div `
 
 `;
 
-/* export const OnlineSidebarStyle = styled.aside `
-    display : flex;
-    flex-direction: column;
-    height: 500px;
-    width: 400px;
-    background-color: #151515;
-`; */
+
 
 export const HeaderOnlineUsers = styled.div`
     height : 90px;

@@ -1,16 +1,39 @@
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
-	reactStrictMode: false,
-	images: {
-		domains: [
-			"cdn.intra.42.fr",
-			"lh3.googleusercontent.com",
-			"cdn.landesa.org",
-			"images.squarespace-cdn.com",
-			"res.cloudinary.com",
-		],
-	},
+    reactStrictMode: false,
+    images: {
+        remotePatterns: [
+				{
+					protocol: 'https',
+					hostname: "cdn.intra.42.fr",
+					
+				},
+				{
+					protocol: 'https',
+					hostname: "lh3.googleusercontent.com",
+					
+				},
+				{
+					protocol: 'https',
+					hostname: "cdn.landesa.org",
+					
+				},
+				{
+					protocol: 'https',
+					hostname: "images.squarespace-cdn.com",
+					
+				},
+				{
+					protocol: 'https',
+					hostname: "res.cloudinary.com"
+					
+				}
+        ],
+    },
 };
 
-module.exports = nextConfig;
+
+
+
+module.exports = nextConfig

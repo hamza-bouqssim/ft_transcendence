@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import type { PayloadAction } from '@reduxjs/toolkit'
 import { ConversationTypes, CreateConversationParams } from '../utils/types'
-import { createConversation, deleteConversation, findConversationUsers, getConversation, getConversationMessage } from '../utils/api';
+import { createConversation, deleteConversation, findConversationUsers, getConversation } from '../utils/api';
 
 export interface ConversationsState {
   conversations: ConversationTypes[];
@@ -15,16 +14,13 @@ const initialState: ConversationsState = {
   error : null,
 };
 
-// for create the conversation
 
 export const createConversationThunk = createAsyncThunk(
   'conversations/create',
   async (params: CreateConversationParams, { rejectWithValue }) => {
     try {
       const response = await createConversation(params.display_name ?? '', params.message);
-      // if (!response.data.success) {
-      //   throw new Error(response.data.error);
-      // }
+     
       return response.data;
     } catch (err: any) {
         throw new Error("create conversation failed with an unknown error");
@@ -67,8 +63,16 @@ export const fetchConversationUserThunk = createAsyncThunk('conversation/fetch',
 
 
 export const fetchDeleteConversation = createAsyncThunk('deleteConversation/fetch', async(conversationId : string)=>{
+  try{
     const response = await deleteConversation(conversationId);
     return response.data;
+
+  }catch(err){
+
+      throw new Error("Error while deleting the conversation");
+
+  }
+   
 })
 export const conversationsSlice = createSlice({
   name: 'conversations',
@@ -113,7 +117,6 @@ export const conversationsSlice = createSlice({
   }
 })
 
-// Action creators are generated for each case reducer function
 export const { addConversation} =
   conversationsSlice.actions;
 

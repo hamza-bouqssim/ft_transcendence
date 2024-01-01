@@ -43,70 +43,97 @@ const initialStateMember: MemberState = {
 };
 
 export const getAllMembers = createAsyncThunk('members/getAllMembers', async (roomId: string, { rejectWithValue }) => {
+  
   try {
-    const response = await getAllMembersApi(roomId);
-    return response.data.data;
-  } catch (error : any) {
-    return rejectWithValue(error.message || 'Failed to fetch members');
-  }
+		const response = await getAllMembersApi(roomId);
+		if(response.data.success)
+			return response.data.response;
+		else
+			return rejectWithValue(response.data.message);
+	  } catch (error : any) {
+		return rejectWithValue('Failed to fetch members');
+	  }  
 });
 
 export const quitMember = createAsyncThunk('members/quitMember', async (roomId: string, { rejectWithValue }) => {
   try {
-    const response = await quitRoom(roomId);
-    return response.data.data;
-  } catch (error : any) {
-    return rejectWithValue(error.message || 'Failed to quit members');
-  }
+		const response = await quitRoom(roomId);
+		if(response.data.success)
+			return response.data.response;
+		else
+			return rejectWithValue(response.data.message);
+	  } catch (error : any) {
+		return rejectWithValue('Failed to quit members');
+	  }  
+
 });
 export const addMemberToRooms = createAsyncThunk('members/addMemberToRooms', async (memberdata:Memberdata, { rejectWithValue }) => {
   try {
     const response = await addMemberToRoomsApi(memberdata.id,memberdata.userId);
-    return response.data.data;
-  } catch (error : any) {
-    return rejectWithValue(error.message || 'Failed to quit members');
-  }
+		if(response.data.success)
+			return response.data.response;
+		else
+			return rejectWithValue(response.data.message);
+	  } catch (error : any) {
+		return rejectWithValue('Failed to addMember To Rooms members');
+	  }
 });
 export const makeAdminMember = createAsyncThunk('members/makeAdminMember', async (memberdata:Memberdata, { rejectWithValue }) => {
   try {
-    const response = await makeAdmin(memberdata.id,memberdata.userId);
-    return response.data.data;
-  } catch (error : any) {
-    return rejectWithValue(error.message || 'Failed to quit members');
-  }
+		const response = await makeAdmin(memberdata.id,memberdata.userId);
+		if(response.data.success)
+			return response.data.response;
+		else
+			return rejectWithValue(response.data.message);
+	  } catch (error : any) {
+		return rejectWithValue('Failed to make Admin members');
+	  }  
 });
 
 export const makeMember = createAsyncThunk('members/makeMember', async (memberdata:Memberdata, { rejectWithValue }) => {
   try {
     const response = await Member(memberdata.id,memberdata.userId);
-    return response.data.data;
-  } catch (error : any ) {
-    return rejectWithValue(error.message || 'Failed to quit members');
-  }
+		if(response.data.success)
+			return response.data.response;
+		else
+			return rejectWithValue(response.data.message);
+	  } catch (error : any) {
+		return rejectWithValue('Failed to Member members');
+	  }  
 });
 export const kickMembers = createAsyncThunk('members/kickMembers', async (memberdata:Memberdata, { rejectWithValue }) => {
   try {
     const response = await kickMember(memberdata.id,memberdata.userId);
-    return response.data.data;
-  } catch (error : any) {
-    return rejectWithValue(error.message || 'Failed to quit members');
-  }
+		if(response.data.success)
+			return response.data.response;
+		else
+			return rejectWithValue(response.data.message);
+	  } catch (error : any) {
+		return rejectWithValue('Failed to Kick members');
+	  }  
+
 });
 export const mutMembers = createAsyncThunk('members/mutMembers', async (memberdata:Mutedata, { rejectWithValue }) => {
   try {
     const response = await mutMember(memberdata.id,memberdata.userId,memberdata.muteDuration);
-    return response.data.data;
-  } catch (error : any) {
-    return rejectWithValue(error.message || 'Failed to quit members');
-  }
+		if(response.data.success)
+			return response.data.response;
+		else
+			return rejectWithValue(response.data.message);
+	  } catch (error : any) {
+		return rejectWithValue('Failed to Mut members');
+	  }  
 });
 export const banMembers = createAsyncThunk('members/banMembers', async (memberdata:Memberdata, { rejectWithValue }) => {
   try {
-    const response = await banMember(memberdata.id, memberdata.userId);
-    return response.data.data;
-  } catch (error:any) {
-    return rejectWithValue(error.message || 'Failed to ban members');
-  }
+		const response = await banMember(memberdata.id, memberdata.userId);
+		if(response.data.success)
+			return response.data.response;
+		else
+			return rejectWithValue(response.data.message);
+	  } catch (error : any) {
+		return rejectWithValue('Failed to ban members');
+	  }  
 });
 
 const membersSlice = createSlice({
@@ -137,20 +164,7 @@ const membersSlice = createSlice({
         state.status = 'failed';
         state.error = action.payload;
       })
-      // .addCase(banMembers.pending, (state: any) => {
-      //   state.status = 'loading';
-      // })
-      // .addCase(banMembers.fulfilled, (state: any, action: PayloadAction<Member[]>) => {
-      //   state.status = 'succeeded';
-      //   state.members = state.members.map((member) => ({
-      //     ...member,
-      //     Status: member.user_id === action.payload ? 'Ban' : member.Status,
-      //   }));
-      // })
-      // .addCase(banMembers.rejected, (state: any, action: PayloadAction<string>) => {
-      //   state.status = 'failed';
-      //   state.error = action.payload;
-      // })
+     
       
   },
 });

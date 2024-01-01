@@ -1,8 +1,6 @@
-import { getAllMembers } from '../../store/memberSlice';
 import { socketContext } from '../../utils/context/socketContext';
-import React ,{useContext,useEffect,useState} from 'react'
+import React ,{useContext,useState} from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import Image from 'next/image';
 import ListUser from './ListUser';
 
 

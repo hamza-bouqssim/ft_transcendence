@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { getAllRoomsApi, createRoomsApi, updateRoomsApi, deleteRoomsApi, joinRoomApi, getNotificationRoomApi } from '../utils/api';
-import { ConversationTypes } from '../utils/types';
+import {  getNotificationRoomApi } from '../utils/api';
 
 
 
@@ -9,7 +8,6 @@ interface notification {
     number:number;
 
 }
-
 
 interface NotificationState {
 	notificationChat: notification[];
@@ -27,16 +25,15 @@ const initialState: NotificationState = {
 
 
 export const getNotificationRoom = createAsyncThunk('rooms/getNotificationRoom', async (_,{rejectWithValue} ) => {
-    try {
-      const response = await getNotificationRoomApi();
-      return response.data.data; 
-    } catch (error : any) {
-      if (error.response && error.response.data) {
-        return rejectWithValue(error.response.data);
-      } else {
-        return rejectWithValue('Failed to fetch rooms');
-      }
-    }
+  try {
+		const response = await getNotificationRoomApi();
+		if(response.data.success)
+			return response.data.response;
+		else
+			return rejectWithValue(response.data.message);
+	  } catch (error : any) {
+		return rejectWithValue('Failed to getNotificationRoom rooms');
+	  }  
   });
 
 

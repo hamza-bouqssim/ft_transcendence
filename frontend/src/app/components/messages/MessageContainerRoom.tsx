@@ -18,8 +18,7 @@ import { cleanNotification } from "@/app/store/NotificationChatSlice";
 
 const MessageContainerRoom = () => {
     const scrollRef = useRef<HTMLDivElement | null>(null);
-    const [Message,setMessage] = useState<any[]>([]);
-    const [MessageRoom,setMessageRoom] = useState<any[]>([]);
+    const [Message,setMessage] = useState<messageTypes[]>([]);
     const pathname = usePathname()
     const { channel , updateChannel} = useContext(socketContext);
     const { oldId,setOldId } = useContext(socketContext);
@@ -31,6 +30,21 @@ const MessageContainerRoom = () => {
     const menuRef = useRef<HTMLDivElement>(null);
     const [valide,setValide] =useState(false)
 
+
+    const  formatTimeDifference =(timeDifference:number) =>{
+      const seconds = Math.floor(timeDifference / 1000);
+      const minutes = Math.floor(seconds / 60);
+      const hours = Math.floor(minutes / 60);
+      const days = Math.floor(hours / 24);
+    
+      if (days > 0) {
+        return `${days} day${days > 1 ? 's' : ''}`;
+      } else if (hours > 0) {
+        return `${hours} hour${hours > 1 ? 's' : ''}`;
+      } else{
+        return `${minutes} min`;
+      } 
+    }
     const joinRoom = useCallback(
         (id: string) => {
           if (oldId) socket.emit("leaveToRoom", { id: oldId });
@@ -44,11 +58,19 @@ const MessageContainerRoom = () => {
           const id = channel.id;
             getConversationMessageRoom(id)
               .then((data: any) => {
-                joinRoom(id);
-                dispatch(cleanNotification({roomId:id}))
-                setMessage(data.data.data);
+                if(data.data.success)
+                {
+                  joinRoom(id);
+                  dispatch(cleanNotification({roomId:id}))
+                  setMessage(data.data.response);
+                }
+                else{
+                  toast.error(data.data.message)
+                }
               })
-              .catch((err: any) => console.log(err));
+              .catch((err: any) =>{
+                toast.error("can not get this  conversation")
+              });
         }
     }, [channel?.id]);
 
@@ -86,7 +108,6 @@ const MessageContainerRoom = () => {
                   if (foundChannel) {
                     updateChannel(foundChannel);
                     setValide(false);
-
                   }
                 })
                 .catch((error: any) => {
@@ -113,7 +134,6 @@ const MessageContainerRoom = () => {
             document.removeEventListener('click', handleDocumentClick);
         };
     }, [valide]);
-
     return (
         
         <>
@@ -124,7 +144,6 @@ const MessageContainerRoom = () => {
                       <div className="h-[calc(100%-148px)] no-scrollbar  overflow-y-auto py-3 ">
                         { Message?.map((m:any) =>(
                           <div className="" key={m.id}>
-                            
                               <div className={`${Userdata?.id !== m?.senderId ? " mr-auto justify-start" : "ml-auto justify-end"} my-2    max-w-[70%]  flex  items-start`}>
                                   {
                                     m?.senderId !== Userdata?.id   && <div className="mr-2 mt-1">
@@ -134,8 +153,8 @@ const MessageContainerRoom = () => {
                                       </div>
                                   }
                                   <div  className={`${Userdata?.id !== m?.senderId ? "bg-[#F2F3FD] text-[#404040] " : "bg-[#5B8CD3] "} w-fit max-w-[90%] rounded-2xl flex items-end justify-between`}>
-                                      <h1 className="p-2"> {m.content}</h1>
-                                      <h1 className=" pl-5 pr-3 pb-1 text-[12px]">19.54</h1>
+                                      <h1 className="p-2"> {m?.content}</h1>
+                                      <p className=" pl-5 pr-3 pb-1 text-[12px]">{formatTimeDifference(new Date().getTime() - new Date(m?.createdAt).getTime())}</p>
                                   </div>
                                   
                               </div>

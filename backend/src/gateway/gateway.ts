@@ -1,13 +1,19 @@
 /* eslint-disable prettier/prettier */
-import { SubscribeMessage,WebSocketGateway,WebSocketServer,OnGatewayDisconnect, OnGatewayConnection } from '@nestjs/websockets';
-import { Server ,Socket} from 'socket.io';
-import { AuthenticatedSocket } from "src/utils/interfaces";
+import {
+	SubscribeMessage,
+	WebSocketGateway,
+	WebSocketServer,
+	OnGatewayDisconnect,
+	OnGatewayConnection,
+} from '@nestjs/websockets';
+import { Server, Socket } from 'socket.io';
+import { AuthenticatedSocket } from 'src/utils/interfaces';
 import { IGateWaySession } from './gateway.session';
 import { Services } from 'src/utils/constants';
-import {Inject} from '@nestjs/common'
-import {EventEmitter2, OnEvent} from  '@nestjs/event-emitter';
+import { Inject } from '@nestjs/common';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { PrismaService } from 'prisma/prisma.service';
-import { CreateMessageRoom, RoomId} from 'src/Rooms/dto/rooms.dto';
+import { CreateMessageRoom, RoomId } from 'src/Rooms/dto/rooms.dto';
 import { RoomsService } from 'src/Rooms/rooms.service';
 import { ConversationsService } from 'src/conversations/conversations.service';
 import { UserService } from 'src/user/user.service';
@@ -82,7 +88,7 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
         const chatroom  = await this.roomsService.notificationRoomUpdate(messageRome.senderId,messageRome.chatRoomId)
         chatroom.members.map(member=>{
             if(member.id !== messageRome.senderId)
-                this.server.to(member.user_id.toString()).emit ('setNotification',{id:chatroom.id,content:messageRome.content});
+                this.server.to(member.user_id.toString()).emit ('setNotification',{id:chatroom.id,content:messageRome.content,senderId:messageRome.senderId});
         })
         this.server.to(createMessageRoom.chatRoomId.toString()).emit ('messageRome', messageRome);
     }
@@ -105,7 +111,7 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
     @SubscribeMessage('cleanNotification')
     async cleanNotification (client: AuthenticatedSocket, roomId:string) {
         await this.roomsService.cleanNotification(client.user.sub,roomId)
-        this.server.to(client.user.sub.toString()).emit ('setNotification',{id:roomId});
+        this.server.to(client.user.sub.toString()).emit ('setNotification',{id:roomId,senderId:client.user.sub});
     }
     
     @OnEvent("order.created")
@@ -368,4 +374,3 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
       
       
 }
-    

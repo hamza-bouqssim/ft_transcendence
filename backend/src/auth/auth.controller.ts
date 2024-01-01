@@ -32,45 +32,39 @@ export class AuthController {
 		@Req() req: Request,
 		@Res() res: Response,
 	) {
-		try{
+		try {
 			const user = await this.authService.signIn(dto);
 
-		const payload = { sub: user.id, email: user.email };
+			const payload = { sub: user.id, email: user.email };
 
-		if (user.first_time) {
+			if (user.first_time) {
+				const token = this.jwtService.sign(payload);
+				res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
+				this.gameState.createStateGame(user.id);
+				return res.send({ success: true, message: 'Welcome .....' });
+			}
+
+			if (user.tfa_enabled) {
+				const token = this.jwtService.sign(payload);
+				res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
+				return res.send({ valid: true, message: 'tfa enabled' });
+			}
+
 			const token = this.jwtService.sign(payload);
 			res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
-			this.gameState.createStateGame(user.id);
-			return res.send({ success: true, message: 'new user' });
+			return res.send({ signed: true, message: 'Signed Successfully' });
+		} catch (error) {
+			return res.send({ success: false, message: error.message });
 		}
-
-		if (user.tfa_enabled) {
-			const token = this.jwtService.sign(payload);
-			res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
-			return res.send({ valid: true, message: 'tfa enabled' });
-		}
-
-		const token = this.jwtService.sign(payload);
-		res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
-		return res.send({ signed: true, message: 'Signed Successfully' });
-
-		}catch(error )
-		{
-			return res.send({success: false, message: error.message});
-			
-		}
-		
 	}
-	
+
 	@Post('signup')
 	async signUp(@Body() dto: LocalAuthDto, @Res() res) {
-		try{
-			const  test = await this.authService.signUp(dto);
+		try {
+			const test = await this.authService.signUp(dto);
 			return res.status(200).json({ success: true, response: test });
-
-
-		}catch(error){
-			return res.send({success: false, message: error.message});
+		} catch (error) {
+			return res.send({ success: false, message: error.message });
 		}
 	}
 
@@ -81,7 +75,6 @@ export class AuthController {
 	@Get('google/redirect')
 	@UseGuards(AuthGuard('google'))
 	googleRedirect(@Res() res: Response, @Req() req) {
-
 		const user = req.user;
 		const payload = { sub: user.id, email: user.email };
 
@@ -89,18 +82,18 @@ export class AuthController {
 			const token = this.jwtService.sign(payload);
 			res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
 			this.gameState.createStateGame(user.id);
-			return res.redirect('http://localhost:3000/dashboard/settings');
+			return res.redirect(`${process.env.ROOT_FRONT}/dashboard/settings`);
 		}
 
 		if (user.tfa_enabled) {
 			const token = this.jwtService.sign(payload);
 			res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
-			return res.redirect('http://localhost:3000/signIn/verify-two-factor');
+			return res.redirect(`${process.env.ROOT_FRONT}/signIn/verify-two-factor`);
 		}
 
 		const token = this.jwtService.sign(payload);
 		res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
-		return res.redirect('http://localhost:3000/dashboard');
+		return res.redirect(`${process.env.ROOT_FRONT}/dashboard`);
 	}
 
 	@Get('42/login')
@@ -117,34 +110,36 @@ export class AuthController {
 			const token = this.jwtService.sign(payload);
 			res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
 			this.gameState.createStateGame(user.id);
-			return res.redirect('http://localhost:3000/dashboard/settings');
+			return res.redirect(`${process.env.ROOT_FRONT}/dashboard/settings`);
 		}
 
 		if (user.tfa_enabled) {
 			const token = this.jwtService.sign(payload);
 			res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
-			return res.redirect('http://localhost:3000/signIn/verify-two-factor');
+			return res.redirect(`${process.env.ROOT_FRONT}/signIn/verify-two-factor`);
 		}
 
 		const token = this.jwtService.sign(payload);
 		res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
-		return res.redirect('http://localhost:3000/dashboard');
+		return res.redirect(`${process.env.ROOT_FRONT}/dashboard`);
 	}
 
 	@Get('logout')
 	logout(@Req() req, @Res() res) {
 		res.clearCookie('token');
-		return res.redirect('http://localhost:3000/signIn');
+		return res.redirect(`${process.env.ROOT_FRONT}/signIn`);
 	}
 
 	@Post('isAuth')
-    @UseGuards(AuthGuard('jwt'))
-    async isAuthentication( @Req() request, @Res() res,) {
-      try {
-        await this.authService.findUser(request.user.id) 
-        return res.status(200).json({ isAuth: true});
-      } catch (error) {
-        return res.status(401).json({ isAuth: false });
-      }
-    }
+	@UseGuards(AuthGuard('jwt'))
+	async isAuthentication(@Req() request, @Res() res) {
+		try {
+			const {id} = request.user;
+			await this.authService.findUser(id);
+			return res.status(200).json({ success: true});
+		} catch (error) {
+
+			return res.send({success: false, message:error.response});
+		}
+	}
 }

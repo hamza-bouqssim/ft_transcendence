@@ -7,8 +7,6 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 
 
 
-
-
 @Controller("/rooms")
 export class RoomsController {
   constructor(private roomsService:RoomsService ,
@@ -24,9 +22,9 @@ export class RoomsController {
     try {
       const {id}=req.user
       const chatRoom = await this.roomsService.getAllRooms(id);
-      return res.status(200).json({data: chatRoom });
+      return res.status(200).json({ success: true, response: chatRoom });
     } catch (error) {
-      return res.status(401).json(error.response);
+      return res.send({success: false, message:error.response});
     }
 
   }
@@ -42,9 +40,9 @@ export class RoomsController {
         'order.created',
         chatRoom
       );
-      return res.status(201).json({data: chatRoom });
+      return res.status(200).json({ success: true, response: chatRoom});
     } catch (error) {
-      return res.status(500).json(error.response);
+      return res.send({success: false, message:error.response});
     }
   }
 
@@ -60,9 +58,9 @@ export class RoomsController {
         'order.update',
         update,id
       );
-      return res.status(200).json({data: update });
+      return res.status(200).json({ success: true, response: update});
     } catch (error) {
-      return res.status(500).json(error.response);
+      return res.send({success: false, message:error.response});
     }
 
   }
@@ -74,9 +72,9 @@ export class RoomsController {
     try {
       const {id}=req.user
       const Conversation = await this.roomsService.getConversation(RoomId,id);
-      return res.status(200).json({data: Conversation });
+      return res.status(200).json({ success: true, response: Conversation});
     } catch (error) {
-      return res.status(500).json(error.response);
+      return res.send({success: false, message:error.response});
     }
   }
 
@@ -89,9 +87,9 @@ export class RoomsController {
     try {
       const {id}=req.user
       const friend = await this.roomsService.getAllFreind(id);
-      return res.status(200).json({data: friend });
+      return res.status(200).json({ success: true, response: friend});
     } catch (error) {
-      return res.status(500).json(error.response);
+      return res.send({success: false, message:error.response});
     }
   }
   
@@ -102,9 +100,9 @@ export class RoomsController {
     try {
       const {id}=req.user
       const member = await this.roomsService.allMember(id,RoomId);
-      return res.status(200).json({data: member });
+      return res.status(200).json({ success: true, response: member});
     } catch (error) {
-      return res.status(500).json(error.response);
+      return res.send({success: false, message:error.response});
     }
     
   }
@@ -120,9 +118,9 @@ export class RoomsController {
         'order.updateMember',
         memberUpdate.id,memberUpdate.userId,"Ban"
       );
-      return res.status(200).json({data: member });
+      return res.status(200).json({ success: true, response: member});
     } catch (error) {
-      return res.status(500).json(error.response);
+      return res.send({success: false, message:error.response});
     }
     
   }
@@ -151,10 +149,9 @@ export class RoomsController {
         }, durationInSeconds * 1000);
       }
   
-
-      return res.status(200).json({data: member });
+      return res.status(200).json({ success: true, response: member});
     } catch (error) {
-      return res.status(500).json(error.response);
+      return res.send({success: false, message:error.response});
     }
     
   }
@@ -170,9 +167,9 @@ export class RoomsController {
         'order.updateMember',
         memberUpdate.id,null,null
       );
-      return res.status(200).json({data: member });
+      return res.status(200).json({ success: true, response: member});
     } catch (error) {
-      return res.status(500).json(error.response);
+      return res.send({success: false, message:error.response});
     }
     
   }
@@ -187,9 +184,9 @@ export class RoomsController {
         'order.updateMember',
         memberUpdate.id,null,null
       );
-      return res.status(200).json({data: member });
+      return res.status(200).json({ success: true, response: member});
     } catch (error) {
-      return res.status(500).json(error.response);
+      return res.send({success: false, message:error.response});
     }
 
   }
@@ -204,9 +201,9 @@ export class RoomsController {
         'order.updateMember',
         RoomId.id,null,null
       );
-      return res.status(200).json({data: response });
+      return res.status(200).json({ success: true, response: response});
     } catch (error) {
-      return res.status(500).json(error.response);
+      return res.send({success: false, message:error.response});
     }
     
   }
@@ -222,13 +219,12 @@ export class RoomsController {
         'order.updateMember',
         memberUpdate.id,null,null
       );
-      return res.status(200).json({data: update });
+      return res.status(200).json({ success: true, response: update});
     } catch (error) {
-      return res.status(500).json(error.response);
+      return res.send({success: false, message:error.response});
     }
     
   }
-
   
   @Post("/addMemberToRooms")
   @UseGuards(AuthGuard("jwt"))
@@ -241,15 +237,13 @@ export class RoomsController {
         'order.updateMember',
         memberUpdate.id,null,null
       );
-      return res.status(200).json({data: update });
+      return res.status(200).json({ success: true, response: update});
     }
     catch (error) {
-      return res.status(500).json(error.response);
+      return res.send({success: false, message:error.response});
     }
 
   }
-
-
 
   @Post("/joinRooms")
   @UseGuards(AuthGuard("jwt"))
@@ -258,9 +252,9 @@ export class RoomsController {
     try {
       const {id}=req.user
       const response = await this.roomsService.joinRooms(id,joinRooms);
-      return res.status(200).json({data: response });
+      return res.status(200).json({ success: true, response: response});
     } catch (error) {
-      return res.status(500).json(error.response);
+      return res.send({success: false, message:error.response});
     }
 
   }
@@ -272,13 +266,11 @@ export class RoomsController {
     try {
       const {id}=req.user
       const response = await this.roomsService.getNotification(id);
-      return res.status(200).json({data: response });
+      return res.status(200).json({ success: true, response: response});
     } catch (error) {
-      return res.status(500).json(error.response);
+      return res.send({success: false, message:error.response});
     }
-
   }
-  
 
 }
 

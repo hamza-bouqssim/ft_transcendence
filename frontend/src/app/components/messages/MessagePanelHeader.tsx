@@ -1,9 +1,6 @@
 "use client";
 import {
-	AvatarStyle,
 	IngameStyling,
-	MessageItemAvatar,
-	MessagePannelHeaderStyle,
 	OflineStyling,
 	OnlineStyling,
 } from "../../utils/styles";
@@ -93,7 +90,6 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 		if(channel?.id)
 			dispatch(getAllMembers(channel?.id));
 	}, [dispatch, channel]);
-	// Image src
 
 	const InfoRecipient = () => {
 		let test: User | undefined;
@@ -122,21 +118,48 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 	const handleUpdate = () => {
     if(olddata)
     {
-      dispatch(updateRooms(olddata)).then((res:any) => {
-        if (res.error) {
-          toast.error(res.payload);
-        }
-		else
+		if(olddata.Privacy==="Protected" && !olddata.password?.trim().length  )
 		{
-			updateChannel(res.payload)
-			toast.success("Update Room Successfully! 🎉");
+			toast.error('ineed Password for this room');
+			return;
 		}
-			
-      });
+		   
+		dispatch(updateRooms(olddata)).then((res:any) => {
+			if (res.error) {
+			toast.error(res.payload);
+			}
+			else
+			{
+				updateChannel(res.payload)
+				toast.success("Update Room Successfully! 🎉");
+			}
+				
+		});
     }
 	};
 
+	const getDisplayUser = () => {
+		let friend: User | undefined;
+		let truncatedDisplayName;
 
+		if (channel?.recipient.id === Userdata?.id) {
+			friend = channel?.sender;
+		} else 
+			friend = channel?.recipient;
+		if(friend){
+			 truncatedDisplayName =
+		  friend.display_name.length > 10
+			? `${friend.display_name.substring(0, 10)}...`
+			: friend.display_name;
+		}
+		
+	
+		return {
+		  ...friend,
+		  display_name: truncatedDisplayName,
+		};
+	  };
+	  
 	return (
 		<>
 		{
@@ -165,12 +188,12 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 					<div className="flex">
 						<Image
 						src={InfoRecipient()?.avatar_url as string}
-						className="w-[50px]  rounded-full"
+						className="h-10 w-10 rounded-[50%] bg-black"
 						alt=""
-						width={30}
-						height={30}
+						width={60}
+						height={60}
 						/>
-						{checkTheStatus() === 'online' ? (<OnlineStyling/>) :  checkTheStatus() === 'offline' ? (<OflineStyling/>) :( <IngameStyling/>)}
+						{checkTheStatus() === 'online' ? (<OnlineStyling/>) :  checkTheStatus() === 'ingame' ? <IngameStyling/> :  checkTheStatus() === 'offline' ?  ( <OflineStyling/>) : <></>}
 					</div>					
 				)}
 				{channel?.name && (
@@ -184,7 +207,7 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 					</div>
 				)}
 				{!channel?.name && channel?.recipient.display_name && (
-					<h1 className="ml-2">{InfoRecipient()?.display_name}</h1>
+					<h1 className="ml-2">{getDisplayUser()?.display_name}</h1>
 				)}
 			</div>
 			{pathname.includes("groups") &&
@@ -211,7 +234,8 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 						>
 							close
 						</button>
-						{channel !== olddata && 
+						
+						{(channel?.name !== olddata?.name  ||  channel?.Privacy !== olddata?.Privacy || olddata?.password) &&  
 							<button
 								onClick={handleUpdate}
 								className={`${

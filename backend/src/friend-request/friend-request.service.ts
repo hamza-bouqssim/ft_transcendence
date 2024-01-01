@@ -114,7 +114,6 @@ export class FriendRequestService {
 		return { message: 'Friend request sent successfully' };
 	}
 
-	//send request to play
 	async sendRequestPlay(
 		senderDisplay_name: string,
 		recipientDisplay_name: string,
