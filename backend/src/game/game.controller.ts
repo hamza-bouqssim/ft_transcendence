@@ -16,13 +16,14 @@ export class GameController {
 
 	@Post('myhistory')
 	@UseGuards(AuthGuard('jwt'))
-	async getMyHistory(@Body() request: { userId: string }, @Res() res) {
+	async getMyHistory(@Body() request: { userId: string }, @Res() res: any) {
 		try {
 			const history = await this.gameService.history_matches(request.userId);
 			const modifiedHistory = await Promise.all(
 				history.map(async (entry) => {
 					if (entry.playerOne == request.userId) {
 						return {
+							
 							playerOne: entry.playerone.avatar_url,
 							playerTwo: entry.playertwo.avatar_url,
 							resultOne: entry.resultOne,
@@ -53,7 +54,7 @@ export class GameController {
 
 	@Get('ranking')
 	@UseGuards(AuthGuard('jwt'))
-	async getAllRanking(@Res() res) {
+	async getAllRanking(@Res() res : any) {
 		try {
 			const rating = await this.gameService.getRanks();
 			const modifiedRank = rating.map((entry, index) => ({

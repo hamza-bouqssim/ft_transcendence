@@ -356,6 +356,7 @@ async findConversationUsers(user : any, _display_name : string, message : string
   this.eventEmitter.emit('createConversationMessage.created', {
     chat
   });
+  console.log("chat here-->", chat);
   return chat;
 }
 

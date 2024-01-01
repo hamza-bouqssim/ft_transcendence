@@ -13,6 +13,6 @@ RUN npm install
 RUN chmod +x init.sh
 
 EXPOSE 8000
+
 ENTRYPOINT [ "./init.sh" ]
-RUN npm run build
-CMD npm run start
+CMD npm run start:dev 

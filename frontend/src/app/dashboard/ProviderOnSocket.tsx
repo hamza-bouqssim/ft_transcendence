@@ -75,6 +75,7 @@ const ProviderOnSocket = () => {
     
          });
          socket.on('blockNotification', (data : any) =>{
+          console.log("chat here-->");
           dispatch(fetchBlocksThunk());
           dispatch(fetchBlockedUsers());
           dispatch(fetchNotificationThunk());

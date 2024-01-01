@@ -44,12 +44,10 @@ const OnlineGame = ({ mapIndex }: any) => {
 		width: number;
 		height: number;
 	}>({
-		width: 560,
-		height: 836,
+		width: 500,
+		height: 800,
 	});
 	useEffect(() => {
-		
-
 		const parentWidth: number = parentCanvasRef.current?.clientWidth!;
 		const parentHeight: number = parentCanvasRef.current?.clientHeight!;
 
@@ -63,13 +61,16 @@ const OnlineGame = ({ mapIndex }: any) => {
 	}, []);
 
 	useEffect(() => {
-		window.addEventListener("popstate", () => {
-			router.push("/dashboard/game/", { scroll: false });
-		});
 		if (opponentPlayer.opponent.username === "") {
 			router.push("/dashboard/game/", { scroll: false });
 			return;
 		}
+		const handleRedirect = () => {
+			router.push("/dashboard/game/", { scroll: false });
+		}
+		gameSocket.on("redirectUser", handleRedirect);
+		window.addEventListener("popstate", handleRedirect);
+		window.addEventListener("offline", handleRedirect);
 		const updateScoreListener = (playersScore: any) => {
 			setScore({
 				...score,
@@ -78,7 +79,12 @@ const OnlineGame = ({ mapIndex }: any) => {
 			});
 		};
 		gameSocket.on("updateScore", updateScoreListener);
-		return () => void gameSocket.off("updateScore");
+		return () =>{
+			gameSocket.off("updateScore");
+			window.removeEventListener("popstate", handleRedirect);
+			window.removeEventListener("offline", handleRedirect);
+			gameSocket.off("redirectUser", handleRedirect);
+		}
 	}, []);
 
 	useEffect(() => {
@@ -96,6 +102,7 @@ const OnlineGame = ({ mapIndex }: any) => {
 
 		const handleGameIsFinished = (payload: { status: string }) => {
 			// clearAtomData();
+			// setStartGame((prev: any) => !prev);
 			if (payload.status === "winner") WinnerPlayerPopUp(router);
 			else LoserPlayerPopUp(router);
 			// pongRef.current?.clear();

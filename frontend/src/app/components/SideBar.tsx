@@ -26,7 +26,7 @@ const SideBar = () => {
 			icon: faHouse,
 			spanText: "Home",
 			condition: pathName.endsWith("/dashboard")
-				? "bg-[--pink-color] animate-wiggle"
+				? "text-[--pink-color] animate-pulse"
 				: "",
 		},
 		{
@@ -35,7 +35,7 @@ const SideBar = () => {
 			spanText: "Chat",
 			condition:
 				pathName.endsWith("/chat") || pathName.endsWith("/groups")
-					? "bg-[--pink-color] animate-wiggle"
+					? "text-[--pink-color] animate-pulse"
 					: "",
 			notification: isMessage,
 		},
@@ -44,15 +44,15 @@ const SideBar = () => {
 			icon: faGamepad,
 			spanText: "Game",
 			condition: pathName.includes("/game")
-				? "bg-[--pink-color] animate-wiggle"
+				? "text-[--pink-color] animate-pulse"
 				: "",
 		},
 		{
 			href: "/dashboard/settings",
 			icon: faGear,
-			spaneText: "Settings",
+			spanText: "Settings",
 			condition: pathName.endsWith("/settings")
-				? "bg-[--pink-color] animate-wiggle"
+				? "text-[--pink-color] animate-pulse"
 				: "",
 		},
 	];
@@ -83,36 +83,32 @@ const SideBar = () => {
 
 
 	return (
-		<aside
-			className={`fixed bottom-0 left-0 right-0 z-20 flex justify-between bg-gradient-to-b from-[#2E2F54] via-[#3B5282] to-[#2E2F54]  text-white duration-300 ease-in-out md:relative md:h-full md:flex-col md:items-center`}
-		>
-			<ul className="flex h-full w-full justify-between font-bold md:w-auto md:flex-col md:justify-start">
-				{items.map((el: any, index: number) => (
-					<Link href={el.href} key={index}  className="relative">
-						<ListItem
-							icon={el.icon}
-							spanText={el.icon}
-							additionalStyle={el.condition}
-						/>
-						{el?.notification && !pathName.includes("/chat")  &&   !pathName.includes("/groups") && 
-						<div className="w-3 h-3 absolute bg-[--pink-color]  rounded-full right-10 top-10  ">
+    <aside
+      className={`fixed bottom-0 left-0 right-0 z-20 flex justify-between bg-gradient-to-b from-[#2E2F54] via-[#3B5282] to-[#2E2F54]  text-white duration-300 ease-in-out md:relative md:h-full md:flex-col md:items-center`}
+    >
+      <ul className="flex h-full w-full justify-between font-bold md:w-auto md:flex-col md:justify-start">
+        {items.map((el: any, index: number) => (
+          <Link href={el.href} key={index}>
+            <ListItem
+              icon={el.icon}
+              spanText={el.spanText}
+              additionalStyle={""}
+              iconColor={el.condition}
+            />
+          </Link>
+        ))}
 
-						</div>
-						}
-						
-					</Link>
-				))}
-
-				<Link className="hidden md:block" href={"#"} onClick={LogOut}>
-					<ListItem
-						icon={faRightFromBracket}
-						spanText="LogOut"
-						additionalStyle="absolute w-full bottom-0"
-					/>
-				</Link>
-			</ul>
-		</aside>
-	);
+        <Link className="hidden md:block" href={"#"} onClick={LogOut}>
+          <ListItem
+            icon={faRightFromBracket}
+            spanText="LogOut"
+            additionalStyle="absolute w-full bottom-0"
+            iconColor={""}
+          />
+        </Link>
+      </ul>
+    </aside>
+  );
 };
 
 export default SideBar;

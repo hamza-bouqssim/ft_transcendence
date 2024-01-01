@@ -9,31 +9,34 @@ import { User } from "./dtos/User";
 
 export class WebSocketAdapter extends IoAdapter {
   private authenticateSocket(socket: AuthenticatedSocket, next: (err?: any) => void) {
-    const { cookie: clientCookie } = socket.handshake.headers;
-    
-    if (!clientCookie) {
-      return next(new Error('Not authenticated'));
-    }
+		const { cookie: clientCookie } = socket.handshake.headers;
+		console.log(cookie)
+		if (!clientCookie) {
+			return next(new Error('Not authenticated'));
+		}
 
-    const { token } = cookie.parse(clientCookie);
+		const { token } = cookie.parse(clientCookie);
 
-    if (!token) {
-      return next(new Error('Not authenticated'));
-    }
+		if (!token) {
+			return next(new Error('Not authenticated'));
+		}
 
-    const COOKIE_SECRET: string = "my-secret";
-    cookieParser.signedCookie(token, COOKIE_SECRET);
+		const COOKIE_SECRET: string = process.env.COOKIE_SECRET;
+		cookieParser.signedCookie(token, process.env.COOKIE_SECRET);
 
-    try {
-      const decodedToken = jwt.verify(token, COOKIE_SECRET) as Record<string, any>;
+		try {
+			const decodedToken = jwt.verify(token, COOKIE_SECRET) as Record<
+				string,
+				any
+			>;
 
-      const userDb = plainToInstance(User, decodedToken);
-      socket.user = userDb;
-      next();
-    } catch (error) {
-      return next(new Error('Not authenticated'));
-    }
-  }
+			const userDb = plainToInstance(User, decodedToken);
+			socket.user = userDb;
+			next();
+		} catch (error) {
+			return next(new Error('Not authenticated'));
+		}
+	}
 
   createIOServer(port: number, options: any) {
     const server = super.createIOServer(port, options);

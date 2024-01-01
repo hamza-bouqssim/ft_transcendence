@@ -20,7 +20,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     constructor(private readonly authService: AuthService) {
       super({
         jwtFromRequest: ExtractJwt.fromExtractors([extractCookie]),
-			secretOrKey: 'my-secret',
+			secretOrKey: process.env.COOKIE_SECRET,
       });
     }
     
@@ -32,3 +32,18 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       return  user;
     }
 }
+
+
+// import { Catch, ExceptionFilter, UnauthorizedException, ArgumentsHost } from '@nestjs/common';
+// import { Response } from 'express';
+
+// @Catch(UnauthorizedException)
+// export class UnauthorizedExceptionFilter implements ExceptionFilter {
+//   catch(exception: UnauthorizedException, host: ArgumentsHost) {
+//     const response = host.switchToHttp().getResponse<Response>();
+//     response.status(401).json({
+//       statusCode: 401,
+//       message: 'Unauthorized',
+//     });
+//   }
+// }

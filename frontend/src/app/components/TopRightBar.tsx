@@ -16,93 +16,89 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { User } from "../utils/types";
 
 const TopRightBar = () => {
-	const dispatch = useDispatch<AppDispatch>();
-	const { notification, status, error, count } = useSelector(
-		(state: any) => state.notification,
-	);
-	const ToastError = (message: any) => {
-		toast.error(message, {
-			position: toast.POSITION.TOP_RIGHT,
-			autoClose: 5000,
-			hideProgressBar: false,
-			closeOnClick: true,
-			pauseOnHover: true,
-			draggable: true,
-		});
-	};
+  const dispatch = useDispatch<AppDispatch>();
+  const { notification, status, error, count } = useSelector(
+    (state: any) => state.notification
+  );
+  const ToastError = (message: any) => {
+    toast.error(message, {
+      position: toast.POSITION.TOP_RIGHT,
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
+  };
 
-	const ToastSuccess = (message: any) => {
-		toast.success(message, {
-			position: toast.POSITION.TOP_RIGHT,
-			autoClose: 5000,
-			hideProgressBar: false,
-			closeOnClick: true,
-			pauseOnHover: true,
-			draggable: true,
-		});
-	};
-	const { Userdata, setUserdata } = useContext(socketContext);
-	useEffect(() => {
-		
-		dispatch(fetchCountNotification());
-		getAuthUser()
-			.then(({ data }) => {
-				setUserdata((prevData) => ({
-					...prevData,
-					...data,
-				}));
-			})
-			.catch((err) => {
-			});
-	}, [setUserdata, dispatch]);
-	const router = useRouter();
-	const [notfication, setNotefication] = useState(false);
-	// const logout = () => {
-	// 	try {
-	// 		getlogout();
-	// 		deleteCookie("logged");
-	// 		router.push("/", { scroll: false });
-	// 		ToastSuccess(`Logout succefully `);
-	// 	} catch (err) {
-	// 		ToastError(`Failed to logout`);
-	// 	}
-	// };
-	const menuRef = useRef<HTMLDivElement>(null);
-	const subMenuRef = useRef<HTMLDivElement>(null);
-	const faChevronDownRef = useRef<SVGSVGElement>(null);
+  const ToastSuccess = (message: any) => {
+    toast.success(message, {
+      position: toast.POSITION.TOP_RIGHT,
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
+  };
+  const { Userdata, setUserdata } = useContext(socketContext);
+  useEffect(() => {
+    dispatch(fetchCountNotification());
+    getAuthUser()
+      .then(({ data }) => {
+        setUserdata((prevData) => ({
+          ...prevData,
+          ...data,
+        }));
+      })
+      .catch((err) => {});
+  }, [setUserdata, dispatch]);
+  const router = useRouter();
+  const [notfication, setNotefication] = useState(false);
+  // const logout = () => {
+  // 	try {
+  // 		getlogout();
+  // 		deleteCookie("logged");
+  // 		router.push("/", { scroll: false });
+  // 		ToastSuccess(`Logout succefully `);
+  // 	} catch (err) {
+  // 		ToastError(`Failed to logout`);
+  // 	}
+  // };
+  const menuRef = useRef<HTMLDivElement>(null);
+  const subMenuRef = useRef<HTMLDivElement>(null);
+  const faChevronDownRef = useRef<SVGSVGElement>(null);
 
-	const [rotate, setRotate] = useState<boolean>(false);
+  const [rotate, setRotate] = useState<boolean>(false);
 
-	const handleDocumentClick = (event: any) => {
-		if (menuRef.current && !menuRef.current.contains(event.target)) {
-			setNotefication(false);
-		}
-	};
+  const handleDocumentClick = (event: any) => {
+    if (menuRef.current && !menuRef.current.contains(event.target)) {
+      setNotefication(false);
+    }
+  };
 
-	useEffect(() => {
-		
-		if (notfication) {
-			document.addEventListener("click", handleDocumentClick);
-		} else {
-			document.removeEventListener("click", handleDocumentClick);
-		}
+  useEffect(() => {
+    if (notfication) {
+      document.addEventListener("click", handleDocumentClick);
+    } else {
+      document.removeEventListener("click", handleDocumentClick);
+    }
 
-		return () => {
-			document.removeEventListener("click", handleDocumentClick);
-		};
-	}, [notfication]);
+    return () => {
+      document.removeEventListener("click", handleDocumentClick);
+    };
+  }, [notfication]);
 
-	useEffect(() => {
-		
-		const handleCLickEvent = (e: MouseEvent) => {
-			if (!faChevronDownRef.current?.contains(e.target as Node))
-				setRotate(false);
-		};
+  useEffect(() => {
+    const handleCLickEvent = (e: MouseEvent) => {
+      if (!faChevronDownRef.current?.contains(e.target as Node))
+        setRotate(false);
+    };
 
-		document.addEventListener("click", handleCLickEvent);
+    document.addEventListener("click", handleCLickEvent);
 
-		return () => document.removeEventListener("click", handleCLickEvent);
-	}, []);
+    return () => document.removeEventListener("click", handleCLickEvent);
+  }, []);
 
 	const getDisplayUser = (user : User | null) => {
 		let truncatedDisplayName
@@ -168,33 +164,33 @@ const TopRightBar = () => {
 						</span>
 					</div>
 
-					<ExpandMoreIcon
-						ref={faChevronDownRef}
-						className={`inline-block transform cursor-pointer text-2xl hover:text-[--pink-color] lg:text-3xl ${
-							rotate ? "rotate-[180deg]" : "rotate-0"
-						}`}
-						style={{
-							transition: "transform 0.5s ease-in-out",
-						}}
-						onClick={() => setRotate(!rotate)}
-					/>
-					{rotate && (
-						<div
-							ref={subMenuRef}
-							className={`absolute right-4 top-14 flex h-[134px] w-[247px] flex-col items-center justify-center gap-1 rounded-[15px] border-2 border-solid border-[#8E8E8E] bg-white font-['Whitney_Semibold'] lg:right-[32px] lg:top-[64px]`}
-						>
-							<MenuButton background={"bg-[#d9d9d9]"} value="View Profile" />
-							<MenuButton background={"bg-[#BBBBBB]"} value="Settings" />
-							<LogoutButton background={"bg-[#EA7F87]"} value="Logout" />
-						</div>
-					)}
-				</div>
-			</div>
-			{notfication && (
-				<div className=" absolute bottom-0 left-0 right-0 top-0 z-10 bg-[#2e2f54d9]  opacity-100"></div>
-			)}
-		</>
-	);
+          <ExpandMoreIcon
+            ref={faChevronDownRef}
+            className={`inline-block transform cursor-pointer text-2xl hover:text-[--pink-color] lg:text-3xl ${
+              rotate ? "rotate-[180deg]" : "rotate-0"
+            }`}
+            style={{
+              transition: "transform 0.5s ease-in-out",
+            }}
+            onClick={() => setRotate(!rotate)}
+          />
+          {rotate && (
+            <div
+              ref={subMenuRef}
+              className={`absolute right-4 top-14 flex h-[134px] w-[247px] flex-col items-center justify-center gap-1 rounded-[15px] border-2 border-solid border-[#8E8E8E] bg-white font-['Whitney_Semibold'] lg:right-[32px] lg:top-[64px]`}
+            >
+              <MenuButton background={"bg-[#d9d9d9]"} value="View Profile" />
+              <MenuButton background={"bg-[#BBBBBB]"} value="Settings" />
+              <LogoutButton background={"bg-[#EA7F87]"} value="Logout" />
+            </div>
+          )}
+        </div>
+      </div>
+      {notfication && (
+        <div className=" absolute bottom-0 left-0 right-0 top-0 z-10 bg-[#2e2f54d9]  opacity-100"></div>
+      )}
+    </>
+  );
 };
 
 export default TopRightBar;

@@ -19,7 +19,6 @@
     "@reduxjs/toolkit": "^2.0.1",
     "axios": "^1.6.3",
     "date-fns": "^3.0.6",
-    "howler": "^2.2.4",
     "jotai": "^2.6.0",
     "lucide-react": "^0.302.0",
     "matter-js": "^0.19.0",
@@ -43,7 +42,6 @@
     "three": "^0.153.0"
   },
   "devDependencies": {
-    "@types/howler": "^2.2.9",
     "@types/matter-js": "^0.19.0",
     "@types/node": "^20",
     "@types/react": "^18",

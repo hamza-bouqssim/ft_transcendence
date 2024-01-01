@@ -8,6 +8,7 @@ import "swiper/css";
 import "swiper/css/effect-coverflow";
 import { OpponentData } from "../../utils/data";
 import { useSetAtom } from "jotai";
+import GameGuide from "@/app/components/GameGuide";
 
 const ChoseMapOnline = () => {
 	const setMapIndexAtom = useSetAtom(OpponentData);
@@ -29,54 +30,56 @@ const ChoseMapOnline = () => {
 					width={500}
 					height={500}
 					alt=""
+          priority
 				/>
 			</SwiperSlide>
 		),
 	);
 
 	return (
-		<div className="relative h-[100vh] min-h-[600px] w-full select-none">
-			<div className="glassmorphism absolute left-[50%] top-[50%] m-auto flex w-full max-w-[800px] -translate-x-[50%] -translate-y-[50%] flex-col gap-6 p-6">
-				<h1 className="text-center font-['Whitney_Bold'] text-sm lg:text-2xl">
-					Select A Map
-				</h1>
-				<div>
-					<Swiper
-						ref={swiperRef}
-						effect={"coverflow"}
-						grabCursor={true}
-						centeredSlides={true}
-						slidesPerView={"auto"}
-						coverflowEffect={{
-							rotate: 50,
-							stretch: 0,
-							depth: 100,
-							modifier: 1,
-							slideShadows: true,
-						}}
-						onSlideChange={() =>
-							setMapIndex(swiperRef.current?.swiper.realIndex)
-						}
-						modules={[EffectCoverflow]}
-					>
-						{mappedImagesSlides}
-					</Swiper>
-				</div>
-				<Link
-					href={{
-						pathname: "./match-making",
-						query: { mapIndex },
-					}}
-					className="glassmorphism m-auto w-fit px-7 py-2 font-['Whitney_Semibold'] duration-150 ease-in-out hover:bg-[--purple-color]"
-					onClick={() =>
-						setMapIndexAtom((prevData) => ({ ...prevData, mapIndex }))
-					}
-				>
-					Choose
-				</Link>
-			</div>
-		</div>
-	);
+    <div className="relative h-[100vh] min-h-[600px] w-full select-none">
+      <div className="glassmorphism absolute left-[50%] top-[50%] m-auto flex w-full max-w-[800px] -translate-x-[50%] -translate-y-[50%] flex-col gap-6 p-6">
+        <GameGuide />
+        <h1 className="text-center font-['Whitney_Bold'] text-sm lg:text-2xl">
+          Select A Map
+        </h1>
+        <div>
+          <Swiper
+            ref={swiperRef}
+            effect={"coverflow"}
+            grabCursor={true}
+            centeredSlides={true}
+            slidesPerView={"auto"}
+            coverflowEffect={{
+              rotate: 50,
+              stretch: 0,
+              depth: 100,
+              modifier: 1,
+              slideShadows: true,
+            }}
+            onSlideChange={() =>
+              setMapIndex(swiperRef.current?.swiper.realIndex)
+            }
+            modules={[EffectCoverflow]}
+          >
+            {mappedImagesSlides}
+          </Swiper>
+        </div>
+        <Link
+          href={{
+            pathname: "./match-making",
+            query: { mapIndex },
+          }}
+          className="glassmorphism m-auto w-fit px-7 py-2 font-['Whitney_Semibold'] duration-150 ease-in-out hover:bg-[--purple-color]"
+          onClick={() =>
+            setMapIndexAtom((prevData) => ({ ...prevData, mapIndex }))
+          }
+        >
+          Choose
+        </Link>
+      </div>
+    </div>
+  );
 };
 
 export default ChoseMapOnline;

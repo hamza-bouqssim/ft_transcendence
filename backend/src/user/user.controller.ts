@@ -20,8 +20,9 @@ export class UserController {
 
 	@Get('info')
 	@UseGuards(AuthGuard('jwt'))
-	async grabMyInfos(@Req() req) {
-		const user = req.user;
+	async grabMyInfos(@Req() req, @Res() res) {
+		try{
+			const user = req.user;
 
 		return {
 			id: user.id,
@@ -32,6 +33,13 @@ export class UserController {
 			tfa_enabled: user.tfa_enabled,
 			first_time: user.first_time,
 		};
+
+		}catch(error){
+			return res.send({success: false, message: error.message});
+
+
+		}
+		
 	}
 
 

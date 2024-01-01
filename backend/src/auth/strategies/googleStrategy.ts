@@ -11,20 +11,22 @@ import { AuthDto } from '../dto/auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
 import { VerifiedCallback } from 'passport-jwt';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy) {
 	constructor(
 		private readonly authService: AuthService,
 		private readonly jwtService: JwtService,
+		private readonly configService: ConfigService,
 	) {
 		super({
-			clientID:
-				'733824333433-o5h97tg504iukbekbfg6bgntrcqlomfd.apps.googleusercontent.com', //this SHIT is hard coded, go put you SHIT in ENV file !!!!!!!!!!!!!!!!!!!!!!
-			clientSecret: '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', //this SHIT is hard coded, go put your SHIT in ENV file !!!!!!!!!!!!!!!!!!!!!!
-			callbackURL: 'http://localhost:8000/auth/google/redirect',
+			clientID: configService.get<string>('GOOGLE_CLIENT_ID'),
+			clientSecret: configService.get<string>('GOOGLE_CLIENT_SECRET'),
+			callbackURL: configService.get<string>('GOOGLE_CALL_BACK_URL'),
 			scope: ['profile', 'email'],
 		});
+		console.log(configService.get<string>('GOOGLE_CLIENT_ID'))
 	}
 	async validate(accessToken: string, refreshToken: string, profile: Profile) {
 		const authDto: AuthDto = {

@@ -16,7 +16,7 @@ import { GameService } from 'src/game/game.service';
 @Module({
   imports: [PrismaModule,
     JwtModule.register({
-      secret: 'my-secret',
+      secret: process.env.COOKIE_SECRET,
       signOptions: { expiresIn: '6000000000s' },
     }),
   ],
