@@ -41,7 +41,7 @@ export class AuthController {
 				const token = this.jwtService.sign(payload);
 				res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
 				this.gameState.createStateGame(user.id);
-				return res.send({ success: true, message: 'new user' });
+				return res.send({ success: true, message: 'Welcome .....' });
 			}
 
 			if (user.tfa_enabled) {

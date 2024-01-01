@@ -17,7 +17,6 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy) {
 			clientSecret: configService.get<string>('INTRA_CLIENT_SECRET'),
 			callbackURL: configService.get<string>('INTRA_CALL_BACK_URL'),
 		});
-		console.log( configService.get<string>('INTRA_CLIENT_ID'))
 	}
 	async validate(accessToken: string, refreshToken: string, profile: any) {
 		const dto: AuthDto = {

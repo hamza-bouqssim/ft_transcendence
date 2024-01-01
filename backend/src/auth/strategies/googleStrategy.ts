@@ -26,7 +26,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
 			callbackURL: configService.get<string>('GOOGLE_CALL_BACK_URL'),
 			scope: ['profile', 'email'],
 		});
-		console.log(configService.get<string>('GOOGLE_CLIENT_ID'))
 	}
 	async validate(accessToken: string, refreshToken: string, profile: Profile) {
 		const authDto: AuthDto = {

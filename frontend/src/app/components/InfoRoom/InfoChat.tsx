@@ -79,10 +79,10 @@ export const InfoChat = () => {
       <div className='flex'>
         <Image
               src={fetchDataUser()?.avatar_url as string}
-              className=" -top-[37px] left-[18px] w-[70px] rounded-full"
+              className=" h-20 w-20 rounded-[50%] bg-black"
               alt=""
-              width={120}
-              height={120}
+              width={70}
+              height={70}
               priority={true}
             />
             <div className='-top-[37px] '>

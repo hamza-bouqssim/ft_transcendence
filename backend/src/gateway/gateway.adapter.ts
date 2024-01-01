@@ -10,7 +10,6 @@ import { User } from "./dtos/User";
 export class WebSocketAdapter extends IoAdapter {
   private authenticateSocket(socket: AuthenticatedSocket, next: (err?: any) => void) {
 		const { cookie: clientCookie } = socket.handshake.headers;
-		console.log(cookie)
 		if (!clientCookie) {
 			return next(new Error('Not authenticated'));
 		}

@@ -203,10 +203,10 @@ export const ListChat:FC<props> = ({elem} ) => {
                                         <div className="relative">
                                         <Image
 												src={getDisplayUser(elem)?.avatar_url}
-												className="w-[50px] rounded-full"
+												className="h-10 w-10 rounded-[50%] bg-black"
 												alt="Description of the image"
-												width={30}
-												height={30}
+												width={60}
+												height={60}
 											/>
                                             
                                             { number !== 0 && <div className="absolute top-[-5px] right-0 bg-[red] px-1 rounded-full">

@@ -1,4 +1,3 @@
-import { getAuthUser } from "../../utils/api";
 import { Conversation, ConversationPannelStyle, Page } from "../../utils/styles";
 import { User } from "../../utils/types";
 import { useContext, useEffect, useState } from "react";

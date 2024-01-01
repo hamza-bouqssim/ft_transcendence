@@ -86,7 +86,6 @@ const ConversationChannelPagechat = () => {
       dispatch(fetchCountNotification());
     })
     socket.on('blockNotification', (data : any) =>{
-      console.log("provider here");
       dispatch(fetchBlocksThunk());
       dispatch(fetchNotificationThunk());
       dispatch(fetchCountNotification());
