@@ -141,6 +141,7 @@ const MessageContainer = () => {
                   alt="Description of the image"
                   width={60}
                   height={60}
+                  priority={true}
                 />}
 
                 <div className={`flex-1`}>

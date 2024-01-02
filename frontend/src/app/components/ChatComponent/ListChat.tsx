@@ -207,6 +207,7 @@ export const ListChat:FC<props> = ({elem} ) => {
 												alt="Description of the image"
 												width={60}
 												height={60}
+												priority={true}
 											/>
                                             
                                             { number !== 0 && <div className="absolute top-[-5px] right-0 bg-[red] px-1 rounded-full">

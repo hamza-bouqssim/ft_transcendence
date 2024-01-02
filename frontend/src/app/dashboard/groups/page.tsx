@@ -37,8 +37,7 @@ const ConversationChannelPage = () => {
       updateChannel(null)
 		})
     socket.on("updateMember",(payload:any) =>{
-			dispatch(getAllMembers(payload.roomId))
-    
+			  dispatch(getAllMembers(payload.roomId))
         dispatch(getAllRooms());
 		})
     return () => {

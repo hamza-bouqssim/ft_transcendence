@@ -1,4 +1,4 @@
-"use client"
+
 import React, { ReactNode, useEffect, useState } from 'react';
 import { useRouter ,usePathname} from 'next/navigation';
 import { isAuth } from './api';

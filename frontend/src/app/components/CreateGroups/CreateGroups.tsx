@@ -103,8 +103,8 @@ const CreatGroups: React.FC<CreateGroupsProps> = ({
 			>
 				
 				{!_image ? <div className="rounded-full bg-[#EFEFEF]  p-10">
-					<BiImageAdd size={30} className="text-[#949494]"></BiImageAdd>
-				</div>  : <Image src={_image} alt="" className="rounded-full bg-containe h-[120px] w-[120px] " width={100} height={100} />
+					<BiImageAdd size={30} className="text-[#949494]" ></BiImageAdd>
+				</div>  : <Image src={_image} alt="" className="rounded-full bg-containe h-[120px] w-[120px] " width={100} height={100}   priority={true}/>
 				}
 				
 			</label>

@@ -1,7 +1,6 @@
 "use client"
 import {  socketContext } from '@/app/utils/context/socketContext'
 import React, {useState,useEffect, useContext} from 'react'
-import Image from 'next/image';
 import { ConversationTypes } from '@/app/utils/types';
 import {  useSelector } from "react-redux";
 import { ListSearch } from './ListSearch';

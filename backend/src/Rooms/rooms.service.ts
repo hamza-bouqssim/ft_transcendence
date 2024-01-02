@@ -971,4 +971,13 @@ export class RoomsService {
     return existingNotification
    
   }
+  async isUserMuted( roomId: string,userId: string) {
+    const isMuted = await this.prisma.member.findFirst({
+      where: {
+        user_id: userId,
+        chatRoomId: roomId,
+      },
+    });
+    return isMuted;
+  }
 }

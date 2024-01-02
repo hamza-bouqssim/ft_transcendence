@@ -160,6 +160,7 @@ const OnlineFriends = () => {
 										alt="Description of the image"
 										width={60}
 										height={60}
+										priority={true}
 									/>
 									{isUserOnline(elem) ? <OnlineStyling /> : <OflineStyling />}
 								</div>

@@ -182,6 +182,7 @@ const ListFriends = () => {
 									alt="Description of the image"
 									width={60}
 									height={60}
+									priority={true}
 								/>
 								{getStatusColor() === "green" ? (
 									<OnlineStyling />

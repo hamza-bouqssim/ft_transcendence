@@ -89,7 +89,7 @@ const FriendsBloque = () =>{
 					{friendsBlock.map(function(elem : BloquesTypes){
 						return(
 							<ConversationSideBarItem key={elem.id}>
-              <Image src={elem.avatar_url} className="h-14 w-14 rounded-[50%] bg-black " alt="Description of the image" width={60}   height={60} />
+              <Image src={elem.avatar_url} className="h-14 w-14 rounded-[50%] bg-black " alt="Description of the image" width={60}   height={60} 	priority={true}/>
 
 							
 					 				<span  className="ConversationName">{getDisplayUser(elem).display_name}</span>

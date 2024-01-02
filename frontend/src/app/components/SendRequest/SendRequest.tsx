@@ -96,7 +96,8 @@ const SendRequest  = () => {
 					{request.map(function(elem : RequestTypes){
 						return(
 							<ConversationSideBarItem key={elem.id}>
-                <Image src={elem.user.avatar_url} className="h-14 w-14 rounded-[50%] bg-black " alt="Description of the image" width={60}   height={60} />
+                <Image src={elem.user.avatar_url} className="h-14 w-14 rounded-[50%] bg-black " alt="Description of the image" width={60}   height={60} priority={true}
+ />
 								<div>
 					 				<span  className="ConversationName">{getDisplayUser(elem.user).display_name}</span>
 					 			</div>

@@ -136,17 +136,22 @@ export class RoomsController {
         memberUpdate.id,null,null
       );
 
-      if (memberUpdate.muteDuration && parseInt(memberUpdate.muteDuration, 10) > 0) {
+      if (memberUpdate. muteDuration&& parseInt(memberUpdate.muteDuration, 10) > 0) {
         const durationInSeconds = parseInt(memberUpdate.muteDuration, 10);
           const intervalId = setInterval(async () => {
-            await this.roomsService.Member(id,{id:memberUpdate.id,userId:memberUpdate.userId})
-            this.eventEmitter.emit(
-              'order.updateMember',
-              memberUpdate.id,null,null
-            );
+            const isUserStillMuted = await this.roomsService.isUserMuted(memberUpdate.id,memberUpdate.userId);
+            if (isUserStillMuted.Status === "Mut") 
+            {
+              await this.roomsService.Member(id,{id:memberUpdate.id,userId:memberUpdate.userId})
+              this.eventEmitter.emit(
+                'order.updateMember',
+                memberUpdate.id,null,null
+              );
+            }
           clearInterval(intervalId);
         }, durationInSeconds * 1000);
       }
+     
   
       return res.status(200).json({ success: true, response: member});
     } catch (error) {
@@ -251,6 +256,10 @@ export class RoomsController {
     try {
       const {id}=req.user
       const response = await this.roomsService.joinRooms(id,joinRooms);
+      this.eventEmitter.emit(
+        'order.updateMember',
+        joinRooms.id,null,null
+      );
       return res.status(200).json({ success: true, response: response});
     } catch (error) {
       return res.send({success: false, message:error.response});

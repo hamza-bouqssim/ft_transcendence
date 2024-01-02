@@ -118,9 +118,9 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 	const handleUpdate = () => {
     if(olddata)
     {
-		if(olddata.Privacy==="Protected" && !olddata.password?.trim().length  )
+		if(olddata.Privacy==="Protected" && olddata.password && olddata.password?.trim().length < 8  )
 		{
-			toast.error('ineed Password for this room');
+			toast.error('Password are required for a Protected group. 8 character min');
 			return;
 		}
 		   
@@ -182,6 +182,7 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 						alt=""
 						width={30}
 						height={30}
+						priority={true}
 					/>
 				)}
 				{!channel?.picture && InfoRecipient()?.avatar_url && (
@@ -192,6 +193,7 @@ const MessagePanelHeader: FC<MessagePanelHeaderProps> = ({
 						alt=""
 						width={60}
 						height={60}
+						priority={true}
 						/>
 						{checkTheStatus() === 'online' ? (<OnlineStyling/>) :  checkTheStatus() === 'ingame' ? <IngameStyling/> :  checkTheStatus() === 'offline' ?  ( <OflineStyling/>) : <></>}
 					</div>					
