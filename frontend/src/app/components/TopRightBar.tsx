@@ -148,7 +148,7 @@ const TopRightBar = () => {
 						/>
 					)}
 					<div className="font-['Whitney_Bold'] leading-3">
-						<h6 className="text-sm min-[1750px]:text-lg">
+						<h6 className="text-sm min-[1750px]:text-lg" title={Userdata?.display_name}>
 							{getDisplayUser(Userdata).display_name}
 						</h6>
 						<span className="text-xs min-[1750px]:text-sm">

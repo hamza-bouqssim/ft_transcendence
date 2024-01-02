@@ -75,11 +75,11 @@ export const InfoChat = () => {
   };
 
   return (
-    <div className='relative bg-[#CDCEDB] w-full h-[80%] flex flex-col gap-4 px-5 py-10 rounded-t-2xl'>
-      <div className='flex'>
+    <div className='relative bg-[#CDCEDB] w-full h-full flex flex-col gap-4 px-5 py-10 rounded-t-2xl mt-[100px] mb-auto'>
+      <div className='flex -mt-[80px]'>
         <Image
               src={fetchDataUser()?.avatar_url as string}
-              className=" h-20 w-20 rounded-[50%] bg-black"
+              className=" h-20 w-20 rounded-[50%] bg-black border-2 border-[--blue-color]"
               alt=""
               width={70}
               height={70}
@@ -87,7 +87,6 @@ export const InfoChat = () => {
             />
             <div className='-top-[37px] '>
               {checkTheStatus() === 'online' ? (<OnlineStyling/>) :  checkTheStatus() === 'ingame' ? (<IngameStyling/>) : checkTheStatus() === 'offline' ? ( <OflineStyling/>) : <></>}
-
             </div>
       </div>
             
