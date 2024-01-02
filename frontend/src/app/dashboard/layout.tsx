@@ -33,6 +33,7 @@ function AppWithProviders({ children }: PropsWithChildren & Props) {
 	const updateChannel = (newAddress: ConversationTypes | null) => {
 		setChannel(newAddress);
 	};
+	socket.connect();
 	return (
 		<Provider store={store}>
 			<socketContext.Provider

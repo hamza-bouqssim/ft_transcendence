@@ -16,6 +16,7 @@ const Features = () => {
           src={elem}
           width={100}
           height={100}
+          priority
           alt={elem.substring(8, elem.lastIndexOf("."))}
         />
         <h3 className="text-center text-xs lg:text-sm 2xl:text-xl mt-3">

@@ -160,6 +160,7 @@ const Dashboard = () => {
 											width="200"
 											height="200"
 											alt=""
+											priority
 										/>
 									</div>
 									<div className="my">
@@ -171,6 +172,7 @@ const Dashboard = () => {
 											width="200"
 											height="200"
 											alt=""
+											priority
 										/>
 									</div>
 									<div className="my">
@@ -182,6 +184,7 @@ const Dashboard = () => {
 											width="200"
 											height="200"
 											alt=""
+											priority
 										/>
 									</div>
 									<div className="my">
@@ -193,6 +196,7 @@ const Dashboard = () => {
 											width="200"
 											height="200"
 											alt=""
+											priority
 										/>
 									</div>
 									<div className="my">
@@ -204,6 +208,7 @@ const Dashboard = () => {
 											width="200"
 											height="200"
 											alt=""
+											priority
 										/>
 									</div>
 									<div className="my">
@@ -217,6 +222,7 @@ const Dashboard = () => {
 											width="200"
 											height="200"
 											alt=""
+											priority
 										/>
 									</div>
 								</div>

@@ -138,15 +138,14 @@ export class AuthService {
 		return user;
 	}
 
-	async generateNickname(email: string): Promise<string> {
+	 async generateNickname(email: string) {
 		const username = email.split('@')[0];
 		const cleanedUsername = username.replace(/[^a-zA-Z0-9]/g, '');
 		
-		const randomNumber = Math.floor(Math.random() * 1000000000); 
+		const randomNumber = Math.floor(Math.random() * 10); 
 		const usernameWithNumber = cleanedUsername + randomNumber;
 	
-		const nickname =
-			usernameWithNumber.length > 0 ? usernameWithNumber : 'defaultNickname';
+		const nickname =usernameWithNumber.length > 0 ? usernameWithNumber : 'defaultNickname';
 		
 		return nickname;
 	}

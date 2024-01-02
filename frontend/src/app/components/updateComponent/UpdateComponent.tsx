@@ -42,6 +42,7 @@ const UpdateComponent:FC<UpdateComponentProps> = (
 						alt=""
 						height={30}
 						width={30}
+						priority
 					/>
 					<div className="mx-2 flex items-center justify-center ">
 						<EdiText

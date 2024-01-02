@@ -11,6 +11,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { TwoFactorAuthenticationService } from 'src/two-factor-authentication/two-factor-authentication.service';
 import { GameService } from 'src/game/game.service';
+import { PassportModule } from '@nestjs/passport';
 
 
 @Module({

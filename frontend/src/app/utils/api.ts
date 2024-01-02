@@ -348,6 +348,10 @@ export const isAuth = () => {
   const response = API.post("/auth/isAuth");
   return response;
 };
+export const is2fa = () => {
+  const response = API.post("/two-factor-authentication/is2fa");
+  return response;
+};
 
 export const joinRoomApi = (data: join) => {
   const response = API.post("/rooms/joinRooms", data);

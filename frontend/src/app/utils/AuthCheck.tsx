@@ -14,8 +14,8 @@ const AuthCheck: React.FC<AuthCheckProps> = ({ children }) => {
     const fetchData = async () => {
       try {
         const response = await isAuth();
-        if(response.data.success)
-            setIsAuthenticated(response.data.success);
+        if(response.status===200)
+            setIsAuthenticated(response.status===200);
         else{
             router.push("/signIn")
         }

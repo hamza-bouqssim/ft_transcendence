@@ -159,7 +159,7 @@ const ListUser: React.FC<Props> = ({member}) => {
         <div  className="flex items-center justify-between relative">
               <div className="flex items-center m-1">
               <div className={`${member?.Status === "Owner" ? "outline outline-4 outline-[--pink-color]" : ""} rounded-full`}>
-                  <Image src={member?.user.avatar_url} alt="" className="w-10 rounded-full" width={30} height={30}/>
+                  <Image priority src={member?.user.avatar_url} alt="" className="w-10 rounded-full" width={30} height={30}/>
                 </div>
                 <div className="text-[13px] flex flex-col justify-center ml-2">
                   <h1>{member?.user.username}</h1>

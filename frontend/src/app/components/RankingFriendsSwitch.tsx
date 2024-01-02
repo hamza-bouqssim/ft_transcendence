@@ -195,6 +195,7 @@ const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 									width="250"
 									height="250"
 									priority={true}
+									
 								/>
 							)}
 							<h1 className="select-none">{userinfo?.username}</h1>
@@ -229,6 +230,7 @@ const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 							alt=""
 							width={250}
 							height={250}
+							priority
 						/>
 					</div>
 
@@ -239,6 +241,7 @@ const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 							alt=""
 							width={250}
 							height={250}
+							priority
 						/>
 					</div>
 
@@ -249,6 +252,7 @@ const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 							alt=""
 							width={250}
 							height={250}
+							priority
 						/>
 					</div>
 
@@ -302,6 +306,7 @@ const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 									className=" pointer-events-none select-none h-14 w-14 rounded-[50%] bg-black "
 									alt="Description of the image"
 									width={60}
+									priority
 									height={60}
 								/>
 								{getStatusColor() === "green" ? (

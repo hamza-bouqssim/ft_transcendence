@@ -17,6 +17,7 @@ const Team = () => {
         src={e}
         width={100}
         height={100}
+        priority
         alt={e.substring(8, e.lastIndexOf("."))}
       />
     )

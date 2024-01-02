@@ -55,6 +55,12 @@ const SignUpForm = forwardRef((_props: any, ref: any) => {
 	const router = useRouter();
 
 	const onSubmit = async (data: createUserParams) => {
+		if (data.password_hashed.length < 8)
+		{
+
+			ToastError(`Your password must contain atleast 8 characters`);
+			return
+		}
 		try {
 			const res = await postRegisterUser(data);
 			if(!res.data.success)
@@ -137,6 +143,7 @@ const SignUpForm = forwardRef((_props: any, ref: any) => {
 						})}
 						className="custom-shape input-style"
 						placeholder="Passsword"
+						
 					/>
 					<Visibility
 						ref={faEyeRef}

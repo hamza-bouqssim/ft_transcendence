@@ -31,6 +31,7 @@ const Settings = () => {
 								width={500}
 								height={500}
 								alt="settings"
+								priority
 								/>
 						</div>
 					</div>

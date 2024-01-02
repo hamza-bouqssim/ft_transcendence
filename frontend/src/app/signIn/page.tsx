@@ -4,9 +4,19 @@ import PingPong from "../components/PingPong";
 import { GoogleSignInButton, IntraSignInButton } from "../components/Buttons";
 import Link from "next/link";
 import ProtectSgnIn from "../utils/ProtectSgnIn";
+import { socketContext } from "../utils/context/socketContext";
+import { useRouter } from "next/navigation";
+import { useContext, useEffect } from "react";
 
 const SignIn = () => {
+//   const {Userdata} = useContext(socketContext) 
+//   const route = useRouter()
+//   if(Userdata)
+//         route.push("/dashboard")
+//  console.log(Userdata)
   return (
+    <ProtectSgnIn>
+
     <PingPong>
       <div className="custom-shape absolute transition-all duration-700 ease-in-out sm:left-[15%] md:bg-white md:px-8 md:py-8">
         <div className="custom-shape flex flex-col items-center gap-4 bg-white px-4 py-7 transition-all duration-700 ease-in-out sm:gap-5 sm:px-9 sm:py-10 md:bg-transparent md:px-6 md:py-4 2xl:py-36">
@@ -43,6 +53,7 @@ const SignIn = () => {
         </div>
       </div>
     </PingPong>
+    </ProtectSgnIn>
   );
 };
 

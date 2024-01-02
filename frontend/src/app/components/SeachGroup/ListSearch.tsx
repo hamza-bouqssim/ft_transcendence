@@ -16,7 +16,7 @@ export const ListSearch: FC<ListSearchProps> = ({ data }) => {
     <div key={data.id} className="flex text-black items-center justify-between my-4">
       <div className="flex items-center justify-center">
         <div className="relative">
-          <Image className=" w-[70px] h-[70px] rounded-full" src={data.picture} alt={data.name} height={30} width={30} />
+          <Image className=" w-[70px] h-[70px] rounded-full" src={data.picture} alt={data.name} height={30} width={30} priority />
         </div>
         <div className="ml-2">
           <h2>{data.name}</h2>

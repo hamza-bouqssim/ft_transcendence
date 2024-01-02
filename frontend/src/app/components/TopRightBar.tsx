@@ -145,6 +145,7 @@ const TopRightBar = () => {
 							width={72}
 							height={51}
 							alt="user"
+              priority
 						/>
 					)}
 					<div className="font-['Whitney_Bold'] leading-3">

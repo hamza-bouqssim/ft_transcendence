@@ -1,21 +1,27 @@
-import React, { ReactNode, useContext } from 'react'
+import React, { ReactNode, useContext, useEffect, useState } from 'react'
 import { socketContext } from './context/socketContext'
-import { useParams } from 'next/navigation'
 import { useRouter } from 'next/navigation'
+import { isAuth } from './api';
 interface AuthCheckProps {
     children: ReactNode;
   }
 const ProtectSgnIn: React.FC<AuthCheckProps> = ({ children })=> {
-    const {Userdata} = useContext(socketContext) 
-    const route = useRouter()
-    if(!Userdata)
-        route.push("/dashboad")
+  const router = useRouter();
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await isAuth();
+        if(response.status===200)
+            router.push("/dashboard")
+      } catch (error) {
+      }
+    };
+    fetchData();
+  }, []);
 
-  return (
-    <div>
-      {children}
-    </div>
-  )
+  return <>{children}</>;
+
 }
 
 export default ProtectSgnIn
+

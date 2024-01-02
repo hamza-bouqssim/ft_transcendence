@@ -68,7 +68,7 @@ export const RestFriend = () => {
           <div key={friend.id} className="flex items-center justify-between my-2 mt-5">
           <div className="flex items-center justify-center ">
             <div className="relative">
-              <Image className="w-14 rounded-full" src={friend.avatar_url} alt={friend.display_name} height={30} width={30}/>
+              <Image className="w-14 rounded-full" src={friend.avatar_url} alt={friend.display_name} height={30} width={30} priority/>
             </div>
             <div className="ml-2 ">
               <h2>{friend.display_name}</h2>

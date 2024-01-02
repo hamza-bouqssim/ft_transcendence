@@ -12,6 +12,7 @@ const EditImage = () => {
 					width={72}
 					height={51}
 					alt="user"
+					priority
 				/>
 			</div>
 			<div className="my-3 ml-6">

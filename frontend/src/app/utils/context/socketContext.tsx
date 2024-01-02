@@ -1,3 +1,4 @@
+
 import { createContext, Dispatch, SetStateAction } from "react";
 import { io, Socket } from "socket.io-client";
 import { ConversationTypes, User } from "../types";
@@ -18,6 +19,7 @@ type SocketContextValue = {
 
 export const socket = io("http://localhost:8000/chat", {
      withCredentials: true,
+     autoConnect: false,
 });
 export const socketContext = createContext<SocketContextValue>({
   socket,

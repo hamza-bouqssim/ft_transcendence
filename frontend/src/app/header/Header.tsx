@@ -198,6 +198,7 @@ const Header = () => {
             width={190}
             height={190}
             alt="ping-pong"
+            priority
           />
         </div>
       </section>

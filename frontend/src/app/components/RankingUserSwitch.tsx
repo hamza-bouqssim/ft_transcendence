@@ -109,6 +109,7 @@ const RankingUserSwitch = ({
 							alt="Description of the image"
 							width={250}
 							height={250}
+							priority
 						/>
 					</div>
 
@@ -119,6 +120,7 @@ const RankingUserSwitch = ({
 							alt="Description of the image"
 							width={250}
 							height={250}
+							priority
 						/>
 					</div>
 
@@ -129,6 +131,7 @@ const RankingUserSwitch = ({
 							alt="Description of the image"
 							width={250}
 							height={250}
+							priority
 						/>
 					</div>
 

@@ -64,6 +64,7 @@ const InviteField = () => {
 					width={50}
 					height={50}
 					alt="42logo"
+					priority
 				/>
 			</div>
 			<div className="w-[50%] font-['Whitney_Bold'] text-black">

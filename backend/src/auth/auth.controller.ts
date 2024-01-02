@@ -45,8 +45,9 @@ export class AuthController {
 			}
 
 			if (user.tfa_enabled) {
-				const token = this.jwtService.sign(payload);
-				res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
+				const _payload = { sub: user.id, email: user.email};
+				const _2fatoken = this.jwtService.sign(_payload,{ secret: process.env.S_2FA});
+				res.cookie('_2fa', _2fatoken, { httpOnly: true, maxAge: 1000000 });
 				return res.send({ valid: true, message: 'tfa enabled' });
 			}
 
@@ -86,8 +87,9 @@ export class AuthController {
 		}
 
 		if (user.tfa_enabled) {
-			const token = this.jwtService.sign(payload);
-			res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
+			const _payload = { sub: user.id, email: user.email};
+			const _2fatoken = this.jwtService.sign(_payload,{ secret: process.env.S_2FA});
+        	res.cookie('_2fa', _2fatoken, { httpOnly: true, maxAge: 1000000 });
 			return res.redirect(`${process.env.ROOT_FRONT}/signIn/verify-two-factor`);
 		}
 
@@ -114,8 +116,9 @@ export class AuthController {
 		}
 
 		if (user.tfa_enabled) {
-			const token = this.jwtService.sign(payload);
-			res.cookie('token', token, { httpOnly: true, maxAge: 600000000000 });
+			const _payload = { sub: user.id, email: user.email};
+			const _2fatoken = this.jwtService.sign(_payload,{ secret: process.env.S_2FA});
+        	res.cookie('_2fa', _2fatoken, { httpOnly: true, maxAge: 1000000 });
 			return res.redirect(`${process.env.ROOT_FRONT}/signIn/verify-two-factor`);
 		}
 
@@ -134,12 +137,13 @@ export class AuthController {
 	@UseGuards(AuthGuard('jwt'))
 	async isAuthentication(@Req() request, @Res() res) {
 		try {
+
 			const {id} = request.user;
 			await this.authService.findUser(id);
 			return res.status(200).json({ success: true});
 		} catch (error) {
-
-			return res.send({success: false, message:error.response});
+			return res.status(401).json({ success: true, message:error.response});
 		}
 	}
+	
 }

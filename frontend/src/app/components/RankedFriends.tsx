@@ -22,6 +22,7 @@ const RankedFriends: React.FC<RankedFriendsProps> = ({
 					className=" pointer-events-none select-none h-[30px] w-[30px] rounded-full"
 					height={30}
 					width={30}
+					priority
 				/>
 			</div>
 

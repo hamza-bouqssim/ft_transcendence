@@ -6,8 +6,9 @@ import { faXmark } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import ProtectTwofa from "@/app/utils/ProtectTwofa"
 
-const TwoFactorVerify = () => {
+const verifyTwoFactor = () => {
 
     const [Loading, setLoading] = useState(false);
     const [otp, setOtp] = useState("");
@@ -33,7 +34,8 @@ const TwoFactorVerify = () => {
       }
 
     return (
-      <AuthCheck>
+     <ProtectTwofa>
+
 
         <div className="absolute left-0 z-10 right-0 bottom-0 top-0 bg-[#0000005f] backdrop-blur-[0px] opacity-100">
             <div className="w-[380px] h-[600px] z-30 bg-white absolute top-0 left-0 bottom-0 right-0 m-auto  drop-shadow-xl rounded-[20px] overflow-hidden">
@@ -76,8 +78,8 @@ const TwoFactorVerify = () => {
     </div> 
         </div>
 
-      </AuthCheck>
+      </ProtectTwofa>
     )
 }
 
-export default TwoFactorVerify
+export default verifyTwoFactor

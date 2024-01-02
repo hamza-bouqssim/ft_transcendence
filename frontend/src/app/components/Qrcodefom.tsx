@@ -70,6 +70,7 @@ export function Qrcodeform({ closeQrForm }: Props) {
 						className=" w-[165px]"
 						width={165}
 						height={165}
+						priority
 					/>
 
 					<div className="relative w-full border-t">

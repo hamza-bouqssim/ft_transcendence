@@ -41,7 +41,7 @@ export const MemberUser: React.FC<MemberUserProps> = ({ idUserAdd, setIdUserAdd 
             <div key={user.id} className="flex items-center justify-between my-2">
               <div className="flex items-center justify-center ">
                 <div className="relative">
-                  <Image className="w-14 rounded-full" src={user.avatar_url} alt={user.display_name} height={30} width={30}/>
+                  <Image priority  className="w-14 rounded-full" src={user.avatar_url} alt={user.display_name} height={30} width={30}/>
                   {
                     user.status === "offline" 
                     ? <div className="w-3 h-3 bg-red-400   absolute bottom-1 right-0 rounded-full"></div> 

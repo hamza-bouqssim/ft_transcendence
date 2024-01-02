@@ -67,7 +67,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
   } = useForm<CreateConversationParams>();
   const [buttonType, setButtonType] = useState("");
   const [IsBloqued, setIsBloqued] = useState(false);
-
+  const router = useRouter();
   const ToastError = (message: any) => {
     toast.error(message, {
       position: toast.POSITION.TOP_RIGHT,
@@ -97,7 +97,8 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
           setUserInfo(response.data);
         }
       } catch (error) {
-        ToastError(`Interaction not allowed. Users are blocked`);
+        router.push("/dashboard")
+        ToastError(`User Not Found!`);
       }
     };
 
@@ -114,7 +115,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
       onSubmit(formData);
     }
   };
-  const router = useRouter();
+ 
 
   const onSubmit = async (data: CreateConversationParams) => {
     if (!data.message.trim()) {

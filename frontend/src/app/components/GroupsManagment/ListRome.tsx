@@ -50,7 +50,7 @@ const ListRome: FC<ListRomeProps> = ({data} ) => {
   return (
     <div key={data.id} onClick={() => updateChannel(data)} className="cursor-pointer rounded-[10px] hover:bg-[#F2F3FD] flex items-center justify-between px-2 py-3">
         <div className="flex items-center w-[70%] justify-start">
-          <Image className="w-16 h-16 bg-cover rounded-full" src={data.picture} alt="" height={30} width={30} />
+          <Image priority className="w-16 h-16 bg-cover rounded-full" src={data.picture} alt="" height={30} width={30} />
           <div className="ml-4 ">
             <h1>{data.name}</h1>
             {data.messageRome && data.messageRome.length > 0 ? (
