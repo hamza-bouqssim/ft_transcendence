@@ -195,6 +195,7 @@ const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 									alt="Description of the image"
 									width="250"
 									height="250"
+									priority={true}
 									// placeholder="blur"
 									// blurDataURL={userinfo?.avatar_url}
 									

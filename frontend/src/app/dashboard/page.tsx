@@ -103,11 +103,14 @@ const Dashboard = () => {
 								Play Now!
 							</button>
 						</div>
-						<div className="boxes">
-							<Boxes title="WINS" value={results.win} color="#6A67F3" />
-							<Boxes title="LEVEL" value={results.level} color="#498CDA" />
-							<Boxes title="LOSSES" value={results.lose} color="#FC7785" />
-						</div>
+						{
+							(results.win && results.level && results.lose) &&
+							<div className="boxes">
+								<Boxes title="WINS" value={results?.win} color="#6A67F3" />
+								<Boxes title="LEVEL" value={results?.level} color="#498CDA" />
+								<Boxes title="LOSSES" value={results?.lose} color="#FC7785" />
+							</div>
+						}
 						<h1 className="mt-[20px]">History</h1>
 						<div className=" history-header mt-[20px] flex h-[40px] w-full justify-between rounded-[40px] bg-[#79a9f28d] px-1 py-1 shadow-lg ">
 							<div className="w-[23%] text-center ">

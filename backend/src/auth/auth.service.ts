@@ -96,39 +96,36 @@ export class AuthService {
 	
 
 	async validateUser(dto: AuthDto) {
-		try {
-		  const user = await this.prisma.user.findUnique({
-			where: { email: dto.email },
-		  });
-	  
-		  if (user) {
-			return user;
-		  }
-	  
-		  const createNewUser = await this.prisma.user.create({
-			data: {
-			  username: dto.username,
-			  email: dto.email,
-			  password: '',
-			  display_name: dto.display_name,
-			  avatar_url: dto.avatar_url,
-			  two_factor_auth: '',
-			  two_factor_secret_key: '',
-			},
-		  });
-	  
-		  return createNewUser;
-		} catch (error) {
-			console.error('Error in validateUser:', error);
-		
-			if (error.code === 'P2021') {
-			
-			  throw new NotFoundException('User not found');
-			} else {
-			  throw new InternalServerErrorException('Internal server error');
-			}
-		  }
-	  }
+        try {
+            return await this.prisma.user.upsert({
+                where: {
+                    email: dto.email,
+                },
+                create: {
+                    username: dto.username,
+                    email: dto.email,
+                    password: '',
+                    display_name: dto.display_name,
+                    avatar_url: dto.avatar_url,
+                    two_factor_auth: '',
+                    two_factor_secret_key: '',
+                    
+                },
+                update: {
+                    avatar_url: dto.avatar_url,
+                }
+            })
+        } catch (error) {
+            console.error('Error in validateUser:', error);
+        
+            if (error.code === 'P2021') {
+            
+              throw new NotFoundException('User not found');
+            } else {
+              throw new InternalServerErrorException('Internal server error');
+            }
+          }
+      }
 
 	
 	async findUser(id: string) {

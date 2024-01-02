@@ -145,6 +145,7 @@ const TopRightBar = () => {
 							width={72}
 							height={51}
 							alt="user"
+              priority={true}
               // placeholder="blur"
               // blurDataURL={Userdata.avatar_url}
 						/>
