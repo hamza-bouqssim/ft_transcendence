@@ -12,7 +12,7 @@ const HistoryMatches = (props: HistoryMatchesType) => {
 						className="w-[30px] h-[30px] rounded-full"
 						width={30}
 						height={30}
-						blurDataURL={props.playerOne}
+						// blurDataURL={props.playerOne}
 					/>
 				</div>
 
@@ -26,7 +26,7 @@ const HistoryMatches = (props: HistoryMatchesType) => {
 						className="w-[30px] h-[30px] rounded-full"
 						width={30}
 						height={30}
-						blurDataURL={props.playerTwo}
+						// blurDataURL={props.playerTwo}
 					/>
 				</div>
 			</div>

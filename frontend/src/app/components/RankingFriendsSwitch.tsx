@@ -195,8 +195,8 @@ const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 									alt="Description of the image"
 									width="250"
 									height="250"
-									placeholder="blur"
-									blurDataURL={userinfo?.avatar_url}
+									// placeholder="blur"
+									// blurDataURL={userinfo?.avatar_url}
 									
 								/>
 							)}
@@ -232,8 +232,8 @@ const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 							alt=""
 							width={250}
 							height={250}
-							placeholder="blur"
-							blurDataURL={players[2]?.picture || "/assets/unknown.png"}
+							// placeholder="blur"
+							// blurDataURL={players[2]?.picture || "/assets/unknown.png"}
 						/>
 					</div>
 
@@ -244,8 +244,8 @@ const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 							alt=""
 							width={250}
 							height={250}
-							placeholder="blur"
-							blurDataURL={players[0]?.picture || "/assets/unknown.png"}
+							// placeholder="blur"
+							// blurDataURL={players[0]?.picture || "/assets/unknown.png"}
 						/>
 					</div>
 
@@ -256,8 +256,8 @@ const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 							alt=""
 							width={250}
 							height={250}
-							placeholder="blur"
-							blurDataURL={players[1]?.picture || "/assets/unknown.png"}
+							// placeholder="blur"
+							// blurDataURL={players[1]?.picture || "/assets/unknown.png"}
 						/>
 					</div>
 
@@ -313,8 +313,8 @@ const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 									width={60}
 									priority
 									height={60}
-									placeholder="blur"
-									blurDataURL={elem.avatar_url}
+									// placeholder="blur"
+									// blurDataURL={elem.avatar_url}
 								/>
 								{getStatusColor() === "green" ? (
 									<OnlineStyling />

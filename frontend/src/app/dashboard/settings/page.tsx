@@ -10,7 +10,7 @@ const Settings = () => {
 			<div className="">
 				<div className="my-16  flex  flex-col gap-16 rounded-[40px] bg-white p-4 md:p-10">
 					<div className="">
-						<h1 className="font-['Whitney'] text-[2rem] font-bold text-black md:text-[4rem]">
+						<h1 className="font-['Whitney_Semibold'] text-[2rem] font-bold text-black md:text-[4rem]">
 							Settings
 						</h1>
 						<h1 className="font-['Whitney_Semibold'] text-[1rem] text-[#474747] md:text-[2rem]">

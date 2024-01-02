@@ -211,6 +211,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			display_name: data.req_play.recipient.display_name,
 			avatar_url: data.req_play.recipient.avatar_url,
 		};
+		const games = this.queueGame.filter((game)=> game.user1.id === user1.id ||game.user1.id === user2.id ||game.user2.id === user1.id ||game.user2.id === user2.id)
+        if(games.length !== 0)
+            return;
 		this.queueGame.push({
 			indexMap: 0,
 			socket1: null,

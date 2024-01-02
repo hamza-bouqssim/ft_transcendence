@@ -148,7 +148,9 @@ const MessageContainerRoom = () => {
                                   {
                                     m?.senderId !== Userdata?.id   && <div className="mr-2 mt-1">
                                       <Image src={m?.user.avatar_url} alt="" className='rounded-full' width={30}
-                                                          height={30}  blurDataURL={m?.user.avatar_url}                                                 />
+                                                          height={30}  
+                                                          // blurDataURL={m?.user.avatar_url}                                            
+                                                               />
                           
                                       </div>
                                   }

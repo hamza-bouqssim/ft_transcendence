@@ -30,7 +30,7 @@ function AppWithProviders({ children }: PropsWithChildren ) {
 	};
 
 	useEffect(() => {
-		const _socket = io("http://localhost:8000/chat", {
+		const _socket = io(`${process.env.NEXT_PUBLIC_HOST}/chat`, {
 			withCredentials: true,
 		});
 		setSocket(_socket);
@@ -93,7 +93,7 @@ export default function RootLayout({
 	};
 
 
-const socket = io("http://localhost:8000/chat", {
+const socket = io(`${process.env.NEXT_PUBLIC_HOST}/chat`, {
 	withCredentials: true,
 });
 

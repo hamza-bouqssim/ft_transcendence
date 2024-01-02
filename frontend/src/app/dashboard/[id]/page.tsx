@@ -366,8 +366,8 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
                 alt=""
                 width="500"
                 height="500"
-                placeholder="blur"
-                blurDataURL="/assets/hand.png"
+                // placeholder="blur"
+                // blurDataURL="/assets/hand.png"
               />
               <div className="align-center absolute bottom-5 left-10 flex items-center justify-center gap-4">
                 {!IsBloqued ? (
@@ -442,8 +442,8 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
                         alt=""
                         width={120}
                         height={120}
-                        placeholder="blur"
-                        blurDataURL={userinfo?.avatar_url || ""}
+                        // placeholder="blur"
+                        // blurDataURL={userinfo?.avatar_url || ""}
                       />
                       <input
                         {...register("message", {

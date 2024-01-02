@@ -58,8 +58,8 @@ const MyAccount = () => {
 						width={70}
 						height={70}
 						alt="user"
-						placeholder="blur"
-						blurDataURL={Userdata?.avatar_url || "/assets/user2.jpeg"}
+						// placeholder="blur"
+						// blurDataURL={Userdata?.avatar_url || "/assets/user2.jpeg"}
 					/>
 				</div>
 				<div className="">

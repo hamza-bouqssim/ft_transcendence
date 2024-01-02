@@ -145,8 +145,8 @@ const TopRightBar = () => {
 							width={72}
 							height={51}
 							alt="user"
-              placeholder="blur"
-              blurDataURL={Userdata.avatar_url}
+              // placeholder="blur"
+              // blurDataURL={Userdata.avatar_url}
 						/>
 					)}
 					<div className="font-['Whitney_Bold'] leading-3">
