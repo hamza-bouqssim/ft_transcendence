@@ -29,6 +29,7 @@ export const GoogleSignInButton = () => {
 				width={40}
 				height={40}
 				alt={"google"}
+				priority={true}
 			/>
 		</button>
 	);
@@ -43,6 +44,7 @@ export const IntraSignInButton = () => {
 				width={40}
 				height={40}
 				alt={"intra42"}
+				priority={true}
 			/>
 		</button>
 	);

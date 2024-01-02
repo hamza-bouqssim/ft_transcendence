@@ -15,4 +15,5 @@ RUN chmod +x init.sh
 EXPOSE 8000
 
 ENTRYPOINT [ "./init.sh" ]
-CMD npm run start:dev
+RUN npm run build
+CMD npm run start

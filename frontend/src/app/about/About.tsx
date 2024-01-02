@@ -17,6 +17,7 @@ const About = () => {
 			width={100}
 			height={100}
 			alt={el.substring(8)}
+			priority={true}
 			/>
 			<h3 className="text-center text-xs lg:text-sm 2xl:text-xl">
 			{el.substring(8, el.lastIndexOf("."))}

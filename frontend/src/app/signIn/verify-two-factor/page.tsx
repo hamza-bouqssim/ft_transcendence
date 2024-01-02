@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation"
 import { useState } from "react"
 import ProtectTwofa from "@/app/utils/ProtectTwofa"
 
-const verifyTwoFactor = () => {
+const VerifyTwoFactor = () => {
 
     const [Loading, setLoading] = useState(false);
     const [otp, setOtp] = useState("");
@@ -18,7 +18,7 @@ const verifyTwoFactor = () => {
 
     const _verificationCode = async () => {
         // setLoading(true);
-          await confirm(otp).then((res)=>{
+          await confirm(otp).then((res:any)=>{
             setIsVerified(res.data.success);
             setMessage(res.data.message)
             if(res.data.success)
@@ -82,4 +82,4 @@ const verifyTwoFactor = () => {
     )
 }
 
-export default verifyTwoFactor
+export default VerifyTwoFactor

@@ -194,7 +194,7 @@ const MatchMaking = () => {
       gameSocket.off("knowOpponent", handleKnowOpponent);
       gameSocket.off("redirectUser", handleRedirectUser);
     };
-  }, [opponentPlayer.mapIndex]);
+  }, [opponentPlayer.mapIndex,gameSocket]);
 
   return (
     <>
