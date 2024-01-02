@@ -19,7 +19,6 @@ type SocketContextValue = {
 
 export const socket = io("http://localhost:8000/chat", {
      withCredentials: true,
-     autoConnect: false,
 });
 export const socketContext = createContext<SocketContextValue>({
   socket,

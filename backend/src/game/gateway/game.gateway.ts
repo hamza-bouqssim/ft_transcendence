@@ -215,7 +215,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			user1,
 			launch: false,
 		});
-
 		this.eventEmitter.emit('chat.AcceptPLayNotification', data);
 	}
 

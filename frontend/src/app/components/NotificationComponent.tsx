@@ -148,7 +148,7 @@ const NotificationComponent = () => {
                                     </div>
                                 )}
                             </div>
-                            <FontAwesomeIcon icon={faTimes} className="text-[--pink-color] font-bold hover:scale-150 w-4 h-4 p-1 mt-[8px] mb-auto rounded-full cursor-pointer  duration-500  hover:text-[--purple-color] " onClick={() => deleteNotification(elem.id)}/>
+                            {/* <FontAwesomeIcon icon={faTimes} className="text-[--pink-color] font-bold hover:scale-150 w-4 h-4 p-1 mt-[8px] mb-auto rounded-full cursor-pointer  duration-500  hover:text-[--purple-color] " onClick={() => deleteNotification(elem.id)}/> */}
                         </div>
                         
                     );
