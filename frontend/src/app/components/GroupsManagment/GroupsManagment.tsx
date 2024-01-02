@@ -3,7 +3,7 @@ import { IoMdAdd } from "react-icons/io";
 import { useRouter, usePathname } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useContext, useState } from 'react';
-import { getAllRooms, getRemovestore } from '../../store/roomsSlice';
+import { getAllRooms } from '../../store/roomsSlice';
 import { socketContext } from "../../utils/context/socketContext";
 import Image from "next/image";
 import { AppDispatch } from "../../store";
@@ -20,6 +20,9 @@ const GroupsManagement = () => {
   const [sortedConversations, setSortedConversations] = useState<ConversationTypes[]>([]);
   const { rooms, status, error } = useSelector((state: any) => state.room);
 
+  useEffect(() =>{
+    dispatch(getAllRooms())
+  },[dispatch])
   useEffect(() => {
     const sortedConversations = [...rooms].sort((a, b) => {
       const aDate = (a.messageRome.length > 0 && a.messageRome[0].createdAt) || a.updatedAt || a.createdAt  || new Date();

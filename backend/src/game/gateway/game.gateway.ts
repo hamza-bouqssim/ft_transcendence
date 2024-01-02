@@ -221,8 +221,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			user1,
 			launch: false,
 		});
-		console.log("invite",this.getQueueGame(user1.id));
-		// console.log()
 		try{
 			const userOne = await this.prisma.user.findUnique({where:{id:user1.id}})
 			const userTwo = await this.prisma.user.findUnique({where:{id:user2.id}})

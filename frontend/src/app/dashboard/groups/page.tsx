@@ -16,7 +16,7 @@ import {Provider as ReduxProvider, useDispatch, useSelector} from 'react-redux'
 import { fetchMessagesThunk } from "../../store/messageSlice";
 import { fetchConversationThunk } from "../../store/conversationSlice";
 import { getAllRooms } from "../../store/roomsSlice";
-import { getAllMembers } from "../../store/memberSlice";
+import { getAllMembers, quitMember } from "../../store/memberSlice";
 import AuthCheck from '@/app/utils/AuthCheck';
 import { getNotificationRoom } from '@/app/store/NotificationChatSlice';
 
@@ -38,15 +38,17 @@ const ConversationChannelPage = () => {
       updateChannel(null)
 		})
     socket.on("updateMember",(payload:any) =>{
-      console.log(payload.idUserleave,Userdata?.id ,payload.types)
       if(Userdata?.id === payload.idUserleave && (payload.types==="Ban" || payload.types==="Kick") )
       { 
+        dispatch(quitMember(payload.roomId))
         updateChannel(null);
       }
-      dispatch(getAllRooms());
+      else
+      {
+        dispatch(getNotificationRoom());
+      }
 			dispatch(getAllMembers(payload.roomId))
-      dispatch(getNotificationRoom());
-        
+      dispatch(getAllRooms());
 		})
     return () => {
       socket.off("notification");

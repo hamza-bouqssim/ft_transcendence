@@ -156,12 +156,9 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
                 }
             }
         })
-        console.log(member,RoomId,id,types)
         member?.members.map((member) => {
-            this.server.to(member.user_id).emit('updateMember', {roomId:RoomId,idUserleave:id,types:types});         
-        })
-        if(types === "Quit")
-            this.server.to(id).emit('updateMember', {roomId:RoomId,idUserleave:id,types:types});         
+            this.server.to(member.user_id).emit('updateMember', {roomId:member.chatRoomId,idUserleave:id,types:types});         
+        })    
     }
 
 

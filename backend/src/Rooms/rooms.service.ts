@@ -144,12 +144,12 @@ export class RoomsService {
     await this.prisma.notificationMessage.createMany({
       data: [
         {
-          userId: id, // Assuming id is a string
+          userId: id, 
           roomId: chatRoom.id,
           number: 0,
         },
         ...data.idUserAdd.map((userId) => ({
-          userId: userId, // Assuming userId is a string
+          userId: userId, 
           roomId: chatRoom.id,
           number: 1,
         })),
@@ -338,17 +338,6 @@ export class RoomsService {
         Status: "Ban",
       },
     });
-    const not = await this.prisma.notificationMessage.findFirst({
-      where:{
-        userId: memberUpdate.userId,
-        roomId :memberUpdate.id
-      },
-    });
-    await this.prisma.notificationMessage.delete({
-      where:{
-        id:not.id
-      },
-    });
     
     return updatedMember;
   }
@@ -394,7 +383,6 @@ export class RoomsService {
   
   async kickMember(id: string, memberUpdate: Member)
   {
-    console.log(id, memberUpdate)
     const userRole = await this.prisma.member.findFirst({
       where: {
         user_id: id,
@@ -414,18 +402,6 @@ export class RoomsService {
     if (userRole1?.Status === 'Owner'|| (userRole?.Status === 'Admin' &&  userRole1?.Status === 'Admin' )) {
       throw new HttpException("can t kick owner in the room", HttpStatus.BAD_REQUEST);
     }
-    const not = await this.prisma.notificationMessage.findFirst({
-      where:{
-        userId: memberUpdate.userId,
-        roomId :memberUpdate.id
-      },
-    });
-    await this.prisma.notificationMessage.delete({
-      where:{
-        id:not.id
-      },
-    });
-
     const updatedMember = await this.prisma.member.update({
       where: {
         id: userRole1.id,
@@ -571,11 +547,15 @@ export class RoomsService {
         userId: iduser,
       },
     });
-    await this.prisma.notificationMessage.delete({
-      where: {
-        id: not.id,
-      },
-    });
+    if(not)
+    {
+      await this.prisma.notificationMessage.delete({
+        where: {
+          id: not.id,
+        },
+      });
+    }
+   
     if (remainingMembers === 0) {
       const existingNotification = await this.prisma.notificationMessage.findFirst({
         where: {
@@ -646,6 +626,12 @@ export class RoomsService {
             id: memberUpdate.id,
           },
         },
+      },
+    });
+    await this.prisma.notificationMessage.create({
+      data: {
+        roomId: memberUpdate.id,
+        userId: memberUpdate.userId,
       },
     });
 
@@ -719,6 +705,12 @@ export class RoomsService {
         },
       });
     }
+    await this.prisma.notificationMessage.create({
+      data: {
+        roomId: joinRooms.id,
+        userId:id ,
+      },
+    });
 
     return 'Join to room success';
   }

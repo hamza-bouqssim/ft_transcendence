@@ -147,6 +147,7 @@ const membersSlice = createSlice({
       })
       .addCase(getAllMembers.fulfilled, (state: any, action: PayloadAction<Member[]>) => {
         state.status = 'succeeded';
+        state.members  = [];
         state.members = action.payload;
       })
       .addCase(getAllMembers.rejected, (state: any, action: PayloadAction<string>) => {

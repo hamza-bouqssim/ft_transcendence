@@ -111,7 +111,6 @@ export class RoomsController {
   async banMember(@Res() res: any,@Req() req , @Body() memberUpdate:Member)
   {
     try {
-      console.log("sdasdasdasdas",memberUpdate)
       const {id}=req.user
       const member = await this.roomsService.banMember(id,memberUpdate);
       this.eventEmitter.emit(
@@ -204,7 +203,7 @@ export class RoomsController {
       const response = await this.roomsService.quitRoom(id,RoomId);
       this.eventEmitter.emit(
         'order.updateMember',
-        RoomId.id,id,"Quit"
+        RoomId.id,null,null
       );
       return res.status(200).json({ success: true, response: response});
     } catch (error) {

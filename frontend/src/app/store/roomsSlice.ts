@@ -121,6 +121,7 @@ const roomSlice = createSlice({
 				(state: any, action: PayloadAction<string>) => {
 					state.status.get = "failed";
 					state.error = action.payload;
+					state.rooms = [];
 				},
 			)
 			.addCase(createRooms.pending, (state: any) => {
@@ -156,5 +157,4 @@ const roomSlice = createSlice({
   },
 });
 export const { updateRoomMessage } = roomSlice.actions
-export const { getRemovestore } = roomSlice.actions
 export default roomSlice.reducer;

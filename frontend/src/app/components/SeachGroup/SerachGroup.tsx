@@ -30,7 +30,6 @@ export const SerachGroup = () => {
       setRoom(null)
     
   };
-  console.log("roomsroomsroomsrooms" ,rooms)
   return (
     <div>
         <input  value={groupName}
