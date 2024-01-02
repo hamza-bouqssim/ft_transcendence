@@ -97,7 +97,8 @@ const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 					setUserInfo(response.data);
 				}
 			} catch (error) {
-				
+				router.push("/dashboard")
+				ToastError(`User Not Found!`);
 			}
 		};
 
@@ -194,7 +195,8 @@ const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 									alt="Description of the image"
 									width="250"
 									height="250"
-									priority={true}
+									placeholder="blur"
+									blurDataURL={userinfo?.avatar_url}
 									
 								/>
 							)}
@@ -230,7 +232,8 @@ const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 							alt=""
 							width={250}
 							height={250}
-							priority
+							placeholder="blur"
+							blurDataURL={players[2]?.picture || "/assets/unknown.png"}
 						/>
 					</div>
 
@@ -241,7 +244,8 @@ const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 							alt=""
 							width={250}
 							height={250}
-							priority
+							placeholder="blur"
+							blurDataURL={players[0]?.picture || "/assets/unknown.png"}
 						/>
 					</div>
 
@@ -252,7 +256,8 @@ const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 							alt=""
 							width={250}
 							height={250}
-							priority
+							placeholder="blur"
+							blurDataURL={players[1]?.picture || "/assets/unknown.png"}
 						/>
 					</div>
 
@@ -308,6 +313,8 @@ const RankingFriendsSwitch = ({ userId }: { userId?: string }) => {
 									width={60}
 									priority
 									height={60}
+									placeholder="blur"
+									blurDataURL={elem.avatar_url}
 								/>
 								{getStatusColor() === "green" ? (
 									<OnlineStyling />

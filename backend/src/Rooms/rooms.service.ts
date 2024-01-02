@@ -328,12 +328,25 @@ export class RoomsService {
     if (userRole1?.Status === 'Owner' || (userRole?.Status === 'Admin' &&  userRole1?.Status === 'Admin' )) {
       throw new HttpException("can t ban owner or Admin ban admin in the room", HttpStatus.BAD_REQUEST);
     }
+    
+
     const updatedMember = await this.prisma.member.update({
       where: {
         id: userRole1.id,
       },
       data: {
         Status: "Ban",
+      },
+    });
+    const not = await this.prisma.notificationMessage.findFirst({
+      where:{
+        userId: memberUpdate.userId,
+        roomId :memberUpdate.id
+      },
+    });
+    await this.prisma.notificationMessage.delete({
+      where:{
+        id:not.id
       },
     });
     
@@ -381,6 +394,7 @@ export class RoomsService {
   
   async kickMember(id: string, memberUpdate: Member)
   {
+    console.log(id, memberUpdate)
     const userRole = await this.prisma.member.findFirst({
       where: {
         user_id: id,
@@ -400,6 +414,17 @@ export class RoomsService {
     if (userRole1?.Status === 'Owner'|| (userRole?.Status === 'Admin' &&  userRole1?.Status === 'Admin' )) {
       throw new HttpException("can t kick owner in the room", HttpStatus.BAD_REQUEST);
     }
+    const not = await this.prisma.notificationMessage.findFirst({
+      where:{
+        userId: memberUpdate.userId,
+        roomId :memberUpdate.id
+      },
+    });
+    await this.prisma.notificationMessage.delete({
+      where:{
+        id:not.id
+      },
+    });
 
     const updatedMember = await this.prisma.member.update({
       where: {
@@ -409,7 +434,6 @@ export class RoomsService {
         Status: "kick",
       },
     });
-    
     return updatedMember;
     
   }
@@ -541,17 +565,22 @@ export class RoomsService {
         chatRoomId: roomId.id,
       },
     });
-  
+    const not = await this.prisma.notificationMessage.findFirst({
+      where: {
+        roomId: roomId.id,
+        userId: iduser,
+      },
+    });
+    await this.prisma.notificationMessage.delete({
+      where: {
+        id: not.id,
+      },
+    });
     if (remainingMembers === 0) {
       const existingNotification = await this.prisma.notificationMessage.findFirst({
         where: {
           roomId: roomId.id,
           userId: iduser,
-        },
-      });
-      await this.prisma.notificationMessage.delete({
-        where: {
-          id: existingNotification.id,
         },
       });
       await this.prisma.messageRome.deleteMany({

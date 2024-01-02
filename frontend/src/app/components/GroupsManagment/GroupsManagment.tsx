@@ -3,7 +3,7 @@ import { IoMdAdd } from "react-icons/io";
 import { useRouter, usePathname } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useContext, useState } from 'react';
-import { getAllRooms } from '../../store/roomsSlice';
+import { getAllRooms, getRemovestore } from '../../store/roomsSlice';
 import { socketContext } from "../../utils/context/socketContext";
 import Image from "next/image";
 import { AppDispatch } from "../../store";
@@ -19,9 +19,6 @@ const GroupsManagement = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [sortedConversations, setSortedConversations] = useState<ConversationTypes[]>([]);
   const { rooms, status, error } = useSelector((state: any) => state.room);
-  useEffect(() => {
-    dispatch(getAllRooms())
-  }, [dispatch]);
 
   useEffect(() => {
     const sortedConversations = [...rooms].sort((a, b) => {
@@ -31,7 +28,6 @@ const GroupsManagement = () => {
     });
     setSortedConversations(sortedConversations);
   }, [rooms]);
-
 
   if (status.get == "loading" || status.get == "idle") {
     return (

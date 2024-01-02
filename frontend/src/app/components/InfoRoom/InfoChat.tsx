@@ -83,7 +83,8 @@ export const InfoChat = () => {
               alt=""
               width={70}
               height={70}
-              priority={true}
+              placeholder='blur'
+              blurDataURL={fetchDataUser()?.avatar_url as string}
             />
             <div className='-top-[37px] '>
               {checkTheStatus() === 'online' ? (<OnlineStyling/>) :  checkTheStatus() === 'ingame' ? (<IngameStyling/>) : checkTheStatus() === 'offline' ? ( <OflineStyling/>) : <></>}

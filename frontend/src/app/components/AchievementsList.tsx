@@ -30,7 +30,8 @@ const AchievementsList: FC<AchievementsListProps> = ({ results }) => {
 						src={`/assets/${name}.jpg`}
 						width="200"
 						height="200"
-						priority={true}
+						placeholder="blur"
+						blurDataURL={`/assets/${name}.jpg`}
 					/>
 				</div>
 			))}

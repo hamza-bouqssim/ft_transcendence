@@ -3,7 +3,7 @@
 /node_modules
 ../node_modules
 /prisma/migrations
-
+.env
 # Logs
 logs
 *.log

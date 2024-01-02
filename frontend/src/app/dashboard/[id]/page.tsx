@@ -366,7 +366,8 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
                 alt=""
                 width="500"
                 height="500"
-                priority={true}
+                placeholder="blur"
+                blurDataURL="/assets/hand.png"
               />
               <div className="align-center absolute bottom-5 left-10 flex items-center justify-center gap-4">
                 {!IsBloqued ? (
@@ -399,7 +400,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
                     )}
                     {Userdata?.id !== params.id && (
                       <button
-                        onKeyPress={handleEnter}
+                        onKeyDown={handleEnter}
                         className="hover:duration- h-12 rounded-2xl bg-[--purple-color] px-4 shadow-xl ease-in-out hover:scale-105 hover:bg-[--purple-hover]"
                         onClick={() => setShowMessageBlock(true)}
                       >
@@ -441,7 +442,8 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
                         alt=""
                         width={120}
                         height={120}
-                        priority={true}
+                        placeholder="blur"
+                        blurDataURL={userinfo?.avatar_url || ""}
                       />
                       <input
                         {...register("message", {
@@ -450,7 +452,7 @@ const Dashboard = ({ params }: { params: { id: string } }) => {
                         type="text"
                         className="w-full rounded-xl border-2 border-[--purple-color]  p-4 text-black outline-[--purple-color]"
                         placeholder="Send Message"
-                        onKeyPress={handleEnter}
+                        onKeyDown={handleEnter}
                       />
                     </div>
                   </div>

@@ -111,6 +111,7 @@ export class RoomsController {
   async banMember(@Res() res: any,@Req() req , @Body() memberUpdate:Member)
   {
     try {
+      console.log("sdasdasdasdas",memberUpdate)
       const {id}=req.user
       const member = await this.roomsService.banMember(id,memberUpdate);
       this.eventEmitter.emit(
@@ -169,7 +170,7 @@ export class RoomsController {
       const member = await this.roomsService.kickMember(id,memberUpdate);
       this.eventEmitter.emit(
         'order.updateMember',
-        memberUpdate.id,null,null
+        memberUpdate.id,memberUpdate.userId,"Kick"
       );
       return res.status(200).json({ success: true, response: member});
     } catch (error) {
@@ -203,7 +204,7 @@ export class RoomsController {
       const response = await this.roomsService.quitRoom(id,RoomId);
       this.eventEmitter.emit(
         'order.updateMember',
-        RoomId.id,null,null
+        RoomId.id,id,"Quit"
       );
       return res.status(200).json({ success: true, response: response});
     } catch (error) {

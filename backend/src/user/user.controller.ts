@@ -226,7 +226,7 @@ export class UserController {
 			res.status(200).json(user);
 
 		}catch(error){
-			return res.send({success: false, message: error.message});
+			res.status(401).json({success: false, message: error.message});
 
 		}
 		

@@ -1,8 +1,11 @@
 import { ConversationTypes } from '@/app/utils/types';
 import Image from 'next/image';
 import { socketContext } from '@/app/utils/context/socketContext';
-import React, {  useContext, FC } from 'react';
+import React, {  useContext, FC, useEffect } from 'react';
 import {  useSelector } from "react-redux";
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '@/app/store';
+import { getAllRooms } from '@/app/store/roomsSlice';
 
 interface ListSearchProps {
   data: ConversationTypes;
@@ -10,8 +13,8 @@ interface ListSearchProps {
 
 export const ListSearch: FC<ListSearchProps> = ({ data }) => {
   const { updateChannel, channel } = useContext(socketContext);
-  const { rooms} = useSelector((state:any) => state.room);
-
+  const {rooms} = useSelector((state:any) => state.room);
+  
   return (
     <div key={data.id} className="flex text-black items-center justify-between my-4">
       <div className="flex items-center justify-center">

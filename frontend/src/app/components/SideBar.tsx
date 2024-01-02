@@ -56,6 +56,13 @@ const SideBar = () => {
 				: "",
 		},
 	];
+	const {socket} = useContext(socketContext);
+
+	const hanldeLogOut = () =>{
+		const ret : boolean | null = LogOut();
+		if (ret == true)
+			socket.disconnect();
+	}
 
 	const [isLoggedOut, setIsLoggedOut] = useState<boolean>(false);
 	const {notificationChat} = useSelector((state:any) => state.NotificationChat);
@@ -98,7 +105,7 @@ const SideBar = () => {
           </Link>
         ))}
 
-        <Link className="hidden md:block" href={"#"} onClick={LogOut}>
+        <Link className="hidden md:block" href={"#"} onClick={hanldeLogOut}>
           <ListItem
             icon={faRightFromBracket}
             spanText="LogOut"

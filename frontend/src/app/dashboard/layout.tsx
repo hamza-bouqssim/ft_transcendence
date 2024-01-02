@@ -3,36 +3,44 @@ import {
 	useState,
 	
 	PropsWithChildren,
-
+	useEffect
 } from "react";
+import { io, Socket } from "socket.io-client";
 import SideBar from "../components/SideBar";
 import TopRightBar from "../components/TopRightBar";
 import { Provider } from "react-redux";
-import { socket, socketContext } from "../utils/context/socketContext";
+import { socketContext } from "../utils/context/socketContext";
 import { store } from "../store";
-import { Socket } from "socket.io-client";
 import { usePathname } from "next/navigation";
 import { ConversationTypes, User } from "../utils/types";
-import { Group } from "three";
 import ProviderOnSocket from "./ProviderOnSocket";
-import { ToastContainer, toast } from "react-toastify";
 import { ChangeContext } from "./game/utils/data";
 import AuthCheck from "../utils/AuthCheck";
 
 
-type Props = {
-
-	socket: Socket;
-};
-
-function AppWithProviders({ children }: PropsWithChildren & Props) {
+function AppWithProviders({ children }: PropsWithChildren ) {
 	const [channel, setChannel] = useState<ConversationTypes | null>(null); // Initial value
 	const [oldId, setOldId] = useState<string>("");
 	const [Userdata, setUserdata] = useState<User | null>(null);
 	const [isMessage, setIsMessage] = useState<boolean>(false);
+	const [socket, setSocket] = useState<Socket|null>(null)
+	
 	const updateChannel = (newAddress: ConversationTypes | null) => {
 		setChannel(newAddress);
 	};
+
+	useEffect(() => {
+		const _socket = io("http://localhost:8000/chat", {
+			withCredentials: true,
+		});
+		setSocket(_socket);
+
+		return () => { _socket.disconnect()}
+	}, [])
+
+	if (!socket) {
+		return <></>
+	}
 	return (
 		<Provider store={store}>
 			<socketContext.Provider
@@ -85,6 +93,9 @@ export default function RootLayout({
 	};
 
 
+const socket = io("http://localhost:8000/chat", {
+	withCredentials: true,
+});
 
 	return (
 		<div >
@@ -94,7 +105,7 @@ export default function RootLayout({
 					className={`flex h-screen w-full text-white`}
 					// style={{ minHeight: `${minHeight}px` }}
 					>
-					<AppWithProviders socket={socket}>
+					<AppWithProviders>
 						{shouldHide() ? null : <SideBar />}
 						{shouldHide() ? null : <TopRightBar />}
 

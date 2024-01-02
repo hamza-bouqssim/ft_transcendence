@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import LogOut from "./LogOut";
 import Link from "next/link";
+import { useContext } from "react";
+import { socketContext } from "../utils/context/socketContext";
 
 export const GoogleSignInButton = () => {
 	const router = useRouter();
@@ -85,18 +87,18 @@ export const MenuButton2 = (props: any) => {
 	);
 };
 
-export const LogoutButton = (props: any) => {
-	return (
-		<button
-			onClick={LogOut}
-			className={`h-[35px] w-[225px] ${props.background} ${
-				props.value === "Logout" ? "text-white" : "text-black"
-			} rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`}
-		>
-			{props.value}
-		</button>
-	);
-};
+// export const LogoutButton = (props: any) => {
+// 	return (
+// 		<button
+// 			onClick={hanldeLogOut}
+// 			className={`h-[35px] w-[225px] ${props.background} ${
+// 				props.value === "Logout" ? "text-white" : "text-black"
+// 			} rounded-[15px] hover:bg-[rgba(0,0,0,.2)]`}
+// 		>
+// 			{props.value}
+// 		</button>
+// 	);
+// };
 
 export const GoToProfileBtn = (props: any) => {
 	const router = useRouter();

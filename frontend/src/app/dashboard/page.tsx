@@ -160,7 +160,8 @@ const Dashboard = () => {
 											width="200"
 											height="200"
 											alt=""
-											priority
+											placeholder="blur"
+                							blurDataURL="/assets/first.jpg"
 										/>
 									</div>
 									<div className="my">
@@ -172,7 +173,8 @@ const Dashboard = () => {
 											width="200"
 											height="200"
 											alt=""
-											priority
+											placeholder="blur"
+                							blurDataURL="/assets/second.jpg"
 										/>
 									</div>
 									<div className="my">
@@ -184,7 +186,8 @@ const Dashboard = () => {
 											width="200"
 											height="200"
 											alt=""
-											priority
+											placeholder="blur"
+                							blurDataURL="/assets/third.jpg"
 										/>
 									</div>
 									<div className="my">
@@ -196,7 +199,8 @@ const Dashboard = () => {
 											width="200"
 											height="200"
 											alt=""
-											priority
+											placeholder="blur"
+                							blurDataURL="/assets/fourth.jpg"
 										/>
 									</div>
 									<div className="my">
@@ -208,7 +212,8 @@ const Dashboard = () => {
 											width="200"
 											height="200"
 											alt=""
-											priority
+											placeholder="blur"
+                							blurDataURL="/assets/fifth.jpg"
 										/>
 									</div>
 									<div className="my">
@@ -222,7 +227,8 @@ const Dashboard = () => {
 											width="200"
 											height="200"
 											alt=""
-											priority
+											placeholder="blur"
+                							blurDataURL="/assets/sixth.jpg"
 										/>
 									</div>
 								</div>

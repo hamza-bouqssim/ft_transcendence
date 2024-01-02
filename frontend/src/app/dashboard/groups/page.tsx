@@ -4,12 +4,12 @@ import CoversationSideBar from "../../components/CoversationSideBar/Conversation
 import { ConversationChannelStyle, Page} from "../../utils/styles";
 import { useContext, useEffect, useState , PropsWithChildren} from "react";
 import { ConversationTypes, User, messageEventPayload, messageTypes } from "../../utils/types";
-import {  getConversation, getConversationMessage } from "../../utils/api";
+import {  getConversation, getConversationMessage, getNotification } from "../../utils/api";
 import { useParams } from "next/navigation";
 import MessagePanel from "../../components/messages/MessagePanel";
 import TopRightBar from "../../components/TopRightBar";
 import SideBar from "../../components/SideBar";
-import { socket, socketContext } from "../../utils/context/socketContext";
+import { socketContext } from "../../utils/context/socketContext";
 import { Socket } from "socket.io-client";
 import { AppDispatch, RootState, store } from "../../store";
 import {Provider as ReduxProvider, useDispatch, useSelector} from 'react-redux'
@@ -18,11 +18,12 @@ import { fetchConversationThunk } from "../../store/conversationSlice";
 import { getAllRooms } from "../../store/roomsSlice";
 import { getAllMembers } from "../../store/memberSlice";
 import AuthCheck from '@/app/utils/AuthCheck';
+import { getNotificationRoom } from '@/app/store/NotificationChatSlice';
 
 
 const ConversationChannelPage = () => {
   const {channel ,updateChannel} = useContext<any>(socketContext);
-  const socket = useContext<any>(socketContext).socket
+  const {socket} = useContext<any>(socketContext);
   const dispatch= useDispatch<AppDispatch>();
   const {Userdata} = useContext<any>(socketContext)
 
@@ -37,8 +38,15 @@ const ConversationChannelPage = () => {
       updateChannel(null)
 		})
     socket.on("updateMember",(payload:any) =>{
-			  dispatch(getAllMembers(payload.roomId))
-        dispatch(getAllRooms());
+      console.log(payload.idUserleave,Userdata?.id ,payload.types)
+      if(Userdata?.id === payload.idUserleave && (payload.types==="Ban" || payload.types==="Kick") )
+      { 
+        updateChannel(null);
+      }
+      dispatch(getAllRooms());
+			dispatch(getAllMembers(payload.roomId))
+      dispatch(getNotificationRoom());
+        
 		})
     return () => {
       socket.off("notification");

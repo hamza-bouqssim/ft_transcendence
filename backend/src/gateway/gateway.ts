@@ -156,9 +156,12 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
                 }
             }
         })
+        console.log(member,RoomId,id,types)
         member?.members.map((member) => {
             this.server.to(member.user_id).emit('updateMember', {roomId:RoomId,idUserleave:id,types:types});         
         })
+        if(types === "Quit")
+            this.server.to(id).emit('updateMember', {roomId:RoomId,idUserleave:id,types:types});         
     }
 
 
@@ -344,6 +347,12 @@ export class WebSocketChatGateway implements OnGatewayConnection ,OnGatewayDisco
 
     async handleDisconnect(socket: AuthenticatedSocket) {
         const userId = socket.user.sub;
+        const userdb = await this.prisma.user.findUnique({
+			where: {
+				id: userId,
+			},
+		});
+		if (!socket.user || !userdb) return;
         if (this.NsessionOfuser.has(userId)) {
           const sessionNumber = this.NsessionOfuser.get(userId) - 1;
       

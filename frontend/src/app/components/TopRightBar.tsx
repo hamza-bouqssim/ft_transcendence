@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
-import { LogoutButton, MenuButton } from "./Buttons";
+import { MenuButton } from "./Buttons";
 import { useEffect, useState, useContext, useRef } from "react";
 import { getAuthUser, getNumberNotification, getlogout } from "../utils/api";
 import { useRouter } from "next/navigation";
@@ -145,7 +145,8 @@ const TopRightBar = () => {
 							width={72}
 							height={51}
 							alt="user"
-              priority
+              placeholder="blur"
+              blurDataURL={Userdata.avatar_url}
 						/>
 					)}
 					<div className="font-['Whitney_Bold'] leading-3">
@@ -174,7 +175,7 @@ const TopRightBar = () => {
             >
               <MenuButton background={"bg-[#d9d9d9]"} value="View Profile" />
               <MenuButton background={"bg-[#BBBBBB]"} value="Settings" />
-              <LogoutButton background={"bg-[#EA7F87]"} value="Logout" />
+              {/* <LogoutButton background={"bg-[#EA7F87]"} value="Logout" /> */}
             </div>
           )}
         </div>

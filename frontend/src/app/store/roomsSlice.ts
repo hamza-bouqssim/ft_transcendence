@@ -156,4 +156,5 @@ const roomSlice = createSlice({
   },
 });
 export const { updateRoomMessage } = roomSlice.actions
+export const { getRemovestore } = roomSlice.actions
 export default roomSlice.reducer;

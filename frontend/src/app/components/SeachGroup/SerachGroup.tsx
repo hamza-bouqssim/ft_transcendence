@@ -4,12 +4,15 @@ import React, {useState,useEffect, useContext} from 'react'
 import { ConversationTypes } from '@/app/utils/types';
 import {  useSelector } from "react-redux";
 import { ListSearch } from './ListSearch';
+import { getAllRooms } from '@/app/store/roomsSlice';
+import { AppDispatch } from '@/app/store';
+import { useDispatch } from 'react-redux';
 
 export const SerachGroup = () => {
   const [groupName, setgroupName] = useState<string>("")
   const [room, setRoom] = useState<ConversationTypes[] | null >(null)
   const {socket} = useContext(socketContext)
-  const { rooms} = useSelector((state:any) => state.room);
+  const {rooms} = useSelector((state:any) => state.room);
 
   useEffect(() => {
     socket.on("resualtRoom", (payload) => {
@@ -27,6 +30,7 @@ export const SerachGroup = () => {
       setRoom(null)
     
   };
+  console.log("roomsroomsroomsrooms" ,rooms)
   return (
     <div>
         <input  value={groupName}

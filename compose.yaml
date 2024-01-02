@@ -35,9 +35,8 @@ services:
     ports:
       - "8000:8000"
       - "5555:5555"
-    environment:
-      DATABASE_URL: postgres://postgres:transcandance800@postgres:5432/transcandance?schema=public
-      PORT: 8000
+    env_file:
+      - .env    
     volumes:
       - ./backend:/app/
       - /app/node_modules

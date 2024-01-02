@@ -35,7 +35,7 @@ const MessageInputField=() => {
     return (
         <div className="flex items-center justify-between ">
         <div  className="w-full  flex items-center bg-[#F2F3FD]  rounded-full justify-between">
-            <input onKeyPress={handleEnter} className="w-full p-4 py-3 bg-[#F2F3FD] rounded-full  focus:outline-none text-[#949494]" placeholder="Type a message" value={content}  onChange={(e) => setContent(e.target.value)}/>
+            <input onKeyDown={handleEnter} className="w-full p-4 py-3 bg-[#F2F3FD] rounded-full  focus:outline-none text-[#949494]" placeholder="Type a message" value={content}  onChange={(e) => setContent(e.target.value)}/>
             <button onClick={sendMessage} className="bg-[#5B8CD3]  py-1 px-4 mr-2 rounded-full" type="submit"><LuSendHorizonal size={32}/></button>
         </div>
         </div>

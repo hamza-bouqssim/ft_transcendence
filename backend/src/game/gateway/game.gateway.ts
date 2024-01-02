@@ -127,6 +127,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	async handleDisconnect(socket: AuthenticatedSocket) {
 		socket.leave(`@${socket.user.sub}`);
 		const userId = socket.user.sub;
+		const userdb = await this.prisma.user.findUnique({
+			where: {
+				id: userId,
+			},
+		});
+		if (!socket.user || !userdb) return;
 		if (socket.user) {
 			await this.prisma.user.update({
 				where: { id: socket.user.sub },
@@ -135,7 +141,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			this.eventEmitter.emit('Ingameoffline.created', { userId });
 		}
 		const queue = this.getQueueWaiting(userId);
-		if (queue) {
+		if (queue && queue.socket === socket.id) {
 			this.queueWaiting = this.queueWaiting.filter(
 				(queue) => queue.user.id !== userId,
 			);
@@ -215,6 +221,19 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			user1,
 			launch: false,
 		});
+		console.log("invite",this.getQueueGame(user1.id));
+		// console.log()
+		try{
+			const userOne = await this.prisma.user.findUnique({where:{id:user1.id}})
+			const userTwo = await this.prisma.user.findUnique({where:{id:user2.id}})
+			if(!userOne || !userTwo || userOne.status !== 'online' || userTwo.status !== 'online')
+			{
+				this.queueGame = this.queueGame.filter((queue) => queue.user1.id !== userOne.id)
+				this.eventEmitter.emit('requestRefusePlay.created', data);
+				return ;
+			}
+		}
+		catch(error){}
 		this.eventEmitter.emit('chat.AcceptPLayNotification', data);
 	}
 
